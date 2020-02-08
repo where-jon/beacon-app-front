@@ -56,28 +56,6 @@ export const fetchPositionHistory = async (allShow, pMock) => {
 }
 
 /**
- * 位置情報を取得する。
- * @method
- * @async
- * @param {Object[]} exbs
- * @param {Object[]} txs
- * @return {Object[]}
- */
-export const fetchPositionList = async (exbs, txs) => {
-  let data = DEV.USE_MOCK_EXC? mock.position:
-    await HttpHelper.getExCloud(url(EXCLOUD.POSITION_URL) + new Date().getTime())
-  return _(data)
-    .map(val => {
-      let tx = _.find(txs, tx => tx.btxId == val.btx_id)
-      if (!DEV.NOT_FILTER_TX || !tx) { return null}
-      let exb = _.find(exbs, exb => exb.deviceId == val.device_id)
-      if (!exb) { return null}
-      let label = tx && tx.displayName? tx.displayName: val.btx_id
-      return {...val, tx: tx, exb: exb, label, updatetime: dateform(val.updatetime)}
-    }).compact().value()
-}
-
-/**
  * センサ情報を取得する。
  * @method
  * @async

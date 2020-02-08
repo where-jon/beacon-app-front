@@ -74,7 +74,7 @@ export default {
         // オムロン系はレスポンスが違うので変換する
         if(this.selectedSensor == SENSOR.OMR_ENV){
           exCluodSensors = exCluodSensors.sensors.map(sensor => {
-            return {...sensor, sensorid: sensor.pos_id, btx_id: sensor.sensor_id, updatetime: sensor.timestamp}
+            return {...sensor, sensorid: sensor.pos_id, btxId: sensor.sensor_id, updatetime: sensor.timestamp}
           })
         }
         const positions = await PositionHelper.loadPosition(null, true, true)

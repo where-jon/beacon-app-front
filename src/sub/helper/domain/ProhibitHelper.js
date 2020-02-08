@@ -40,7 +40,7 @@ export const getLostUnDetectList = (position, lostZones) => {
         if( pos.detectState != DETECT_STATE.DETECTED || pos.exb.zoneCd != lostZone.zoneCd) {
           lostUnDetectList.push({
             isLost: true,
-            btxId: pos.btx_id,
+            btxId: pos.btxId,
             minor: pos.minor,
             potName: pos.tx.potName,
             areaName: pos.exb.areaName,
@@ -103,7 +103,7 @@ export const getProhibitDetectList = (position, prohibitZones) => {
       if (group && group.zoneCd.includes(prohibitZone.zoneCd)) {
         if (pos.exb.zoneCd == prohibitZone.zoneCd) {
           detectList.push({
-            btxId: pos.btx_id,
+            btxId: pos.btxId,
             minor: pos.minor,
             potName: pos.tx.potName,
             areaName: pos.exb.areaName,

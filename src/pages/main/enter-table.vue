@@ -142,7 +142,7 @@ export default {
       const absentCategory = this.categories.find(e => e.systemUse == 1 && e.categoryCd == 'ABSENT')
       const absentZoneList = this.zones.filter(e => absentCategory && e.categoryId == absentCategory.categoryId)
       _(this.pots).map(pot => {
-        let pos = positions.find(pos => pos.tx_id == pot.txId)
+        let pos = positions.find(pos => pos.txId == pot.txId)
         const location = pos && pos.location? locationMap[pos.location.locationId]: {}
         return {
           potId: pot.potId,

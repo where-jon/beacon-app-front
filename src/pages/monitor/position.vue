@@ -45,7 +45,7 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'txs', 'exbs'
+      'txs', 'exbs', 'btxIdMap', 'deviceIdMap'
     ]),
     allCount() {
       return this.positions.length
@@ -115,8 +115,8 @@ export default {
     async makePositionRecords(positions) {
       // await Promise.all(['exb','tx'].map(StateHelper.load))
       return positions.map(e => {
-        const tx = this.txs.find(tx => tx.btxId == e.btx_id)
-        const exb = this.exbs.find(exb => exb.deviceId == e.device_id)
+        const tx = this.btxIdMap[e.btx_id]
+        const exb = this.deviceIdMap[e.device_id]
         return {
           ...e,
           name: tx != null ? tx.potName : '—',
@@ -155,7 +155,7 @@ export default {
         const sRet = []
         Object.keys(sensorHistories).forEach(key => {
           sensorHistories[key].forEach(sensorHistory => {
-            const tx = this.txs.find(tx => tx.btxId == sensorHistory.btxid)
+            const tx = this.btxIdMap[sensorHistory.btxid]
             sRet.push({
               ...sensorHistory,
               btx_id: sensorHistory.btxid,

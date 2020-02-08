@@ -390,11 +390,6 @@ export default {
       icons: {},
       exbIcons: [],
       txIcons: [],
-      // リスト→map変換
-      txsMap: {},
-      locationsMap: {},
-      potsMap: {},
-      sensorMap: {},
       // 凡例
       legendItems: null,
       // 検知
@@ -405,6 +400,8 @@ export default {
       prohibitInterval: null,
       lostInterval: null,
       absentZonePosition: null, // 不在表示ゾーン
+      // センサー
+      sensorMap: {},
       // 温湿度
       isShownChart: false, // 温湿度モーダル表示
       iconTicker: null,
@@ -441,6 +438,11 @@ export default {
       'lostZones',
       'absentDisplayZones',
       'txs',
+      'btxIdMap',
+      'txIdMap',
+      'deviceIdMap',
+      'potIdMap',
+      'locationIdMap',
       'locations',
       'pots',
     ]),
@@ -489,7 +491,7 @@ export default {
     'vueSelected.category': {
       handler: function(newVal, oldVal){
         this.selectedCategory = Util.getValue(newVal, 'value', null)
-        if(Util.hasValue(this.form.potId) && Util.getValue(this.potsMap[this.form.potId], 'categoryId', null) != this.selectedCategory){
+        if(Util.hasValue(this.form.potId) && Util.getValue(this.potIdMap[this.form.potId], 'categoryId', null) != this.selectedCategory){
           this.vueSelected.individual = null
         }
       },
@@ -498,7 +500,7 @@ export default {
     'vueSelected.group': {
       handler: function(newVal, oldVal){
         this.selectedGroup = Util.getValue(newVal, 'value', null)
-        if(Util.hasValue(this.form.potId) && Util.getValue(this.potsMap[this.form.potId], 'groupId', null) != this.selectedGroup){
+        if(Util.hasValue(this.form.potId) && Util.getValue(this.potIdMap[this.form.potId], 'groupId', null) != this.selectedGroup){
           this.vueSelected.individual = null
         }
       },
@@ -528,15 +530,8 @@ export default {
       this.loadStates.push('lostZones')
     }
     await Promise.all(this.loadStates.map(state => StateHelper.load(state)))
-    this.txs.forEach(t => this.txsMap[t.btxId] = t)
     // ゾーン表示時「・・・」用TXを追加しておく
-    this.txsMap[PositionHelper.zoneLastTxId()] = { txId: PositionHelper.zoneLastTxId(), disp: 1, tx: {disp: 1} }
-    this.locations.forEach(l => {
-      if(Util.hasValue(l.posId)){
-        this.locationsMap[l.posId] = l
-      }
-    })
-    this.pots.forEach(e => this.potsMap[e.potId] = e)
+    this.btxIdMap[PositionHelper.zoneLastTxId()] = { txId: PositionHelper.zoneLastTxId(), disp: 1, tx: {disp: 1} }
     this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryOptions, this.selectedCategory, false)
     this.vueSelected.group = VueSelectHelper.getVueSelectData(this.groupOptions, this.selectedGroup, false)
     if(this.pSplitAutoReload){
@@ -737,8 +732,6 @@ export default {
     },
     async refreshTxInfo(){
       // await StateHelper.load('tx', true)
-      this.txsMap = {}
-      this.txs.forEach(t => this.txsMap[t.btxId] = t)
     },
     // Txアイコンを選択した場合のポップアップ
     setupSelectedTx (tx, x, y, isDispThumbnail) {
@@ -767,7 +760,7 @@ export default {
       if (PositionHelper.isDoubleTx(btxId)) {
         btxId = PositionHelper.getDoubleDefaultTxId(btxId)
       }
-      const tx = this.txsMap[btxId]
+      const tx = this.btxIdMap[btxId]
 
       // サムネイル表示無しの設定になっているか？
       const isNoThumbnail = APP.TXDETAIL.NO_UNREGIST_THUMB? !tx.existThumbnail: false
@@ -803,13 +796,13 @@ export default {
         return ret
       }
       // 既に該当btx_idのTXアイコンが作成済みか?
-      // console.error(pos.btx_id + '_' + pos.isFixedPosition, pos.x, pos.y)
-      let txBtn = this.icons[pos.btx_id + '_' + pos.isFixedPosition]
+      // console.error(pos.btxId + '_' + pos.isFixedPosition, pos.x, pos.y)
+      let txBtn = this.icons[pos.btxId + '_' + pos.isFixedPosition]
       if (!txBtn || txBtn.color != color || txBtn.bgColor != bgColor || txBtn.transparent != pos.transparent) {
         // 作成されていない場合、新規作成してからiconsに登録
         txBtn = IconHelper.createTxBtn(pos, display.shape, color, bgColor, this.getMapScale())
         txBtn.on('click', evt => this.txOnClick(evt))
-        this.icons[pos.btx_id + '_' + pos.isFixedPosition] = txBtn
+        this.icons[pos.btxId + '_' + pos.isFixedPosition] = txBtn
       } else {
         // 作成済みの場合、座標値のみセットする
         txBtn.x = pos.x
@@ -828,11 +821,11 @@ export default {
       const bgColor = StyleHelper.getTxIconBgColor(display, meditag, magnet)
 
       // 既に該当btx_idのTXアイコンが作成済みか?
-      const zoneBtx_id = PositionHelper.zoneBtxIdAddNumber + pos.btx_id
+      const zoneBtx_id = PositionHelper.zoneBtxIdAddNumber + pos.btxId
       let txBtn = this.icons[zoneBtx_id]
       if (!txBtn || txBtn.color != color || txBtn.bgColor != bgColor) {
         // 作成されていない場合、新規作成してからiconsに登録
-        if (pos.btx_id == PositionHelper.zoneLastTxId()) {
+        if (pos.btxId == PositionHelper.zoneLastTxId()) {
           txBtn = IconHelper.createLastSystemTx(pos, this.getMapScale())
         } else {
           txBtn = IconHelper.createTxBtn(pos, display.shape, color, bgColor, this.getMapScale(), true)
@@ -895,12 +888,12 @@ export default {
       }
 
       const tx = this.selectedTx
-      const selectedAbsentTxPosition = _.find(this.absentZonePosition, pos => pos.btx_id == tx.btxId)
+      const selectedAbsentTxPosition = _.find(this.absentZonePosition, pos => pos.btxId == tx.btxId)
       // 不在表示用ゾーンに表示されている方を優先して表示する
       if (selectedAbsentTxPosition) {
         this.showDetail(tx.btxId, selectedAbsentTxPosition.x, selectedAbsentTxPosition.y)
       } else {
-        const selectedTxPosition = positions.find(pos => pos.btx_id == tx.btxId)
+        const selectedTxPosition = positions.find(pos => pos.btxId == tx.btxId)
         if (!selectedTxPosition || !selectedTxPosition.tx) {
           return
         }
@@ -911,7 +904,7 @@ export default {
       }
     },
     showAbsentZoneTx(pos) {
-      const tx = this.txsMap[pos.btx_id]
+      const tx = this.btxIdMap[pos.btxId]
       if(!SensorHelper.match(this.pShowTxSensorIds, tx.sensorId) || !this.pShowAbsent){
         return
       }
@@ -976,9 +969,9 @@ export default {
         return
       }
 
-      pos.transparent = pos.transparent || isAbsentZone // FIXME:
+      pos.transparent = pos.transparent || isAbsentZone // TODO: 別の場所に移動
       const txBtn = this.updateTxBtn(pos, pos.tx, meditag, magnet)
-      if(this.reloadSelectedTx.btxId == pos.btx_id){
+      if(this.reloadSelectedTx.btxId == pos.btxId){
         this.showDetail(txBtn.btxId, txBtn.x, txBtn.y)
       }
       this.txIcons.push({ button: txBtn, device: pos.tx, config: txBtn.iconInfo, sign: -1 })

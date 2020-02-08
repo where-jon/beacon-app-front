@@ -1178,6 +1178,7 @@ const addSensorInfo = (sensor, txMap, exbMap, pos) => {
   return {
     // id: sensor.sensorId,
     ...sensor,
+    btxId: sensor.btx_id,
     // sensorId: sensor? sensor.id: null,
     label: Util.getValue(tx, 'displayName', sensor.btx_id), 
     ...tx,
@@ -1243,7 +1244,7 @@ export const getPositionedTxWithSensor = (selectedSensor, exCluodSensors, positi
     .filter(tx => allPosition || tx.location && tx.location.x && tx.location.y > 0) // MEDiTAG以外は固定位置のTXのみ
     .filter(tx => selectedSensor == null || tx.sensorId == selectedSensor)
     .map(tx => {
-      const pos = positions.find(pos => pos.tx_id == tx.txId)
+      const pos = positions.find(pos => pos.txId == tx.txId)
       const sensor = exCluodSensors.find(sensor => (sensor.btxid == tx.btxId || sensor.btx_id == tx.btxId) && (sensor.timestamp || sensor.updatetime))
       return addSensorInfo(sensor, txMap, null, pos)
     })

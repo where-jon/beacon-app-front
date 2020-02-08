@@ -306,7 +306,7 @@ export const createLastSystemTx = (pos, mapScale) => {
       strokeColor: ColorUtil.getRGBA(DISP.TX.STROKE_COLOR, bgAlpha),
       strokeStyle: DISP.TX.STROKE_WIDTH,
     })
-  txBtn.txId = pos.btx_id
+  txBtn.txId = pos.btxId
   txBtn.x = pos.x
   txBtn.y = pos.y
   return txBtn
@@ -346,11 +346,11 @@ export const createAbsentTxIcon = (pos, shape, color, bgColor, mapScale) => {
  */
 export const createTxBtn = (pos, shape, color, bgColor, mapScale, isAbsent = false) => {
   let txBtn = createPositionTxIcon(pos, shape, color, bgColor, mapScale)
-  txBtn.btxId = pos.btx_id
+  txBtn.btxId = pos.btxId
 
   if (isAbsent) {
     txBtn = createAbsentTxIcon(pos, shape, color, bgColor, mapScale)
-    txBtn.btxId = PositionHelper.zoneBtxIdAddNumber + pos.btx_id
+    txBtn.btxId = PositionHelper.zoneBtxIdAddNumber + pos.btxId
   }
   txBtn.x = pos.x
   txBtn.y = pos.y

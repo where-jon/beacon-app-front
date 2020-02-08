@@ -41,7 +41,7 @@ export default {
         id: 'positionListId',
         fields: ViewHelper.addLabelByKey(this.$i18n, [
           APP.TX.BTX_MINOR == 'minor' ? {key: 'minor', label: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
-          APP.TX.BTX_MINOR != 'minor' ? {key: 'btx_id', label: 'btxId', sortable: true, tdClass: 'action-rowdata' }: null,
+          APP.TX.BTX_MINOR != 'minor' ? {key: 'btxId', label: 'btxId', sortable: true, tdClass: 'action-rowdata' }: null,
           APP.TX.BTX_MINOR == 'both' ? {key: 'minor', label:'minor', sortable: true, tdClass: 'action-rowdata' }: null,
           ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'potCd') ? {key: 'potCd', label: 'potCd', sortable: true, tdClass: 'action-rowdata'} : null,
           {key: 'potName', label: 'name', sortable: true, tdClass: 'action-rowdata'},

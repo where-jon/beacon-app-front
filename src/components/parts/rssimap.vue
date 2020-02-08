@@ -280,7 +280,7 @@ export default {
 
           let positions = PositionHelper.filterPositions(undefined, false)
           this.nearest = await this.getNearest(this.exbBtns)
-          this.nearest = this.nearest.filter((n) => positions.some((pos) => pos.btx_id === n.btx_id))
+          this.nearest = this.nearest.filter((n) => positions.some((pos) => pos.btxId === n.btx_id))
 
           this.stage.addChild(this.exbCon)
           this.stage.setChildIndex(this.exbCon, this.stage.numChildren-1)

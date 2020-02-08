@@ -110,7 +110,6 @@ export default {
       return this.positionType == POSITION_STACK_TYPES[type.toUpperCase()]
     },
     fetchData(payload){
-      console.error(122, this.$refs.areaPosition)
       // this.$refs.areaPosition.fetchData(payload)
       // this.$refs.zonePosition.fetchData(payload)
     },

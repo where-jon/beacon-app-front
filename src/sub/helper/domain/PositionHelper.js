@@ -29,7 +29,7 @@ export const zoneLastTxId = () => { return 100000001 }
 export const isZoneLastTxId = (btxId) => { return btxId == zoneLastTxId }
 
 export const zoneLastTxData = () => {
-  return { btx_id: zoneLastTxId(), pos_id: 0, label: '・・・', isLost: false, }
+  return { btxId: zoneLastTxId(), pos_id: 0, label: '・・・', isLost: false, }
 }
 
 export const isDoubleTx = (btxId) => { return btxId >= zoneBtxIdAddNumber }
@@ -75,9 +75,9 @@ export const loadPosition = async (count, allShow = false, fixSize = false) => {
   Util.debug('fetchPositionHistory', positions)
   const now = !DEV.USE_MOCK_EXC ? new Date().getTime(): mock.positions_conf.start + count++ * mock.positions_conf.interval
 
-  const txIdMap = _(store.state.app_service.txs).keyBy('txId').value()
-  const exbIdMap = _(store.state.app_service.exbs).keyBy('exbId').value()
-  const locationIdMap = _(store.state.app_service.locations).keyBy('locationId').value()
+  const txIdMap = store.state.app_service.txIdMap
+  const exbIdMap = store.state.app_service.exbIdMap
+  const locationIdMap = store.state.app_service.locationIdMap
 
   positions = _(positions).filter(pos => allShow || DEV.NOT_FILTER_TX || txIdMap[pos.txId])
     .filter(pos => allShow || Util.hasValue(pos.locationId) && locationIdMap[pos.locationId] && (txIdMap[pos.txId] && NumberUtil.bitON(txIdMap[pos.txId].disp, TX.DISP.POS)))
@@ -98,7 +98,7 @@ export const loadPosition = async (count, allShow = false, fixSize = false) => {
         display.opacity = 0.6
       }
   
-      return { ...pos, btx_id: tx.btxId, device_id: exb? exb.deviceId : -1, tx_id: pos.txId, posx: pos.x, posy: pos.y, // TODO: 昔のIFなので全部txIdなど内部形式にする
+      return { ...pos, btxId: tx.btxId, deviceId: exb.deviceId, posx: pos.x, posy: pos.y,
         label, location, exb, tx, updatetime: DateUtil.dateform(pos.positionDt), timestamp:DateUtil.dateform(pos.positionDt),
         transparent: pos.transparent? pos.transparent: isTransparent(pos.timestamp, now),
         isLost: isLost(pos.timestamp, now),
@@ -132,11 +132,11 @@ export const filterPositions = (positions = store.state.main.positions,
   selectedDetail = store.state.main.selectedDetail,
   selectedFreeWord = store.state.main.selectedFreeWord) => { // p, position-display, rssimap, position-list, position, ProhibitHelper
 
-  const txs = store.state.app_service.txs
+  const btxIdMap = store.state.app_service.btxIdMap
 
   if (!showTxNoOwner) { // potの所有状態で絞込み(TX未登録やPotと紐付いていない場合は表示しない)
     positions = positions.filter(pos => {
-      const tx = txs.find(tx => tx.btxId == pos.btx_id)
+      const tx = btxIdMap[pos.btxId]
       return tx && tx.potId
     })
   }
@@ -146,7 +146,7 @@ export const filterPositions = (positions = store.state.main.positions,
 
 const positionFilterFreeWord = (pos, freeWord) => {
   const columnList = [
-    APP.TX.BTX_MINOR == 'minor'? 'minor': 'btx_id',
+    APP.TX.BTX_MINOR == 'minor'? 'minor': 'btxId',
     APP.TX.BTX_MINOR == 'both'? 'minor': null,
     ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'potCd')? 'tx.pot.potCd': null,
     'tx.pot.potName',
@@ -173,7 +173,7 @@ const positionFilterFreeWord = (pos, freeWord) => {
 const positionFilter = (positions, groupId, categoryId, txIdList, freeWord) => { //p
   const txsMap = _(store.state.app_service.txs).keyBy('btxId').value()
   return _(positions).filter(pos => {
-    const tx = txsMap[pos.btx_id]
+    const tx = txsMap[pos.btxId]
     let grpHit = true
     let catHit = true
     let detailHit = true
@@ -310,7 +310,7 @@ export const isLost = (timestamp, now) => {
  */
 export const checkTxAllow = (pos, tx, areaId, isAbsent = false, onlyFixPos = false) => {
   if (!tx) {
-    console.warn('tx not found. btx_id=' + pos.btx_id)
+    console.warn('tx not found. btxId=' + pos.btxId)
     return false
   }
   if(isAbsent){
@@ -407,7 +407,6 @@ export const calcScreenCoordinates = (positions, ratio, locations = [], selected
     const samePos = targetPos.filter(pos => pos.location.locationId == location.locationId)
     // console.error('samePos', samePos.map(e => e.minor))
     const txR = location.isFixedPosZone? DISP.TX.FIXED_POS.R: DISP.TX.R
-    console.error(txR)
     samePos.forEach(pos => pos.txR = txR)
     return calcCoordinatesWhenOverlap(location, ratio, samePos, txR)
   }).compact().flatMap(e => e).tap(Util.debug).value()
@@ -672,7 +671,7 @@ export const calcCoordinatesForMultiPosition = (positions, selectedArea) => {
  */
 export const createTxDetailInfo = (x, y, tx, canvasScale, offset, containerRect, preloadThumbnail) => {
   const display = StyleHelper.getPositionDisplay(tx)
-  const position = filterPositions().find(e => e.btx_id === tx.btxId)
+  const position = filterPositions().find(e => e.btxId === tx.btxId)
   const ret = {
     btxId: tx.btxId,
     minor: i18n.tnl('label.minor') + ':' + tx.btxId,
@@ -715,7 +714,7 @@ export const createTxDetailInfo = (x, y, tx, canvasScale, offset, containerRect,
  */
 export const createTxDetailInfoOnStack = (x, y, tx, offset, preloadThumbnail) => {
   const display = StyleHelper.getPositionDisplay(tx)
-  const position = getPositions().find(e => e.btx_id === tx.btxId)
+  const position = filterPositions().find(e => e.btxId === tx.btxId)
   const ret = {
     btxId: tx.btxId,
     minor: i18n.tnl('label.minor') + ':' + tx.btxId,

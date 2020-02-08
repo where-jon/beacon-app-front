@@ -182,6 +182,18 @@ const buildMasters = (data) => {
         }
       }
       else {
+        if (currentMaster == 'tx') {
+          if (!idmaps['btx']) {
+            idmaps['btx'] ={}
+          }
+          idmaps['btx'][row[1]] = obj
+        }
+        if (currentMaster == 'exb') {
+          if (!idmaps['device']) {
+            idmaps['device'] ={}
+          }
+          idmaps['device'][row[1]] = obj
+        }
         idmaps[currentMaster][row[0]] = obj
       }
     }
