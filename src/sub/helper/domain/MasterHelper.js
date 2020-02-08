@@ -51,7 +51,7 @@ export const loadMaster = async () => {
   addInfo(masters)
   console.log('commit', new Date())
   Util.debug({masters})
-  storeCommit(masters)
+  storeCommit(masters, idmaps)
   console.log('end', new Date())
 }
 
@@ -153,7 +153,7 @@ const buildMasters = (data) => {
     else {
       const obj = convert(row, currentColumn)
       masters[currentMaster].push(obj)
-      if (/[A-Z]/.test(currentMaster)) { // 関連テーブルは配列のマップ
+      if (isRelationEntity(currentMaster)) { // 関連テーブルは配列のマップ
         if (!idmaps[currentMaster][row[0]]) {
           idmaps[currentMaster][row[0]] = []
         }
@@ -185,6 +185,8 @@ const buildMasters = (data) => {
   
   return {masters, idmaps}
 }
+
+const isRelationEntity = (e) => /[A-Z]/.test(e)
 
 /**
  * 値を型変換し、マスタエンティティのプロパティ名でセットする。
@@ -488,10 +490,22 @@ const addInfo = (masters) => {
   })
 }
 
-const storeCommit = (masters) => {
+/**
+ * Storeに保存
+ */
+const storeCommit = (masters, idmaps) => {
   Object.keys(masters).forEach(key => {
-    StateHelper.storeCommit(StringUtil.single2multi(key), masters[key])
+    if (!isRelationEntity(key)) { // 関連エンティティは保存しない
+      StateHelper.storeCommit(StringUtil.single2multi(key), masters[key])
+    }
   })
+
+  Object.keys(idmaps).forEach(key => { // idMapはIdMapの名前を後に付加
+    if (!isRelationEntity(key)) { // 関連エンティティは保存しない
+      StateHelper.storeCommit(key + 'IdMap', idmaps[key])
+    }
+  })
+
 }
 
 
