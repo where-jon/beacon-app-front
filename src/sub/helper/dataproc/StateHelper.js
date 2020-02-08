@@ -48,19 +48,6 @@ export const setForceFetch = (name, force) => {
 }
 
 const appStateConf = {
-  templates: {
-    path: '/core/rcvexcloud/template/list',
-    sort: 'notifyTemplateId',
-    beforeCommit: arr => {
-      return arr.map(template => {
-        return {
-          ...template,
-          notifyTemplateKey: template.notifyTemplateKey? getTemplateKeyName(template.notifyTemplateKey): null,
-          notifyMedium: template.notifyMedium == 0? i18n.tnl('label.email'): i18n.tnl('label.slack'),
-        }
-      })
-    }
-  },
   newsList: {
     path: '/news',
     sort: 'newsDate',
@@ -109,12 +96,6 @@ const appStateConf = {
   },
   lostZones: {
     path: '/core/zone/lostZones',
-    beforeCommit: arr => {
-      let result = arr.map(val => (val? {
-        ...val,
-      }: null))
-      return result
-    }
   },
   prohibits: {
     path: '/core/zone/prohibit',
@@ -229,13 +210,3 @@ export const getMapImage = areaId => {
 
 }
 
-/**
- * 指定したキーを持つ通知状態名称を取得する。
- * @method
- * @param {String} templateKey 
- * @return {String}
- */
-const getTemplateKeyName = templateKey => {
-  const templateKeyName = NOTIFY_STATE.getOptions().find(tval => tval.value === templateKey)
-  return templateKeyName != null? templateKeyName.text: null
-}

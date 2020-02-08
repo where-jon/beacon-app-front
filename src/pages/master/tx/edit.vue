@@ -239,7 +239,6 @@ export default {
     },
     async onSaved(){
       // StateHelper.setForceFetch('pot', true)
-      await MasterHelper.loadMaster()
     },
     async onSaving() {
       const txId = Util.hasValue(this.form.txId)? this.form.txId: -1

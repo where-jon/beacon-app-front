@@ -274,7 +274,6 @@ export default {
     },
     async onSaved(){
       // await StateHelper.load('categories', true)
-      await MasterHelper.loadMaster()
       const categoryList = this.categories.filter(category => category.systemUse == 0)
       this.$set(this.form, 'categoryCd', MasterHelper.createMasterCd('category', categoryList, this.category))
     }

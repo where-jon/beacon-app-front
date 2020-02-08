@@ -105,7 +105,6 @@ export default {
         .filter(val => val)
     },
     async Saved(){
-      await MasterHelper.loadMaster()
       // StateHelper.setForceFetch('pot', true)
       // StateHelper.setForceFetch('tx', true)
       // StateHelper.setForceFetch('zone', true)

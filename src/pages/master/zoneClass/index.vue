@@ -89,7 +89,6 @@ export default {
       // StateHelper.setForceFetch('tx', true)
       // StateHelper.setForceFetch('exb', true)
       // StateHelper.setForceFetch('category', true)
-      await MasterHelper.loadMaster()
     },
     editResponse(data) {
       data.forEach(val => {

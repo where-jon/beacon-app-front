@@ -146,7 +146,6 @@ export default {
       return dummyKey
     },
     async onSaved(){
-      await MasterHelper.loadMaster()
       // StateHelper.setForceFetch('pot', true)
     },
   }

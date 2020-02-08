@@ -95,7 +95,6 @@ export default {
     },
     async onSaved(){
       // StateHelper.setForceFetch('user', true)
-      await MasterHelper.loadMaster()
       await AuthHelper.switchAppService()
     },
     onBeforeReload(){

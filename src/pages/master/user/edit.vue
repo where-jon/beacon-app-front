@@ -198,7 +198,6 @@ export default {
         )
       }
       // StateHelper.setForceFetch('pot', true)
-      await MasterHelper.loadMaster()
     },
     onBeforeReload(){
       this.vueSelected.role = VueSelectHelper.getVueSelectData(this.roleOptions, this.roleOptions.reduce((prev, cur) => cur).value)

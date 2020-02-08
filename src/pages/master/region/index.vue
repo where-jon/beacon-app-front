@@ -51,7 +51,6 @@ export default {
   methods: {
     async onSaved(param){
       // StateHelper.setForceFetch('user', true)
-      await MasterHelper.loadMaster()
       const result = await RegionHelper.autoSwitchRegion(this.regions)
       if(result){
         LocalStorageHelper.setLocalStorage('listMessage', param.message)

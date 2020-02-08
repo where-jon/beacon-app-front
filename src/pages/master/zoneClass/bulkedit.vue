@@ -78,7 +78,6 @@ export default {
       return dummyKey
     },
     async onSaved(){
-      await MasterHelper.loadMaster()
       // StateHelper.setForceFetch('tx', true)
       // StateHelper.setForceFetch('exb', true)
       // StateHelper.setForceFetch('category', true)

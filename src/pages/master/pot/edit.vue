@@ -501,7 +501,6 @@ export default {
       // StateHelper.setForceFetch('tx', true)
       // StateHelper.setForceFetch('user', true)
       // await StateHelper.load('pots', true)
-      await MasterHelper.loadMaster()
       this.$set(this.form, 'potCd', MasterHelper.createMasterCd('pot', this.pots, this.pot))
     },
     setDummyParam(dummyUser, paramName, showForm){

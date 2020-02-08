@@ -1113,7 +1113,6 @@ export default {
       }
     },
     showExb(exb) {
-      console.error({exb}, this.pShowExbSensorIds)
       const icon = IconHelper.createExbIcon(exb, this.pShowExbSensorIds, this.getMapScale(), this.stage)
       if(!icon){
         return
@@ -1127,7 +1126,7 @@ export default {
       this.exbCon.addChild(icon)
     },
     showExbTx(tx) {
-      console.error('showExbTx', tx)
+      console.error('showExbTx 要チェック', tx)
       const icon = IconHelper.createExbIconForMagnet(tx, this.sensorMap.magnet, this.getMapScale())
       if(icon){
         this.exbCon.addChild(icon)

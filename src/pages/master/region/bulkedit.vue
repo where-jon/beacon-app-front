@@ -50,7 +50,6 @@ export default {
     },
     async onSaved(bulkSaveFunc, param){
       // StateHelper.setForceFetch('user', true)
-      await MasterHelper.loadMaster()
       const result = await RegionHelper.autoSwitchRegion(this.regions)
       if(result){
         LocalStorageHelper.setLocalStorage('bulkMessage', param.message)

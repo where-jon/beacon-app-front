@@ -115,7 +115,6 @@ export default {
       // StateHelper.setForceFetch('pot', true)
       // StateHelper.setForceFetch('tx', true)
       // await StateHelper.load('groups', true)
-      await MasterHelper.loadMaster()
       const groupId = MasterHelper.createMasterCd('group', this.groups, this.group)
       this.$set(this.form, 'groupCd', groupId)
     },

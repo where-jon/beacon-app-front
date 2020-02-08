@@ -95,7 +95,6 @@ export default {
         try {
           await this.onSaving()
           // StateHelper.setForceFetch(this.name, true)
-          // await MasterHelper.loadMaster() // TODO: ここで行えば各箇所では不要
           if (this.name == 'area' && this.form.mapImage) {
             await ImageHelper.loadImageArea(this.form.areaId)
           }
@@ -107,6 +106,7 @@ export default {
           if(this.onSaved) {
             this.onSaved()
           }
+          await MasterHelper.loadMaster()
           if (this.again) {
             this.form = {}
             Util.applyDef(this.form, this.defValue, this)

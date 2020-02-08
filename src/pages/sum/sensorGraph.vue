@@ -164,8 +164,8 @@ export default {
       },
       message: '',
       sumUnitOptions: [],
-      exbOptions: [],
-      txOptions: [],
+      exbOptions: [], // FIXME: commonmixinに定義されている
+      txOptions: [], // FIXME: commonmixinに定義されている
       exbType: [SENSOR.PIR, SENSOR.THERMOPILE, SENSOR.LED_TYPE2, SENSOR.LED_TYPE5],
       txType: [SENSOR.MEDITAG, SENSOR.MAGNET],
       deviceType: DEVICE.EXB,

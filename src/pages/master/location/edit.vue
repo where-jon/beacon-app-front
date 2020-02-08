@@ -339,7 +339,6 @@ export default {
     },
     async onSaved(){
       // await StateHelper.load('locations', true)
-      await MasterHelper.loadMaster()
       this.$set(this.form, 'locationCd', MasterHelper.createMasterCd('location', this.locations, this.location))
     }
   }

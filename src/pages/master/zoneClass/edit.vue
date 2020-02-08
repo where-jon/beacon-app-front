@@ -225,7 +225,6 @@ export default {
       // StateHelper.setForceFetch('category', true)
       // StateHelper.setForceFetch('location', true)
       // await StateHelper.load('zone', true)
-      await MasterHelper.loadMaster()
       this.$set(this.form, 'zoneCd', MasterHelper.createMasterCd('zone', this.zones, this.zone))
     },
     async onBeforeReload(){

@@ -52,7 +52,6 @@ export default {
     async onSaved(){
       // StateHelper.setForceFetch('pot', true)
       // StateHelper.setForceFetch('tx', true)
-      await MasterHelper.loadMaster()
     },
   }
 }

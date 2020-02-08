@@ -59,7 +59,6 @@ export default {
       // StateHelper.setForceFetch('tx', true)
       // StateHelper.setForceFetch('exb', true)
       // StateHelper.setForceFetch('zone', true)
-      await MasterHelper.loadMaster()
     },
     thumbnail(row) {
       let addUrlParam = ''

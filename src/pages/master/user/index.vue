@@ -61,7 +61,6 @@ export default {
         ]))
     },
     async onSaved(){
-      await MasterHelper.loadMaster()
       // StateHelper.setForceFetch('pot', true)
     },
   }

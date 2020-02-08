@@ -138,7 +138,6 @@ export default {
     async onSaved(){
       // StateHelper.setForceFetch('tx', true)
       // StateHelper.setForceFetch('user', true)
-      await MasterHelper.loadMaster()
     },
   }
 }

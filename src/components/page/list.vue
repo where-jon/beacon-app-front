@@ -745,7 +745,6 @@ export default {
     async edit(item, index, target) {
       this.setEmptyMessage()
       let entity = {}
-      console.error(this.name, {item, index, target})
       if(item != null) {
         const masterId = this.compactMode? this.$parent.$options.methods && this.$parent.$options.methods.getEditKey? this.$parent.$options.methods.getEditKey.call(this.$parent, item): item.updateKey: item[this.id]
         entity = await AppServiceHelper.fetch(this.appServicePath, masterId)
@@ -924,11 +923,11 @@ export default {
       const pageName = this.params.dispName? this.params.dispName: this.params.name
       try {
         await AppServiceHelper.deleteEntity(this.appServicePath, id)
-        if(this.compactMode) {
-          // StateHelper.setForceFetch(this.params.name, true)
-        } else {
-          // await StateHelper.load(this.params.name, true)
-        }
+        // if(this.compactMode) {
+        //   // StateHelper.setForceFetch(this.params.name, true)
+        // } else {
+        //   // await StateHelper.load(this.params.name, true)
+        // }
         await MasterHelper.loadMaster()
         this.message = this.$i18n.tnl('message.deleteCompleted', {target: this.$i18n.tnl('label.' + this.params.name)})
         if(this.$parent.$options.methods && this.$parent.$options.methods.onSaved){

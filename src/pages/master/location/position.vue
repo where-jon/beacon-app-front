@@ -712,7 +712,6 @@ export default {
 
         if (param.length > 0) {
           await HttpHelper.postAppService('/core/location/updateLocation', param)
-          await MasterHelper.loadMaster()
           // await StateHelper.load('exb', true)
           // await StateHelper.load('tx', true)
           // await StateHelper.load('location', true)
@@ -720,9 +719,9 @@ export default {
 
         if (this.mapRatioChanged && this.mapRatio != null) {
           await AppServiceHelper.save('/core/area', this.createSendArea(), UPDATE_ONLY_NN.EMPTY_ZERO)
-          await MasterHelper.loadMaster()
           // await StateHelper.load('area', true)
         }
+        await MasterHelper.loadMaster()
         this.message = this.$i18n.tnl('message.completed', {target: this.$i18n.tnl('label.save')})
         this.replace({showInfo: true})
         this.isChanged = false

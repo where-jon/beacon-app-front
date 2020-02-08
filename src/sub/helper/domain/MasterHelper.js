@@ -50,9 +50,10 @@ export const loadMaster = async () => {
   console.log('add', new Date())
   addInfo(masters)
   console.log('commit', new Date())
-  Util.debug({masters})
   storeCommit(masters, idmaps)
   console.log('end', new Date())
+  Util.debug({masters})
+  console.warn({masters})
 }
 
 /**
@@ -132,6 +133,9 @@ const buildMasters = (data) => {
       break
     case 'role_id':
       currentMaster = 'role'
+      break
+    case 'notify_template_id':
+      currentMaster = 'template'
       break
     case 'zone_id':
       if (row[1] == 'category_id') {
@@ -486,9 +490,18 @@ const addInfo = (masters) => {
       })
       ArrayUtil.sortIgnoreCase(list, ArrayUtil.includesIgnoreCase(APP.USER.WITH, 'name')? 'name': 'loginId')  
       break
+    case 'template':
+      list.forEach(t => {
+        const templateKeyName = NOTIFY_STATE.getOptions().find(tval => tval.value === t.notifyTemplateKey)
+        t.notifyTemplateKey = templateKeyName? templateKeyName.text: null
+        t.notifyMedium = t.notifyMedium == 0? i18n.tnl('label.email'): i18n.tnl('label.slack')
+      })
+      ArrayUtil.sortIgnoreCase(list, ArrayUtil.includesIgnoreCase(APP.USER.WITH, 'name')? 'name': 'loginId')  
+      break
     }
   })
 }
+
 
 /**
  * Storeに保存

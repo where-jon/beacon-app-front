@@ -52,7 +52,7 @@ export default {
     async fetchData(payload) {
       try {
         this.showProgress()
-        await StateHelper.load('template')
+        // await StateHelper.load('template')
         if (payload && payload.done) {
           payload.done()
         }

@@ -176,7 +176,6 @@ export default {
       // StateHelper.setForceFetch('exb', true)
       // StateHelper.setForceFetch('zone', true)
       // await StateHelper.load('areas', true)
-      await MasterHelper.loadMaster()
       this.$set(this.form, 'areaCd', MasterHelper.createMasterCd('area', this.areas, this.area))
     },
     beforeSubmit(again){
