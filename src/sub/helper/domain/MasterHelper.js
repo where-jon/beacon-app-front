@@ -31,9 +31,9 @@ export const setApp = (pStore, pi18n) => {
  * マスタエンティティをロードする
  */
 export const loadMaster = async () => {
-  console.error('fetch', new Date())
+  console.log('fetch', new Date())
   const masterAll = await HttpHelper.getAppService('/core/region/masterall')
-  console.error('parse', new Date())
+  console.log('parse', new Date())
   const res = Papa.parse(masterAll)
   if (res.errors.length > 0) {
     res.errors.forEach(e => {

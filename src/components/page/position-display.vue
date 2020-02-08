@@ -60,7 +60,7 @@ export default {
       eachListName: StringUtil.concatCamel('each', StringUtil.single2multi(this.masterName)),
       prohibitDetectList : null,
       // loadStates: ['area', 'zone', 'tx', 'location', 'lostZones','prohibit', 'category', 'group', 'exb', 'pot'],
-      // loadStates: ['lostZones','prohibit'],
+      loadStates: [],
       showDismissibleAlert: false,
       positions: [],
     }

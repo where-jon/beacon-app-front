@@ -133,7 +133,6 @@ export const filterPositions = (positions = store.state.main.positions,
   selectedFreeWord = store.state.main.selectedFreeWord) => { // p, position-display, rssimap, position-list, position, ProhibitHelper
 
   const txs = store.state.app_service.txs
-  console.warn(positions, selectedGroup, selectedCategory, selectedDetail, selectedFreeWord)
 
   if (!showTxNoOwner) { // potの所有状態で絞込み(TX未登録やPotと紐付いていない場合は表示しない)
     positions = positions.filter(pos => {

@@ -7,14 +7,15 @@
     <b-row class="mt-2 ml-3">
       <b-form inline class="mt-2" @submit.prevent>
         <!--
+        -->
         <b-form-row class="my-1 ml-2 ml-sm-0">
           <label v-t="'label.positionStackType'" class="mr-2 mt-1" />
           <span>
             <b-form-select v-model="positionType" :options="positionTypeOptions" />
           </span>
         </b-form-row>
-        -->
         <!--
+        -->
         <b-form-row v-if="isShow('zone')" class="my-1 ml-2 ml-sm-0">
           <label v-t="'label.zoneCategory'" class="ml-sm-4 ml-2 mr-1 mt-1" />
           <span :title="vueSelectTitle(vueSelected.zoneCategory)">
@@ -28,7 +29,6 @@
             </v-select>
           </span>
         </b-form-row>
-        -->
       </b-form>
     </b-row>
     <position-display v-if="isShow('area')" ref="areaPosition" master-name="area" :alert-data="alertData" />
@@ -110,8 +110,9 @@ export default {
       return this.positionType == POSITION_STACK_TYPES[type.toUpperCase()]
     },
     fetchData(payload){
-      this.$refs.areaPosition.fetchData(payload)
-      this.$refs.zonePosition.fetchData(payload)
+      console.error(122, this.$refs.areaPosition)
+      // this.$refs.areaPosition.fetchData(payload)
+      // this.$refs.zonePosition.fetchData(payload)
     },
   },
 }
