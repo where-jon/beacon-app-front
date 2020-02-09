@@ -950,15 +950,17 @@ export const createTxLegends = (txList, categoryList, groupList) => {
       { id: 2, text: legendElement.name, style: {} },
     ]
   }))
-  // デフォルトは常に表示
-  const defaultStyle = { shape: SHAPE.CIRCLE, bgColor: DISP.TX.BGCOLOR, color: DISP.TX.COLOR }
-  ret.push({
-    id: 0,
-    items: [
-      { id: 5, text: 'A', style: StyleHelper.getStyleDisplay1(defaultStyle) },
-      { id: 6, text: i18n.tnl('label.defaultOther'), style: {} },
-    ]
-  })
+  // グループ、カテゴリに全てのTXが紐付いている場合は、デフォルトを非表示
+  if(!hasAllTxDisplayInfo(txList)){
+    const defaultStyle = { shape: SHAPE.CIRCLE, bgColor: DISP.TX.BGCOLOR, color: DISP.TX.COLOR }
+    ret.push({
+      id: 0,
+      items: [
+        { id: 5, text: 'A', style: StyleHelper.getStyleDisplay1(defaultStyle) },
+        { id: 6, text: i18n.tnl('label.defaultOther'), style: {} },
+      ]
+    })
+  }
   return ret
 }
 
@@ -1116,4 +1118,20 @@ export const getTodayThermoHumidityInfo = async (id, isExb) => {
     }
   })
   return sensorData
+}
+
+/**
+ * 全てのTxが優先設定の表示情報に紐付いているか確認する
+ * @method
+ * @param {Object[]} txList
+ * @return {Boolean}
+ */
+export const hasAllTxDisplayInfo = txList =>{
+  var displayInfo = null
+  if (DISP.TX.DISPLAY_PRIORITY == 'category'){
+    displayInfo = txList.filter(val => (val.categoryId ))
+  }else {
+    displayInfo = txList.filter(val => (val.groupId ))
+  }
+  return txList.length == displayInfo.length
 }
