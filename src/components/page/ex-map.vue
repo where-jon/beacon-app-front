@@ -1096,7 +1096,7 @@ export default {
         positions = PositionHelper.addFixedPosition(positions, this.locations, this.selectedArea) // 固定位置追加
       }
       // 表示Txのフィルタリング
-      positions = this.pDisabledFilter? PositionHelper.filterPositions(positions, false, false, null, null, null): PositionHelper.filterPositions(positions)
+      positions = this.pDisabledFilter? PositionHelper.filterPositions(positions, false, undefined, null, null, null): PositionHelper.filterPositions(positions)
       this.detectedCount = PositionHelper.getDetectCount(positions, this.selectedArea)  // 検知数カウント増加
 
       if (this.isQuantity) { // 数量ボタン押下時
@@ -1118,8 +1118,7 @@ export default {
       this.exbIcons.push({ button: icon, device: exb, config: icon.iconInfo, sign: -1 })
       this.exbCon.addChild(icon)
     },
-    showExbTx(tx) {
-      console.error('showExbTx 要チェック', tx)
+    showExbTx(tx) { // TODO: メソッド名がおかしい。マグネットセンサTX専用ならそうすべき
       const icon = IconHelper.createExbIconForMagnet(tx, this.sensorMap.magnet, this.getMapScale())
       if(icon){
         this.exbCon.addChild(icon)
@@ -1133,7 +1132,7 @@ export default {
         this.exbCon = ViewHelper.addContainerOnStage(this.stage, this.bitmap.width, this.bitmap.height)
       }
       this.exbCon.removeAllChildren()
-      _.forEach(this.sensorMap, exbList => exbList.forEach(exb => exb.exbId? this.showExb(exb): null))
+      _.forEach(this.sensorMap, exbList => exbList.forEach(exb => exb.exbId && exb.areaId == this.selectedArea? this.showExb(exb): null))
       this.keepExbPosition = false
       //　表示条件：マグネットセンサ、固定位置登録＆同一エリア、PIR画面表示設定
       if(SensorHelper.match(this.pShowExbSensorIds, SENSOR.MAGNET) && APP.SENSOR.SHOW_MAGNET_ON_PIR){

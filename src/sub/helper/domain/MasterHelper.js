@@ -384,7 +384,8 @@ const addInfo = (masters) => {
         Util.merge(tx, {
           sensorId: Util.v(tx, 'sensorList.0.sensorId'),
           sensor: i18n.tnl('label.' + Util.v(tx, 'sensorList.0.sensorName', 'normal')),
-          // potName: Util.getValue(tx, 'potTxList.0.potName', ''),
+          potName: Util.getValue(tx, 'potList.0.potName', ''),
+          locationId: tx.location? tx.location.locationId: null,
           dispPos: tx.disp & 1,
           dispPir: tx.disp & 2,
           dispAlways: tx.disp & 4,

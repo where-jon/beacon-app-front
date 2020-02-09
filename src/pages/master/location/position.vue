@@ -681,14 +681,15 @@ export default {
     getSaveLocationList(){
       return this.work.locationList.filter(location => location.isChanged).map(location => {
         return {
-           ...location,
-           isChanged: false,
-           exbList: [],
-           exbIdList: Util.getValue(location, 'exbList', []).map(val => val.exbId),
-           txList: [],
-           txIdList: Util.getValue(location, 'txList', []).map(val => val.txId),
-           x: Math.round(location.x),
-           y: Math.round(location.y),
+          ...location,
+          isChanged: false,
+          exbList: [],
+          exbIdList: Util.getValue(location, 'exbList', []).map(val => val.exbId),
+          txList: [],
+          txIdList: Util.getValue(location, 'txList', []).map(val => val.txId),
+          x: Math.round(location.x),
+          y: Math.round(location.y),
+          locationZoneList: location.locationZoneList? location.locationZoneList.map(val => ({locationZonePK: {locationId: val.locationId, zoneId: val.zoneId}})): null
         }
       })
     },

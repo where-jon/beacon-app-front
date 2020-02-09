@@ -603,7 +603,6 @@ export default {
     }
     if (this.params.extraFilter) {
       const filterColumnList = this.params.extraFilter.filter(str => str != 'detectState')
-      console.error('要チェック', {filterColumnList})
       // await Promise.all(filterColumnList.map(state => StateHelper.load(state)))
       filterColumnList.filter(state => ['category', 'group', 'area'].some(s => s == state)).forEach(state => {
         const selectedKey = StringUtil.concatCamel('selected', state)
@@ -750,7 +749,6 @@ export default {
         entity = await AppServiceHelper.fetch(this.appServicePath, masterId)
       } else {
         // masterCdの最大値を算出するために全件データが必要
-        console.error('要チェック', this.name)
         // await StateHelper.load(this.name)
       }
       if (this.$parent.$options.methods && this.$parent.$options.methods.convBeforeEdit) {

@@ -132,11 +132,11 @@ export const filterPositions = (positions = store.state.main.positions,
   selectedDetail = store.state.main.selectedDetail,
   selectedFreeWord = store.state.main.selectedFreeWord) => { // p, position-display, rssimap, position-list, position, ProhibitHelper
 
-  const btxIdMap = store.state.app_service.btxIdMap
+  const txIdMap = store.state.app_service.btxIdMap
 
   if (!showTxNoOwner) { // potの所有状態で絞込み(TX未登録やPotと紐付いていない場合は表示しない)
     positions = positions.filter(pos => {
-      const tx = btxIdMap[pos.btxId]
+      const tx = txIdMap[pos.txId]
       return tx && tx.potId
     })
   }
@@ -171,9 +171,9 @@ const positionFilterFreeWord = (pos, freeWord) => {
  * @return {Object[]}
  */
 const positionFilter = (positions, groupId, categoryId, txIdList, freeWord) => { //p
-  const txsMap = _(store.state.app_service.txs).keyBy('btxId').value()
+  const txIdMap = store.state.app_service.txIdMap
   return _(positions).filter(pos => {
-    const tx = txsMap[pos.btxId]
+    const tx = txIdMap[pos.txId]
     let grpHit = true
     let catHit = true
     let detailHit = true
