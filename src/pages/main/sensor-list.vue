@@ -70,18 +70,22 @@ export default {
         this.params.initTotalRows = 0
         this.showProgress()
 
-        let exCluodSensors = await EXCloudHelper.fetchSensor(this.selectedSensor, false)
-        // オムロン系はレスポンスが違うので変換する
+        // センサ情報を取得する
+        let exCluodSensors = await EXCloudHelper.fetchSensor(this.selectedSensor)
+        // オムロン系はレスポンスが違うので変換する TODO:ロジックを移す。sensoridとは？
         if(this.selectedSensor == SENSOR.OMR_ENV){
           exCluodSensors = exCluodSensors.sensors.map(sensor => {
             return {...sensor, sensorid: sensor.pos_id, btxId: sensor.sensor_id, updatetime: sensor.timestamp}
           })
         }
+        // EXB情報とセンサ情報をマージする
+        const positionedExb = SensorHelper.mergeExbWithSensor(this.selectedSensor, exCluodSensors)
+        // TXの位置情報を取得
         const positions = await PositionHelper.loadPosition(null, true, true)
-        const positionedExb = SensorHelper.getPositionedExbWithSensor(this.selectedSensor, exCluodSensors)
-        let positionedTx = SensorHelper.getPositionedTxWithSensor(this.selectedSensor, exCluodSensors, positions)
-
-        this.sensorList = positionedExb.concat(positionedTx).map(sensor =>{
+        // TX情報とセンサ、位置情報をマージする
+        let positionedTx = SensorHelper.mergeTxWithSensorAndPosition(this.selectedSensor, exCluodSensors, positions)
+        // EXBとTX情報をマージする
+        this.sensorList = positionedExb.concat(positionedTx).map(sensor => {
           return {
             ...sensor,
             temperature: NumberUtil.formatTemperature(sensor.temperature),

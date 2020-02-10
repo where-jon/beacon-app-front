@@ -139,7 +139,7 @@ export default {
       })
 
       return telemetrys.map((e) => {
-        const name = map[e.deviceid]
+        const name = map[e.deviceId]
         const ret = {
           name: name != null ? name : 'ー',
           powerLevel:e.power_level * 2,
@@ -147,13 +147,13 @@ export default {
           state: this.$refs.monitorTable.getStateLabel('exb', e.timestamp)
         }
 
-        const deviceId = DISP.POS.EXSERVER ? e.deviceid : parseInt(e.deviceid, 16)
+        const deviceId = DISP.POS.EXSERVER ? e.deviceId : parseInt(e.deviceId, 16)
 
         if(ConfigHelper.includesDeviceType('deviceId')){
           ret.deviceId = deviceId
         }
         if(ConfigHelper.includesDeviceType('deviceIdX')){
-          ret.deviceIdX= e.deviceid.toUpperCase()
+          ret.deviceIdX= e.deviceId.toUpperCase()
         }
         return ret
       })

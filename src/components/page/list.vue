@@ -553,7 +553,7 @@ export default {
       return BrowserUtil.getLangShort() == 'ja'? {width: '100px !important'}: {width: '110px !important'}
     },
     selectedSensor() {
-      if (!Util.getValue(this.selectedTx, 'btx_Id', null)) {
+      if (!Util.getValue(this.selectedTx, 'btxId', null)) {
         return []
       }
       const ret = SensorHelper.getSensorFromBtxId('meditag', this.positionedTxMap.meditag, this.selectedTx.btxId)

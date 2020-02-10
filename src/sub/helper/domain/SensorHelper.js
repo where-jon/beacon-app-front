@@ -687,7 +687,7 @@ export const getStressBg = stress => {
  */
 export const setStress = (positions, sensors) => {
   return positions.map(position => {
-    let sensor = sensors.find(sensor => sensor.btx_id == position.btx_id)
+    let sensor = sensors.find(sensor => sensor.btxId == position.btxId)
     return sensor? {...position, bg: getStressBg(sensor.stress)}: position
   })
 }
@@ -885,7 +885,7 @@ export const createTxLocationDummyName = tx => 'tx' + (APP.TX.BTX_MINOR == 'mino
  * @return {Object}
  */
 export const getSensorFromBtxId = (type, sensorList, btxId) => {
-  const sensor = sensorList? sensorList.find(sensor => sensor.btxId == btxId || sensor.btxid == btxId || sensor.btx_id == btxId): null
+  const sensor = sensorList? sensorList.find(sensor => sensor.btxId == btxId || sensor.btxId == btxId || sensor.btxId == btxId): null
   Util.debug(type, sensor)
   return sensor
 }
@@ -1118,46 +1118,52 @@ export const getTodayThermoHumidityInfo = async (id, isExb) => {
 /**
  * センサ情報を取得し、TXやEXB等の情報を付加する。
  * @method
- * @param {Number[]} [showTxSensorIds = []]
- * @param {Number[]} [showExbSensorIds = []]
- * @param {Number[]} [mergeSensorIds = []]
- * @return {Object}
+ * @param {Number[]} [targetSensorIds = []]
+ * @return {Object[]}
  */
 export const fetchSensorInfo = async (targetSensorIds = []) => {
-  const txs = store.state.app_service.txs
-  const exbs = store.state.app_service.exbs
-  const exbMap = _(exbs).keyBy('deviceId').value()
-  const txMap = _(txs).keyBy('btxId').value()
+  const deviceIdMap = store.state.app_service.deviceIdMap
+  const btxIdMap = store.state.app_service.btxIdMap
   const sensorInfos = await fetchAllSensor(targetSensorIds)
 
   const sensorMap = {}
   sensorInfos.forEach(sensor => {
-    let sensorInfo = _(sensor.data).filter(sensor => {
-      const tx = txMap[sensor.btx_id]
-      const exb = exbMap[sensor.deviceid]
+    let sensorInfo = _(sensor.data).filter(sensor => {      
+      const tx = btxIdMap[sensor.btxId]
+      const exb = deviceIdMap[sensor.deviceId]
       const hasTime = sensor.timestamp || sensor.updatetime // 日時がないのは除外
       // const fixedPos = tx.location && tx.location.x && tx.location.y > 0 // TODO: ここで固定位置かどうかの条件は不要と思われる
       return (tx || exb) && hasTime
     }
-    ).map(sensor => addSensorInfo(sensor, txMap, exbMap))
+    ).map(sensor => addSensorInfo(sensor))
     // pir: val.count >= DISP.PIR.MIN_COUNT // TODO: 元のソースにあったfilter条件。多分不要。
     // exb.sensorId == SENSOR.PRESSURE? exb.pressVol <= DISP.PRESSURE.VOL_MIN || DISP.PRESSURE.EMPTY_SHOW: exb.count > 0 || DISP.PIR.EMPTY_SHOW
     // APP.SENSOR.SHOW_MAGNET_ON_PIR) 
     sensorMap[sensor.name] = sensorInfo.sortBy(sensor => 
       sensor.sensorId == SENSOR.MEDITAG && (new Date().getTime() - sensor.downLatest < APP.SENSOR.MEDITAG.DOWN_RED_TIME)?
         sensor.downLatest * -1
-        : sensor.btx_id
+        : sensor.btxId
     ).value()
   })
 
-  // console.warn(sensorMap)
   return sensorMap
 
 }
 
-const addSensorInfo = (sensor, txMap, exbMap, pos) => {
-  const exb = exbMap && exbMap[sensor.deviceid]
-  let tx = txMap && txMap[sensor.btx_id]
+/**
+ * センサ情報にTX,EXB,POS情報を付加する
+ * 
+ * @param {}} sensor 
+ * @param {*} txMap 
+ * @param {*} exbMap 
+ * @param {*} pos 
+ */
+const addSensorInfo = (sensor, pos) => {
+  const deviceIdMap = store.state.app_service.deviceIdMap
+  const btxIdMap = store.state.app_service.btxIdMap
+
+  const exb = deviceIdMap[sensor.deviceId]
+  let tx = btxIdMap[sensor.btxId]
   let location, areaId, areaName, zoneIdList, zoneCategoryIdList
   if (tx && pos && !PositionHelper.hasTxLocation(pos.tx)) { // MEDiTAGのように固定TXではない場合、現在いるエリア、ゾーン、ゾーンカテゴリ
     areaId = pos.exb.areaId
@@ -1167,7 +1173,7 @@ const addSensorInfo = (sensor, txMap, exbMap, pos) => {
     zoneCategoryIdList = pos.exb.zoneCategoryIdList
   }
   else {
-    location = sensor.btx_id? (tx? tx.location: {}): exb? exb.location: {}
+    location = sensor.btxId? (tx? tx.location: {}): exb? exb.location: {}
     // location = store.state.app_service.locations.find(e => e.locationId == location.locationId)
     areaId = location.areaId
     areaName = Util.getValue(location, 'area.areaName')
@@ -1180,9 +1186,8 @@ const addSensorInfo = (sensor, txMap, exbMap, pos) => {
   return {
     // id: sensor.sensorId,
     ...sensor,
-    btxId: sensor.btx_id,
     // sensorId: sensor? sensor.id: null,
-    label: Util.getValue(tx, 'displayName', sensor.btx_id), 
+    label: Util.getValue(tx, 'displayName', sensor.btxId), 
     ...tx,
     ...exb,
     bg: getStressBg(sensor.stress), 
@@ -1207,48 +1212,45 @@ const addSensorInfo = (sensor, txMap, exbMap, pos) => {
 
 
 /**
- * センサ情報を使用し、EXBの配置位置情報を取得する。
+ * EXB情報にセンサ情報を付加する。
+ * 
  * @method
  * @param {Number} selectedArea
- * @param {Function} sensorFilterFunc
- * @param {Function} findSensorFunc
- * @param {Function} showSensorFunc
- * @param {Boolean} allArea
+ * @param {Object} exCluodSensors
  * @return {Object[]}
  */
-export const getPositionedExbWithSensor = (selectedSensorId, exCluodSensors) => { // pir, sensor-list, thermohumidity
+export const mergeExbWithSensor = (selectedSensorId, exCluodSensors) => {
   const exbs = store.state.app_service.exbs
-  const exbMap = _(exbs).keyBy('deviceId').value()
-  return _(exbs).filter(exb => {
-    return exb.location && exb.location.x && exb.location.y > 0
-  })
-    .filter(exb => exb.sensorIds.includes(selectedSensorId))
+  return _(exbs)
+    .filter(exb => {
+      return exb.location && exb.location.x && exb.location.y > 0
+      && exb.sensorIds.includes(selectedSensorId)
+    })
     .map(exb => {
-      const sensor = {id: selectedSensorId, ...exCluodSensors.find(sensor => sensor.deviceid == exb.deviceId && (sensor.timestamp || sensor.updatetime))}
-      return addSensorInfo(sensor, null, exbMap)
+      const sensor = {id: selectedSensorId, ...exCluodSensors.find(sensor => sensor.deviceId == exb.deviceId && (sensor.timestamp || sensor.updatetime))}
+      return addSensorInfo(sensor)
     })
     .value()
 }
 
 /**
- * センサ情報を使用し、Txの配置位置情報を取得する。
+ * TX情報にセンサ情報を付加する。
  * @method
  * @param {Number} selectedSensor
  * @param {Boolean} exCluodSensors
  * @param {Boolean} positionHistory
  * @return {Object[]}
  */
-export const getPositionedTxWithSensor = (selectedSensor, exCluodSensors, positions) => { // sensor-list, thermohumidity
+export const mergeTxWithSensorAndPosition = (selectedSensor, exCluodSensors, positions) => {
   const txs = store.state.app_service.txs
-  const txMap = _(txs).keyBy('btxId').value()
   const allPosition = selectedSensor == SENSOR.MEDITAG
   return _(txs)
     .filter(tx => allPosition || tx.location && tx.location.x && tx.location.y > 0) // MEDiTAG以外は固定位置のTXのみ
     .filter(tx => selectedSensor == null || tx.sensorId == selectedSensor)
     .map(tx => {
       const pos = positions.find(pos => pos.txId == tx.txId)
-      const sensor = exCluodSensors.find(sensor => (sensor.btxid == tx.btxId || sensor.btx_id == tx.btxId) && (sensor.timestamp || sensor.updatetime))
-      return addSensorInfo(sensor, txMap, null, pos)
+      const sensor = exCluodSensors.find(sensor => sensor.btxId == tx.btxId && (sensor.timestamp || sensor.updatetime))
+      return addSensorInfo(sensor, pos)
     })
     .value()
 }

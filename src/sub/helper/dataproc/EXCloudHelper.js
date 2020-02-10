@@ -62,13 +62,25 @@ export const fetchPositionHistory = async (allShow, pMock) => {
  * @param {Number} sensorId
  * @return {Object[]}
  */
-export const fetchSensor = async (sensorId, doCompact=true) => {
+export const fetchSensor = async (sensorId) => {
   let data = DEV.USE_MOCK_EXC? mock.sensor[sensorId]:
     await HttpHelper.getExCloud(url(EXCLOUD.SENSOR_URL).replace('{id}', sensorId) + new Date().getTime())
-  if(doCompact){
-    return _(data).compact().value()
-  }
-  return data
+  
+  return _(data).map(val => {
+    if (val.deviceid) {
+      val.deviceId = val.deviceid
+      delete val.deviceid
+    }
+    if (val.btx_id) {
+      val.btxId = val.btx_id
+      delete val.btx_id
+    }      
+    if (val.btxid) {
+      val.btxId = val.btxid
+      delete val.btxid
+    }      
+    return val
+  }).compact().value()
 }
 
 /**
@@ -82,8 +94,17 @@ export const fetchRawPosition = async () => {
     await HttpHelper.getExCloud(url(EXCLOUD.POSITION_URL) + new Date().getTime())
   return _(data)
     .map(val => {
-      let nearest = _.map(val.nearest, near => ({...near, timestamp: dateform(near.timestamp)}))
-      return {...val, timestamp: dateform(val.timestamp), ibeacon_received: dateform(val.ibeacon_received), nearest}
+      let nearest = _.map(val.nearest, near => {
+        const deviceId = near.device_id
+        delete near.device_id
+        return {...near, deviceId}
+      })
+
+      const deviceId = val.device_id
+      const btxId = val.btx_id
+      delete val.btx_id
+      delete val.device_id
+      return {...val, deviceId, btxId, nearest}
     })
     .compact().value()
 }
@@ -99,6 +120,10 @@ export const fetchGateway = async () => {
     await HttpHelper.getExCloud(url(EXCLOUD.GATEWAY_URL) + new Date().getTime())
   return _(data)
     .map(val => {
+      if (val.deviceid) {
+        val.deviceId = val.deviceid
+        delete val.deviceid
+      }
       if(DISP.POS.EXSERVER){
         return {...val, updated: dateform(val.timestamp * 1000)}
       }else{
@@ -120,6 +145,10 @@ export const fetchTelemetry = async () => {
   return _(data)
     // .filter((val) => EXB.some((exb) => exb.pos_id == val.pos_id))
     .map(val => {
+      if (val.deviceid) {
+        val.deviceId = val.deviceid
+        delete val.deviceid
+      }
       let timestamp = DISP.POS.EXSERVER ? val.timestamp * 1000 : val.timestamp
       return {...val, timestamp: dateform(timestamp), ibeacon_received: dateform(val.ibeacon_received)}
     })

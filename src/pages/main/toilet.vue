@@ -144,9 +144,9 @@ export default {
     },
     async fetchSensorData(sensorId, deviceType) {
       const key = deviceType == 'exb'? {
-        pKey: 'exbId', list: this.exbs, front: 'deviceId', server: 'deviceid', detect: 'count' 
+        pKey: 'exbId', list: this.exbs, front: 'deviceId', server: 'deviceId', detect: 'count' 
       }: {
-        pKey: 'txId', list: this.txs, front: 'btxId', server: 'btx_id', detect: 'magnet'
+        pKey: 'txId', list: this.txs, front: 'btxId', server: 'btxId', detect: 'magnet'
       }
 
       const exCloudSensors = await EXCloudHelper.fetchSensor(sensorId)

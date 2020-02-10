@@ -148,18 +148,22 @@ export default {
     this.initCategoryNames()
   },
   methods: {
-    async initAreaNames() {
+    initAreaNames() {
       // await StateHelper.load('area')
       this.areaNames = MasterHelper.getOptionsFromState('area', false, true)
+      let areaId
       if(this.pageSendParam){
-        this.areaId = this.pageSendParam.areaId
+        areaId = this.pageSendParam.areaId
         this.vueSelected.category = VueSelectHelper.getVueSelectData(this.areaNames, this.pageSendParam.areaId)
         this.replaceAS({pageSendParam: null})
       }
       else{
-        this.areaId = this.areaNames[0].value
+        areaId = this.areaNames[0].value
         this.vueSelected.category = VueSelectHelper.getVueSelectData(this.areaNames, this.areaId)
       }
+      this.$nextTick(() => {
+        this.areaId = areaId
+      })
     },
     async initCategoryNames() {
       // await StateHelper.load('category')

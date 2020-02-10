@@ -189,7 +189,7 @@ export default {
       )
     },
     txRecords() {
-      const btxs = this.nearest.map(n => ({label: n.btx_id, value: n.btx_id}))
+      const btxs = this.nearest.map(n => ({label: n.btxId, value: n.btxId}))
       if (!this.selectedGroup && !this.selectedCategory) {
         return btxs
       }
@@ -284,7 +284,7 @@ export default {
           let positions = PositionHelper.filterPositions(undefined, false)
           // this.nearest = await this.getNearest(this.exbBtns)
           this.nearest = await this.getNearest(this.positionedExb)
-          this.nearest = this.nearest.filter((n) => positions.some((pos) => pos.btxId == n.btx_id))
+          this.nearest = this.nearest.filter((n) => positions.some((pos) => pos.btxId == n.btxId))
 
           this.stage.addChild(this.exbCon)
           this.stage.setChildIndex(this.exbCon, this.stage.numChildren-1)
@@ -376,19 +376,19 @@ export default {
       return this.exbs.filter(exb => exb.location && exb.location.areaId === this.selectedArea && exb.location.x && exb.location.y > 0)
     },
     async getNearest(exbs) {
-      const positions = await HttpHelper.getExCloud(EXCloudHelper.url(EXCLOUD.POSITION_URL) + new Date().getTime())
+      const positions = await EXCloudHelper.fetchRawPosition()
       const xymap = {}
       exbs.forEach(e => xymap[e.deviceId] = {x: e.x, y: e.y})
-      return positions.filter(position => exbs.some(exb => exb.deviceId == position.device_id))
+      return positions.filter(position => exbs.some(exb => exb.deviceId == position.deviceId))
         .map(position => {
           position.nearest && position.nearest.forEach(n => {
-            const target = xymap[n.device_id]
+            const target = xymap[n.deviceId]
             if (target) {
               n.x = target.x
               n.y = target.y
             }
           })
-          return {btx_id: position.btx_id, nearest: position.nearest? position.nearest: []}
+          return {btxId: position.btxId, nearest: position.nearest? position.nearest: []}
         })
     },
     dispRssiIcons(btxId) {
@@ -408,7 +408,7 @@ export default {
         return
       }
 
-      const target = this.nearest.find((n) => n.btx_id === btxId)
+      const target = this.nearest.find((n) => n.btxId === btxId)
       if (!target) {
         return
       }

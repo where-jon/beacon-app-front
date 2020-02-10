@@ -2,37 +2,37 @@ let now = new Date().getTime()
 
 export const positions_conf = {start: 1536318071987, interval: 6000}
 export const positions = [] // TODO: To be modified
-positions[0] = [{'btx_id':1,'minor':1,'pos_id':3,'device_id':3,'updatetime':'2018-09-07T11:01:02.114Z','nearest':[{'device_id':3,'timestamp':1536318062114,'rssi':-61.95289495278382,'place_id':3},{'device_id':1,'timestamp':1536318063248,'rssi':-68.4930477665437,'place_id':1},{'device_id':2,'timestamp':1536318063248,'rssi':-70.28672955448882,'place_id':2}],'power_level':100},{'btx_id':2,'minor':2,'pos_id':1,'device_id':1,'updatetime':'2018-09-07T11:01:04.399Z','nearest':[{'device_id':1,'timestamp':1536318064399,'rssi':-72.6579287696201,'place_id':1},{'device_id':2,'timestamp':1536318058685,'rssi':-74.77349655378839,'place_id':2},{'device_id':3,'timestamp':1536318060058,'rssi':-79.28689716924704,'place_id':3}],'power_level':100},{'btx_id':3,'minor':3,'pos_id':2,'device_id':2,'updatetime':'2018-09-07T11:01:03.248Z','nearest':[{'device_id':2,'timestamp':1536318063248,'rssi':-39.28495023861946,'place_id':2},{'device_id':1,'timestamp':1536318061365,'rssi':-67.26560049842656,'place_id':1},{'device_id':3,'timestamp':1536318064399,'rssi':-72.74744968597842,'place_id':3}],'power_level':100},{'btx_id':4,'minor':4,'pos_id':3,'device_id':3,'updatetime':'2018-09-07T11:01:04.399Z','nearest':[{'device_id':3,'timestamp':1536318064399,'rssi':-45.54802228176176,'place_id':3},{'device_id':1,'timestamp':1536318064399,'rssi':-73.28311215642759,'place_id':1},{'device_id':2,'timestamp':1536318063248,'rssi':-74.97000520215018,'place_id':2}],'power_level':100},{'btx_id':5,'minor':5,'pos_id':1,'device_id':1,'updatetime':'2018-09-07T11:01:04.399Z','nearest':[{'device_id':1,'timestamp':1536318064399,'rssi':-71.92023572660051,'place_id':1},{'device_id':2,'timestamp':1536318063248,'rssi':-75.86665495653499,'place_id':2},{'device_id':3,'timestamp':1536318064399,'rssi':-80.04061839683315,'place_id':3}],'power_level':100}]
+positions[0] = [{'btxId':1,'minor':1,'pos_id':3,'deviceId':3,'updatetime':'2018-09-07T11:01:02.114Z','nearest':[{'deviceId':3,'timestamp':1536318062114,'rssi':-61.95289495278382,'place_id':3},{'deviceId':1,'timestamp':1536318063248,'rssi':-68.4930477665437,'place_id':1},{'deviceId':2,'timestamp':1536318063248,'rssi':-70.28672955448882,'place_id':2}],'power_level':100},{'btxId':2,'minor':2,'pos_id':1,'deviceId':1,'updatetime':'2018-09-07T11:01:04.399Z','nearest':[{'deviceId':1,'timestamp':1536318064399,'rssi':-72.6579287696201,'place_id':1},{'deviceId':2,'timestamp':1536318058685,'rssi':-74.77349655378839,'place_id':2},{'deviceId':3,'timestamp':1536318060058,'rssi':-79.28689716924704,'place_id':3}],'power_level':100},{'btxId':3,'minor':3,'pos_id':2,'deviceId':2,'updatetime':'2018-09-07T11:01:03.248Z','nearest':[{'deviceId':2,'timestamp':1536318063248,'rssi':-39.28495023861946,'place_id':2},{'deviceId':1,'timestamp':1536318061365,'rssi':-67.26560049842656,'place_id':1},{'deviceId':3,'timestamp':1536318064399,'rssi':-72.74744968597842,'place_id':3}],'power_level':100},{'btxId':4,'minor':4,'pos_id':3,'deviceId':3,'updatetime':'2018-09-07T11:01:04.399Z','nearest':[{'deviceId':3,'timestamp':1536318064399,'rssi':-45.54802228176176,'place_id':3},{'deviceId':1,'timestamp':1536318064399,'rssi':-73.28311215642759,'place_id':1},{'deviceId':2,'timestamp':1536318063248,'rssi':-74.97000520215018,'place_id':2}],'power_level':100},{'btxId':5,'minor':5,'pos_id':1,'deviceId':1,'updatetime':'2018-09-07T11:01:04.399Z','nearest':[{'deviceId':1,'timestamp':1536318064399,'rssi':-71.92023572660051,'place_id':1},{'deviceId':2,'timestamp':1536318063248,'rssi':-75.86665495653499,'place_id':2},{'deviceId':3,'timestamp':1536318064399,'rssi':-80.04061839683315,'place_id':3}],'power_level':100}]
 
 export const sensor = []
 
 now = new Date().getTime()
 sensor[1] = [
-  {'deviceid':22017,'timestamp':now,'temperature':15.69,'humidity':52},
-  {'deviceid':22018,'timestamp':now,'temperature':26.03,'humidity':90},
-  {'deviceid':22019,'timestamp':now,'temperature':25.72,'humidity':51},
-  {'deviceid':22020,'timestamp':now,'temperature':35.5,'humidity':51},
-  {'deviceid':22021,'timestamp':now,'temperature':26.28,'humidity':11},
-  {'deviceid':11,'timestamp':now,'temperature':25.13,'humidity':60},
-  {'deviceid':12,'timestamp':now,'temperature':25.08,'humidity':61},
-  {'deviceid':13,'timestamp':now,'temperature':24.94,'humidity':61},
-  {'deviceid':14,'timestamp':now,'temperature':25,'humidity':61}
+  {'deviceId':22017,'timestamp':now,'temperature':15.69,'humidity':52},
+  {'deviceId':22018,'timestamp':now,'temperature':26.03,'humidity':90},
+  {'deviceId':22019,'timestamp':now,'temperature':25.72,'humidity':51},
+  {'deviceId':22020,'timestamp':now,'temperature':35.5,'humidity':51},
+  {'deviceId':22021,'timestamp':now,'temperature':26.28,'humidity':11},
+  {'deviceId':11,'timestamp':now,'temperature':25.13,'humidity':60},
+  {'deviceId':12,'timestamp':now,'temperature':25.08,'humidity':61},
+  {'deviceId':13,'timestamp':now,'temperature':24.94,'humidity':61},
+  {'deviceId':14,'timestamp':now,'temperature':25,'humidity':61}
 ]
 
 sensor[2] = [
-  {'deviceid':22017,'count':3,'timestamp':now},
-  {'deviceid':22018,'count':0,'timestamp':now},
-  {'deviceid':22019,'count':2,'timestamp':now},
-  {'deviceid':22020,'count':1,'timestamp':now},
-  {'deviceid':22021,'count':5,'timestamp':now},
+  {'deviceId':22017,'count':3,'timestamp':now},
+  {'deviceId':22018,'count':0,'timestamp':now},
+  {'deviceId':22019,'count':2,'timestamp':now},
+  {'deviceId':22020,'count':1,'timestamp':now},
+  {'deviceId':22021,'count':5,'timestamp':now},
 ]
 
 sensor[3] = [
-  {'deviceid':11,'count':16,'timestamp':now},
-  {'deviceid':12,'count':0,'timestamp':now},
-  {'deviceid':13,'count':10,'timestamp':now},
-  {'deviceid':14,'count':1,'timestamp':now},
-  {'deviceid':15,'count':5,'timestamp':now},
+  {'deviceId':11,'count':16,'timestamp':now},
+  {'deviceId':12,'count':0,'timestamp':now},
+  {'deviceId':13,'count':10,'timestamp':now},
+  {'deviceId':14,'count':1,'timestamp':now},
+  {'deviceId':15,'count':5,'timestamp':now},
 ]
 
 sensor[5] = [
@@ -51,7 +51,7 @@ sensor[5] = [
     'downLatest':now,
     'down':1,
     'type':'meditag',
-    'btx_id':601
+    'btxId':601
   },
   {
     'battery_level':88,
@@ -68,7 +68,7 @@ sensor[5] = [
     'downLatest':1542763347060,
     'down':0,
     'type':'meditag',
-    'btx_id':602
+    'btxId':602
   }
 ]
 

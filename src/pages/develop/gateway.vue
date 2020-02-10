@@ -30,23 +30,23 @@ export default {
     return {
       items: ViewHelper.createBreadCrumbItems('develop', 'gateway'),
       headers: ViewHelper.addLabelByKey(null, DISP.POS.EXSERVER?[
-        { key: 'deviceid', label: 'deviceid'},
+        { key: 'deviceId', label: 'deviceId'},
         { key: 'updated', label: 'updated'},
         { key: 'state'},
       ]:[
         { key: 'num' , label: 'no'},
-        { key: 'deviceid', label: 'deviceid'},
+        { key: 'deviceId', label: 'deviceId'},
         { key: 'updated', label: 'updated'},
         { key: 'state'},
       ]),
       gateways: [],
       csvHeaders: DISP.POS.EXSERVER ? {
-        'deviceid': 'deviceid',
+        'deviceId': 'deviceId',
         'updated': 'updated',
         'state': 'state',
       } : {
         'num': 'num',
-        'deviceid': 'deviceid',
+        'deviceId': 'deviceId',
         'updated': 'updated',
         'state': 'state',
       },
@@ -106,13 +106,13 @@ export default {
     },
     getCsvHeaderList() {
       return DISP.POS.EXSERVER ? [
-        'deviceid',
+        'deviceId',
         'updated',
         'state',
         '\n'
       ]: [
         'no',
-        'deviceid',
+        'deviceId',
         'updated',
         'state',
         '\n'

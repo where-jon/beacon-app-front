@@ -795,7 +795,7 @@ export default {
         ret.on('click', async evt => this.showChart(tx, await SensorHelper.getTodayThermoHumidityInfo(tx.txId, false)))
         return ret
       }
-      // 既に該当btx_idのTXアイコンが作成済みか?
+      // 既に該当btxIdのTXアイコンが作成済みか?
       // console.error(pos.btxId + '_' + pos.isFixedPosition, pos.x, pos.y)
       let txBtn = this.icons[pos.btxId + '_' + pos.isFixedPosition]
       if (!txBtn || txBtn.color != color || txBtn.bgColor != bgColor || txBtn.transparent != pos.transparent) {
@@ -820,9 +820,9 @@ export default {
       const color = StyleHelper.getTxIconColor(display, meditag, magnet)
       const bgColor = StyleHelper.getTxIconBgColor(display, meditag, magnet)
 
-      // 既に該当btx_idのTXアイコンが作成済みか?
-      const zoneBtx_id = PositionHelper.zoneBtxIdAddNumber + pos.btxId
-      let txBtn = this.icons[zoneBtx_id]
+      // 既に該当btxIdのTXアイコンが作成済みか?
+      const zoneBtxId = PositionHelper.zoneBtxIdAddNumber + pos.btxId
+      let txBtn = this.icons[zoneBtxId]
       if (!txBtn || txBtn.color != color || txBtn.bgColor != bgColor) {
         // 作成されていない場合、新規作成してからiconsに登録
         if (pos.btxId == PositionHelper.zoneLastTxId()) {
@@ -833,13 +833,13 @@ export default {
         }
         txBtn.color = color
         txBtn.bgColor = bgColor
-        this.icons[zoneBtx_id] = txBtn
+        this.icons[zoneBtxId] = txBtn
       } else {
         // 作成済みの場合、座標値のみセットする
         txBtn.x = pos.x
         txBtn.y = pos.y
       }
-      return { txBtn, zoneBtx_id }
+      return { txBtn, zoneBtxId }
     },
     showNomalTx(positions) {
       if(!Util.hasValue(this.pShowTxSensorIds)){
@@ -916,7 +916,7 @@ export default {
 
       const txBtnInfo = this.updateZoneTxBtn(pos, tx, meditag, magnet)
       const txBtn = txBtnInfo.txBtn
-      if(this.reloadSelectedTx.btxId == txBtnInfo.zoneBtx_id){
+      if(this.reloadSelectedTx.btxId == txBtnInfo.zoneBtxId){
         this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
       }
       this.txCont.addChild(txBtn)

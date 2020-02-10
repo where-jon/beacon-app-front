@@ -195,7 +195,7 @@ export default {
       const no = this.deviceType == 5? this.ledNo: 1
       return [{
         deviceType: this.deviceType,
-        deviceid: this.form.deviceId,
+        deviceId: this.form.deviceId,
         ['rgb' + no]: !isOn && this.deviceType == 5? 0: rgb,
         ['pattern' + no]: isOn? this.form.blink: 0,
       }]
@@ -205,7 +205,7 @@ export default {
       Util.debug('led send: ', entity)
       await EXCloudHelper.postLed(entity)
 
-      const timerKey = 'led-' + entity[0].deviceid
+      const timerKey = 'led-' + entity[0].deviceId
       if(APP.SENSOR.LED.AUTO_OFF_TIME > 0) {
         if(this.lightOnCandidate) {
           this.pushTimer(timerKey, APP.SENSOR.LED.AUTO_OFF_TIME * 1000, () => EXCloudHelper.postLed(this.createEntity(false)))
