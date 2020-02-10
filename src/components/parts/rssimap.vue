@@ -340,7 +340,7 @@ export default {
       const s = new Shape()
       const w = DISP.INSTALLATION.WIDTH / this.canvasScale
       const h = DISP.INSTALLATION.HEIGHT / this.canvasScale
-      s.graphics.beginFill(DISP.EXB_LOC.BGCOLOR).drawRect(0, 0, w, h)
+      s.graphics.beginFill(DISP.EXB_LOC.RSSI_BGCOLOR).drawRect(0, 0, w, h)
       s.x = -w * 0.5
       s.y = -h * 0.5
       exbBtn.addChild(s)
@@ -352,7 +352,7 @@ export default {
       exbBtn.addChild(label)
       exbBtn.deviceId = exb.deviceId
       exbBtn.exbId = exb.exbId
-      const posKey = exb.x+"-"+exb.y
+      const posKey = exb.x+'-'+exb.y
       if(this.posCache[posKey]){
         exbBtn.x = this.posCache[posKey].x
         exbBtn.y = this.posCache[posKey].y + h * 2
