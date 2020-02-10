@@ -267,20 +267,24 @@ export default {
 
           this.positionedExb = this.getExbPosition()
           this.exbCon = new Container()
-          this.exbBtns = this.positionedExb.map((exb) => {
-            const clone = Object.assign({}, exb)
-            if (!this.keepExbPosition) {
-              clone.x = exb.location.x
-              clone.y = exb.location.y
-            }
-            const exbBtn = this.createExbIcon(clone)
+          // TODO:以下のように書き換えたが動作している。なぜボタンを渡す必要がある？ もっと根本的に短くかけると思われる。
+          // this.exbBtns = this.positionedExb.map((exb) => {
+          this.positionedExb.forEach((exb) => {
+            // const clone = Object.assign({}, exb)
+            // if (!this.keepExbPosition) {
+            //   clone.x = exb.location.x
+            //   clone.y = exb.location.y
+            // }
+            // const exbBtn = this.createExbIcon(clone)
+            const exbBtn = this.createExbIcon(exb)
             this.exbCon.addChild(exbBtn)
-            return exbBtn
+            // return exbBtn
           })
 
           let positions = PositionHelper.filterPositions(undefined, false)
-          this.nearest = await this.getNearest(this.exbBtns)
-          this.nearest = this.nearest.filter((n) => positions.some((pos) => pos.btxId === n.btx_id))
+          // this.nearest = await this.getNearest(this.exbBtns)
+          this.nearest = await this.getNearest(this.positionedExb)
+          this.nearest = this.nearest.filter((n) => positions.some((pos) => pos.btxId == n.btx_id))
 
           this.stage.addChild(this.exbCon)
           this.stage.setChildIndex(this.exbCon, this.stage.numChildren-1)
@@ -375,7 +379,7 @@ export default {
       const positions = await HttpHelper.getExCloud(EXCloudHelper.url(EXCLOUD.POSITION_URL) + new Date().getTime())
       const xymap = {}
       exbs.forEach(e => xymap[e.deviceId] = {x: e.x, y: e.y})
-      return positions.filter(position => exbs.some(exb => exb.deviceId === position.device_id))
+      return positions.filter(position => exbs.some(exb => exb.deviceId == position.device_id))
         .map(position => {
           position.nearest && position.nearest.forEach(n => {
             const target = xymap[n.device_id]
