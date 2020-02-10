@@ -35,6 +35,10 @@ export function loadTimeLine(data, currentUser, dupMessage, basicColorMap) {
       const basicColorAlpha = basicColor.alpha(0.25)
       const color = basicColor.darken()
 
+      const isReadOnly = currentUser.isAd
+        ? currentUser.adPot.potId != plan.userPotId
+        : currentUser.userId != plan.userId
+
       const card =  {
         id: id,
         calendarId: potId,
@@ -45,7 +49,7 @@ export function loadTimeLine(data, currentUser, dupMessage, basicColorMap) {
         color: color,
         bgColor: basicColorAlpha,
         dragBgColor: basicColorAlpha,
-        isReadOnly: currentUser.userId != plan.userId,
+        isReadOnly: isReadOnly,
         location: location,
         attendees: attendees,
         body: `[${dupMessage}] ${plan.description}`,

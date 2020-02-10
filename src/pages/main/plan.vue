@@ -667,7 +667,7 @@ export default {
           arr = arr.filter(e => !this.currentUserPotIds.includes(e.value))
         }
       } else {
-        if (this.targetPlan.userId == this.currentUser.usersId) {
+        if (this.targetPlan.userId == this.currentUser.userId) {
           arr = arr.filter(e => !this.currentUserPotIds.includes(e.value))
         }
       }
