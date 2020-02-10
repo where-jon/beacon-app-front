@@ -218,7 +218,7 @@ const convert = (row, colNames) => {
       ret[col] = val
     }
     else if (col.endsWith('Id')) {
-      ret[col] = Number(val)
+      ret[col] = typeof val == 'number'? Number(val): val
     }
     else if (col == 'extValue' || col == 'txViewType' || col == 'display') {
       ret[col] = val? JSON.parse(val.split('|').join('"')): {}
@@ -229,7 +229,7 @@ const convert = (row, colNames) => {
     else if (col.endsWith('Type') || col.endsWith('Ratio') || col.endsWith('Width') || col.endsWith('Height')
       || col.startsWith('threshold') || col.startsWith('adjust')
       || ArrayUtil.equalsAny(col, ['major','minor','x','y','z','w','h','disp','systemUse'])) {
-      ret[col] = Number(val)      
+      ret[col] = typeof val == 'number'? Number(val): val     
     }
     else {
       ret[col] = val
