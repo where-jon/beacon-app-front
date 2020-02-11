@@ -1,3 +1,9 @@
+/**
+ * AD認証に関するヘルパーモジュール
+ * Teams環境で認証を行う
+ * @module helper/base/AADHelper
+ */
+
 import * as microsoftTeams from '@microsoft/teams-js'
 import { MSTEAMS_APP } from '../../constant/config'
 

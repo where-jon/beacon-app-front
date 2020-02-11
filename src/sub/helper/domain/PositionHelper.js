@@ -23,19 +23,6 @@ const angle = 45
 // ゾーンエリアに表示するTXIDに付加する数値
 export const zoneBtxIdAddNumber = 10000
 
-// ゾーンエリアに表示できる最後のTX位置で省略を表示する際に使用する
-export const zoneLastTxId = () => { return 100000001 }
-
-export const isZoneLastTxId = (btxId) => { return btxId == zoneLastTxId }
-
-export const zoneLastTxData = () => {
-  return { btxId: zoneLastTxId(), pos_id: 0, label: '・・・', isLost: false, }
-}
-
-export const isDoubleTx = (btxId) => { return btxId >= zoneBtxIdAddNumber }
-
-export const getDoubleDefaultTxId = (btxId) => { return btxId - zoneBtxIdAddNumber }
-
 const defaultDisplay = {
   color: DISP.TX.COLOR,
   bgColor: DISP.TX.BGCOLOR,
@@ -327,6 +314,19 @@ export const checkTxAllow = (pos, tx, areaId, isAbsent = false, onlyFixPos = fal
   return true
 }
 
+// ゾーンエリアに表示できる最後のTX位置で省略を表示する際に使用する
+export const zoneLastTxId = () => { return 100000001 }
+
+export const isZoneLastTxId = (btxId) => { return btxId == zoneLastTxId }
+
+export const zoneLastTxData = () => {
+  return { btxId: zoneLastTxId(), pos_id: 0, label: '・・・', isLost: false, }
+}
+
+export const isDoubleTx = (btxId) => { return btxId >= zoneBtxIdAddNumber }
+
+export const getDoubleDefaultTxId = (btxId) => { return btxId - zoneBtxIdAddNumber }
+
 
 // ------- 固定表示 -------
 
@@ -359,7 +359,7 @@ export const addFixedPosition = (orgPositions, locations = [], selectedMapId = n
         pos.hasAnother = true
       }
       pos.location = pos.tx.location
-      if (DISP.TX.FIXED_POS.APPLY_COLOR) {
+      if (DISP.TX.FIXED_POS.APPLY_COLOR) { // 固定表示で色を別に変える場合
         let bgColor = DISP.TX.FIXED_POS.UNDETECT_BGCOLOR
         switch (pos.detectState) {
         case DETECT_STATE.DETECTED:
@@ -702,6 +702,7 @@ export const createTxDetailInfo = (x, y, tx, canvasScale, offset, containerRect,
   }
   return ret
 }
+
 /**
  * 位置表示（全体）のTx詳細に必要な情報を取得する。
  * @method

@@ -1,5 +1,7 @@
 /**
  * EXCloudに関するヘルパーモジュール
+ * （実際現状、EXCloud直ではなく、app-service経由）
+ * 
  * @module helper/dataproc/EXCloudHelper
  */
 
@@ -66,7 +68,7 @@ export const fetchSensor = async (sensorId) => {
   let data = DEV.USE_MOCK_EXC? mock.sensor[sensorId]:
     await HttpHelper.getExCloud(url(EXCLOUD.SENSOR_URL).replace('{id}', sensorId) + new Date().getTime())
   
-  return _(data).map(val => {
+  return _(data).map(val => { // deviceid, btx_idはすべて名前を変換する
     if (val.deviceid) {
       val.deviceId = val.deviceid
       delete val.deviceid
@@ -94,7 +96,7 @@ export const fetchRawPosition = async () => {
     await HttpHelper.getExCloud(url(EXCLOUD.POSITION_URL) + new Date().getTime())
   return _(data)
     .map(val => {
-      let nearest = _.map(val.nearest, near => {
+      let nearest = _.map(val.nearest, near => { // deviceid, btx_idはすべて名前を変換する
         const deviceId = near.device_id
         delete near.device_id
         return {...near, deviceId}
@@ -120,7 +122,7 @@ export const fetchGateway = async () => {
     await HttpHelper.getExCloud(url(EXCLOUD.GATEWAY_URL) + new Date().getTime())
   return _(data)
     .map(val => {
-      if (val.deviceid) {
+      if (val.deviceid) { // deviceidはすべて名前を変換する
         val.deviceId = val.deviceid
         delete val.deviceid
       }
@@ -145,7 +147,7 @@ export const fetchTelemetry = async () => {
   return _(data)
     // .filter((val) => EXB.some((exb) => exb.pos_id == val.pos_id))
     .map(val => {
-      if (val.deviceid) {
+      if (val.deviceid) { // deviceidはすべて名前を変換する
         val.deviceId = val.deviceid
         delete val.deviceid
       }

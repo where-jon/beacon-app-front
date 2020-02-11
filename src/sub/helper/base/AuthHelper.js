@@ -16,7 +16,6 @@ import * as HttpHelper from './HttpHelper'
 import * as LocaleHelper from './LocaleHelper'
 import * as LocalStorageHelper from './LocalStorageHelper'
 import * as MenuHelper from '../dataproc/MenuHelper'
-import * as StateHelper from '../dataproc/StateHelper'
 import * as MasterHelper from '../domain/MasterHelper'
 
 let router
@@ -34,7 +33,7 @@ export const setApp = (pRouter, pStore) => {
 }
 
 /**
- * ログイン認証を行う。
+ * ログイン認証を行う。 TODO: もはやローカルログインは使わないので削除
  * @method
  * @async
  * @param {String} loginId 

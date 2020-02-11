@@ -75,12 +75,12 @@ export const createChartGraphOptions = (scales, isResponsive = false) => {
   const ret = {
     scales:{
       yAxes: scales.map(s => {
-          return {
-            id: s.id, type: 'linear', position: s.position,
-            scaleLabel: { display: true, labelString: s.label },
-            ticks: s.ticks,
-          }
-        }).filter((val) => val),
+        return {
+          id: s.id, type: 'linear', position: s.position,
+          scaleLabel: { display: true, labelString: s.label },
+          ticks: s.ticks,
+        }
+      }).filter((val) => val),
     },
     elements:{ line:{ tension: 0 } }
   }

@@ -40,7 +40,7 @@ export const state = () => ({
   topNews: {},
   newsList: [],
   news: {},
-  forceFetchPot: true,
+  forceFetchPot: true, // TODO: 使わないので削除
   forceFetchTx: true,
   forceFetchUser: true,
   forceFetchExb: true,

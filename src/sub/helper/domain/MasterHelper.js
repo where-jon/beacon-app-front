@@ -1,3 +1,8 @@
+/**
+ * マスタデータに関するヘルパーモジュール
+ * @module helper/domain/MasterHelper
+ */
+
 import Papa from 'papaparse'
 import * as HttpHelper from '../base/HttpHelper'
 import * as StringUtil from '../../util/StringUtil'
@@ -33,6 +38,7 @@ export const setApp = (pStore, pi18n) => {
 export const loadMaster = async () => {
   console.log('fetch', new Date())
   const masterAll = await HttpHelper.getAppService('/core/region/masterall')
+
   console.log('parse', new Date())
   const res = Papa.parse(masterAll)
   if (res.errors.length > 0) {
@@ -45,19 +51,22 @@ export const loadMaster = async () => {
   console.log('build', new Date())
   const {masters, idmaps} = buildMasters(res.data)
   // Util.debug({masters})
+
   console.log('relation', new Date())
   buildRelation(masters, idmaps)
+
   console.log('add', new Date())
   addInfo(masters)
+
   console.log('commit', new Date())
   storeCommit(masters, idmaps)
+
   console.log('end', new Date())
   Util.debug({masters})
-  console.warn({masters})
 }
 
 /**
- * 取得したデータから各マスタエンティティのリストを構築する。
+ * 取得したデータから各マスタエンティティのリストおよびIDマップを構築する。
  * 
  * @param {*} data 
  */
@@ -217,15 +226,16 @@ const convert = (row, colNames) => {
     if (col == 'loginId') {
       ret[col] = val
     }
-    else if (col.endsWith('Id')) {
+    else if (col.endsWith('Id')) { // loginId以外のIdはNumber
       ret[col] = Util.hasValue(val)? Number(val): val
     }
     else if (col == 'extValue' || col == 'txViewType' || col == 'display') {
-      ret[col] = val? JSON.parse(val.split('|').join('"')): {}
+      ret[col] = val? jsonParse(col, val): {}
     }
-    // else if (col.endsWith('Dt')) {
+    // else if (col.endsWith('Dt')) { // 現状Dateは扱わない
     //   ret[col] = new Date(val)      
     // }
+    // その他Numberとなるもの
     else if (col.endsWith('Type') || col.endsWith('Ratio') || col.endsWith('Width') || col.endsWith('Height')
       || col.startsWith('threshold') || col.startsWith('adjust')
       || ArrayUtil.equalsAny(col, ['major','minor','x','y','z','w','h','disp','systemUse'])) {
@@ -236,6 +246,22 @@ const convert = (row, colNames) => {
     }
   })
   return ret
+}
+
+/**
+ * JSONデータをパースして返す。
+ * エラーの場合、カラム、値をログに出力してからthrow
+ * 
+ * @param {*} col 
+ * @param {*} val 
+ */
+const jsonParse = (col, val) => {
+  try {
+    return JSON.parse(val.split('|').join('"'))    
+  } catch (e) {
+    console.error('JSON parse error', col, val, e)
+    throw e
+  }
 }
 
 /**
@@ -318,10 +344,10 @@ const buildRelation = (masters, idmaps) => {
  * 関連を構築する汎用メソッド
  * 
  * @param {*} e 自身のオブジェクト
- * @param {*} relateId 最初に関連するエンティティ（関連テーブル、もしくは直接関連するエンティティ）との結合キー
- * @param {*} relationList 最初に関連するエンティティのリスト
- * @param {*} targetId 更に関連するエンティティ（関連テーブル経由で結合するエンティティ）の結合キー
- * @param {*} targetList 更に関連するエンティティのリスト
+ * @param {*} relateId 最初に関連するエンティティ（関連テーブル、もしくは直接関連するエンティティ）との結合キー名
+ * @param {*} relationMap 最初に関連するエンティティのマップ
+ * @param {*} targetId 更に関連するエンティティ（関連テーブル経由で結合するエンティティ）の結合キー名
+ * @param {*} targetMap 更に関連するエンティティのマップ
  */
 const relate = (e, relateId, relationMap, targetId, targetMap) => {
   if (!relationMap) return null
@@ -335,7 +361,6 @@ const relate = (e, relateId, relationMap, targetId, targetMap) => {
   if (!relations) return []
 
   const target = relations.map(rId => targetMap[rId]).filter(e => e)
-  // targetList.filter(t => relations.find(r => r[targetId] == t[targetId]))
   return target? target: []
 }
 
@@ -761,7 +786,7 @@ const getTxIdNames = txList => {
     return null
   }
   const names = []
-  txList.forEach(tx => {
+  txList.forEach(tx => { // TODO: 最初からmapで書く
     names.push(getTxIdName(tx))
   })
   return names.map(name => name)
@@ -778,7 +803,7 @@ const getTxIds = txList => {
     return null
   }
   const ids = []
-  txList.forEach(tx => {
+  txList.forEach(tx => { // TODO: 最初からmapで書く
     ids.push(tx.txId)
   })
   return ids.map(name => name)
@@ -795,7 +820,7 @@ const getTxParams = txList => {
     return null
   }
   const txParams = []
-  txList.forEach(tx => {
+  txList.forEach(tx => { // TODO: mapで書く
     txParams.push({
       txId: tx.txId,
       btxId: tx.btxId,

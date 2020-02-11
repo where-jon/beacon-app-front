@@ -4,8 +4,8 @@
  */
 
 import _ from 'lodash'
-import { APP, DISP } from '../../constant/config'
-import { FEATURE, NOTIFY_STATE } from '../../constant/Constants'
+import { APP } from '../../constant/config'
+import { FEATURE } from '../../constant/Constants'
 import * as DateUtil from '../../util/DateUtil'
 import * as StringUtil from '../../util/StringUtil'
 import * as AppServiceHelper from './AppServiceHelper'
