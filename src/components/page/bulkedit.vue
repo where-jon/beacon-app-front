@@ -155,10 +155,18 @@ export default {
       if (!this.form.csvFile) {
         throw new Error(this.$t('message.emptyFile'))
       }
+      const conf = this.$parent.$options.methods.getConf.call(this.$parent)
+      let formData = new FormData()
+      formData.append('csvFile', this.form.csvFile)
+      formData.append('conf', JSON.stringify(conf))
+      const charSet = CHAR_SET.find(e => e.id == this.csvCharSet)
+      console.log('!!!99')
+      let result = await AppServiceHelper.bulkSave2(this.appServicePath, formData, charSet.name, UPDATE_ONLY_NN.NONE, IGNORE.ON)
+      
       const reader = new FileReader()
       const readerParam = {readFin: false, error: null, entities: [], headers: [], sameLine: []}
       this.setReaderOnload(reader, readerParam, option)
-      const charSet = CHAR_SET.find(e => e.id == this.csvCharSet)
+      // const charSet = CHAR_SET.find(e => e.id == this.csvCharSet)
       reader.readAsText(this.form.csvFile, charSet.name)
       for(var i=0; i<10; i++){
         if(readerParam.readFin){
@@ -166,20 +174,20 @@ export default {
         }
         await Util.sleep(100)
       }
-      
-      if (readerParam.error || !readerParam.entities || readerParam.entities.length == 0) {
-        throw new Error(readerParam.error? readerParam.error: this.$i18n.tnl('message.csvNotFound'))
-      }
-      if(Util.hasValue(readerParam.sameLine)){
-        throw new Error(`${this.$i18n.tnl('message.csvSameKey')}${BulkHelper.formatBulkErrorLine(readerParam.sameLine)}`)
-      }
+      console.log('!!!', readerParam)
+      // if (readerParam.error || !readerParam.entities || readerParam.entities.length == 0) {
+      //   throw new Error(readerParam.error? readerParam.error: this.$i18n.tnl('message.csvNotFound'))
+      // }
+      // if(Util.hasValue(readerParam.sameLine)){
+      //   throw new Error(`${this.$i18n.tnl('message.csvSameKey')}${BulkHelper.formatBulkErrorLine(readerParam.sameLine)}`)
+      // }
 
-      this.replaceAS({showLine: true})
-      BulkHelper.entityKeyCheck(this.name, this.pName, readerParam.headers)
-      await AppServiceHelper.bulkSave(this.appServicePath, readerParam.entities, UPDATE_ONLY_NN.NONE, IGNORE.ON)
-      if(this.$parent.$options.methods && this.$parent.$options.methods.onSaved) {
-        this.$parent.$options.methods.onSaved.call(this.$parent)
-      }
+      // this.replaceAS({showLine: true})
+      // BulkHelper.entityKeyCheck(this.name, this.pName, readerParam.headers)
+      // await AppServiceHelper.bulkSave(this.appServicePath, readerParam.entities, UPDATE_ONLY_NN.NONE, IGNORE.ON)
+      // if(this.$parent.$options.methods && this.$parent.$options.methods.onSaved) {
+      //   this.$parent.$options.methods.onSaved.call(this.$parent)
+      // }
     },
     setReaderOnload(reader, readerParam, option){
       reader.onload = () => {

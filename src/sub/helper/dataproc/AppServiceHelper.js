@@ -143,6 +143,19 @@ export const bulkSave = async (target, entities, updateOnlyNN = UPDATE_ONLY_NN.N
   return data
 }
 
+export const bulkSave2 = async (target, formData, charset, updateOnlyNN = UPDATE_ONLY_NN.NONE, ignoreImage = IGNORE.OFF) => {
+  const path = `${target}/bulk2/?charset=${charset}&updateOnlyNN=${updateOnlyNN}&ignoreImage=${ignoreImage}&_=${new Date().getTime()}`
+  const config = {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  }
+  let data = DEV.USE_MOCK_APS? mock[target]:
+    await HttpHelper.postAppService(path, formData, config)
+
+  return data
+}
+
 /**
  * 削除リクエストを行う。
  * @method

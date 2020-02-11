@@ -139,6 +139,9 @@ export default {
       // StateHelper.setForceFetch('tx', true)
       // StateHelper.setForceFetch('user', true)
     },
+    getConf() {
+      return {with: APP.POT.WITH, multiTx: APP.POT.MULTI_TX, txMax: APP.POT.TX_MAX, types: APP.POT.TYPES}
+    }
   }
 }
 </script>
