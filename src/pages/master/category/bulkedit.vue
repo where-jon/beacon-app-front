@@ -65,7 +65,6 @@ export default {
     }
   },
   async created() {
-    // await StateHelper.load('category')
   },
   methods: {
     restructZone(entity, dummyKey){
@@ -105,9 +104,6 @@ export default {
       return dummyKey
     },
     async onSaved(){
-      // StateHelper.setForceFetch('pot', true)
-      // StateHelper.setForceFetch('tx', true)
-      // StateHelper.setForceFetch('zone', true)
     },
   }
 }

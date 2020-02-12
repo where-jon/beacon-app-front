@@ -72,8 +72,6 @@ export default {
         .filter(val => val)
     },
     async onSaved(){
-      // StateHelper.setForceFetch('pot', true)
-      // StateHelper.setForceFetch('tx', true)
     },
     style(row) {
       return StyleHelper.getStyleDisplay1(row)

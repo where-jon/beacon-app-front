@@ -68,10 +68,6 @@ export default {
     items() {
       return ViewHelper.createBreadCrumbItems('main', 'toiletStatus')
     },
-    loadStates() {
-      // return ['area', 'zone', 'location', 'tx', 'exb']
-      return []
-    },
     imgInfo() {
       return { w: 32, h: 96 }
     },
@@ -171,7 +167,6 @@ export default {
     async fetchData(payload){
       try {
         this.showProgress()
-        // await Promise.all(this.loadStates.map(state => StateHelper.load(state)))
         const pirDataList = await this.fetchSensorData(SENSOR.PIR, 'exb')
         const magnetDataList = await this.fetchSensorData(SENSOR.MAGNET, 'tx')
         this.dataList = this.mergeToiletData(pirDataList, magnetDataList)

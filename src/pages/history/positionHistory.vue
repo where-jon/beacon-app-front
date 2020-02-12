@@ -156,15 +156,12 @@ export default {
     },
   },
   created() {
-    // StateHelper.load('group')
     const date = DateUtil.getDefaultDate()
     this.form.datetimeFrom = DateUtil.getDatetime(date, {hours: -1})
     this.form.datetimeTo = DateUtil.getDatetime(date)
   },
   mounted() {
     ViewHelper.importElementUI()
-    // StateHelper.load('tx')
-    // StateHelper.load('exb')
     this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`
   },
   methods: {

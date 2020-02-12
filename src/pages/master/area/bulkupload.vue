@@ -39,9 +39,6 @@ export default {
   },
   methods: {
     async onSaved(){
-      // StateHelper.setForceFetch('tx', true)
-      // StateHelper.setForceFetch('exb', true)
-      // StateHelper.setForceFetch('zone', true)
     },
     search(key) {
       const target = this.areas.find(val => val.areaCd == key)

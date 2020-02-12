@@ -142,7 +142,6 @@ export default {
     },
   },
   async created(){
-    // await Promise.all(['region', 'role'].map(StateHelper.load))
     this.roleOptions = MasterHelper.getOptionsFromState('role', false, true)
     this.vueSelected.role = VueSelectHelper.getVueSelectData(this.roleOptions, Util.getValue(this.form, 'roleId', this.roleOptions.reduce((prev, cur) => cur).value))
     if(Util.hasValue(this.form.userRegionList)){
@@ -197,7 +196,6 @@ export default {
           }
         )
       }
-      // StateHelper.setForceFetch('pot', true)
     },
     onBeforeReload(){
       this.vueSelected.role = VueSelectHelper.getVueSelectData(this.roleOptions, this.roleOptions.reduce((prev, cur) => cur).value)

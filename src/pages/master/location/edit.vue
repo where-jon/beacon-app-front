@@ -244,7 +244,6 @@ export default {
   },
   async mounted() {
     this.checkWarnOn()
-    // await Promise.all(['area', 'zone', 'exb', 'tx', 'locations'].map(StateHelper.load))
     this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, this.form.areaId)
     if(!Util.hasValue(this.form.locationType)){
       this.form.locationType = Util.getValue(this.locationTypeOptions, '0.value', null)
@@ -338,7 +337,6 @@ export default {
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
     },
     async onSaved(){
-      // await StateHelper.load('locations', true)
       this.$set(this.form, 'locationCd', MasterHelper.createMasterCd('location', this.locations, this.location))
     }
   }

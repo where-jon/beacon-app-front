@@ -86,9 +86,6 @@ export default {
       return retMap
     },
     async onSaved(){
-      // StateHelper.setForceFetch('tx', true)
-      // StateHelper.setForceFetch('exb', true)
-      // StateHelper.setForceFetch('category', true)
     },
     editResponse(data) {
       data.forEach(val => {

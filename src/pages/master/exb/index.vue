@@ -50,7 +50,6 @@ export default {
         .map(val => ({key: val, label: val, sortable: true}))
     },
     async createListParams(){
-      // await Promise.all(['sensor'].map(state => StateHelper.load(state)))
       const retMap = { sensor: {} }
       this.sensorOptionsExb.forEach(option => retMap.sensor[option.value? option.value.toString(): '0'] = option.text)
       return retMap

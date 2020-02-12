@@ -372,7 +372,6 @@ export default {
       isLoading: false,
       isMsTeams: MSTEAMS_APP.IS_COOPERATION,
       noImageErrorKey: 'noMapImage',
-      // loadStates: ['sensor', 'category', 'group', 'tx', 'exb', 'location', 'pot', 'absentDisplayZones'],
       loadStates: ['absentDisplayZones'],
       detectedCount: 0,
       thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
@@ -729,9 +728,6 @@ export default {
     // 分析用検索日付の自動入力
     changeDatetimeFrom(newVal = this.form.datetimeFrom) {
       this.form.datetimeTo = newVal? DateUtil.getDatetime(newVal, {minutes: APP.ANALYSIS.DATETIME_INTERVAL}): null
-    },
-    async refreshTxInfo(){
-      // await StateHelper.load('tx', true)
     },
     // Txアイコンを選択した場合のポップアップ
     setupSelectedTx (tx, x, y, isDispThumbnail) {
@@ -1231,7 +1227,6 @@ export default {
       const reloadButton = document.getElementById('spinner')
       if(!this.firstTime && reloadButton){
         this.reloadState.isLoad = true
-        await this.refreshTxInfo()
       }
       this.exbIcons = []
       this.txIcons = []

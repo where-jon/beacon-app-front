@@ -242,7 +242,6 @@ export default {
   },
   async mounted() {
     this.reloadState.isLoad = false
-    // await Promise.all(['category', 'group'].map(StateHelper.load))
   },
   methods: {
     initMap() {
@@ -292,8 +291,6 @@ export default {
           if (this.targetTx) {
             this.dispRssiIcons(this.targetTx)
           }
-
-          // await StateHelper.load('tx')
 
           if (payload && payload.done) {
             payload.done()

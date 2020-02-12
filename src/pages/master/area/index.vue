@@ -56,9 +56,6 @@ export default {
   },
   methods: {
     async onSaved(){
-      // StateHelper.setForceFetch('tx', true)
-      // StateHelper.setForceFetch('exb', true)
-      // StateHelper.setForceFetch('zone', true)
     },
     thumbnail(row) {
       let addUrlParam = ''

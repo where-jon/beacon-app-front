@@ -45,7 +45,6 @@ export default {
     }
   },
   async created() {
-    // await StateHelper.load('zone')
   },
   methods: {
     async onSaving() {

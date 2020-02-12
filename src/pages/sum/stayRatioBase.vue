@@ -299,7 +299,6 @@ export default {
     },
   },
   async created() {
-    // await Promise.all(['groups','pots','categories','areas'].map(StateHelper.load))
     this.form.date = DEV.DEFAULT_DATE != '' ? new Date(DEV.DEFAULT_DATE) : moment().add(-1, 'days').format('YYYYMMDD')
     let sortedArea = _.cloneDeep(this.areas)
     ArrayUtil.sortIgnoreCase(sortedArea, 'areaName')
@@ -313,7 +312,6 @@ export default {
       this.setGraphTimeDisplay()
     })
     this.updateColumnName()
-    // await StateHelper.load('category')
     if (this.categories.length < 1) {
       return
     }
@@ -458,8 +456,6 @@ export default {
       this.replace({showAlert: false})
       this.showProgress()
       try {
-        // await Promise.all(['zones','pots','groups'].map(StateHelper.load))
-        
         if (!this.form.date || this.form.date.length == 0) {
           this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
           this.replace({showAlert: true})
@@ -784,8 +780,6 @@ export default {
       this.replace({showAlert: false})
       this.showProgress()
       try {
-        // await Promise.all(['zones', 'pots', 'groups'].map(StateHelper.load))
-
         if (!this.form.date || this.form.date.length == 0) {
           this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
           this.replace({showAlert: true})
