@@ -49,7 +49,6 @@ export default {
       await this.$refs.bulkEdit.bulkSave({numberList: ['regionId', 'meshId']})
     },
     async onSaved(bulkSaveFunc, param){
-      // StateHelper.setForceFetch('user', true)
       const result = await RegionHelper.autoSwitchRegion(this.regions)
       if(result){
         LocalStorageHelper.setLocalStorage('bulkMessage', param.message)

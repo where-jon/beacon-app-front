@@ -179,7 +179,6 @@ export default {
     },
   },
   async created() {
-    // await Promise.all(['area', 'category'].map(state => StateHelper.load(state)))
     await this.initAreaNames()
     await this.initCategoryNames()
     this.initForm()
@@ -220,11 +219,6 @@ export default {
       })
     },
     async onSaved(){
-      // StateHelper.setForceFetch('tx', true)
-      // StateHelper.setForceFetch('exb', true)
-      // StateHelper.setForceFetch('category', true)
-      // StateHelper.setForceFetch('location', true)
-      // await StateHelper.load('zone', true)
       this.$set(this.form, 'zoneCd', MasterHelper.createMasterCd('zone', this.zones, this.zone))
     },
     async onBeforeReload(){

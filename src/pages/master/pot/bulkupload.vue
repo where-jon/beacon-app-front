@@ -59,15 +59,11 @@ export default {
     },
   },
   async mounted() {
-    // await StateHelper.load('pot')
   },
   async created() {
-    // await StateHelper.load('pot')
   },
   methods: {
     async onSaved(){
-      // StateHelper.setForceFetch('tx', true)
-      // StateHelper.setForceFetch('user', true)
     },
     search(key) {
       const target = this.pots.find(val => val.potCd == key && this.pTypeList.includes(val.potType))

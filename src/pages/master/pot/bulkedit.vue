@@ -60,11 +60,9 @@ export default {
     },
   },
   async created() {
-    // await StateHelper.load('pot')
   },
   methods: {
     async onSaving() {
-      // await Promise.all(['pot', 'category', 'group', 'tx'].map(StateHelper.load))
       await this.$refs.bulkEdit.bulkSave({numberList: 'potType'})
     },
     restructTx(entity, dummyKey){
@@ -136,8 +134,6 @@ export default {
       return dummyKey
     },
     async onSaved(){
-      // StateHelper.setForceFetch('tx', true)
-      // StateHelper.setForceFetch('user', true)
     },
   }
 }

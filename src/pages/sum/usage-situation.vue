@@ -227,7 +227,6 @@ export default {
     ViewHelper.importElementUI()
     this.vModelYearMonth = this.yearMonthOptions[0].value
     this.yearMonthChange(this.vModelYearMonth)
-    // await StateHelper.load('category')
     if (this.categories.length < 1) {
       return
     }
@@ -235,7 +234,6 @@ export default {
       .sort((a, b) => a.categoryId < b.categoryId ? -1 : 1)
       .map((c) => { return {label: MasterHelper.getDispCategoryName(c), value: c.categoryId}})
     this.vModelCategory = this.categoryOptionList[0].value
-    // await StateHelper.load('zone')
   },
   methods: {
     yearMonthChange(val) {

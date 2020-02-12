@@ -587,7 +587,6 @@ export default {
     },
   },
   async created() {
-    // await StateHelper.load('region')
   },
   async mounted() {
     const currentArea = LocalStorageHelper.getLocalStorage(KEY.CURRENT.AREA)
@@ -748,9 +747,6 @@ export default {
       if(item != null) {
         const masterId = this.compactMode? this.$parent.$options.methods && this.$parent.$options.methods.getEditKey? this.$parent.$options.methods.getEditKey.call(this.$parent, item): item.updateKey: item[this.id]
         entity = await AppServiceHelper.fetch(this.appServicePath, masterId)
-      } else {
-        // masterCdの最大値を算出するために全件データが必要
-        // await StateHelper.load(this.name)
       }
       if (this.$parent.$options.methods && this.$parent.$options.methods.convBeforeEdit) {
         entity = this.$parent.$options.methods.convBeforeEdit.call(this.$parent, entity)
@@ -922,11 +918,6 @@ export default {
       const pageName = this.params.dispName? this.params.dispName: this.params.name
       try {
         await AppServiceHelper.deleteEntity(this.appServicePath, id)
-        // if(this.compactMode) {
-        //   // StateHelper.setForceFetch(this.params.name, true)
-        // } else {
-        //   // await StateHelper.load(this.params.name, true)
-        // }
         await MasterHelper.loadMaster()
         this.message = this.$i18n.tnl('message.deleteCompleted', {target: this.$i18n.tnl('label.' + this.params.name)})
         if(this.$parent.$options.methods && this.$parent.$options.methods.onSaved){

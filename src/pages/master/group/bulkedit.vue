@@ -36,7 +36,6 @@ export default {
     ]),
   },
   async created() {
-    // await StateHelper.load('group')
   },
   methods: {
     onRestruct(entity, dummyKey){
@@ -50,8 +49,6 @@ export default {
       return dummyKey
     },
     async onSaved(){
-      // StateHelper.setForceFetch('pot', true)
-      // StateHelper.setForceFetch('tx', true)
     },
   }
 }

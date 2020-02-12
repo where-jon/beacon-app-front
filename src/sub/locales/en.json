@@ -161,7 +161,6 @@
     "settingNow": "Setting up",
     "mapRatioSetting": "How to set the map ratio",
 
-    "posId": "pos ID",
     "positionHistory": "Position history",
     "positionHistoryExc": "Position history (Exc)",
     "positionHistoryId": "Tx Position ID",
@@ -1184,7 +1183,6 @@
         "deviceId": "deviceId::Device ID",
         "deviceIdX": "deviceIdX::Device ID(Hex)",
         "locationName": "LocationName::Location name",
-        "posId": "posId::posId",
         "areaName": "areaName::Area name",
         "x": "x::X",
         "y": "y::Y"
@@ -1201,7 +1199,6 @@
         "dispAlways": "dispAlways::Show always"
       },
       "LOCATION": {
-        "posId": "posId::posId",
         "zoneBlock": "zoneBlock::Zone(Block)",
         "zoneClass": "zoneClass::Zone(Classification)"
       },
@@ -1232,7 +1229,6 @@
         "locationName": "locationName::Last position"
       },
       "SENSOR_LIST": {
-        "posId": "posId::posId",
         "deviceId": "deviceId::Device ID",
         "deviceIdX": "deviceIdX::Device ID(Hex)"
       },

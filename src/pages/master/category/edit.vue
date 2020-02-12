@@ -191,7 +191,6 @@ export default {
     this.onBeforeReload(true)
   },
   async mounted() {
-    // await Promise.all(['category', 'zone'].map(state => StateHelper.load(state)))
     Util.applyDef(this.form, this.defValue)
     if(!Util.hasValue(this.form.categoryCd)){
       const categoryList = this.categories.filter(category => category.systemUse == 0)
@@ -238,11 +237,6 @@ export default {
         //this.form.categoryCd = MasterHelper.createMasterCd('category', categoryList, this.category)
       }
     },
-    // onSaved(){
-    //   StateHelper.setForceFetch('pot', true)
-    //   StateHelper.setForceFetch('tx', true)
-    //   StateHelper.setForceFetch('zone', true)
-    // },
     structZoneCategory(getDummyKeyFunc){
       return Util.getValue(this.form, 'zoneGuardList', []).concat(Util.getValue(this.form, 'zoneDoorList', [])).map(zoneCategory => {
         zoneCategory.zoneCategoryPK.categoryId = getDummyKeyFunc()
@@ -273,7 +267,6 @@ export default {
       return await AppServiceHelper.bulkSave(this.pAppServicePath, [entity])
     },
     async onSaved(){
-      // await StateHelper.load('categories', true)
       const categoryList = this.categories.filter(category => category.systemUse == 0)
       this.$set(this.form, 'categoryCd', MasterHelper.createMasterCd('category', categoryList, this.category))
     }

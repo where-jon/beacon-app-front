@@ -36,7 +36,6 @@ export default {
     ]),
   },
   async created() {
-    // await StateHelper.load('area')
   },
   methods: {
     onRestruct(entity, dummyKey){
@@ -46,9 +45,6 @@ export default {
       return dummyKey
     },
     async onSaved(){
-      // StateHelper.setForceFetch('tx', true)
-      // StateHelper.setForceFetch('exb', true)
-      // StateHelper.setForceFetch('zone', true)
     },
   }
 }

@@ -377,7 +377,6 @@ export default {
     }
   },
   mounted () {
-    // StateHelper.load('zone')
     const drawArea = document.getElementById('stage')
     this.stage = new Konva.Stage({
       container: 'stage',
@@ -474,7 +473,9 @@ export default {
     async onChangeAreaId(areaId) {
       await StateHelper.loadAreaImage(areaId, true)
       const areaImage = this.$store.state.app_service.areaImages.find((a) => { return a.areaId === areaId })
-      this.setupCanvas(areaImage.mapImage)
+      if (areaImage) {
+        this.setupCanvas(areaImage.mapImage)
+      }
     },
     setupCanvas (mapImage) {
       const stage = this.stage

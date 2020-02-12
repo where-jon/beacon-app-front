@@ -70,7 +70,7 @@ export const loadPosition = async (count, allShow = false, fixSize = false) => {
     .filter(pos => allShow || Util.hasValue(pos.locationId) && locationIdMap[pos.locationId] && (txIdMap[pos.txId] && NumberUtil.bitON(txIdMap[pos.txId].disp, TX.DISP.POS)))
     .map(pos => {
       let tx = txIdMap[pos.txId]
-      // 固定位置の場合,txのlocation、そうではない場合exbのlocation
+      // 固定位置の場合,txのlocation、そうではない場合exbのlocation TODO:要検討
       let location = tx.location && 0 < tx.location.x * tx.location.y? tx.location: locationIdMap[pos.locationId]
       let exb = exbIdMap[pos.exbId]
       let label = tx.displayName? tx.displayName: tx.btxId
@@ -85,7 +85,7 @@ export const loadPosition = async (count, allShow = false, fixSize = false) => {
         display.opacity = 0.6
       }
   
-      return { ...pos, btxId: tx.btxId, deviceId: exb.deviceId, posx: pos.x, posy: pos.y,
+      return { ...pos, btxId: tx.btxId, deviceId: Util.v(exb, 'deviceId'), posx: pos.x, posy: pos.y,
         label, location, exb, tx, updatetime: DateUtil.dateform(pos.positionDt), timestamp:DateUtil.dateform(pos.positionDt),
         transparent: pos.transparent? pos.transparent: isTransparent(pos.timestamp, now),
         isLost: isLost(pos.timestamp, now),

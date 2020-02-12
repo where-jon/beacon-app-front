@@ -39,14 +39,12 @@ export default {
     ]),
   },
   async mounted() {
-    // await StateHelper.load('tx')
   },
   methods: {
     createDefaultName(prefix){
       return prefix + '_' + (new Date().getTime() % 10000)
     },
     async onSaving() {
-      // await Promise.all(['category', 'group', 'pot'].map(StateHelper.load))
       await this.$refs.bulkEdit.bulkSave({numberList: ['btxId', 'major', 'minor', 'disp', 'x', 'y'], nullableList: ['locationName', 'x', 'y', 'sensorNames']})
     },
     restructTx(entity, dummyKey){
@@ -146,7 +144,6 @@ export default {
       return dummyKey
     },
     async onSaved(){
-      // StateHelper.setForceFetch('pot', true)
     },
   }
 }

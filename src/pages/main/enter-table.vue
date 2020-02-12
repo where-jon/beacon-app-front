@@ -74,8 +74,6 @@ export default {
       autoPager: false,
       autoPagerPlay: false,
       modalInfo: { title: this.$i18n.tnl('label.confirm'), content: '', id:'' },
-      // loadStates: ['category', 'zone', 'tx', 'exb', 'location', 'pot'],
-      loadStates: []
     }
   },
   computed: {
@@ -99,7 +97,6 @@ export default {
       try {
         this.replace({showAlert: false})
         this.showProgress()
-        await Promise.all(this.loadStates.map(StateHelper.load))
         await PositionHelper.loadPosition(0, true)
         let positions = PositionHelper.filterPositions(undefined, true)
         Util.debug(positions)

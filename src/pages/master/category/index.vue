@@ -105,9 +105,6 @@ export default {
         .filter(val => val)
     },
     async Saved(){
-      // StateHelper.setForceFetch('pot', true)
-      // StateHelper.setForceFetch('tx', true)
-      // StateHelper.setForceFetch('zone', true)
     },
     createListParams(){
       const retMap = { categoryType: {} }

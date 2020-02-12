@@ -244,7 +244,6 @@ export default {
     }
   },
   async mounted() {
-    // await Promise.all(['area', 'exb', 'tx', 'location'].map(StateHelper.load))
     this.form.locationDisp = Util.getValue(this.locationDispOptions, '0.value', null)
     this.vueSelected.area = this.initAreaId
     this.legend.items = this.legendItems
@@ -713,14 +712,10 @@ export default {
 
         if (param.length > 0) {
           await HttpHelper.postAppService('/core/location/updateLocation', param)
-          // await StateHelper.load('exb', true)
-          // await StateHelper.load('tx', true)
-          // await StateHelper.load('location', true)
         }
 
         if (this.mapRatioChanged && this.mapRatio != null) {
           await AppServiceHelper.save('/core/area', this.createSendArea(), UPDATE_ONLY_NN.EMPTY_ZERO)
-          // await StateHelper.load('area', true)
         }
         await MasterHelper.loadMaster()
         this.message = this.$i18n.tnl('message.completed', {target: this.$i18n.tnl('label.save')})
