@@ -126,12 +126,12 @@ export default {
           }else if(absentZone){
             // 不在ゾーンへの登録
             if(hasMasterId){
-              tempMasterMap[absentZone.zoneId].positions.push(pos)
+              tempMasterMap[absentZone.zoneCd].positions.push(pos)
             }
           }
         })
       })
-      const ret = _.sortBy(tempMasterMap, tmm => this.displayArea? tmm.areaCd : tmm.label)
+      const ret = _.sortBy(tempMasterMap, tmm => this.displayArea? tmm.areaCd : tmm.zoneCd)
       if(showExt){
         ret.push(tempMasterExt)
       }
