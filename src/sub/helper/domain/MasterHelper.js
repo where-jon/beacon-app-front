@@ -63,6 +63,7 @@ export const loadMaster = async () => {
 
   console.log('end', new Date())
   Util.debug({masters})
+  console.warn({masters})
 }
 
 /**
@@ -227,7 +228,7 @@ const convert = (row, colNames) => {
       ret[col] = val
     }
     else if (col.endsWith('Id')) { // loginId以外のIdはNumber
-      ret[col] = Util.hasValue(val)? Number(val): val
+      ret[col] = Util.hasValue(val)? Number(val): null
     }
     else if (col == 'extValue' || col == 'txViewType' || col == 'display') {
       ret[col] = val? jsonParse(col, val): {}
@@ -239,7 +240,7 @@ const convert = (row, colNames) => {
     else if (col.endsWith('Type') || col.endsWith('Ratio') || col.endsWith('Width') || col.endsWith('Height')
       || col.startsWith('threshold') || col.startsWith('adjust')
       || ArrayUtil.equalsAny(col, ['major','minor','x','y','z','w','h','disp','systemUse'])) {
-      ret[col] = Util.hasValue(val)? Number(val): val     
+      ret[col] = Util.hasValue(val)? Number(val): null     
     }
     else {
       ret[col] = val
