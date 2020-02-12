@@ -556,6 +556,7 @@ export default {
       if (!Util.getValue(this.selectedTx, 'btxId', null)) {
         return []
       }
+      if (!this.positionedTxMap) return []
       const ret = SensorHelper.getSensorFromBtxId('meditag', this.positionedTxMap.meditag, this.selectedTx.btxId)
       return ret? [ret]: []
     },

@@ -179,7 +179,7 @@ export default {
       form: {
         ...Util.extract(this.$store.state.app_service.pot,
           ['potId', 'potCd', 'potName', 'potType', 'extValue.ruby',
-            'displayName', 'potGroupList.0.group.groupId', 'potCategoryList',
+            'displayName', 'potGroupList.0.group.groupId', 'potCategoryList.0.category.categoryId',
             'existThumbnail', 'description', ...PotHelper.getPotExtKeys(this.pName, true)])
       },
       userForm: {
