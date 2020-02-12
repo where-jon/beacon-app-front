@@ -107,7 +107,6 @@ export default {
 
       _.forEach(positions, pos => {
         const location = this.locationIdMap[pos.locationId]
-        console.error('check', {location})
         prohibitDetectList? prohibitDetectList.some(data => {
           if(data.minor == pos.minor){
             pos.blinking = 'blinking'

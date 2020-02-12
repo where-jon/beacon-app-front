@@ -319,7 +319,7 @@ export const zoneLastTxId = () => { return 100000001 }
 
 export const isZoneLastTxId = (btxId) => { return btxId == zoneLastTxId }
 
-export const zoneLastTxData = () => {
+export const zoneLastTxData = () => { // TODO: pos_idは何に使っている？
   return { btxId: zoneLastTxId(), pos_id: 0, label: '・・・', isLost: false, }
 }
 

@@ -145,7 +145,6 @@ export const fetchTelemetry = async () => {
   let data = DEV.USE_MOCK_EXC? mock.position:
     await HttpHelper.getExCloud(url(EXCLOUD.TELEMETRY_URL) + new Date().getTime())
   return _(data)
-    // .filter((val) => EXB.some((exb) => exb.pos_id == val.pos_id))
     .map(val => {
       if (val.deviceid) { // deviceidはすべて名前を変換する
         val.deviceId = val.deviceid

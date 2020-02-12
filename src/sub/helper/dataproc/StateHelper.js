@@ -160,7 +160,6 @@ export const storeCommit = (key, val) => {
  * @param {Boolean} force 強制取得する
  */
 export const loadAreaImage = async (areaId, force) => {
-  console.error('loadAreaImage', areaId, force)
   if (areaId == null) {
     console.log('empty areas', areaId)
     return
