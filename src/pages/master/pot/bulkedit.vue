@@ -140,7 +140,14 @@ export default {
       // StateHelper.setForceFetch('user', true)
     },
     getConf() {
-      return {with: APP.POT.WITH, multiTx: APP.POT.MULTI_TX, txMax: APP.POT.TX_MAX, types: APP.POT.TYPES}
+      return {
+        with: APP.POT.WITH,
+        multiTx: APP.POT.MULTI_TX,
+        txMax: APP.POT.TX_MAX,
+        types: APP.POT.TYPES,
+        allow: BULK.REQUIRE.POT.ALLOW,
+        disallow: BULK.REQUIRE.POT.DISALLOW,
+      }
     }
   }
 }

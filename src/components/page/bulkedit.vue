@@ -163,18 +163,18 @@ export default {
       console.log('!!!99')
       let result = await AppServiceHelper.bulkSave2(this.appServicePath, formData, charSet.name, UPDATE_ONLY_NN.NONE, IGNORE.ON)
       
-      const reader = new FileReader()
-      const readerParam = {readFin: false, error: null, entities: [], headers: [], sameLine: []}
-      this.setReaderOnload(reader, readerParam, option)
+      // const reader = new FileReader()
+      // const readerParam = {readFin: false, error: null, entities: [], headers: [], sameLine: []}
+      // this.setReaderOnload(reader, readerParam, option)
       // const charSet = CHAR_SET.find(e => e.id == this.csvCharSet)
-      reader.readAsText(this.form.csvFile, charSet.name)
-      for(var i=0; i<10; i++){
-        if(readerParam.readFin){
-          break
-        }
-        await Util.sleep(100)
-      }
-      console.log('!!!', readerParam)
+      // reader.readAsText(this.form.csvFile, charSet.name)
+      // for(var i=0; i<10; i++){
+      //   if(readerParam.readFin){
+      //     break
+      //   }
+      //   await Util.sleep(100)
+      // }
+      // console.log('!!!', readerParam)
       // if (readerParam.error || !readerParam.entities || readerParam.entities.length == 0) {
       //   throw new Error(readerParam.error? readerParam.error: this.$i18n.tnl('message.csvNotFound'))
       // }
@@ -185,9 +185,9 @@ export default {
       // this.replaceAS({showLine: true})
       // BulkHelper.entityKeyCheck(this.name, this.pName, readerParam.headers)
       // await AppServiceHelper.bulkSave(this.appServicePath, readerParam.entities, UPDATE_ONLY_NN.NONE, IGNORE.ON)
-      // if(this.$parent.$options.methods && this.$parent.$options.methods.onSaved) {
-      //   this.$parent.$options.methods.onSaved.call(this.$parent)
-      // }
+      if(this.$parent.$options.methods && this.$parent.$options.methods.onSaved) {
+        this.$parent.$options.methods.onSaved.call(this.$parent)
+      }
     },
     setReaderOnload(reader, readerParam, option){
       reader.onload = () => {
