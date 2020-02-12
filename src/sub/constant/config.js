@@ -150,6 +150,7 @@ export const APP = { // 機能面に関する設定
   POT: {
     WITH: ['thumbnail', 'category', 'user', 'ruby', 'description'],
     MULTI_TX: false,         // 複数Tx使用
+    CSV_USER: false,
     TX_MAX: 2,   // 所持Tx最大数
     TYPES: [1, 2, 3],   // 選択可能な種別（1人,2物,3物(その他)）
     // 拡張項目定義（サンプル）
