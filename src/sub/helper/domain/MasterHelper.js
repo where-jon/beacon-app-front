@@ -407,8 +407,8 @@ const addInfo = (masters) => {
         Util.merge(tx, {
           sensorId: Util.v(tx, 'sensorList.0.sensorId'),
           sensor: i18n.tnl('label.' + Util.v(tx, 'sensorList.0.sensorName', 'normal')),
-          potName: Util.getValue(tx, 'potList.0.potName', ''),
-          locationId: tx.location? tx.location.locationId: null,
+          potName: Util.v(tx, 'potList.0.potName'),
+          locationId: Util.v(tx, 'location.locationId'),
           dispPos: tx.disp & 1,
           dispPir: tx.disp & 2,
           dispAlways: tx.disp & 4,
@@ -428,6 +428,7 @@ const addInfo = (masters) => {
           x: location? Math.round(location.x * 10)/10: null,
           y: location? Math.round(location.y * 10)/10: null,
           areaId: location? location.areaId: null,
+          areaName: location? location.area.areaName: null,
           locationName: location? location.locationName: null,
           sensor: i18n.tnl('label.' + Util.v(exb, 'sensorName', 'normal')),
           isAbsentZone: locationZoneList.some(e => e.categoryName == SYSTEM_ZONE_CATEGORY_NAME.ABSENT),

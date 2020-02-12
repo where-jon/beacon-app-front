@@ -97,7 +97,6 @@ export default {
       fields: [],
       fields1: SensorHelper.getFields1([
         { key: 'locationName', forceShow: true },
-        'posId',
       ]),
       fields2: SensorHelper.getFields2(),
       fields5: SensorHelper.getFields5(),
@@ -143,7 +142,6 @@ export default {
         senHist.major = aTx.major
         senHist.minor = aTx.minor
         senHist.locationName = aTx.locationName
-        senHist.posId = null
         senHist.areaName = aTx.areaName
       }
 
@@ -152,7 +150,6 @@ export default {
         senHist.deviceId = aExb.deviceId
         senHist.deviceIdX = aExb.deviceIdX
         senHist.locationName = aExb.locationName
-        senHist.posId = aExb.posId
         senHist.areaName = aExb.areaName
       }
 

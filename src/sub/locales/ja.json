@@ -163,7 +163,6 @@
     "settingNow": "設定中",
     "mapRatioSetting": "マップ比率設定方法",
 
-    "posId": "pos ID",
     "positionHistory": "位置情報",
     "positionHistoryExc": "位置情報(Exc)",
     "positionHistoryId": "Tx位置ID",
@@ -1308,7 +1307,6 @@
         "deviceId": "deviceId::デバイスID",
         "deviceIdX": "deviceIdX::デバイスID(16進数)",
         "locationName": "locationName::場所名",
-        "posId": "posId::posId",
         "areaName": "areaName::エリア名",
         "x": "x::X座標",
         "y": "y::Y座標"
@@ -1325,7 +1323,6 @@
         "dispAlways": "dispAlways::常時表示"
       },
       "LOCATION": {
-        "posId": "posId::posId",
         "zoneBlock": "zoneBlock::ゾーン(区画)",
         "zoneClass": "zoneClass::ゾーン(分類)"
       },
@@ -1357,7 +1354,6 @@
         "locationName": "locationName::最終取得場所"
       },
       "SENSOR_LIST": {
-        "posId": "posId::posId",
         "deviceId": "deviceId::デバイスID",
         "deviceIdX": "deviceIdX::デバイスID(16進数)"
       },

@@ -28,10 +28,6 @@
                 </template>
               </v-select>
             </b-form-group>
-            <b-form-group v-if="isShown('LOCATION.WITH', 'posId')">
-              <label v-t="'label.posId'" />
-              <input v-model="form.posId" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control" >
-            </b-form-group>
             <b-form-group>
               <label v-t="'label.locationX'" />
               <input v-model="form.x" :readonly="!isEditable" type="number" min="0" max="99999" class="form-control">
@@ -137,7 +133,7 @@ export default {
       useZoneBlock: MenuHelper.isMenuEntry('/master/zoneBlock') && this.isShown('LOCATION.WITH', 'zoneBlock'),
       form: Util.extract(this.$store.state.app_service.location, [
         'locationId', 'locationCd', 'locationType', 'locationName',
-        'areaId', 'posId', 'x', 'y',
+        'areaId', 'x', 'y',
         'txViewType', 'locationZoneList',
         'exbIds', 'txIds', 
         ...ExtValueHelper.getExtValueKeys(APP.LOCATION, true)
@@ -320,7 +316,6 @@ export default {
           vertical: this.txIconsVertical
         },
         extValue: {},
-        posId: this.form.posId,
         x: this.form.x,
         y: this.form.y,
         exbIdList: this.form.exbIds,

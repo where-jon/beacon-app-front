@@ -56,6 +56,7 @@ export default {
   },
   methods: {
     async onSaved(){
+      this.$store.commit('main/replaceMain', {selectedArea: null})
     },
     thumbnail(row) {
       let addUrlParam = ''

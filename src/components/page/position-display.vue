@@ -70,6 +70,7 @@ export default {
       'areas',
       'zones',
       'locations',
+      'locationIdMap',
       'prohibits',
       'lostZones',
     ]),
@@ -96,11 +97,7 @@ export default {
       this[this.listName].forEach(obj => tempMasterMap[obj[this.id]] = {...obj, [this.id]: obj[this.id], label: obj[this.name], positions: []})
       const tempMasterExt = {[this.id]: -1, label: this.$i18n.tnl('label.other'), positions: []}
       let showExt = false
-      const locationMap = {}
       this.locations.forEach(location => {
-        if(Util.hasValue(location.posId)){
-          locationMap[location.posId] = location
-        }
         if(this.displayZone && !Util.hasValue(location.zoneIdList)){
           showExt = true
         }
@@ -109,7 +106,8 @@ export default {
       const absentZone = _.find(this.zones, zone => zone.categoryName == SYSTEM_ZONE_CATEGORY_NAME.ABSENT_DISPLAY)
 
       _.forEach(positions, pos => {
-        const location = locationMap[pos.pos_id]
+        const location = this.locationIdMap[pos.locationId]
+        console.error('check', {location})
         prohibitDetectList? prohibitDetectList.some(data => {
           if(data.minor == pos.minor){
             pos.blinking = 'blinking'
