@@ -53,7 +53,7 @@
         </b-form>
         <slot />
         <b-row class="mt-3" />
-        <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" stacked="md" striped hover outline>
+        <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" :sort-compare="defaultSortCompare" stacked="md" striped hover outline>
           <template slot="txNames" slot-scope="row">
             <span v-if="!bUserCheck">
               {{ row.item.txNames }}
@@ -166,6 +166,7 @@ import { getCharSet } from '../../sub/helper/base/CharSetHelper'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import commonmixin from '../../components/mixin/commonmixin.vue'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
@@ -237,7 +238,7 @@ export default {
         {key: 'lastRcvDatetimes', sortable: true,label:'finalReceiveTime' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
-      fields8: ViewHelper.addLabelByKey(this.$i18n, [  // 重要部品持ち出しアラート
+      fields8: ViewHelper.addLabelByKey(this.$i18n, [  // 重要物品持ち出しアラート
         {key: 'positionDt', sortable: true, label:'dt'},
         {key: 'notifyTo', sortable: true,label:'notifyTo' },
         {key: 'minors', sortable: true,label:'minor' },
@@ -283,8 +284,8 @@ export default {
       return _.slice(NOTIFY_STATE.getOptions()).filter((val) => APP.NOTIFY.STATE_TYPES.includes(val.index))
     },
     txOptions() {
-      let result =  StateHelper.getOptionsFromState('tx',
-        tx => StateHelper.getTxIdName(tx),
+      let result =  MasterHelper.getOptionsFromState('tx',
+        tx => MasterHelper.getTxIdName(tx),
         true
       )
       return result
@@ -322,7 +323,7 @@ export default {
   },
   mounted() {
     ViewHelper.importElementUI()
-    StateHelper.load('tx')
+    // StateHelper.load('tx')
     this.changeTx(this.form.txId)
     this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`
   },

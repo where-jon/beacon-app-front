@@ -1,4 +1,5 @@
 import _ from 'lodash'
+import Vue from 'vue'
 import * as config from '../sub/constant/config'
 import { SETTING } from '../sub/constant/Constants'
 import * as Util from '../sub/util/Util'
@@ -7,11 +8,13 @@ import * as ConfigHelper from '../sub/helper/dataproc/ConfigHelper'
 import * as HttpHelper from '../sub/helper/base/HttpHelper'
 import * as LocalStorageHelper from '../sub/helper/base/LocalStorageHelper'
 import * as MenuHelper from '../sub/helper/dataproc/MenuHelper'
+import * as StateHelper from '../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../sub/helper/domain/MasterHelper'
 
 export default async (context, inject) => {
   console.log('App Init') // If you need common initialize procedure, write here.
   LocalStorageHelper.setLocalStorage('defaultConfig', JSON.stringify(config))
-  LocalStorageHelper.setLocalStorage('defaultConfigInfo', JSON.stringify({
+  LocalStorageHelper.setLocalStorage('defaultConfigConstants', JSON.stringify({
     type: SETTING.getType(),
     svc: SETTING.getDefault(),
   }))
@@ -29,6 +32,14 @@ export default async (context, inject) => {
     if (login && login.isAd) {
       // eslint-disable-next-line require-atomic-updates
       config.APP.MENU.LOGIN_PAGE = config.APP.MENU.AZLOGIN_PAGE
+    }
+    if (login) {
+      // get all master
+      MasterHelper.setApp(context.app.store, context.app.i18n)
+      StateHelper.setApp(context.app.store, context.app.i18n)
+      const start = new Date().getTime()
+      await MasterHelper.loadMaster()
+      console.log('master get', new Date().getTime() - start, 'msec')
     }
   }
   catch (e) {
@@ -50,7 +61,15 @@ export default async (context, inject) => {
   }, 3000)
   
 }
-  
+
+Vue.filter('number_format', (value) => {
+  if (!value) {
+    return value
+  }
+  let formatter = new Intl.NumberFormat('ja-JP')
+  return formatter.format(value)
+})
+
 if (String.prototype.includes) {
   console.info('Adding methods. Don\'t use methods in IE before this is called.')
   String.prototype.includes = function(search, start) {

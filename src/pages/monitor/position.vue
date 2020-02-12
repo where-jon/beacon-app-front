@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <breadcrumb :items="items" :reload="true" :state="reloadState" @reload="fetchData" />
     <div v-show="!reloadState.isLoad" class="container">
-      <monitor-table ref="monitorTable" type="position" :vue-table-mode="isDev" :all-count="allCount" :headers="headers" :datas="positions" :tr-class="getClass" />
+      <monitor-table ref="monitorTable" type="tx" :all-count="allCount" :fields="fields" :list="positions" :tr-class="getClass" max-filter-length="40" />
     </div>
   </div>
 </template>
@@ -30,24 +30,22 @@ export default {
     monitorTable,
   },
   mixins: [commonmixin, reloadmixin],
-  props: {
-    isDev: {
-      type: Boolean,
-      default: false
-    }
-  },
   data () {
     return {
       items: ViewHelper.createBreadCrumbItems('monitor', 'position'),
-      headers: this.getHeaders(),
+      fields: this.getHeaders(),
       positions: [],
       reloadState: { isLoad: false },
       csvHeaders: this.getCsvHeaders(),
+      params: {
+        name: 'position-list',
+        id: 'positionListId',
+      },
     }
   },
   computed: {
     ...mapState('app_service', [
-      'txs', 'exbs'
+      'txs', 'exbs', 'btxIdMap', 'deviceIdMap'
     ]),
     allCount() {
       return this.positions.length
@@ -55,15 +53,11 @@ export default {
   },
   mounted() {
     this.fetchData()
-    if (!this.isDev) {
-      return
-    }
-    this.items = ViewHelper.createBreadCrumbItems('develop', 'position')
   },
   methods: {
     convertColumnName(name){
       if(name == 'btxId'){
-        return 'btx_id'
+        return 'btxId'
       }
       if(name == 'locationName'){
         return 'finalReceiveLocation'
@@ -71,35 +65,18 @@ export default {
       return name
     },
     getHeaders(){
-      if(this.isDev){
-        return ViewHelper.addLabelByKey(null, [
-          { key: 'btx_id' }, { key: 'device_id' }, { key: 'pos_id' }, { key: 'phase' }, { key: 'power_level' }, { key: 'updatetime' }, { key: 'nearest1' }, { key: 'nearest2' }, { key: 'nearest3' },
-        ])
-      }
       return ViewHelper.addLabelByKey(this.$i18n, APP.TX_MON.WITH.map(val => ({
-        key: this.convertColumnName(val)
+        key: this.convertColumnName(val), sortable: true, tdClass: 'action-rowdata'
       })).concat([
-        { key: 'finalReceiveTimestamp' }, { key: 'state' }
+        { key: 'finalReceiveTimestamp', sortable: true, tdClass: 'action-rowdata' },
+        { key: 'state' , sortable: true, tdClass: 'action-rowdata'},
+        { key: 'powerLevelTimestamp' , sortable: true, tdClass: 'action-rowdata'},
       ]).filter(val => val))
     },
     getCsvHeaders(){
-      if(this.isDev){
-        return {
-          'btx_id': 'btx_id',
-          'device_id': 'device_id',
-          'pos_id': 'pos_id',
-          'phase': 'phase',
-          'power_level': 'power_level',
-          'updatetime': 'updatetime',
-          'nearest1': 'nearest1',
-          'nearest2': 'nearest2',
-          'nearest3': 'nearest3',
-        }
-      }
-
       const ret = {}
       APP.TX_MON.WITH.forEach(val => {
-        ret[this.convertColumnName(val)] = val == 'btxId'? 'btx_id': val
+        ret[this.convertColumnName(val)] = val == 'btxId'? 'btxId': val
       })
       ret['finalReceiveTimestamp'] = 'timestamp'
       ret['state'] = 'state'
@@ -136,44 +113,31 @@ export default {
       this.isLoad = false
     },
     async makePositionRecords(positions) {
-      if (this.isDev) {
-        return positions.map((position) =>{
-          return {
-            ...position,
-            nearest1: position.nearest && position.nearest.length > 0? position.nearest[0]: null,
-            nearest2: position.nearest && position.nearest.length > 1? position.nearest[1]: null,
-            nearest3: position.nearest && position.nearest.length > 2? position.nearest[2]: null,
-          }
-        })
-      }
-      await Promise.all(['exb','tx'].map(StateHelper.load))
-      return positions.map((e) => {
-        const tx = this.txs.find((tx) => tx.btxId == e.btx_id)
-        const exb = this.exbs.find((exb) => exb.location.posId == e.pos_id)
+      // await Promise.all(['exb','tx'].map(StateHelper.load))
+      return positions.map(e => {
+        const tx = this.btxIdMap[e.btxId]
+        const exb = this.deviceIdMap[e.deviceId]
         return {
           ...e,
           name: tx != null ? tx.potName : '—',
-          finalReceiveLocation: exb? exb.location.locationName  : '',
+          finalReceiveLocation: Util.getValue(exb, 'location.locationName', ''),
           finalReceiveTimestamp: this.getTimestamp(e.updatetime),
-          powerLevel: this.$refs.monitorTable.getPositionPowerLevelLabel(e.power_level),
+          powerLevel: this.$refs.monitorTable.getPositionPowerLevelLabel ? this.$refs.monitorTable.getPositionPowerLevelLabel(e.power_level) : null,
           state: this.$refs.monitorTable.getStateLabel('tx', e.updatetime),
           sensorIds: Util.getValue(tx, 'txSensorList', []).map(txSensor => txSensor.sensor.sensorId),
+          powerLevelTimestamp: this.getTimestamp(e.power_level_timestamp),
         }
       })
     },
     async margeSensorRecords(positions){
-      if(this.isDev){
-        return positions
-      }
       const sensorHistories = await this.fetchSensorHistory()
-
       const ret = positions.map(position => {
         if(!Util.hasValue(position.sensorIds)){
           return position
         }
         const sensorDataList = []
         position.sensorIds.forEach(sensorId => {
-          const mergeData = sensorHistories[`${sensorId}`]? sensorHistories[`${sensorId}`].find(sensorHistory => sensorHistory.btxid == position.btx_id): null
+          const mergeData = sensorHistories[`${sensorId}`]? sensorHistories[`${sensorId}`].find(sensorHistory => sensorHistory.btxId == position.btxId): null
           if(mergeData){
             sensorDataList.push(mergeData)
           }
@@ -191,10 +155,10 @@ export default {
         const sRet = []
         Object.keys(sensorHistories).forEach(key => {
           sensorHistories[key].forEach(sensorHistory => {
-            const tx = this.txs.find(tx => tx.btxId == sensorHistory.btxid)
+            const tx = this.btxIdMap[sensorHistory.btxId]
             sRet.push({
               ...sensorHistory,
-              btx_id: sensorHistory.btxid,
+              btxId: sensorHistory.btxId,
               name: Util.getValue(tx, 'potName', ''),
               powerLevel: this.$refs.monitorTable.getPositionPowerLevelLabel(sensorHistory.power_level),
               finalReceiveTimestamp: this.getTimestamp(EXCloudHelper.getDispTime(sensorHistory)),
@@ -229,21 +193,6 @@ export default {
       )
     },
     getCsvHeaderList() {
-      if(this.isDev){
-        return [
-          'btx_id',
-          'device_id',
-          'pos_id',
-          'phase',
-          'power_level',
-          'updatetime',
-          'nearest1',
-          'nearest2',
-          'nearest3',
-          '\n'
-        ]
-      }
-      
       const ret = []
       APP.TX_MON.WITH.forEach((key) => {
         if (key == 'locationName') {

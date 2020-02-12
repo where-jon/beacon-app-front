@@ -7,7 +7,7 @@ import axios from 'axios'
 import _ from 'lodash'
 import md5 from 'md5'
 import { APP, LOCAL_LOGIN } from '../../constant/config'
-import { LOGIN_MODE, FEATURE } from '../../constant/Constants'
+import { LOGIN_MODE, FEATURE, KEY } from '../../constant/Constants'
 import * as BrowserUtil from '../../util/BrowserUtil'
 import * as Util from '../../util/Util'
 import * as AppServiceHelper from '../dataproc/AppServiceHelper'
@@ -16,7 +16,7 @@ import * as HttpHelper from './HttpHelper'
 import * as LocaleHelper from './LocaleHelper'
 import * as LocalStorageHelper from './LocalStorageHelper'
 import * as MenuHelper from '../dataproc/MenuHelper'
-import * as StateHelper from '../dataproc/StateHelper'
+import * as MasterHelper from '../domain/MasterHelper'
 
 let router
 let store
@@ -33,7 +33,7 @@ export const setApp = (pRouter, pStore) => {
 }
 
 /**
- * ログイン認証を行う。
+ * ログイン認証を行う。 TODO: もはやローカルログインは使わないので削除
  * @method
  * @async
  * @param {String} loginId 
@@ -115,10 +115,15 @@ export const getUserInfo = async (tenantAdmin) => {
 
   // get region
   const currentRegion = await HttpHelper.getAppService('/core/region/current')
-  await StateHelper.load('region', true)
+  LocalStorageHelper.setLocalStorage(KEY.CURRENT.REGION, currentRegion.regionId)
+  // await StateHelper.load('region', true)
 
   // get setting (again in case failed on init or reload)
   const setting = await HttpHelper.getAppService('/meta/setting/wsByTenant/' + getTenantCd('default') + '/' + getRegionId(currentRegion.regionId))
+
+  // get all master
+  await MasterHelper.loadMaster()
+
   return {tenant, tenantFeatureList, user, featureList, menu, currentRegion, setting}
 }
 
@@ -157,6 +162,15 @@ export const authByAppService = async (loginId, password, success, err) => {
     let data = await HttpHelper.postAppService('/login', params, false)
     HttpHelper.setApiKey(data.apiKey)
 
+    const regionId = LocalStorageHelper.getLocalStorage(KEY.CURRENT.REGION)
+    if(Util.hasValue(regionId)){
+      const regionRes = await HttpHelper.putAppService(`/core/region/current/${regionId}`)
+      if(Util.getValue(regionRes, 'status', null)) {
+        LocalStorageHelper.removeLocalStorage(KEY.CURRENT.REGION)
+        LocalStorageHelper.removeLocalStorage(KEY.CURRENT.AREA)
+      }
+    }
+
     const userInfo = await getUserInfo(data.tenantAdmin)
     resetConfig(data.tenantAdmin, userInfo.setting)
 
@@ -190,6 +204,8 @@ export const authByAppService = async (loginId, password, success, err) => {
  * @param {Number} tenantId 
  */
 export const switchTenant = async (tenantId) => {
+  LocalStorageHelper.removeLocalStorage(KEY.CURRENT.REGION)
+  LocalStorageHelper.removeLocalStorage(KEY.CURRENT.AREA)
   await HttpHelper.putAppService(`/meta/tenant/current/${tenantId}`)
   await switchAppService()
 }
@@ -201,6 +217,7 @@ export const switchTenant = async (tenantId) => {
  * @param {Number} regionId 
  */
 export const switchRegion = async (regionId) => {
+  LocalStorageHelper.removeLocalStorage(KEY.CURRENT.AREA)
   await HttpHelper.putAppService(`/core/region/current/${regionId}`)
   await switchAppService()
 }

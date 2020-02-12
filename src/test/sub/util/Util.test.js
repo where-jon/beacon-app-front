@@ -18,7 +18,7 @@ test('getValue', async t => {
       }
     ]
   }
-  t.true(Util.getValue(obj, 'hoge.0.boke.ok').val == 'AbcdE')
+  t.true(Util.getValue(obj, 'hoge.0.boke.ok') == 'AbcdE')
   t.true(Util.getValue(obj, 'hoge.0.boke.ok', 'bbb') == 'AbcdE')
   t.true(Util.getValue(obj, 'hoge.0.boke.ok2', 'bbb') == 'bbb')
 })

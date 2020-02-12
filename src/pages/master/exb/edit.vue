@@ -23,7 +23,7 @@
               </b-form-checkbox>
             </b-form-group>
             -->
-            <b-form-group>
+            <b-form-group v-if="isShown('EXB.WITH', 'exbType')">
               <label v-t="'label.exbType'" />
               <b-form-select v-model="form.exbType" :options="exbTypeOptions" :disabled="!isEditable" :readonly="!isEditable" class="ml-3 col-4" />
             </b-form-group>
@@ -44,22 +44,24 @@
                 </b-form-group>
               </span>
             </b-form-group>
-            <b-form-group>
-              <label v-t="'label.area'" />
-              <v-select v-model="vueSelected.area" :options="areaOptions" :disabled="!isEditable" :readonly="!isEditable" class="vue-options-lg">
-                <template slot="no-options">
-                  {{ vueSelectNoMatchingOptions }}
-                </template>
-              </v-select>
-            </b-form-group>
-            <b-form-group>
-              <label v-t="'label.locationName'" />
-              <v-select v-model="vueSelected.location" :options="getLocationOptions()" :disabled="!isEditable" :readonly="!isEditable" class="vue-options-lg">
-                <template slot="no-options">
-                  {{ vueSelectNoMatchingOptions }}
-                </template>
-              </v-select>
-            </b-form-group>
+            <b-form-row class="mb-3">
+              <b-col>
+                <label v-t="'label.area'" />
+                <v-select v-model="vueSelected.area" :options="areaOptions" :disabled="!isEditable" :readonly="!isEditable" class="vue-options-lg">
+                  <template slot="no-options">
+                    {{ vueSelectNoMatchingOptions }}
+                  </template>
+                </v-select>
+              </b-col>
+              <b-col>
+                <label v-t="'label.locationName'" />
+                <v-select v-model="vueSelected.location" :options="getLocationOptions()" :disabled="!isEditable" :readonly="!isEditable" class="vue-options-lg">
+                  <template slot="no-options">
+                    {{ vueSelectNoMatchingOptions }}
+                  </template>
+                </v-select>
+              </b-col>
+            </b-form-row>
 
             <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
             <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="doBeforeSubmit(false)">
@@ -85,6 +87,7 @@ import * as ConfigHelper from '../../../sub/helper/dataproc/ConfigHelper'
 import * as MenuHelper from '../../../sub/helper/dataproc/MenuHelper'
 import * as OptionHelper from '../../../sub/helper/dataproc/OptionHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import * as VueSelectHelper from '../../../sub/helper/ui/VueSelectHelper'
@@ -109,7 +112,7 @@ export default {
       id: 'exbId',
       backPath: '/master/exb',
       appServicePath: '/core/exb',
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'exb', href: '/master/exb'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.exb.exbId)),
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'masterExb', href: '/master/exb'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.exb.exbId)),
       form: Util.extract(this.$store.state.app_service.exb, [
         'exbId', 'deviceId', 'location.areaId', 'locationId', 'exbSensorList',
         'exbType', 'threshold1', 'threshold2', 'adjust1', 'adjust2'
@@ -125,13 +128,10 @@ export default {
     }
   },
   computed: {
-    areaOptions() {
-      return StateHelper.getOptionsFromState('area', false, true)
-    },
     adjustParams() {
       return [
-        { key: 'threshold1', min: -100, max: 0 },
-        { key: 'threshold2', min: -100, max: 0 },
+        { key: 'threshold1', min: -65535, max: 0 },
+        { key: 'threshold2', min: -65535, max: 0 },
         { key: 'adjust1', min: -50, max: 50 },
         { key: 'adjust2', min: -50, max: 50 },
       ]
@@ -189,14 +189,14 @@ export default {
   async created() {
     this.initExbSensorList()
     this.changeSensors()
-    await StateHelper.load('sensor')
+    // await StateHelper.load('sensor')
     this.$nextTick(() => {
       ValidateHelper.setCustomValidationMessage()
       VueSelectHelper.disabledAllSubmit()
     })
   },
   async mounted() {
-    await Promise.all(['area', 'location'].map(StateHelper.load))
+    // await Promise.all(['area', 'location'].map(StateHelper.load))
     this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, this.form.areaId)
     this.$nextTick(() => this.vueSelected.location = VueSelectHelper.getVueSelectData(this.getLocationOptions(), this.form.locationId))
     this.deviceId = this.form.deviceId
@@ -209,7 +209,7 @@ export default {
       return ConfigHelper.includesDeviceType(name)
     },
     getLocationOptions(){
-      return StateHelper.getOptionsFromState('location', false, true, location => location.areaId == this.form.areaId)
+      return MasterHelper.getOptionsFromState('location', false, true, location => location.areaId == this.form.areaId)
     },
     showSensor(index){
       if(index == 0){

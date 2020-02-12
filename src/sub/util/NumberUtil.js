@@ -1,4 +1,5 @@
 import { hasValue } from './Util'
+import { DISP } from '../constant/config'
 
 /**
  * 数値に関するユーティリティモジュール
@@ -71,9 +72,10 @@ export const bitON = (target, bit) => {
  * 温度情報をフォーマットする
  * @method
  * @param {Number} temperature
+ * @param {Number} aaa
  * @return {String}
  */
-export const formatTemperature = temperature => typeof temperature == 'number'? floorVal(temperature, 1): ''
+export const formatTemperature = (temperature, decimalDigits = DISP.THERMOH.TEMPERATURE_DECIMAL_DIGITS) => typeof temperature == 'number'? floorVal(temperature, 1).toFixed(decimalDigits): temperature
 
 /**
  * 湿度情報をフォーマットする
@@ -81,7 +83,7 @@ export const formatTemperature = temperature => typeof temperature == 'number'? 
  * @param {Number} humidity
  * @return {String}
  */
-export const formatHumidity = humidity => typeof humidity == 'number'? floorVal(humidity, 0): ''
+export const formatHumidity = humidity => typeof humidity == 'number'? floorVal(humidity, 0): humidity
 
 /**
  * 指定した座標が範囲内に存在するか確認する。

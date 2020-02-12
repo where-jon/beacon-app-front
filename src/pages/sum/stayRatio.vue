@@ -38,7 +38,7 @@
       </b-form>
       <slot />
       <b-row class="mt-3" />
-      <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" stacked="md" striped hover outlined />
+      <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" :sort-compare="defaultSortCompare" stacked="md" striped hover outlined />
       <b-row>
         <b-col md="6" class="mt-1 mb-3">
           <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" class="my-0" />
@@ -127,7 +127,7 @@ export default {
     },
   },
   async created() {
-    await Promise.all(['groups','pots','categories'].map(StateHelper.load))
+    // await Promise.all(['groups','pots','categories'].map(StateHelper.load))
     this.form.date = DEV.DEFAULT_DATE != '' ? new Date(DEV.DEFAULT_DATE) : moment().add(-1, 'days').format('YYYYMMDD')
   },
   async mounted() {
@@ -153,7 +153,7 @@ export default {
     async displayImpl(){
       this.replace({showAlert: false})
       this.showProgress()
-      await Promise.all(['zones','pots','groups'].map(StateHelper.load))
+      // await Promise.all(['zones','pots','groups'].map(StateHelper.load))
       
       if (!this.form.date || this.form.date == '') {
         this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
@@ -270,7 +270,7 @@ export default {
       this.replace({showAlert: false})
       this.showProgress()
 
-      await Promise.all(['zones','pots','groups'].map(StateHelper.load))
+      // await Promise.all(['zones','pots','groups'].map(StateHelper.load))
 
       if (!this.form.date || this.form.date == '') {
         this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')

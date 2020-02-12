@@ -8,12 +8,13 @@
 <script>
 import { mapState } from 'vuex'
 import { APP } from '../../../sub/constant/config'
-import { IGNORE, CATEGORY } from '../../../sub/constant/Constants'
+import { IGNORE, CATEGORY, POT_TYPE } from '../../../sub/constant/Constants'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import * as Util from '../../../sub/util/Util'
 import * as BulkHelper from '../../../sub/helper/dataproc/BulkHelper'
 import * as SensorHelper from '../../../sub/helper/domain/SensorHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
@@ -29,7 +30,7 @@ export default {
       id: 'txId',
       backPath: '/master/tx',
       appServicePath: '/core/tx',
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'tx', href: '/master/tx'}, 'bulkRegister'),
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'masterTx', href: '/master/tx'}, 'bulkRegister'),
     }
   },
   computed: {
@@ -38,15 +39,15 @@ export default {
     ]),
   },
   async mounted() {
-    await StateHelper.load('tx')
+    // await StateHelper.load('tx')
   },
   methods: {
     createDefaultName(prefix){
       return prefix + '_' + (new Date().getTime() % 10000)
     },
     async onSaving() {
-      await Promise.all(['category', 'group', 'pot'].map(StateHelper.load))
-      await this.$refs.bulkEdit.bulkSave({numberList: ['btxId', 'major', 'minor', 'disp', 'x', 'y'], nullableList: ['locationName', 'x', 'y']})
+      // await Promise.all(['category', 'group', 'pot'].map(StateHelper.load))
+      await this.$refs.bulkEdit.bulkSave({numberList: ['btxId', 'major', 'minor', 'disp', 'x', 'y'], nullableList: ['locationName', 'x', 'y', 'sensorNames']})
     },
     restructTx(entity, dummyKey){
       if(APP.TX.BTX_MINOR == 'minor'){
@@ -80,7 +81,7 @@ export default {
           potId: Util.getValue(pot, 'potId', dummyKey),
           potCd: Util.getValue(pot, 'potCd', this.createDefaultName(dummyKey)),
           potName: Util.getValue(pot, 'potName', this.createDefaultName(dummyKey--)),
-          potType: Util.getValue(pot, 'potType', CATEGORY.getTypes()[0].value),
+          potType: Util.getValue(pot, 'potType', POT_TYPE.getTypes()[0].value),
           extValue: Util.getValue(pot, 'extValue', null),
         }
       }])
@@ -132,32 +133,20 @@ export default {
       }
       return dummyKey
     },
-    restructLocation(entity, dummyKey){
-      if(!ArrayUtil.includesIgnoreCase(APP.TX.WITH, 'location')){
-        return dummyKey
-      }
-      const param = BulkHelper.createParamLocation(
-        {...entity, locationCd: entity.btxId * -1, locationName: Util.hasValue(entity.locationName)? entity.locationName: SensorHelper.createTxLocationDummyName(entity)},
-        dummyKey
-      )
-      entity.location = param.location
-      return param.dummyKey
-    },
     onRestruct(entity, dummyKey){
       dummyKey = this.restructTx(entity, dummyKey)
       dummyKey = this.restructPot(entity, dummyKey)
-      if(Util.hasValue(entity.sensor)){
-        const param = BulkHelper.createParamSensor('tx', entity.sensor, dummyKey)
+      if(Util.hasValue(entity.sensorNames)){
+        const param = BulkHelper.createParamSensor('tx', entity.sensorNames, dummyKey)
         if(param.sensorList.length != 0){
           entity.txSensorList = param.sensorList
         }
         dummyKey = param.dummyKey
       }
-      dummyKey = this.restructLocation(entity, dummyKey)
       return dummyKey
     },
-    onSaved(){
-      StateHelper.setForceFetch('pot', true)
+    async onSaved(){
+      // StateHelper.setForceFetch('pot', true)
     },
   }
 }

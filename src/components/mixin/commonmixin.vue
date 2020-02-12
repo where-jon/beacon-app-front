@@ -1,14 +1,16 @@
 
 <script>
 import { mapState, mapMutations, mapActions } from 'vuex'
-import { CATEGORY } from '../../sub/constant/Constants'
+import { CATEGORY, POT_TYPE } from '../../sub/constant/Constants'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
+import * as StringUtil from '../../sub/util/StringUtil'
 import * as ConfigHelper from '../../sub/helper/dataproc/ConfigHelper'
+import * as LocaleHelper from '../../sub/helper/base/LocaleHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
 import * as OptionHelper from '../../sub/helper/dataproc/OptionHelper'
 import * as ThemeHelper from '../../sub/helper/ui/ThemeHelper'
 import * as VueSelectHelper from '../../sub/helper/ui/VueSelectHelper'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 
 export default {
   computed: {
@@ -45,11 +47,17 @@ export default {
     categoryOptions() {
       return OptionHelper.getCategoryOptions(CATEGORY.POT_AVAILABLE)
     },
+    authCategoryOptions() {
+      return OptionHelper.getCategoryOptions([CATEGORY.AUTH])
+    },
     vueSelectStyle(){
       return VueSelectHelper.getVueSelectStyle()
     },
     sensorOptions() {
       return OptionHelper.getAllSensorOptions()
+    },
+    sensorGraphOptions() {
+      return OptionHelper.getGraphSensorOptions()
     },
     sensorOptionsExb() {
       return OptionHelper.getExbOptions()
@@ -61,22 +69,25 @@ export default {
       return VueSelectHelper.vueSelectNoMatchingOptions()
     },
     areaOptions() {
-      return StateHelper.getOptionsFromState('area', false, true)
+      return MasterHelper.getOptionsFromState('area', false, true)
     },
     potOptions() {
-      return StateHelper.getOptionsFromState('pot', false, true)
+      return MasterHelper.getOptionsFromState('pot', false, true)
     },
     locationOptions() {
-      return StateHelper.getOptionsFromState('location', false, true)
+      return MasterHelper.getOptionsFromState('location', false, true)
     },
     exbOptions() {
-      return StateHelper.getOptionsFromState('exb', ConfigHelper.includesDeviceType('deviceId')? 'deviceId': 'deviceIdX', true)
+      return MasterHelper.getOptionsFromState('exb', ConfigHelper.includesDeviceType('deviceId')? 'deviceId': 'deviceIdX', true)
     },
     txOptions() {
-      return StateHelper.getOptionsFromState('tx', ConfigHelper.includesBtxMinor('btxId')? 'btxId': 'minor', true)
+      return MasterHelper.getOptionsFromState('tx', ConfigHelper.includesBtxMinor('btxId')? 'btxId': 'minor', true)
     },
     zoneOptions() {
-      return StateHelper.getOptionsFromState('zone', false, true)
+      return MasterHelper.getOptionsFromState('zone', false, true)
+    },
+    filterSelectedList() {
+      return ['area', 'group', 'category', 'detail', 'freeWord']
     },
     selectedArea: {
       get() { return this.$store.state.main.selectedArea},
@@ -94,23 +105,27 @@ export default {
       get() { return this.$store.state.main.selectedDetail},
       set(val) { this.replaceMain({'selectedDetail': val})},
     },
+    selectedFreeWord: {
+      get() { return this.$store.state.main.selectedFreeWord},
+      set(val) { this.replaceMain({'selectedFreeWord': val})},
+    },
   },
   methods: {
     ...mapMutations('app_service', [
-      'replaceAS', 
-      'clear', 
+      'replaceAS',
+      'clear',
     ]),
     ...mapMutations([
-      'replace', 
+      'replace',
     ]),
     ...mapActions([
       'showErrorModal'
     ]),
     ...mapMutations('main', [
-      'replaceMain', 
+      'replaceMain',
     ]),
     ...mapMutations('setting', [
-      'replaceSetting', 
+      'replaceSetting',
     ]),
     ...mapActions([
       'showProgress',
@@ -124,6 +139,36 @@ export default {
     },
     closeVueSelect(){
       VueSelectHelper.closeVueSelect()
+    },
+    getIndividualOptions(categoryId, groupId) {
+      return MasterHelper.getOptionsFromState('pot', false, true,
+        pot => pot.potType == POT_TYPE.PERSON && (!categoryId || pot.categoryId == categoryId) && (!groupId || pot.groupId == groupId)
+      )
+    },
+    defaultSortCompare(a, b, key) {
+      return StringUtil.sortByString(a[key], b[key], LocaleHelper.getSystemLocale())
+    },
+    refreshTimer(key, time, func) {
+      const now = (new Date()).getTime()
+      return this.$store.state.main.timers.filter(timer => {
+        if(key && timer.key == key) {
+          clearTimeout(timer.id)
+          return false
+        }
+        if(timer.start + timer.expired < now) {
+          return false
+        }
+        return true
+      })
+    },
+    pushTimer(key, time, func) {
+      const timers = this.refreshTimer(key)
+      timers.push({ key: key, id: setTimeout(func, time), start: (new Date()).getTime(), expired: time })
+      this.replaceMain({ 'timers': timers })
+    },
+    popTimer(key) {
+      const timers = this.refreshTimer(key)
+      this.replaceMain({ 'timers': timers })
     },
   }
 }

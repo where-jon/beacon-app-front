@@ -1,6 +1,6 @@
 <template>
   <b-form inline @submit.prevent>
-    <b-container :fluid="isFluid">
+    <b-container :fluid="isFluid" @click="resetDetail">
       <alert :message="showMessage? message: error" :force-hide="alertForceHide" />
 
       <!-- searchbox -->
@@ -11,8 +11,11 @@
             <label v-t="'label.filter'" class="mr-2" />
             <b-input-group>
               <input v-model="filter.reg" class="form-control align-self-center" :maxlength="maxFilterLength">
+              <button v-if="compactMode" @click="fetchDataCompact()">
+                <font-awesome-icon class="" icon="search" fixed-width />
+              </button>
               <b-input-group-append>
-                <b-btn v-t="'label.clear'" :disabled="!filter.reg" variant="secondary" class="align-self-center" @click="filter.reg = ''" />
+                <b-btn v-t="'label.clear'" :disabled="!filter.reg" variant="secondary" class="align-self-center" @click="filter.reg = ''; compactMode? fetchDataCompact(): () => {}" />
               </b-input-group-append>
             </b-input-group>
           </b-form-row>
@@ -83,8 +86,13 @@
       <b-row class="mt-3" />
 
       <!-- table -->
-      <b-table :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filterGrid" :bordered="params.bordered" :sort-by.sync="sortBy" :sort-compare="sortCompare" :sort-desc.sync="sortDesc" :empty-filtered-text="emptyMessage" show-empty
-               stacked="md" striped hover outlined caption-top @filtered="onFiltered"
+      <b-table :items="items" :fields="fields"
+                :current-page="compactMode? 1: currentPage" :per-page="perPage"
+                :filter="compactMode? () => true: filterGrid" :bordered="params.bordered"
+                :sort-by.sync="sortBy" :sort-compare="compactMode? () => 0: sortCompare" :sort-desc.sync="sortDesc" :empty-filtered-text="emptyMessage"
+                show-empty stacked="md" striped hover outlined caption-top
+                @filtered="onFiltered"
+                @sort-changed="compactMode? fetchDataCompact(): () => {}"
       >
         <template v-if="params.tableDescription" slot="table-caption">
           {{ $i18n.tnl('label.' + params.tableDescription) }}
@@ -147,27 +155,33 @@
             {{ zoneName }}
           </div>
         </template>
+        <template slot="guardNames" slot-scope="row">
+          <div v-for="(guardName, index) in row.item.guardNames.split(';')" :key="index">
+            {{ guardName }}
+          </div>
+        </template>
+        <template slot="doorNames" slot-scope="row">
+          <div v-for="(doorName, index) in row.item.doorNames.split(';')" :key="index">
+            {{ doorName }}
+          </div>
+        </template>
+        <!-- カテゴリ名 -->
+        <template slot="auth" slot-scope="row">
+          <div v-for="(categoryName, index) in row.item.authCategoryNames" :key="index">
+            {{ categoryName }}
+          </div>
+        </template>
         <!-- EXBタイプ名 -->
         <template slot="exbTypeName" slot-scope="row">
           <div>
             {{ getDispExbType(row.item) }}
           </div>
         </template>
-        <!-- タイプ名 -->
-        <template slot="locationTypeName" slot-scope="row">
-          <div>
-            {{ getDispLocationType(row.item) }}
-          </div>
-        </template>
         <!-- センサ名 -->
-        <template slot="sensorIdName" slot-scope="row">
-          <div v-for="(sensorIdName, index) in row.item.sensorIdNames" :key="index">
-            {{ $i18n.tnl('label.' + sensorIdName) }}
+        <template slot="sensorNames" slot-scope="row">
+          <div v-for="(sensorIdName, index) in row.item.sensorNames" :key="index">
+            {{ sensorIdName }}
           </div>
-        </template>
-        <!-- センサ名 -->
-        <template slot="dispCategoryName" slot-scope="row">
-          <span class="row" v-text="getDispCategoryName(row.item)" />
         </template>
         <!-- 電池レベル -->
         <template slot="powerLevel" slot-scope="row">
@@ -190,11 +204,20 @@
         <template slot="icons" slot-scope="row">
           <div class="empty-icon d-inline-flex" /><!-- 横幅0の「支柱」 -->
           <div class="d-inline-flex flex-wrap">
-            <div v-for="position in row.item.positions" :key="position.areaId"
-                 :style="position.display" :class="'d-inline-flex m-1 '+ position.blinking" @click.stop="mapDisplay(position)"
-            >
-              {{ position.label }}
-            </div>
+            <span v-if="useTxPopup">
+              <div v-for="position in row.item.positions" :key="position.areaId"
+                  :style="position.display" :class="'d-inline-flex m-1 '+ position.blinking" @click="txOnClick($event,position.tx)"
+              >
+                {{ position.label }}
+              </div>
+            </span>
+            <span v-else>
+              <div v-for="position in row.item.positions" :key="position.areaId"
+                  :style="position.display" :class="'d-inline-flex m-1 '+ position.blinking" @click.stop="mapDisplay(position, true)"
+              >
+                {{ position.label }}
+              </div>
+            </span>
           </div>
         </template>
         <!-- 設定用 -->
@@ -223,7 +246,7 @@
       <!-- pager -->
       <b-row>
         <b-col v-if="usePagenation" md="6" class="mt-1 mb-3">
-          <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" class="my-0" />
+          <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" class="my-0" @input="compactMode? fetchDataCompact(): () => {}" />
         </b-col>
         <!-- bulk upload button -->
         <b-col v-if="isBulkRegistable && params.bulkUploadPath && !iosOrAndroid" md="6" class="my-1">
@@ -233,6 +256,10 @@
         </b-col>
       </b-row>
 
+      <!-- Tx詳細表示（ポップアップ） -->
+      <div v-if="selectedTx.btxId && showReady">
+        <txdetail :selected-tx="selectedTx" :selected-sensor="selectedSensor" :is-show-modal="isShowModal()" @resetDetail="resetDetail" />
+      </div>
       <!-- modal -->
       <b-modal id="modalInfo" :title="modalInfo.title" @hide="resetModal" @ok="execDelete(modalInfo.id)">
         {{ modalInfo.content }}
@@ -244,12 +271,14 @@
 <script>
 
 import { mapState, mapMutations } from 'vuex'
-import { CATEGORY, SENSOR, EXB } from '../../sub/constant/Constants'
+import { APP, APP_SERVICE , EXCLOUD} from '../../sub/constant/config'
+import { CATEGORY, DISP, SENSOR, EXB, KEY } from '../../sub/constant/Constants'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as CsvUtil from '../../sub/util/CsvUtil'
 import * as StringUtil from '../../sub/util/StringUtil'
 import * as Util from '../../sub/util/Util'
+import * as DomUtil from '../../sub/util/DomUtil'
 import * as AppServiceHelper from '../../sub/helper/dataproc/AppServiceHelper'
 import * as AuthHelper from '../../sub/helper/base/AuthHelper'
 import { getCharSet } from '../../sub/helper/base/CharSetHelper'
@@ -258,16 +287,22 @@ import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
 import * as OptionHelper from '../../sub/helper/dataproc/OptionHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
+import * as VueSelectHelper from '../../sub/helper/ui/VueSelectHelper'
+import * as PositionHelper from '../../sub/helper/domain/PositionHelper'
+import * as SensorHelper from '../../sub/helper/domain/SensorHelper'
 import commonmixin from '../mixin/commonmixin.vue'
 import detailFilter from '../../components/parts/detailFilter.vue'
 import alert from '../parts/alert.vue'
 import settinginput from '../parts/settinginput.vue'
+import txdetail from '../../components/parts/txdetail.vue'
 
 export default {
   components: {
     detailFilter,
     alert,
     settinginput,
+    txdetail,
   },
   mixins: [commonmixin],
   props: {
@@ -277,7 +312,7 @@ export default {
     },
     list: {
       type: Array,
-      required: true,
+      default: () => [],
     },
     isFluid: {
       type: Boolean,
@@ -307,11 +342,25 @@ export default {
       type: Boolean,
       default: false,
     },
-  },
+    compactMode: {
+      type: Boolean,
+      default: false,
+    },
+    // Txをクリックした場合、ポップアップを出す
+    pShowDetail: {
+      type: Boolean,
+      default: false,
+    },
+},
   data() {
     return {
       currentPage: 1,
       totalRows: 0,
+      dataItemList: [],
+      showReady: false, //  pir, positio
+      preloadThumbnail: new Image(),
+      thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
+      useTxPopup: APP.POS_STACK.USE_POPUP,
       filter: {
         reg: '',
         extra: {
@@ -322,6 +371,7 @@ export default {
           zone: '',
           zoneCategory: '',
           detectState: null,
+          keyCategory: '',
           settingCategory: '',
         },
         detail: null,
@@ -334,6 +384,10 @@ export default {
         area: null,
         zone: null,
         zoneCategory: null,
+      },
+      old: {
+        sortBy: null,
+        sortDesc: false,
       },
       emptyMessage: this.$i18n.tnl('message.listEmpty'),
       modalInfo: { title: '', content: '', id:'' },
@@ -349,7 +403,11 @@ export default {
   },
   computed: {
     items() {
-      return this.list.map((item) => {
+      const dataList = this.compactMode? this.dataItemList: this.list
+      if(!dataList){
+        return []
+      }
+      return dataList.map(item => {
         return _.reduce(item, (result, val, key) => {
           const isAllDisp = Util.hasValue(this.params.allDispFields) && this.params.allDispFields.includes(key)
           result[key] = isAllDisp? val: StringUtil.cutOnLong(val, 50)
@@ -406,10 +464,11 @@ export default {
       if (!this.params.extraFilter) {
         return {}
       }
-      return this.params.extraFilter.map((key) => {
+      return this.params.extraFilter.map(key => {
+        const optionFilter = this.params.extraFilterFunc && this.params.extraFilterFunc[key]? this.params.extraFilterFunc[key]: options => options
         return {
           key: key,
-          options: this[key + 'Options'],
+          options: optionFilter(this[key + 'Options']),
           change: this.params[key + 'Change']? this.params[key + 'Change']: () => {},
           show: this.params.showOnlyHas && this.params.showOnlyHas.includes(key)? Util.hasValue(this[key + 'Options'].filter((val) => val.value != null)): true,
         }
@@ -432,41 +491,47 @@ export default {
       'selectedarea',
     ]),
     categoryOptions() {
-      return StateHelper.getOptionsFromState('category', false, true, 
+      return MasterHelper.getOptionsFromState('category', false, true, 
         category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
       )
     },
     zoneOptions() {
-      return StateHelper.getOptionsFromState('zone', false, true)
+      return MasterHelper.getOptionsFromState('zone', false, true)
     },
     zoneCategoryOptions() {
-      return StateHelper.getOptionsFromState('category',
-        category => StateHelper.getDispCategoryName(category),
+      return MasterHelper.getOptionsFromState('category',
+        category => MasterHelper.getDispCategoryName(category),
         true, 
         category => CATEGORY.ZONE_AVAILABLE.includes(category.categoryType)
       )
     },
     groupOptions() {
-      return StateHelper.getOptionsFromState('group', false, true)
+      return MasterHelper.getOptionsFromState('group', false, true)
     },
     areaOptions() {
-      return StateHelper.getOptionsFromState('area', false, true)
-    },
-    locationTypeOptions() {
-      return OptionHelper.getLocationTypeOptions()
+      return MasterHelper.getOptionsFromState('area', false, true)
     },
     detectStateOptions() {
       let options = DetectStateHelper.getTypes()
       options.unshift({value:null, text:''})
       return options
     },
-    settingCategoryOptions() {
-      const options = this.$i18n.tnl('config.OPTIONS.SETTING_CATEGORY')
-      if(!options){
-        return [{value: null, text: ''}]
+    keyCategoryOptions() {
+      const options = this.$i18n.tnl('config.OPTIONS.KEY_CATEGORY')
+      if(!Util.hasValue(options)) {
+        return [{ value: null, text: '' }]
       }
       const ret = Object.keys(options).map(key => ({value: key, text: options[key]}))
-      ret.unshift({value: null, text: ''})
+      ret.unshift({ value: null, text: '' })
+      return ret
+    },
+    settingCategoryOptions() {
+      const options = APP.MANAGE.SETTING_CATEGORY
+      if(!Util.hasValue(options)) {
+        return [{ value: null, text: '' }]
+      }
+      const ret = options.map(key => ({value: key, text: key}))
+      ret.unshift({ value: null, text: '' })
       return ret
     },
     loginId() {
@@ -487,6 +552,14 @@ export default {
     anotherActionButtonStyle(){
       return BrowserUtil.getLangShort() == 'ja'? {width: '100px !important'}: {width: '110px !important'}
     },
+    selectedSensor() {
+      if (!Util.getValue(this.selectedTx, 'btxId', null)) {
+        return []
+      }
+      if (!this.positionedTxMap) return []
+      const ret = SensorHelper.getSensorFromBtxId('meditag', this.positionedTxMap.meditag, this.selectedTx.btxId)
+      return ret? [ret]: []
+    },
   },
   watch: {
     'vueSelected': {
@@ -495,41 +568,62 @@ export default {
           const oVal = Util.getValue(oldVal[key], 'value', null)
           const nVal = Util.getValue(newVal[key], 'value', null)
           this.filter.extra[key] = nVal
+          if(this.useCommonFilter(key)){
+            this[this.getCommonFilterKey(key)] = nVal
+          }
           if(oVal != nVal){
             this.extraFilterSpec[key].change()
           }
+          if(['category', 'group'].some(k => k == key)) {
+            this[StringUtil.concatCamel('selected', key)] = nVal
+          }
         })
+        this.compactMode? this.fetchDataCompact(): () => {}
       },
       deep: true,
     },
+    selectedArea: function(newVal, oldVal) {
+      LocalStorageHelper.setLocalStorage(KEY.CURRENT.AREA, newVal)
+    },
   },
   async created() {
-    await StateHelper.load('region')
+    // await StateHelper.load('region')
   },
-  mounted() {
+  async mounted() {
+    const currentArea = LocalStorageHelper.getLocalStorage(KEY.CURRENT.AREA)
+    if(Util.hasValue(currentArea)) {
+      this.selectedArea = currentArea
+    }
     const strageMessage = LocalStorageHelper.popLocalStorage('listMessage')
     this.message = Util.hasValue(strageMessage)? strageMessage: this.listMessage
     this.replaceAS({listMessage: null})
-    this.$parent.$options.methods.fetchData.apply(this.$parent)
+    if(this.compactMode) {
+      await this.showList()
+    } else {
+      this.$parent.$options.methods.fetchData.apply(this.$parent)
+    }
     if (this.params.extraFilter) {
-      this.params.extraFilter.filter((str) => !(str === 'detectState'))
-        .forEach(str => {
-          StateHelper.load(str)
-        })
+      const filterColumnList = this.params.extraFilter.filter(str => str != 'detectState')
+      // await Promise.all(filterColumnList.map(state => StateHelper.load(state)))
+      filterColumnList.filter(state => ['category', 'group', 'area'].some(s => s == state)).forEach(state => {
+        const selectedKey = StringUtil.concatCamel('selected', state)
+        this.vueSelected[state] = VueSelectHelper.getVueSelectData(this[state + 'Options'], this[selectedKey])
+      })
     }
     this.sortBy = this.params.sortBy? this.params.sortBy: null
-    this.replace({showWarn: false})
-    this.replace({showAlert: this.showError})
-    this.replace({showInfo: this.showMessage})
+    this.replace({showWarn: false, showAlert: this.showError, showInfo: this.showMessage})
 
     this.$nextTick(() => {
       if(this.moveEditPage && this.editPage){
         this.currentPage = this.editPage
       }
-      this.replaceAS({editPage: null})
-      this.replaceAS({moveEditPage: false})
+      this.replaceAS({editPage: null, moveEditPage: false})
     })
   },
+  // beforeDestroy() {
+  //   document.removeEventListener('touchstart', this.touchEnd)
+  //   this.resetDetail()
+  // },
   methods: {
     ...mapMutations('app_service', [
       'replaceAS', 
@@ -546,12 +640,16 @@ export default {
     thumbnail(row) {
       return this.$parent.$options.methods.thumbnail.call(this.$parent, row)
     },
+    useCommonFilter(key){
+      return Util.getValue(this.params, 'commonFilter', []).some(v => v == key)
+    },
+    getCommonFilterKey(key){
+      return StringUtil.concatCamel('selected', key)
+    },
     setEmptyMessage(){
       this.message = null
       this.error = null
-      this.replace({showWarn: false})
-      this.replace({showAlert: false})
-      this.replace({showInfo: false})
+      this.replace({showWarn: false, showAlert: false, showInfo: false})
       this.$forceUpdate()
     },
     isCurrentTenant(item){
@@ -567,17 +665,14 @@ export default {
       if(key == 'txIdName'){
         return ArrayUtil.sortByArray(aData.txIdNames, bData.txIdNames)
       }
-      if(['regionName', 'areaCd', 'potCd', 'categoryCd', 'groupCd'].includes(key)){
-        return StringUtil.sortByString(aData[key], bData[key])
-      }
-      return null
+      return this.defaultSortCompare(aData, bData, key)
     },
     async switchTenant(item){
       await AuthHelper.switchTenant(item.tenantId)
       location.reload()
     },
     getItem(key){
-      if(this.$parent.$options.methods.getItem){
+      if(this.$parent.$options.methods && this.$parent.$options.methods.getItem){
         return this.$parent.$options.methods.getItem.call(this.$parent, key)
       }
       return {}
@@ -598,59 +693,79 @@ export default {
       return ret
     },
     clearAction(key){
-      if(this.$parent.$options.methods.clearAction){
+      if(this.$parent.$options.methods && this.$parent.$options.methods.clearAction){
         this.$parent.$options.methods.clearAction.call(this.$parent, key)
       }
     },
-    exportCsv() {
-      this.setEmptyMessage()
-      let headers
-      if (this.params.custumCsvColumns) {
-        headers = this.params.custumCsvColumns
-      } else {
-        headers = _(this.params.fields).map((val) => val.key).uniqWith(_.isEqual).value()
+    async createListParam() {
+      return this.$parent.$options.methods && this.$parent.$options.methods.createListParams? await this.$parent.$options.methods.createListParams.call(this.$parent): {}
+    },
+    async showList() {
+      if(!Util.hasValue(this.sortBy)) {
+        this.sortBy = this.old.sortBy
+        this.sortDesc = this.old.sortDesc
+        return
       }
-      headers = headers.filter((val) => !['style', 'thumbnail', 'actions', 'updateAction'].includes(val))
-      headers.unshift('updateKey')
-      headers.push('delFlg')
-      const list = this.list.map((val) => ({...val, updateKey: val[this.id], delFlg: 0}))
-      if(this.$parent.$options.methods.customCsvData){
-        list.forEach((val) => {
-          this.$parent.$options.methods.customCsvData.call(this.$parent, val)
-        })
+      this.showProgress()
+      try {
+        const params = await this.createListParam()
+        params.word = this.filter.reg
+        params.category = this.selectedCategory
+        params.group = this.selectedGroup
+        const response = await AppServiceHelper.fetchCompactList(`${this.appServicePath}/listdownload/${this.perPage}/${this.currentPage}/${this.sortBy}/${this.sortDesc? 'desc': 'asc'}` , params)
+        if( this.$parent.$options.methods && this.$parent.$options.methods.editResponse && response.data) {
+          await this.$parent.$options.methods.editResponse.call(this.$parent, response.data)
+        }
+        this.dataItemList = response.data
+        this.totalRows = response.count
+        this.old.sortBy = this.sortBy
+        this.old.sortDesc = this.sortDesc
       }
-      BrowserUtil.fileDL(this.params.name + '.csv', CsvUtil.converToCsv(list, headers), getCharSet(this.loginId))
+      catch(e) {
+        console.error(e)
+      }
+      this.hideProgress()
+    },
+    async exportCsv() {
+      const params = await this.createListParam()
+      BrowserUtil.executeFileDL(
+        APP_SERVICE.BASE_URL
+        + this.params.appServicePath
+        + '/csvdownload'
+        + '?charset=' + getCharSet(this.$store.state.loginId)
+        + '&params=' + encodeURI(JSON.stringify(params))
+      )
+    },
+    fetchDataCompact() {
+      this.$nextTick(() => this.showList())
     },
     style(index) {
       return this.$parent.$options.methods.style.call(this.$parent, index)
     },
     async edit(item, index, target) {
       this.setEmptyMessage()
-      let entity = item != null? await AppServiceHelper.fetch(this.appServicePath, item[this.id]): {}
-      if (this.$parent.$options.methods.convBeforeEdit) {
+      let entity = {}
+      if(item != null) {
+        const masterId = this.compactMode? this.$parent.$options.methods && this.$parent.$options.methods.getEditKey? this.$parent.$options.methods.getEditKey.call(this.$parent, item): item.updateKey: item[this.id]
+        entity = await AppServiceHelper.fetch(this.appServicePath, masterId)
+      } else {
+        // masterCdの最大値を算出するために全件データが必要
+        // await StateHelper.load(this.name)
+      }
+      if (this.$parent.$options.methods && this.$parent.$options.methods.convBeforeEdit) {
         entity = this.$parent.$options.methods.convBeforeEdit.call(this.$parent, entity)
       }
-      this.replaceAS({[this.name]: entity})
-      this.replaceAS({editPage: this.currentPage})
+      this.replaceAS({[this.name]: entity, editPage: this.currentPage})
       this.$router.push(this.editPath)
     },
-    getDispCategoryName(category){
-      return StateHelper.getDispCategoryName(category)
-    },
-    getDispExbType(exb){
-      return Util.getValue(EXB.getTypes().find(val => val.value == exb.exbType), 'text', '')
-    },
-    getDispLocationType(location){
-      return Util.getValue(this.locationTypeOptions.find(val => val.value == location.locationType), 'text', '')
-    },
     getAnotherPageParam(name, item) {
-      const pageParam = this.anotherPageParams.find((val) => val.name == name)
+      const pageParam = this.anotherPageParams.find(val => val.name == name)
       return pageParam && item[pageParam.id]? pageParam: null
     },
     async jumpAnotherPage(name, item) {
       const pageParam = this.getAnotherPageParam(name, item)
       const pageSendParam = {}
-      pageParam.sendParamNames.forEach((val) => pageSendParam[val] = item[val])
+      pageParam.sendParamNames.forEach(val => pageSendParam[val] = item[val])
       this.replaceAS({pageSendParam: pageSendParam})
       this.$router.push(pageParam.jumpPath)
     },
@@ -664,10 +779,11 @@ export default {
     },
     deleteConfirm(item, index, button) {
       this.setEmptyMessage()
+      const masterId = this.compactMode? item.updateKey: item[this.id]
       this.modalInfo.title = this.$i18n.tnl('label.confirm')
       const confirmName = this.params.confirmName? this.params.confirmName: Util.getValue(this.params, 'name', '') + 'Name'
       this.modalInfo.content = this.$i18n.tnl(this.params.delFilter && item.delFlg != 0? 'message.completeDeleteConfirm': 'message.deleteConfirm', {target: `${this.$i18n.tnl('label.' + confirmName)}:${item[confirmName]}`})
-      this.modalInfo.id = item[this.id]
+      this.modalInfo.id = masterId
       this.$root.$emit('bv::show::modal', 'modalInfo', button)
     },
     resetModal () {
@@ -684,7 +800,7 @@ export default {
       }
       try{
         const regExp = new RegExp('.*' + this.filter.reg + '.*', 'i')
-        const param = this.params.fields.concat(this.params.addFilterFields? this.params.addFilterFields.map(field => ({key: field})): []).map((val) => Util.getValue(originItem, val.key, ''))
+        const param = this.params.fields.filter(field => Util.getValue(field, 'filterable', true)).concat(this.params.addFilterFields? this.params.addFilterFields.map(field => ({key: field})): []).map(val => Util.getValue(originItem, val.key, ''))
         return regExp.test(JSON.stringify(param))
       }
       catch(e){
@@ -728,12 +844,20 @@ export default {
             return false
           }
           break
+        case 'keyCategory':
+          if (extra.keyCategory){
+            if(originItem.isParent){
+              return false
+            }
+            return originItem.categoryKey == extra.keyCategory
+          }
+          break
         case 'settingCategory':
           if (extra.settingCategory){
             if(originItem.isParent){
               return false
             }
-            return originItem.categoryKey == extra.settingCategory
+            return originItem.category == extra.settingCategory
           }
           break
         }
@@ -787,20 +911,33 @@ export default {
       return regBool && extBool && delBool && allShowBool && parentBool && detailBool
     },
     onFiltered(filteredItems) {
+      if(this.compactMode) {
+        return {}
+      }
       this.totalRows = filteredItems.length
       this.currentPage = 1
     },
     async execDelete(id) {
       this.replace({showInfo: false})
+      const pageName = this.params.dispName? this.params.dispName: this.params.name
       try {
         await AppServiceHelper.deleteEntity(this.appServicePath, id)
-        await StateHelper.load(this.params.name, true)
+        // if(this.compactMode) {
+        //   // StateHelper.setForceFetch(this.params.name, true)
+        // } else {
+        //   // await StateHelper.load(this.params.name, true)
+        // }
+        await MasterHelper.loadMaster()
         this.message = this.$i18n.tnl('message.deleteCompleted', {target: this.$i18n.tnl('label.' + this.params.name)})
-        if(this.$parent.$options.methods.onSaved){
+        if(this.$parent.$options.methods && this.$parent.$options.methods.onSaved){
           this.$parent.$options.methods.onSaved.call(this.$parent, {message: this.message})
         }
         this.replace({showInfo: true})
-        await this.$parent.$options.methods.fetchData.apply(this.$parent)
+        if(this.compactMode) {
+          await this.showList()
+        } else {
+          await this.$parent.$options.methods.fetchData.apply(this.$parent)
+        }
       } catch (e) {
         this.message = null
         if(e && e.response && e.response.data && ArrayUtil.isArray(e.response.data.errorList)){
@@ -832,12 +969,12 @@ export default {
           this.replace({showAlert: true})
         }
         else{
-          this.error = this.$i18n.terror('message.deleteFailed', {target: this.$i18n.tnl('label.' + this.params.name), code: e.response.status})
+          this.error = this.$i18n.terror('message.deleteFailed', {target: this.$i18n.tnl('label.' + pageName), code: e.response.status})
         }
       }
     },
     // 位置把握(一覧)から在席表示に遷移する
-    async mapDisplay(item) {
+    async mapDisplay(item, filterReset) {
       const tx = item.tx
       const selectedTx = {
         btxId: tx.btxId,
@@ -848,11 +985,59 @@ export default {
       if (txOk) {
         this.replaceMain({selectedTx})
       }
+      if(filterReset) {
+        this.filterSelectedList.forEach(selected => this[StringUtil.concatCamel('selected', selected)] = null)
+        this.replaceMain({ initDetailFilter: true })
+      }
       this.replaceMain({selectedArea})
       this.$router.push('/main/position')
     },
     onDetailFilter(list){
       this.filter.detail = list
+    },
+    // Txアイコンを選択した場合のポップアップ
+    setupSelectedTx (tx, x, y, isDispThumbnail) {
+      const menuGroup = DomUtil.getRect('.menu-groups')  //  ナビの情報取得：x位置調整
+      const navbar = DomUtil.getRect('.navbar')  // ナビの情報取得：y位置調整
+      const selectedTx = PositionHelper.createTxDetailInfoOnStack(x, y, tx,{x: menuGroup.width, y: navbar.height} , isDispThumbnail? this.preloadThumbnail: {})
+      this.replaceMain({ selectedTx })
+      this.$nextTick(() => this.showReady = true)
+      if (this.isShowModal()) {
+        this.$root.$emit('bv::show::modal', 'detailModal')
+      }
+    },
+    showDetail(tx, x, y) {
+      // アラート表示でずれるので遅延実行を行う
+      this.$nextTick(() => this.showDetailImp(tx, x, y))
+    },
+    showDetailImp(tx, x, y) { // (p,) position
+      if(!Util.hasValue(this.pShowDetail)){
+        return
+      }
+      // サムネイル非表示設定確認
+      const isNoThumbnail = APP.TXDETAIL.NO_UNREGIST_THUMB? !tx.existThumbnail: false
+      if (isNoThumbnail) {
+        this.setupSelectedTx(tx, x, y, false)
+      } else {
+        this.preloadThumbnail.onload = () => this.setupSelectedTx(tx, x, y, true)
+        this.preloadThumbnail.src = null // iOSでonloadが一度しか呼ばれないので対策
+
+        this.preloadThumbnail.src = tx.existThumbnail? this.thumbnailUrl.replace('{id}', tx.potId): '/default.png'
+      }
+    },
+    txOnClick(evt,tx){
+      evt.stopPropagation()
+      this.showReady = false
+      this.showDetail(tx, evt.pageX - evt.offsetX, evt.pageY - evt.offsetY)
+    },
+    isShowModal() { // pir, position
+      return BrowserUtil.isResponsiveMode()
+    },
+
+    // ポップアップの自動非表示
+    resetDetail() { // p, pir, position
+      const selectedTx = {}
+      this.replaceMain({ selectedTx })
     },
   }
 }

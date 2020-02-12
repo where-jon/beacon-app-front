@@ -1,7 +1,7 @@
 // configuration for app
 // Basically using const but values are not primitive but objects or arrays because it may change from outside.
 
-import { DETECT_STATE, LOGIN_MODE } from './Constants'
+import { DETECT_STATE, LOGIN_MODE, SHAPE } from './Constants'
 
 export const DEV = { // 開発デバッグ関連
   DEBUG: 0, // デバッグモード (0:なし、1以上デバッグレベル)
@@ -15,13 +15,13 @@ export const APP = { // 機能面に関する設定
   LOGIN_MODE: LOGIN_MODE.APP_SERVICE, // ログインモード(なし、ローカル、AppService)
   SAAS_DOMAIN: '.saas.',
   COMMON: {
-    VERSION: 'Version 1.3', // バージョン　this application version
-    TIME_ZONE: -9, // 午前0時を決定するためのタイムゾーン(時)
+    VERSION: 'Version 1.3.2', // バージョン　this application version
+    TIME_ZONE: 'JST', // 午前0時を決定するためのタイムゾーン
     AUTO_RELOAD: 60000, // 自動リロード間隔(ミリ秒)
   },
   SYS: {
     TIMEOUT: 60 * 60 * 1000, // session timeout(using local storage)
-    STATE_EXPIRE_TIME: 10 * 60 * 1000, // マスタキャッシュ有効時間(ミリ秒)
+    STATE_EXPIRE_TIME: 3 * 60 * 1000, // マスタキャッシュ有効時間(ミリ秒)
   },
   MENU: {
     SHOW_MENU_LINK: '',
@@ -49,7 +49,6 @@ export const APP = { // 機能面に関する設定
     TRANSPARENT_TIME: 60 * 1000, // 半透明：現在時刻から経過した段階で半透明（ミリ秒）
     LOST_TIME: 10 * 60 * 1000, // 消失とみなす時間（ミリ秒）
     UNDETECT_TIME: 60 * 60 * 1000, // 未検知とみなす時間（ミリ秒）
-    USE_POSITION_HISTORY: false, // 位置情報にT_POSITION_HISTORYを使う
     TX_POS_ONE_TO_ONE: false, // 1つの場所に1TXのみ存在可能
     RSSI_MIN: -99, // RSSI下限値
     MOVING_AVERAGE: 5, // 5回分移動平均
@@ -57,10 +56,10 @@ export const APP = { // 機能面に関する設定
     MULTI_POSITIONING_NUM: 3,     // 多点測位の点数
     // 禁止区域関連設定
     PROHIBIT_ALERT : null,  // 文字列リストで画面かバッチに通知するか判断["screen","mail","led"]
-    PROHIBIT_GROUPS: null, // 禁止区域非許可GROUPID[1,2,3]の形
-    // 重要部品関連設定
+    PROHIBIT_GROUP_ZONE: null, // 禁止区域非許可{"groupCd":"GR1", "zoneCd":["Z1"]}のJSON配列の形
+    // 重要物品関連設定
     LOST_ALERT : null,  // 文字列リストで画面かバッチに通知するか判断["screen","mail"]
-    LOST_GROUPS: null, // 重要部品設定GROUPID[1,2,3]の形
+    LOST_GROUP_ZONE: null, // 重要物品設定{"groupCd":"GR1", "zoneCd":["Z1"]}のJSON配列の形
     USE_LEGEND: false, // 凡例を表示
     SHOW_DETECTED_COUNT: false, // 検知数を表示
     SHOW_TX_NO_OWNER: true, // POTと紐付いていないタグを表示する
@@ -75,7 +74,7 @@ export const APP = { // 機能面に関する設定
     },
   },
   SENSOR: {
-    TX_SENSOR: [1,5,6,7], // TXのタイプに設定可能なセンサーID
+    TX_SENSOR: [1,5,6,7,9], // TXのタイプに設定可能なセンサーID
     MEDITAG: {
       DOWN_RED_TIME: 60000, // MEDiTAG使用時：転倒時赤枠の表示時間
     },
@@ -83,11 +82,14 @@ export const APP = { // 機能面に関する設定
     USE_MEDITAG: false, // メディタグの使用
     USE_MAGNET: false, // マグネットセンサの使用
     USE_PRESSURE: true, // 圧力センサの使用
-    SHOW_MAGNET_ON_PIR: false, // 人感センサ画面でマグネットセンサを表示
+    SHOW_MAGNET_ON_PIR: false, // 利用状況画面でマグネットセンサを表示
     MAGNET_ON_IS_USED: true, // マグネットセンサーONのとき使用中とするか
+    LED: {
+      AUTO_OFF_TIME: 300, // 点灯させたLEDに対し、指定秒後に消灯する
+    },
     // 温湿度
     USE_HUMIDITY_ALERT: true, // 湿度アラートの使用
-    USE_THERMOH_HEATMAP: true, // ヒートマップの使用
+    USE_THERMOH_HEATMAP: false, // ヒートマップの使用
     USE_THERMOH_TOOLTIP: false, // ツールチップを使用する
     TEMPERATURE: {
       LINE_HOUR_START: 0,  // 温湿度グラフの開始時間
@@ -100,7 +102,15 @@ export const APP = { // 機能面に関する設定
   },
   // 位置表示(一覧)
   POS_LIST: {
-    WITH: [''],
+    WITH: ['mapDisplay'],  // 表示対象の文字列を配列に追加で列を表示する。mapDisplay:「マップ表示」列、tel:「電話番号」列
+  },
+  // 位置表示(全体)
+  POS_STACK: {
+    USE_POPUP: false,   // Txアイコンクリック時にポップアップ表示する
+    ADJUST_POPUP: {   // ポップアップの調整　設定した座標だけマイナス
+      X: 15,                   // X座標　増加分、右に移動
+      Y: 5,                     // Y座標　増加分、下に移動
+    },
   },
   // TX関連設定
   TX: {
@@ -110,6 +120,7 @@ export const APP = { // 機能面に関する設定
   },
   // EXB関連設定
   EXB: {
+    WITH: [],
     SENSOR: [1,2,3,4,8], // EXBのタイプに設定可能なセンサーID
     DEVICEID_TYPE: 'deviceId',
     MULTI_SENSOR: true,
@@ -117,10 +128,17 @@ export const APP = { // 機能面に関する設定
   },
   // 場所関連設定
   LOCATION: {
-    WITH: ['posId', 'zone'],
+    WITH: ['zoneClass', 'zoneBlock'],
     TYPE: {
       WITH: [],
     },
+    // 拡張項目定義（サンプル）
+    EXT_DEF: [
+      {key: 'description', type: 'string', length: 100, showlist: true, sort: true },
+      {key: 'toilet', type: 'list', format: 'male|female|share|multip', showlist: true, sort: false},
+      {key:'led_no',type:'int',min:1,max:5,showlist:false},
+      {key:'led_device_id',type:'string',format:'^[0-9]+(,[0-9]+)*$',showlist:false},
+    ],
   },
   // USER関連設定
   USER: {
@@ -130,7 +148,56 @@ export const APP = { // 機能面に関する設定
   POSITION_WITH_AREA: true, // エリアを表示
   // POT関連設定
   POT: {
-    WITH: ['category', 'user', 'ruby', 'description'],
+    WITH: ['thumbnail', 'category', 'user', 'ruby', 'description'],
+    MULTI_TX: false,         // 複数Tx使用
+    TX_MAX: 2,   // 所持Tx最大数
+    TYPES: [1, 2, 3],   // 選択可能な種別（1人,2物,3物(その他)）
+    // 拡張項目定義（サンプル）
+    EXT_DEF: [
+      {key: 'post', type: 'string', showlist: true, sort: true},
+      {key: 'tel', type: 'tel', showlist: true, sort: true},
+      {key: 'mobile', type: 'tel', showlist: false, sort: false},
+      {key: 'entrydate', type: 'date', showlist: true, sort: false},
+      {key: 'salary', type: 'int', min: 0, max: 1200000, showlist: false, sort: false},
+      {key: 'score', type: 'float', default: 50, min: -100, max: 100, showlist: false, sort: false},
+      {key: 'manager', type: 'boolean', default: 'はい', checked:'はい', unchecked:' ', showlist: true, sort: false},
+      {key: 'address', type: 'string', default:'Tokyo', required: true, length:10, format: '[a-zA-Z]+', showlist: false, sort: false},
+    ],
+  },
+  PERSON: {
+    WITH: ['thumbnail', 'category', 'user', 'ruby', 'description'],
+    MULTI_TX: false,         // 複数Tx使用
+    TX_MAX: 2,   // 所持Tx最大数
+    // 拡張項目定義（サンプル）
+    EXT_DEF: [
+      {key: 'post', type: 'string', showlist: true, sort: true},
+      {key: 'tel', type: 'tel', showlist: true, sort: true},
+      {key: 'mobile', type: 'tel', showlist: false, sort: false},
+      {key: 'entrydate', type: 'date', showlist: true, sort: false},
+      {key: 'salary', type: 'int', min: 0, max: 1200000, showlist: false, sort: false},
+      {key: 'score', type: 'float', default: 50, min: -100, max: 100, showlist: false, sort: false},
+      {key: 'manager', type: 'boolean', default: 'はい', checked:'はい', unchecked:' ', showlist: true, sort: false},
+      {key: 'address', type: 'string', default:'Tokyo', required: true, length:10, format: '[a-zA-Z]+', showlist: false, sort: false},
+    ],
+  },
+  THING: {
+    WITH: ['thumbnail', 'category', 'user', 'ruby', 'description'],
+    MULTI_TX: false,         // 複数Tx使用
+    TX_MAX: 2,   // 所持Tx最大数
+    // 拡張項目定義（サンプル）
+    EXT_DEF: [
+      {key: 'post', type: 'string', showlist: true, sort: true},
+      {key: 'tel', type: 'tel', showlist: true, sort: true},
+      {key: 'mobile', type: 'tel', showlist: false, sort: false},
+      {key: 'entrydate', type: 'date', showlist: true, sort: false},
+      {key: 'salary', type: 'int', min: 0, max: 1200000, showlist: false, sort: false},
+      {key: 'score', type: 'float', default: 50, min: -100, max: 100, showlist: false, sort: false},
+      {key: 'manager', type: 'boolean', default: 'はい', checked:'はい', unchecked:' ', showlist: true, sort: false},
+      {key: 'address', type: 'string', default:'Tokyo', required: true, length:10, format: '[a-zA-Z]+', showlist: false, sort: false},
+    ],
+  },
+  OTHER: {
+    WITH: ['thumbnail', 'category', 'user', 'ruby', 'description'],
     MULTI_TX: false,         // 複数Tx使用
     TX_MAX: 2,   // 所持Tx最大数
     // 拡張項目定義（サンプル）
@@ -147,13 +214,35 @@ export const APP = { // 機能面に関する設定
   },
   // category
   CATEGORY: {
-    TYPES: [1,2],   // 選択可能な種別（1人,2物,3ゾーン）
+    TYPES: [1,2],   // 選択可能な種別（1人,2物,3ゾーン,4:権限）
+    WITH: [],
+    // 拡張項目定義（サンプル）
+    EXT_DEF: [
+      {key: 'ruby', type: 'string', length: 20, showlist: true, sort: true },
+    ],
+  },
+  // group
+  GROUP: {
+    WITH: ['ruby'],
+    // 拡張項目定義（サンプル）
+    EXT_DEF: [
+      {key: 'ruby', type: 'string', length: 20, showlist: true, sort: true },
+    ],
+  },
+  // zone
+  ZONE: {
+    WITH: [],
+    TYPES: [1],   // 選択可能な種別（0, 1: 通常, 2: 警戒ゾーン, 3: ドア）
+    // 拡張項目定義（サンプル）
+    EXT_DEF: [
+      {key: 'description', type: 'string', length: 100, showlist: true, sort: true },
+    ],
   },
   NOTIFY: {
     // 通知媒体
     MIDIUM_TYPES: [0,1],   // 選択可能な種別（1メール,2slack）
     // 通知
-    STATE_TYPES: [0,1,2,4,5], // 選択可能な種別（0 TXボタン通知,1 アラート系, 2 ユーザ登録・更新 , 3 sos, 4 進入禁止, 5 重要部品 ）
+    STATE_TYPES: [0,1,2,4,5], // 選択可能な種別（0 TXボタン通知,1 アラート系, 2 ユーザ登録・更新 , 3 sos, 4 進入禁止, 5 重要物品 ）
   },
   // 動線分析関連設定
   ANALYSIS: {
@@ -192,7 +281,8 @@ export const APP = { // 機能面に関する設定
     WITH: ['posId', 'deviceId', 'deviceIdX'],
   },
   SENSORGRAPH: {
-    WITH_DEVICE: true,             // 画面上でデバイスを使用するか否か
+    SENSOR: [1,2,3,4,5,6,7,8,9],        // グラフで利用するセンサー一覧
+    WITH_DEVICE: true,                // 画面上でデバイスを使用するか否か
     CSV_IMMEDIATE: false,             // csvで直近値を出力するか否か
   },
   HISTORY_EXC: {
@@ -210,9 +300,23 @@ export const APP = { // 機能面に関する設定
     },
   },
   SVC: {
-    POS: {
-      EXSERVER: false, // EXServerを使う
+    TOILET: {
+      LED: {
+        ENABLE: false,
+        RGB: -1,
+      }
     },
+  },
+  ENTER: {
+    AUTO_PAGE: 1, // 0:Disable, 1:Enable & Default Pause, 2:Enable && Default Start
+    START_TIME: 1576148292834, // unix time msec
+    AUTO_PAGER_MSEC: 10000, // 自動ページャー更新間隔(ミリ秒)
+  },
+  MANAGE: {
+    SETTING_CATEGORY: [], // 表示するシステム設定カテゴリ
+  },
+  TOILET: {
+    AUTO_RELOAD: true, // 自動リロード
   },
 
   
@@ -267,8 +371,9 @@ export const EXCLOUD = {
 export const DISP = { // 表示系設定（表示・色・フォント・サイズ）
   MENU: {
     SHOW_NAV: true, // show nav  
-    SHOW_SIDEBAR: false, // show sidebar
+    SHOW_SIDEBAR: true, // show sidebar  
     SHOW_LOGO: true, // show logo (or show title text)
+    SHOW_HELP: true,
     THEME: 'default', // デフォルトのテーマ
   },
   // 位置表示：TX
@@ -286,21 +391,29 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     // TX_FONT: '20px Arial', // Tx表示時のフォント
     DIV_2: 1, // Txが重なった際に２つ上下左右に並べる場合にずらす倍率
     DIV_3: 0.5, // Txが重なった際に３つ左右に並べる場合にずらす倍率
-    HORIZON: 5, // TXアイコンタイル表示時の列数
-    VERTICAL: 5, // TXアイコンタイル表示時の行数
+    HORIZON: 10, // TXアイコンタイル表示時の列数
+    VERTICAL: 10, // TXアイコンタイル表示時の行数
     DISPLAY_PRIORITY: 'category', // TX表示の際に参照するdisplay方法
     ABSENT_ZONE_DISPLAY_TYPES: ['undetected','lost','absent'],   // undetected:未検知, lost:消失, absent:不在ゾーン）
+    FIXED_POS: {
+      APPLY_COLOR: true, // この設定を適用するか。falseの場合、カテゴリ/グループの色と不在時の透過を用いる
+      SHAPE: SHAPE.CIRCLE,
+      R: 10,
+      COLOR: '#FFFFFF',
+      IN_ZONE_BGCOLOR: '#4472C4', // 固定ゾーンにいる場合
+      OUT_ZONE_BGCOLOR: '#C00000', // 固定ゾーン外の同一エリアに居る場合
+      UNDETECT_BGCOLOR: '#B78811', // 未検知
+      LOST_BGCOLOR: '#3D3D3D', // 消失
+    }
   },
   // 位置表示(数量)：TX
   TX_NUM: {
-    R: 40, // Txの半径
+    R: 20, // Txの半径
     ROUNDRECT_RADIUS: 13, // Tx角丸表示時のRADIUS
     BGCOLOR: '#ff7f50', // Tx表示時のデフォルト背景色
     COLOR: '#000000', // Tx表示時のデフォルト文字色
     STROKE_COLOR: '#cccccc', // Tx表示時のデフォルト枠線色
     STROKE_WIDTH: 1, // Tx表示時のデフォルト枠線幅
-    TX_FONT: '20px Arial', // Tx表示時のフォント
-    TEXT_BASELINE: 'ideographic',// Tx表示時のフォントの表示位置
 
     // ツールチップ内の表示要素
     TOOLTIP_ITEMS: {
@@ -314,26 +427,20 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     TOOLTIP_ROUNDRECT: 16, // ツールチップ角丸半径
   },
   EXB_LOC: {
-    // EXB配置設定のEXB表示サイズ
+    // 場所配置設定のEXB表示サイズ
     SIZE: {
       W: 60,
       H: 30
     },
-    BGCOLOR: '#76ccf7', // EXB配置設定のEXB表示背景色
-    COLOR: '#000', // EXB配置設定のEXB表示文字色
-    FONT: 'Arial', // EXB配置設定のEXB表示フォント
+    BGCOLOR_DEFAULT: '#76ccf7', // 場所配置設定のアイコン表示背景色(デフォルト)
+    BGCOLOR_DEFAULT_NOTX: '#76ccf7', // 場所配置設定のアイコン表示背景色(デフォルト)
+    COLOR: '#000', // 場所配置設定のアイコン表示文字色
+    FONT: 'Arial', // 場所配置設定のアイコン表示フォント
+    RSSI_BGCOLOR: '#76ccf7',
     RSSI_RADIUS: 0,
-  },
-  TX_LOC: {
-    // TX配置設定のTX表示サイズ
-    SIZE: {
-      W: 60,
-      H: 30
-    },
-    BGCOLOR: '#76ccf7', // TX配置設定のTX表示背景色
-    COLOR: '#000', // TX配置設定のTX表示文字色
-    FONT: 'Arial', // TX配置設定のTX表示フォント
-    ALPHA: 1.0, // TX配置設定のTX表示フォント
+    MAX_FONT_SIZE: 26, // 場所配置設定のアイコン表示最大フォントサイズ
+    BGCOLOR_PATTERN: [], // 場所配置設定のアイコン表示背景色(種類別:Tx関連時)
+    BGCOLOR_PATTERN_NOTX: [], // 場所配置設定のアイコン表示背景色(種類別:Tx未関連時)
   },
   THERMOH: {
     // ツールチップ内の表示要素
@@ -367,12 +474,13 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
       DANGER: 500, // 危険アイコン点滅周期(ミリ秒)
     },
     ALPHA: 1, // アルファ値(0:透明～1:不透明)
-    PATTERN: ['19 #5b9bd5', '25 #6eb290', '26 #ffd966', '27 #ff9966', '31 #ff5050', '32 #ffd966 $WARN', '#ff2525 $DANGER'], // 温度アイコンパターン（順不同。数値：閾値。先頭が#：カラーコード。先頭が$：点滅パターン。OR：閾値に同値を含む。）
+    PATTERN: ['19 #5b9bd5', '26 #ffd966', '31 #ff5050', '#ff2525 $DANGER'], // 温度アイコンパターン（順不同。数値：閾値。先頭が#：カラーコード。先頭が$：点滅パターン。OR：閾値に同値を含む。）
     HUMIDITY_PATTERN: ['LESS 30', 'LESS 50', 'MORE 85'], // 湿度アラートパターン（順不同。数値：閾値。LESS：閾値以下の場合に警告。MORE：閾値以上の場合に警告）
   
     TEMPERATURE_MAX: 28,  // 温湿度ヒートマップ最大値
     TEMPERATURE_MIN: 0,   // 温湿度ヒートマップ最小値
     TEMPERATURE_RADIUS: 150,   // 温湿度ヒートマップ直径
+    TEMPERATURE_DECIMAL_DIGITS:1,   // 温度小数桁（ゼロパディング）
   },
   PIR: {
     R_SIZE: 26,  // PIR表示時の円の半径
@@ -416,11 +524,23 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
       MIN_HEIGHT: 32,
     },
   },
+  ENTER: {
+    COL_CNT: 7, // 表の列数
+    LOST_COLOR: 'gray', // 消失者の文字色
+    ABSENT_BGCOLOR: 'rgb(255,153,153)', // 退場者の背景色 
+    ENTER_BGCOLOR: 'rgb(217,217,217)', // 入場者の背景色
+  },
+  TOILET: {
+    DISPLAY_MODE: 0, // 表示モード 0:数値, 1:アイコン
+    BASE_FONT_SIZE: 24, // 基準フォントサイズ
+    BASE_MARK_R: 16, // 基準空室アイコンサイズ
+    MARK_COLUMN_NUM: 5, // アイコン表示最大列
+  },
 
   FONT_ICON_ADJUST_SCALE: 1.0, // アイコン内テキストのフォントサイズ係数
   IS_SCALE_ICON_TEXT: false, // アイコン内のテキストを自動スケールさせる
   DUMMY_ICON_TEXT: 'あああ',
-  SHOW_MAP_RATIO: true,
+  SHOW_MAP_RATIO: false, // 寸法設定を表示する
 
   MAP_FIT: 'both', // マップを画面表示範囲内にフィットさせるか。width or height or both
   MAP_FIT_MOBILE: 'width', // (モバイル)マップを画面表示範囲内にフィットさせるか。width or height or both
@@ -432,6 +552,8 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   LED_LINE_COLOR: '#fc5800',// LEDセンサグラフの線色
   MAGNET_LINE_COLOR: '#fc5800',// マグネットセンサグラフの線色
   PRESSURE_LINE_COLOR: '#fc5800',// 圧力センサグラフの線色
+  AMBIENT_LIGHT_COLOR: '#AC787C',// 照度センサグラフの線色
+  SOUND_NOISE_COLOR: '#95A4DE',// 騒音センサグラフの線色
   H_BLOOD_PRESSURE_LINE_COLOR: '#fc5800',// MEDiTAGセンサグラフの線色
   L_BLOOD_PRESSURE_LINE_COLOR: '#7da6e8',// 湿度グラフの線色
   HEART_RATE_LINE_COLOR: '#7de8a6',// 湿度グラフの線色
@@ -473,9 +595,13 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   },
 
   INSTALLATION: { // 設置支援
-    RSSI_ICON_WIDTH: 100,
-    RSSI_ICON_HEIGHT: 20,
+    WIDTH: 50,
+    HEIGHT: 20,
+    BG_COLOR: ['#dc143c', '#ff4500', '#ff6347', '#7F7F7F'],
+    FONT_COLOR: ['white', 'white', 'white', 'white'],
+    FONT_SIZE: 15,
   },
+
   // 禁止区域関連設定
   PROHIBIT_TWINKLE_TIME: 1500, // 点滅間隔(ミリ秒)
   // システム設定カテゴリ
@@ -484,7 +610,16 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
       ABSENT: '', // 背景色カラーコード
       PROHIBIT: '', // 背景色カラーコード  
     }
-  }
+  },
+
+  POS: {
+    EXSERVER: false, // EXServerを使う
+  },
+
+  // 位置表示（全体）
+  POS_STACK: {
+    TYPE: 1// 表示方法
+  },
 }
 
 // used when APP.LOGIN_MODE != APP_SERVICE with excloud old api -----------------------------------------------------

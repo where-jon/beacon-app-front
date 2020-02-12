@@ -24,6 +24,7 @@ import { ERROR_STATE } from '../../sub/constant/Constants'
 import * as NumberUtil from '../../sub/util/NumberUtil'
 import * as Util from '../../sub/util/Util'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import commonmixin from '../mixin/commonmixin.vue'
 import editmixin from '../mixin/editmixin.vue'
 import alert from '../parts/alert.vue'
@@ -69,7 +70,7 @@ export default {
     }
   },
   async mounted() {
-    await StateHelper.load('area')
+    // await StateHelper.load('area')
     this.loading = false
     this.submittable = false
     fileReader = new FileReader()
@@ -103,7 +104,7 @@ export default {
                   thumbnail: `data:image/${key.slice(key.lastIndexOf('.') + 1)};base64,${bVal}`,
                   size: bVal.length,
                 }
-                if(this.$parent.$options.methods.addLoadImage){
+                if(this.$parent.$options.methods && this.$parent.$options.methods.addLoadImage){
                   this.$parent.$options.methods.addLoadImage.call(this.$parent, imgInfo)
                 }
                 this.form.thumbnails.push(imgInfo)

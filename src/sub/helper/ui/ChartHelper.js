@@ -67,26 +67,20 @@ export const showBarChart = (canvasId, labels, stackLabels, chartData, labelStri
 /**
  * チャートグラフの設定を作成する。
  * @method
- * @param {Object} left 
- * @param {Object} right 
+ * @param {Object} scales
  * @param {Boolean} [isResponsive = false]
  * @return {Object}
  */
-export const createChartGraphOptions = (left, right, isResponsive = false) => {
+export const createChartGraphOptions = (scales, isResponsive = false) => {
   const ret = {
     scales:{
-      yAxes:[
-        left? {
-          id: left.id, type: 'linear', position: 'left',
-          scaleLabel: { display: true, labelString: left.label },
-          ticks: left.ticks,
-        }: null,
-        right? {
-          id: right.id, type: 'linear', position: 'right',
-          scaleLabel: { display: true, labelString: right.label },
-          ticks: right.ticks,
-        }: null
-      ].filter((val) => val)
+      yAxes: scales.map(s => {
+        return {
+          id: s.id, type: 'linear', position: s.position,
+          scaleLabel: { display: true, labelString: s.label },
+          ticks: s.ticks,
+        }
+      }).filter((val) => val),
     },
     elements:{ line:{ tension: 0 } }
   }

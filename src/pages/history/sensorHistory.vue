@@ -37,7 +37,7 @@
         </b-form>
         <slot />
         <b-row class="mt-3" />
-        <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" stacked="md" striped hover outlined />
+        <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" :sort-compare="defaultSortCompare" stacked="md" striped hover outlined />
         <b-row>
           <b-col md="6" class="my-1">
             {{ footerMessage }}
@@ -95,11 +95,15 @@ export default {
       //
       viewList: [],
       fields: [],
-      fields1: SensorHelper.getFields1(),
+      fields1: SensorHelper.getFields1([
+        { key: 'locationName', forceShow: true },
+        'posId',
+      ]),
       fields2: SensorHelper.getFields2(),
       fields5: SensorHelper.getFields5(),
       fields6: SensorHelper.getFields6(),
       fields8: SensorHelper.getFields8(),
+      fields9: SensorHelper.getFields9(),
       currentPage: 1,
       perPage: 20,
       limitViewRows: 100,
@@ -113,7 +117,7 @@ export default {
     ]),
   },
   async created() {
-    await Promise.all(['sensor', 'tx', 'exb'].map(StateHelper.load))
+    // await Promise.all(['sensor', 'tx', 'exb'].map(StateHelper.load))
     this.form.sensorId = Util.hasValue(this.sensorOptions)? this.sensorOptions[0].value: null
     const date = DateUtil.getDefaultDate()
     this.form.datetimeFrom = DateUtil.getDatetime(date, {hours: -1})
@@ -174,6 +178,12 @@ export default {
       if (senHist.sensorId == SENSOR.PRESSURE) {
         senHist.pressVol = senHist.value.press_vol
       }
+      if (senHist.sensorId == SENSOR.OMR_ENV) {
+        senHist.humidity = senHist.value.humidity
+        senHist.temperature = senHist.value.temperature
+        senHist.soundNoise = senHist.value.sound_noise
+        senHist.ambientLight = senHist.value.ambient_light
+      }
     },
     async displayImpl(){
       this.replace({showAlert: false})
@@ -219,6 +229,9 @@ export default {
       }
       if (aSensorId == SENSOR.PRESSURE) {
         return this.fields8
+      }
+      if (aSensorId == SENSOR.OMR_ENV) {
+        return this.fields9
       }
       return this.fields1
     },

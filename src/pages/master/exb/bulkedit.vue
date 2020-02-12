@@ -29,7 +29,7 @@ export default {
       id: 'exbId',
       backPath: '/master/exb',
       appServicePath: '/core/exb',
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'exb', href: '/master/exb'}, 'bulkRegister'),
+      items: ViewHelper.createBreadCrumbItems('master', {text: 'masterExb', href: '/master/exb'}, 'bulkRegister'),
     }
   },
   computed: {
@@ -42,7 +42,7 @@ export default {
       await this.$refs.bulkEdit.bulkSave({
         numberList: ['deviceId', 'threshold1', 'threshold2', 'adjust1', 'adjust2'],
         hexList: ['deviceIdX'],
-        nullableList: ['threshold1', 'threshold2', 'adjust1', 'adjust2']
+        nullableList: ['threshold1', 'threshold2', 'adjust1', 'adjust2', 'sensorNames']
       })
     },
     onRestruct(entity, dummyKey){
@@ -68,8 +68,8 @@ export default {
           entity.exbType = null
         }
       }
-      if(Util.hasValue(entity.sensor)) {
-        const param = BulkHelper.createParamSensor('exb', entity.sensor, dummyKey)
+      if(Util.hasValue(entity.sensorNames)) {
+        const param = BulkHelper.createParamSensor('exb', entity.sensorNames, dummyKey)
         if(param.sensorList.length != 0){
           entity.exbSensorList = param.sensorList
         }

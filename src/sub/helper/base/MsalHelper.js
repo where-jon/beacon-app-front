@@ -1,4 +1,10 @@
 
+/**
+ * Microsoft Authentication Libraryに関するヘルパーモジュール
+ * 非Teams環境でAD認証を行う
+ * @module helper/base/MsalHelper
+ */
+
 import * as Msal from 'msal'
 import { MSTEAMS_APP } from '../../constant/config'
 import { Date } from 'core-js'

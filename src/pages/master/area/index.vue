@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <breadcrumb :items="items" />
-    <m-list :params="params" :list="areaList" :another-page-params="anotherPageParams" />
+    <m-list :params="params" :another-page-params="anotherPageParams" compact-mode />
   </div>
 </template>
 
@@ -10,9 +10,10 @@ import { mapState } from 'vuex'
 import { APP_SERVICE, EXCLOUD } from '../../../sub/constant/config'
 import * as Util from '../../../sub/util/Util'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
-import reloadmixin from '../../../components/mixin/reloadmixin.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
 import mList from '../../../components/page/list.vue'
 
 export default {
@@ -20,7 +21,7 @@ export default {
     breadcrumb,
     mList,
   },
-  mixins: [reloadmixin],
+  mixins: [commonmixin],
   data() {
     return {
       params: {
@@ -32,64 +33,39 @@ export default {
         bulkUploadPath: '/master/area/bulkUpload',
         appServicePath: '/core/area',
         csvOut: true,
-        custumCsvColumns: ['ID', 'areaName'],
         fields: ViewHelper.addLabelByKey(this.$i18n, [ 
-          {key: 'areaCd', label: 'id', sortable: true, tdClass: 'action-rowdata'},
+          {key: 'ID', label: 'id', sortable: true, tdClass: 'action-rowdata'},
           {key: 'areaName', sortable: true, tdClass: 'action-rowdata'},
           {key: 'thumbnail', tdClass: 'action-rowdata' },
           {key: 'actions', thStyle: {width: '130px !important'}, tdClass: 'action-rowdata' }
         ]),
-        sortBy: 'areaCd',
-        initTotalRows: this.$store.state.app_service.areas.length
+        sortBy: 'ID',
       },
       anotherPageParams: [
-        { name: 'zone', id: 'zoneList', jumpPath: '/master/zoneBlock/', sendParamNames: ['areaId']},
-        { name: 'location', id: 'locationList', jumpPath: '/master/location/position', sendParamNames: ['areaId']}, 
+        { name: 'zone', id: 'zoneList', jumpPath: '/master/zoneBlock/', sendParamNames: ['updateKey']},
+        { name: 'location', id: 'locationIdList', jumpPath: '/master/location/position', sendParamNames: ['updateKey']}, 
       ],
       items: ViewHelper.createBreadCrumbItems('master', 'area'),
-      areaList: [],
       thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.AREA_THUMBNAIL_URL,
     }
   },
   computed: {
     ...mapState('app_service', [
-      'areas',
       'updatedAreaThumbnail',
     ]),
   },
   methods: {
-    onSaved(){
-      StateHelper.setForceFetch('tx', true)
-      StateHelper.setForceFetch('exb', true)
-      StateHelper.setForceFetch('zone', true)
-    },
-    async fetchData(payload) {
-      try {
-        this.showProgress()
-        await StateHelper.load('area')
-        this.areaList = this.areas.map((val) => ({
-          ...val,
-          zoneList: Util.hasValue(val.zoneList)? val.zoneList: [],
-          locationList: Util.hasValue(val.locationList)? val.locationList: [],
-        })) // omit images to avoid being filtering target
-        if (payload && payload.done) {
-          payload.done()
-        }
-      }
-      catch(e) {
-        console.error(e)
-      }
-      this.hideProgress()
+    async onSaved(){
+      // StateHelper.setForceFetch('tx', true)
+      // StateHelper.setForceFetch('exb', true)
+      // StateHelper.setForceFetch('zone', true)
     },
     thumbnail(row) {
       let addUrlParam = ''
-      if (this.updatedAreaThumbnail && this.updatedAreaThumbnail === row.areaId) {
+      if (this.updatedAreaThumbnail && this.updatedAreaThumbnail === row.updateKey) {
         addUrlParam = new Date().getTime()
       }
-      return row.existThumbnail ? this.thumbnailUrl.replace('{id}', row.areaId) + addUrlParam : null
-    },
-    customCsvData(val){
-      val.ID = val.areaCd
+      return row.existThumbnail ? this.thumbnailUrl.replace('{id}', row.updateKey) + addUrlParam : null
     },
   },
 }

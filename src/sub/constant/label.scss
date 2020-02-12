@@ -10,3 +10,11 @@ p.error {
   word-break: break-all !important;
   word-wrap: break-all !important;
 }
+
+.control-line {
+  min-width: 100%;
+  max-width: 100%;
+  min-height: 0px;
+  max-height: 0px;
+  visibility: hidden;
+}

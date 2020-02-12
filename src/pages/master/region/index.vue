@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <breadcrumb :items="items" />
-    <m-list :params="params" :list="regions" />
+    <m-list :params="params" compact-mode />
   </div>
 </template>
 
@@ -9,7 +9,7 @@
 import { mapState } from 'vuex'
 import * as LocalStorageHelper from '../../../sub/helper/base/LocalStorageHelper'
 import * as RegionHelper from '../../../sub/helper/domain/RegionHelper'
-import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import reloadmixin from '../../../components/mixin/reloadmixin.vue'
@@ -31,16 +31,14 @@ export default {
         bulkEditPath: '/master/region/bulkedit',
         appServicePath: '/core/region',
         csvOut: true,
-        custumCsvColumns: ['ID', 'regionName', 'meshId', 'description'],
         fields: ViewHelper.addLabelByKey(this.$i18n, [ 
-          {key: 'regionCd', label: 'id', sortable: true },
+          {key: 'ID', label: 'id', sortable: true },
           {key: 'regionName', sortable: true },
           {key: 'meshId', sortable: true},
           {key: 'description', sortable: true },
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
-        sortBy: 'regionCd',
-        initTotalRows: this.$store.state.app_service.regions.length
+        sortBy: 'ID',
       },
       items: ViewHelper.createBreadCrumbItems('master', 'region'),
     }
@@ -51,29 +49,13 @@ export default {
     ]),
   },
   methods: {
-    customCsvData(val){
-      val.ID = val.regionCd
-    },
     async onSaved(param){
-      StateHelper.setForceFetch('user', true)
+      // StateHelper.setForceFetch('user', true)
       const result = await RegionHelper.autoSwitchRegion(this.regions)
       if(result){
         LocalStorageHelper.setLocalStorage('listMessage', param.message)
         location.reload()
       }
-    },
-    async fetchData(payload) {
-      try {
-        this.showProgress()
-        await StateHelper.load('region')
-        if (payload && payload.done) {
-          payload.done()
-        }
-      }
-      catch(e) {
-        console.error(e)
-      }
-      this.hideProgress()
     },
   }
 }

@@ -15,7 +15,6 @@ import Vue from 'vue'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import * as Util from '../../sub/util/Util'
-import * as PotHelper from '../../sub/helper/domain/PotHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 
 export default {
@@ -31,6 +30,10 @@ export default {
       type: Boolean,
       required: true,
     },
+    pExtValue: {
+      type: Array,
+      required: true,
+    },
   },
   data () {
     return {
@@ -39,8 +42,7 @@ export default {
   },
   computed: {
     extList() {
-      const ret = PotHelper.getPotExt()
-      ret.forEach(e => {
+      this.pExtValue.forEach(e => {
         if (!e.format) {
           if (e.type == 'int') {
             e.format = '[-]?[0-9]*'
@@ -53,7 +55,11 @@ export default {
           }
         }
         if (e.type == 'list') {
-          e.options = e.format.split('|').map(e => ({label: e, text: e, value: e}))
+          e.options = e.format.split('|').map(e => {
+            let label = this.$i18n.tnl('label.' + e)
+            if (!label) label = e
+            return {label, text: label, value: e}
+          })
         }
         if (e.default && !this.form[e.key] && !Util.hasValue(this.form.potId) && this.firstShow) {
           Vue.set(this.form, e.key, e.default)
@@ -76,7 +82,7 @@ export default {
         }
       })
       Vue.set(this, 'firstShow', false)
-      return ret
+      return this.pExtValue
     }, 
   },
   mounted() {

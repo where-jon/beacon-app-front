@@ -9,7 +9,7 @@
           </li>
         </ol>
       </div>
-      <div v-if="useLegend && legendItems" ref="legendButton" class="col-auto px-0">
+      <div v-if="useLegend && legendItems" ref="legendButton" class="col-auto px-1">
         <b-button v-if="showLegend" class="legend-button-active" @click="switchLegend">
           {{ $i18n.tnl('label.legend') }}
         </b-button>
@@ -30,6 +30,12 @@
             <font-awesome-icon :icon="['fas', extraNav.icon]" fixed-width />&nbsp;{{ $t('label.' + extraNav.key) }}
           </b-dropdown-item>
         </b-nav-item-dropdown>
+      </div>
+      <div class="col-auto reload-button-container">
+        <a v-if="autoPager" id="autoPager" href="#" @click="toggleAutoPager">
+          <font-awesome-icon v-if="isAutoPagerPlaying" icon="pause" />
+          <font-awesome-icon v-else icon="play" />
+        </a>
       </div>
       <div class="col-auto reload-button-container ">
         <a v-if="reload" id="reload" href="#" @click="clickReload">
@@ -65,6 +71,14 @@ export default {
       type: Boolean,
       default: false
     },
+    autoPager: {
+      type: Boolean,
+      default: false
+    },
+    autoPagerPlay: {
+      type: Boolean,
+      default: false
+    },
     autoReload: {
       type: Boolean,
       default: true
@@ -90,6 +104,7 @@ export default {
     return {
       showLegend: false,
       touchLegend: false,
+      isAutoPagerPlaying: this.autoPagerPlay,
       useLegend: APP.POS.USE_LEGEND,
     }
   },
@@ -144,6 +159,9 @@ export default {
       this.$router.push(page)
     },
     clickReload(e) {
+      if(this.state.prevent){
+        return
+      }
       this.state.isLoad = true
       const that = this
       EventBus.$emit('reload', {
@@ -152,6 +170,10 @@ export default {
           AuthHelper.checkSession()
         }
       })
+    },
+    toggleAutoPager(e) {
+      this.isAutoPagerPlaying = !this.isAutoPagerPlaying
+      EventBus.$emit('toggleAutoPager', this.isAutoPagerPlaying)
     },
     setColor(className, color) {
       [].forEach.call(document.getElementsByClassName(className), (e) => {
@@ -163,7 +185,7 @@ export default {
       this.setColor('dropdown-menu', color)
       this.setColor('dropdown-item', color)
     },
-    switchLegend(){
+    switchLegend(e){
       this.showLegend = !this.showLegend
       if(this.showLegend){
         document.addEventListener('mousedown', this.touchStart)
@@ -173,6 +195,7 @@ export default {
         document.addEventListener('touchend', this.touchEnd)
       }
       else{
+        e && e.target && e.target.blur()
         document.removeEventListener('mousedown', this.touchStart)
         document.removeEventListener('mouseup', this.touchEnd)
         document.removeEventListener('touchstart', this.touchStart)
@@ -294,4 +317,14 @@ export default {
     background-color: #6c757d !important;
     line-height: 1 !important;
   }
+
+  @keyframes legend-flash {
+  0%,100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+ }
+
 </style>

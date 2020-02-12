@@ -9,41 +9,47 @@ import _ from 'lodash'
 import { hasValue } from './Util'
 
 /**
- * 文字列同士で比較を行う。双方が数値に変換可能な場合は数値として比較を行う。
+ * オブジェクト同士で比較を行う。
  * @method
  * @param {String} a
  * @param {String} b
+ * @param {String} locale
+ * @param {Object} option
  * @return {Number} 0：同値。1：aのほうが大きい。-1：bのほうが大きい。
  */
-export const compareStrNum = (a, b) => {
-  const aNaN = isNaN(a)
-  const bNaN = isNaN(b)
-  const compA = !aNaN && !bNaN? Number(a): String(a)
-  const compB = !aNaN && !bNaN? Number(b): String(b)
-  return compA < compB? -1: compA > compB? 1: 0
-}
+export const localeCompare = (a, b, locale, option) => JSON.stringify(a).localeCompare(JSON.stringify(b), locale, option)
 
 /**
  * 文字列同士で比較を行う。ただし数値に変換可能な文字列同士の比較は、その数値の大小で比較する。
  * @method
  * @param {String} a 
  * @param {String} b 
+ * @param {String} locale 
  * @return {Number} 0：同値。1：aのほうが大きい。-1：bのほうが大きい。
  */
-export const sortByString = (a, b) => {
+export const sortByString = (a, b, locale) => {
+  const hasA = hasValue(a)
+  const hasB = hasValue(b)
+  if(!hasA && !hasB){
+    return 0
+  }
+  if(!hasA){
+    return -1
+  }
+  if(!hasB){
+    return 1
+  }
   if(!isNaN(a) && !isNaN(b)){
     const aNum = Number(a)
     const bNum = Number(b)
     return aNum < bNum? -1: aNum > bNum? 1: 0
   }
-  const aCodeArr = a.split('')
-  const bCodeArr = b.split('')
+  const aCodeArr = a.toString().split('')
+  const bCodeArr = b.toString().split('')
   for(let cnt = 0; cnt < aCodeArr.length && cnt < bCodeArr.length; cnt++){
-    if(aCodeArr[cnt] < bCodeArr[cnt]){
-      return -1
-    }
-    if(aCodeArr[cnt] > bCodeArr[cnt]){
-      return 1
+    const result = localeCompare(aCodeArr[cnt], bCodeArr[cnt], locale)
+    if(result != 0){
+      return result
     }
   }
   return aCodeArr.length < bCodeArr.length? 1: aCodeArr.length < bCodeArr.length? -1: 0
@@ -71,7 +77,7 @@ export const toLowerCaseTop = str => `${str.slice(0, 1).toLowerCase()}${str.slic
  * @param  {...String} strs
  * @return {String}
  */
-export const concatCamel = (...strs) => strs.map((str, idx) => idx == 0? str: `${str.charAt(0).toUpperCase()}${str.slice(1)}`).join('')
+export const concatCamel = (...strs) => strs.filter(val => val).map((str, idx) => idx == 0? str: `${str.charAt(0).toUpperCase()}${str.slice(1)}`).join('')
 
 /**
  * キャメルケースにした文字列を取得する。

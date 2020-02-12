@@ -215,6 +215,9 @@ export const getErrorColumnName = (name, col) => {
   if(['areaCd', 'categoryCd', 'groupCd'].includes(col)){
     return 'id'
   }
+  if(col == 'categoryName' && /^category.+$/.test(name)){
+    return StringUtil.concatCamel(name.replace(/category/, '').toLowerCase(), 'categoryName')
+  }
   return col
 }
 
@@ -272,7 +275,7 @@ export const craeteBulkWarnMessage = bulkErrorList => {
   const retList = []
   bulkErrorList.filter(bulkError => ['Unique', 'MultiUnique'].some(u => u == bulkError.type)).forEach(bulkError => {
     // 場所タイプ選択肢が登録されていない場合は、通常の一意制約警告ーに変換
-    if(bulkError.cols.some(c => c == 'locationType')){
+    if(bulkError.cols && bulkError.cols.some(c => c == 'locationType')){
       const locationTypeVal = bulkError.values[bulkError.cols.findIndex(c => c == 'locationType')]
       if(!Util.hasValue(locationTypeList) || !locationTypeVal){
         const newCol = bulkError.cols.find(c => c != 'locationType')
@@ -344,26 +347,23 @@ export const csvHeaderCheck = header => {
  * 主キーが存在するか確認する。
  * @method
  * @param {String} masterName
- * @param {Object[]} entities
+ * @param {String[]} headers
  * @throws {Exception} エラーメッセージ
  */
-export const entityKeyCheck = (masterName, entities) => {
-  const requireNames = StringUtil.camel2snake(masterName).toUpperCase()
-  entities.forEach(entity => {
-    BULK.REQUIRE[requireNames].ALLOW.forEach(allowName => {
-      if(typeof entity[allowName] === 'undefined') {
-        throw Error(i18n.tnl('message.invalidFile'))
-      }
-    })
-    if(!BULK.REQUIRE[requireNames].DISALLOW){
-      return
-    }
-    BULK.REQUIRE[requireNames].DISALLOW.forEach(disAllowName => {
-      if(typeof entity[disAllowName] !== 'undefined') {
-        throw Error(i18n.tnl('message.invalidFile'))
-      }
-    })
-  })
+export const entityKeyCheck = (masterName, pMasterName, headers) => {
+  if (pMasterName && Util.getValue(BULK.REQUIRE, StringUtil.camel2snake(pMasterName).toUpperCase() + '.ALLOW')) {
+    masterName = pMasterName
+  }
+  let requireNames = StringUtil.camel2snake(masterName).toUpperCase()
+  
+  const arrowHeaders = Util.getValue(BULK.REQUIRE, requireNames + '.ALLOW', [])
+  if(!arrowHeaders.every(allowName => headers.includes(allowName))) {
+    throw Error(i18n.tnl('message.invalidFile'))
+  }
+  const disArrowHeaders = Util.getValue(BULK.REQUIRE, requireNames + '.DISALLOW', [])
+  if(disArrowHeaders.some(disAllowName => headers.includes(disAllowName))) {
+    throw Error(i18n.tnl('message.invalidFile'))
+  }
 }
 
 /**
@@ -396,10 +396,8 @@ export const csvCharsetCheck = (csvString, bulkCharset) => {
  */
 export const convertBulkCsvObj = (loginId, arrayBuffer) => {
   try{
-    const csvString = ArrayUtil.arrayBuffer2str(arrayBuffer)
     const bulkCharset = CharSetHelper.detectBulkCharSet(loginId)
-    csvCharsetCheck(csvString, bulkCharset)
-    return CsvUtil.csv2Obj(csvString, bulkCharset)
+    return CsvUtil.csv2Obj(arrayBuffer, bulkCharset)
   }
   catch(e){
     throw e
@@ -465,11 +463,12 @@ export const setCsvParamList = (vueComponent, masterIdName, readerParam, csvLine
       if (lineIdx == 0) {
         header = csvLine
         csvHeaderCheck(header)
+        readerParam.headers = header
         return
       }
       const entity = {}
       dummyKey = setCsvParam(masterIdName, header, csvLine, dummyKey, entity, option)
-      if(vueComponent.$parent.$options.methods.onRestruct) {
+      if(vueComponent.$parent.$options.methods && vueComponent.$parent.$options.methods.onRestruct) {
         dummyKey = vueComponent.$parent.$options.methods.onRestruct.call(vueComponent.$parent, entity, dummyKey)
       }
       sameDataCheck(readerParam.sameLine, lineIdx, readerParam.entities, entity)
@@ -569,7 +568,6 @@ export const createParamLocation = (entity, dummyKey) => {
   Util.setValue(ret, 'locationCd', entity.locationCd)
   Util.setValue(ret, 'areaName', entity.areaName)
   Util.setValue(ret, 'locationName', entity.locationName)
-  Util.setValue(ret, 'visible', entity.visible)
   Util.setValue(ret, 'txViewType', entity.txViewType)
   Util.setValue(ret, 'posId', entity.posId)
   Util.setValue(ret, 'posIdName', entity.posIdName)

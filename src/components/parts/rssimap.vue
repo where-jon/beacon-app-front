@@ -96,6 +96,7 @@ import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
 import * as PositionHelper from '../../sub/helper/domain/PositionHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import commonmixin from '../mixin/commonmixin.vue'
@@ -103,32 +104,34 @@ import showmapmixin from '../../components/mixin/showmapmixin.vue'
 
 class RssiIcon {
   constructor(parent, rssi, scale, level = 3) {
-    const RSSI_ICON_WIDTH = DISP.INSTALLATION.RSSI_ICON_WIDTH
-    const RSSI_ICON_HEIGHT = DISP.INSTALLATION.RSSI_ICON_HEIGHT
+    const w = DISP.INSTALLATION.WIDTH
+    const h = DISP.INSTALLATION.HEIGHT
     const color = (() => {
+      const bg = DISP.INSTALLATION.BG_COLOR
+      const color = DISP.INSTALLATION.FONT_COLOR
       switch (level) {
       case 0:
-        return {bg: '#dc143c', text: 'white'}
+        return {bg: bg[0], text: color[0]}
       case 1:
-        return {bg: '#ff4500', text: 'white'}
+        return {bg: bg[1], text: color[1]}
       case 2:
-        return {bg: '#ff6347', text: 'white'}
+        return {bg: bg[2], text: color[2]}
       default:
-        return {bg: '#87cefa', text: 'black'}
+        return {bg: bg[3], text: color[3]}
       }
     })()
     this.container = new Container()
     const s = new Shape()
-    s.graphics.beginFill(color.bg).drawRect(0, 0, RSSI_ICON_WIDTH * scale, RSSI_ICON_HEIGHT * scale)
+    s.graphics.beginFill(color.bg).drawRect(0, 0, w * scale, h * scale)
     const label = new Text(rssi)
     this.container.addChild(s, label)
     label.set({
-      font: 20 * scale + 'px ' + DISP.EXB_LOC.FONT,
+      font: DISP.INSTALLATION.FONT_SIZE * scale + 'px ' + DISP.EXB_LOC.FONT,
       color: color.text,
       textAlign: 'center',
       textBaseline: 'bottom',
-      x: RSSI_ICON_WIDTH * scale / 2,
-      y: RSSI_ICON_HEIGHT * scale,
+      x: w * scale / 2,
+      y: h * scale,
     })
     this.parent = parent
   }
@@ -169,12 +172,11 @@ export default {
       targetTx: null,
       exbBtns : [],
       RSSI_SCALE: 5,
-      RSSI_ICON_WIDTH: DISP.INSTALLATION.RSSI_ICON_WIDTH,
-      RSSI_ICON_HEIGHT: DISP.INSTALLATION.RSSI_ICON_HEIGHT,
       isPause: false,
       firstTime: true,
       reloadState: {isLoad: false},
       noImageErrorKey: 'noMapImage',
+      posCache: [],
     }
   },
   computed: {
@@ -182,12 +184,12 @@ export default {
       'reload',
     ]),
     categoryOptionsForPot() {
-      return StateHelper.getOptionsFromState('category', false, true,
+      return MasterHelper.getOptionsFromState('category', false, true,
         category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
       )
     },
     txRecords() {
-      const btxs = this.nearest.map(n => ({label: n.btx_id, value: n.btx_id}))
+      const btxs = this.nearest.map(n => ({label: n.btxId, value: n.btxId}))
       if (!this.selectedGroup && !this.selectedCategory) {
         return btxs
       }
@@ -240,7 +242,7 @@ export default {
   },
   async mounted() {
     this.reloadState.isLoad = false
-    await Promise.all(['category', 'group'].map(StateHelper.load))
+    // await Promise.all(['category', 'group'].map(StateHelper.load))
   },
   methods: {
     initMap() {
@@ -251,6 +253,7 @@ export default {
         this.stage.removeChild(this.exbCon)
       }
       this.stage.update()
+      this.posCache = []
     },
     showMapImage(disableErrorPopup, payload) {
       this.showMapImageDef(async () => {
@@ -264,20 +267,24 @@ export default {
 
           this.positionedExb = this.getExbPosition()
           this.exbCon = new Container()
-          this.exbBtns = this.positionedExb.map((exb) => {
-            const clone = Object.assign({}, exb)
-            if (!this.keepExbPosition) {
-              clone.x = exb.location.x
-              clone.y = exb.location.y
-            }
-            const exbBtn = this.createExbIcon(clone)
+          // TODO:以下のように書き換えたが動作している。なぜボタンを渡す必要がある？ もっと根本的に短くかけると思われる。
+          // this.exbBtns = this.positionedExb.map((exb) => {
+          this.positionedExb.forEach((exb) => {
+            // const clone = Object.assign({}, exb)
+            // if (!this.keepExbPosition) {
+            //   clone.x = exb.location.x
+            //   clone.y = exb.location.y
+            // }
+            // const exbBtn = this.createExbIcon(clone)
+            const exbBtn = this.createExbIcon(exb)
             this.exbCon.addChild(exbBtn)
-            return exbBtn
+            // return exbBtn
           })
 
-          let positions = PositionHelper.getPositions(false, false, true)
-          this.nearest = await this.getNearest(this.exbBtns)
-          this.nearest = this.nearest.filter((n) => positions.some((pos) => pos.btx_id === n.btx_id))
+          let positions = PositionHelper.filterPositions(undefined, false)
+          // this.nearest = await this.getNearest(this.exbBtns)
+          this.nearest = await this.getNearest(this.positionedExb)
+          this.nearest = this.nearest.filter((n) => positions.some((pos) => pos.btxId == n.btxId))
 
           this.stage.addChild(this.exbCon)
           this.stage.setChildIndex(this.exbCon, this.stage.numChildren-1)
@@ -286,7 +293,7 @@ export default {
             this.dispRssiIcons(this.targetTx)
           }
 
-          await StateHelper.load('tx')
+          // await StateHelper.load('tx')
 
           if (payload && payload.done) {
             payload.done()
@@ -304,7 +311,10 @@ export default {
         }
       }, disableErrorPopup)
     },
-    async fetchData(payload, disableErrorPopup) {
+    async fetchData(payload) {
+      this.onChangeAreaDone(payload)
+    },
+    async onChangeAreaDone(payload, disableErrorPopup) {
       this.showReady = false
       const disabledProgress = Util.getValue(payload, 'disabledProgress', false)
       try {
@@ -328,18 +338,30 @@ export default {
     createExbIcon(exb) {
       const exbBtn = new Container()
       const s = new Shape()
-      s.graphics.beginFill(DISP.EXB_LOC.BGCOLOR).drawCircle(0, 0, DISP.EXB_LOC.RSSI_RADIUS / this.canvasScale, DISP.EXB_LOC.RSSI_RADIUS / this.canvasScale)
+      const w = DISP.INSTALLATION.WIDTH / this.canvasScale
+      const h = DISP.INSTALLATION.HEIGHT / this.canvasScale
+      s.graphics.beginFill(DISP.EXB_LOC.RSSI_BGCOLOR).drawRect(0, 0, w, h)
+      s.x = -w * 0.5
+      s.y = -h * 0.5
       exbBtn.addChild(s)
       const label = new Text(this.getExbDisp(exb.deviceId))
-      label.font = 20 / this.canvasScale + 'px ' + DISP.EXB_LOC.FONT
+      label.font = DISP.INSTALLATION.FONT_SIZE / this.canvasScale + 'px ' + DISP.EXB_LOC.FONT
       label.color = DISP.EXB_LOC.COLOR
       label.textAlign = 'center'
       label.textBaseline = 'middle'
       exbBtn.addChild(label)
       exbBtn.deviceId = exb.deviceId
       exbBtn.exbId = exb.exbId
-      exbBtn.x = exb.x
-      exbBtn.y = exb.y
+      const posKey = exb.x+'-'+exb.y
+      if(this.posCache[posKey]){
+        exbBtn.x = this.posCache[posKey].x
+        exbBtn.y = this.posCache[posKey].y + h * 2
+        this.posCache[posKey] = { x: exbBtn.x, y: exbBtn.y }
+      }else{
+        exbBtn.x = exb.x
+        exbBtn.y = exb.y
+        this.posCache[posKey] = {x: exb.x, y: exb.y}
+      }
       return exbBtn
     },
     getExbDisp(deviceId) {
@@ -351,22 +373,22 @@ export default {
       }
     },
     getExbPosition() {
-      return this.exbs.filter((exb) => exb.location.areaId === this.selectedArea && exb.location.x && exb.location.y > 0)
+      return this.exbs.filter(exb => exb.location && exb.location.areaId === this.selectedArea && exb.location.x && exb.location.y > 0)
     },
     async getNearest(exbs) {
-      const positions = await HttpHelper.getExCloud(EXCloudHelper.url(EXCLOUD.POSITION_URL) + new Date().getTime())
+      const positions = await EXCloudHelper.fetchRawPosition()
       const xymap = {}
-      exbs.forEach((e) => xymap[e.deviceId] = {x: e.x, y: e.y})
-      return positions.filter((position) => exbs.some((exb) => exb.deviceId === position.device_id))
-        .map((position) => {
-          position.nearest.forEach((n) => {
-            const target = xymap[n.device_id]
+      exbs.forEach(e => xymap[e.deviceId] = {x: e.x, y: e.y})
+      return positions.filter(position => exbs.some(exb => exb.deviceId == position.deviceId))
+        .map(position => {
+          position.nearest && position.nearest.forEach(n => {
+            const target = xymap[n.deviceId]
             if (target) {
               n.x = target.x
               n.y = target.y
             }
           })
-          return {btx_id: position.btx_id, nearest: position.nearest}
+          return {btxId: position.btxId, nearest: position.nearest? position.nearest: []}
         })
     },
     dispRssiIcons(btxId) {
@@ -386,18 +408,19 @@ export default {
         return
       }
 
-      const target = this.nearest.find((n) => n.btx_id === btxId)
+      const target = this.nearest.find((n) => n.btxId === btxId)
       if (!target) {
         return
       }
 
-      const minusX = this.RSSI_ICON_WIDTH / this.canvasScale / 2
-      const minusY = this.RSSI_ICON_HEIGHT / this.canvasScale * 2
+      const minusX = DISP.INSTALLATION.WIDTH / this.canvasScale / 2
+      const minusY = DISP.INSTALLATION.HEIGHT / this.canvasScale * 1.6
       const pow = Math.pow(10, this.RSSI_SCALE)
 
-      target.nearest.filter((t) => t.x && t.y).forEach((t, i, a) => {
+      const now = new Date().getTime()
+      target.nearest.filter((t) => t.x && t.y && t.timestamp >= now - APP.POS.LOST_TIME).forEach((t, i, a) => {
         const rssi = Math.floor(t.rssi * pow) / pow 
-        new RssiIcon(this.rssiCon, rssi, 1/this.canvasScale, i).add(t.x - minusX, t.y - minusY)
+        new RssiIcon(this.rssiCon, rssi.toFixed(2), 1/this.canvasScale, i).add(t.x - minusX, t.y - minusY)
         this.stage.setChildIndex(this.rssiCon, this.stage.numChildren-1)
       })
       this.stage.update()

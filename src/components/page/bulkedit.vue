@@ -27,6 +27,7 @@ import { CHAR_SET, UPDATE_ONLY_NN, IGNORE } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
 import * as AppServiceHelper from '../../sub/helper/dataproc/AppServiceHelper'
 import * as BulkHelper from '../../sub/helper/dataproc/BulkHelper'
+import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as CharSetHelper from '../../sub/helper/base/CharSetHelper'
 import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
@@ -44,7 +45,15 @@ export default {
       type: String,
       required: true,
     },
+    pName: {
+      type: String,
+      default: null,
+    },
     bulkName: {
+      type: String,
+      default: null,
+    },
+    bulkDispName: {
       type: String,
       default: null,
     },
@@ -87,7 +96,7 @@ export default {
       this.message = message
       this.replace({showInfo: true})
     }
-    StateHelper.load('sensor')
+    // StateHelper.load('sensor')
   },
   methods: {
     backToList(event, path) {
@@ -108,24 +117,25 @@ export default {
       this.$nextTick(async () => {
         this.showProgress()
         const name = Util.getValue(this, 'bulkName', this.name)
+        const dispName = Util.getValue(this, 'bulkDispName', name)
         try {
-          if(this.$parent.$options.methods.onSaving){
+          if(this.$parent.$options.methods && this.$parent.$options.methods.onSaving){
             await this.$parent.$options.methods.onSaving.call(this.$parent)
           }
           else{
             await this.bulkSave()
           }
-          await StateHelper.load(this.name, true)
-          this.message = this.$i18n.tnl('message.bulkRegisterCompleted', {target: this.$i18n.tnl('label.' + name)})
+          // await StateHelper.load(this.name, true)
+          this.message = this.$i18n.tnl('message.bulkRegisterCompleted', {target: this.$i18n.tnl('label.' + dispName)})
           this.replace({showInfo: true})
-          if(this.$parent.$options.methods.onSaved) {
+          if(this.$parent.$options.methods && this.$parent.$options.methods.onSaved) {
             this.$parent.$options.methods.onSaved.call(this.$parent)
           }
           this.editAgain()
         }
         catch(e) {
           console.error(e)
-          this.message = BulkHelper.getBulkErrorMessage(e, name, this.showLine)
+          this.message = BulkHelper.getBulkErrorMessage(e, dispName, this.showLine)
           this.replace({showAlert: true})
           window.scrollTo(0, 0)
         }
@@ -146,10 +156,14 @@ export default {
         throw new Error(this.$t('message.emptyFile'))
       }
       const reader = new FileReader()
-      const readerParam = {readFin: false, error: null, entities: [], sameLine: []}
+      const readerParam = {readFin: false, error: null, entities: [], headers: [], sameLine: []}
       this.setReaderOnload(reader, readerParam, option)
-      reader.readAsArrayBuffer(this.form.csvFile)
-      if (!readerParam.readFin) {
+      const charSet = CHAR_SET.find(e => e.id == this.csvCharSet)
+      reader.readAsText(this.form.csvFile, charSet.name)
+      for(var i=0; i<10; i++){
+        if(readerParam.readFin){
+          break
+        }
         await Util.sleep(100)
       }
       
@@ -161,9 +175,9 @@ export default {
       }
 
       this.replaceAS({showLine: true})
-      BulkHelper.entityKeyCheck(this.name, readerParam.entities)
+      BulkHelper.entityKeyCheck(this.name, this.pName, readerParam.headers)
       await AppServiceHelper.bulkSave(this.appServicePath, readerParam.entities, UPDATE_ONLY_NN.NONE, IGNORE.ON)
-      if(this.$parent.$options.methods.onSaved) {
+      if(this.$parent.$options.methods && this.$parent.$options.methods.onSaved) {
         this.$parent.$options.methods.onSaved.call(this.$parent)
       }
     },

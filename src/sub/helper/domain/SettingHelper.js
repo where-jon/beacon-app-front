@@ -6,6 +6,7 @@
 import { SETTING, PATTERN } from '../../constant/Constants'
 import * as ArrayUtil from '../../util/ArrayUtil'
 import * as Util from '../../util/Util'
+import * as DateUtil from '../../util/DateUtil'
 import * as LocalStorageHelper from '../base/LocalStorageHelper'
 
 let i18n
@@ -56,22 +57,32 @@ export const adjustValType = valType => {
   if(['number', 'int'].includes(type)){
     return SETTING.NUMBER
   }
-  if(['string'].includes(type)){
-    return SETTING.STRING
-  }
   if(['numberlist', 'numlist'].includes(type)){
     return SETTING.NUMBER_LIST
   }
   if(['stringlist', 'strlist'].includes(type)){
     return SETTING.STRING_LIST
   }
-  if(['boolean'].includes(type)){
-    return SETTING.BOOLEAN
-  }
-  if(['json'].includes(type)){
-    return SETTING.JSON
+  if(['boolean', 'json', 'date', 'datetime', 'time'].includes(type)){
+    return type
   }
   return SETTING.STRING
+}
+
+/**
+ * 指定した設定項目のデフォルトカテゴリを取得する。
+ * @method
+ * @param {String} key 
+ * @return {String}
+ */
+export const getDefaultSettingCategory = key => {
+  const tenantSettingList = Util.getValue(
+    LocalStorageHelper.getLogin(),
+    'currentTenant.settingList',
+    []
+  )
+  const tenantDefault = tenantSettingList.find(setting => setting.key == key)
+  return tenantDefault? tenantDefault.category: ''
 }
 
 /**
@@ -114,16 +125,32 @@ export const getDefaultValue = (key, isTenant = false) => {
  * @param {String} key 
  * @return {String}
  */
-export const getDefaultValType = key => {
+export const getDefaultValType = (key, forceType) => {
   const type = Util.getValue(SETTING.getType(), key, null)
   if(type != null && SETTING.VALUES.includes(type)){
     return type
+  }
+  if(forceType){
+    return forceType
   }
   const defaultValue = getDefaultValue(key, true)
   if(defaultValue != null && typeof defaultValue != 'object'){
     return typeof defaultValue
   }
   return SETTING.STRING
+}
+
+/**
+ * カテゴリを判定する。
+ * @method
+ * @param {Object} setting 
+ * @return {String}
+ */
+export const getCategoryKey = setting => {
+  const categoryObjs = i18n.tnl('config.OPTIONS.KEY_CATEGORY')
+  const categoryKeys = categoryObjs? Object.keys(categoryObjs): []
+  const key = Util.getValue(setting, 'key', '').split('.')[1]
+  return key && categoryKeys.includes(key)? key: SETTING.OTHER_CATEGORY
 }
 
 /**
@@ -137,16 +164,23 @@ export const getDefaultValType = key => {
 export const createSetting = (setting, isTenant, option) => {
   const valType = adjustValType(setting.valType)
   const defaultVal = getDefaultValue(setting.key, isTenant)
+  const defaultSettingCategory = getDefaultSettingCategory(setting.key)
   const ret = {
     ...setting,
     valType: valType,
     valTypeDisp: i18n.tnl('label.' + valType),
-    defaultVal: defaultVal && defaultVal.toString? defaultVal.toString(): defaultVal
+    defaultVal: defaultVal && defaultVal.toString? defaultVal.toString(): defaultVal,
+    categoryKey: getCategoryKey(setting),
+    category: defaultSettingCategory? defaultSettingCategory: setting.category,
   }
   if(option){
     Object.keys(option).forEach(key => {
       ret[key] = option[key]
     })
+  }
+  // デフォルト値の日時（UNIX時間）を日付表記へ変換
+  if (valType == SETTING.DATETIME) {
+    ret.defaultVal = DateUtil.formatDate(Number(ret.defaultVal),SETTING.DATE_NOTATION)
   }
   return ret
 }
@@ -168,8 +202,8 @@ export const getI18ConfigInner = (config, isTenant, parentKey = '', list = []) =
       getI18ConfigInner(data, isTenant, key + '.', list)
       return
     }
-    const setting = {key: key, valType: getDefaultValType(key)}
     const params = data.split('::')
+    const setting = {key: key, valType: getDefaultValType(key, params[2])}
     list.push(createSetting(setting, isTenant, {keyName: params[0], title: convertTitle(params[1]), isParent: false}))
   })
   return list
@@ -203,10 +237,10 @@ export const getI18Config = isTenant => {
  * @return {Object[]}
  */
 export const mergeSettings = settings => {
-  const categoryObjs = i18n.tnl('config.OPTIONS.SETTING_CATEGORY')
+  const categoryObjs = i18n.tnl('config.OPTIONS.KEY_CATEGORY')
   const ret = []
   Object.keys(categoryObjs).forEach(categoryKey => {
-    if(categoryKey == 'OTHER'){
+    if(categoryKey == SETTING.OTHER_CATEGORY){
       return
     }
     ret.push({key: categoryObjs[categoryKey], isParent: true, categoryKey: categoryKey, _rowVariant: 'secondary'})
@@ -219,8 +253,8 @@ export const mergeSettings = settings => {
     settings = settings.filter(setting => !setting.key.match(regExp))
   })
   if(settings.length != 0){
-    ret.push({key: categoryObjs['OTHER'], isParent: true,  categoryKey: 'OTHER', _rowVariant: 'secondary'})
-    settings.forEach(setting => ret.push({...setting, categoryKey: 'OTHER'}))
+    ret.push({key: categoryObjs[SETTING.OTHER_CATEGORY], isParent: true,  categoryKey: SETTING.OTHER_CATEGORY, _rowVariant: 'secondary'})
+    settings.forEach(setting => ret.push({...setting, categoryKey: SETTING.OTHER_CATEGORY}))
   }
   return ret
 }

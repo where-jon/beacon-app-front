@@ -1,4 +1,4 @@
-// Various constants or types come here. Basically constants does not change by environment. 
+// Various constants or types come here. Basically constants does not change by environment.
 
 import * as LocalStorageHelper from '../helper/base/LocalStorageHelper'
 
@@ -33,6 +33,18 @@ export const LOCALE = [
   {id: 3,  name: 'en'},
 ]
 
+export const TIME_ZONE = {
+  data: {
+    JST: 'Asia/Tokyo',
+    UTC: 'Etc/UTC',
+    IST: 'Asia/Kolkata',
+  },
+  getData(tz = 'UTC') {
+    const key = tz.toUpperCase()
+    return TIME_ZONE.data[key] == null? TIME_ZONE.data.UTC: TIME_ZONE.data[key]
+  },
+}
+
 export const USER = {
   DUMMY: {
     PASS: 'dummy',
@@ -47,14 +59,21 @@ export const KEYCODE = {
   ENTER: 13
 }
 
+export const KEY = {
+  CURRENT: {
+    REGION: 'currentRegion',
+    AREA: 'currentArea',
+  },
+}
+
 export const PATTERN = {
   NUMBER: '^-?[0-9]+[.]?[0-9]*$',
   NUMBER_LIST: '^(-?[0-9]+[.]?[0-9]*)+(,-?[0-9]+[.]?[0-9]*)*$',
-  MASTER_CD: '^[a-zA-Z0-9_\\-\\.]*$',
-  LOCATION_CD: '^[a-zA-Z0-9_\\-]*$',
+  MASTER_CD: '^[a-zA-Z0-9_\\-\\.:]*$',
+  LOCATION_CD: '^[a-zA-Z0-9_\\-:]*$',
   REGEXP: {
-    MASTER_CD: /^[a-zA-Z0-9_\-.]*$/,
-    LOCATION_CD: /^[a-zA-Z0-9_\\-]*$/,
+    MASTER_CD: /^[a-zA-Z0-9_\-.:]*$/,
+    LOCATION_CD: /^[a-zA-Z0-9_\-:]*$/,
   },
 }
 
@@ -62,18 +81,19 @@ export const BULK = {
   PRIMARY_KEY: 'updateKey',
   SPLITTER: ';',
   REQUIRE: {
-    REGION: { ALLOW: ['regionId', 'regionName', 'meshId'] },
-    AREA: { ALLOW: ['areaId', 'areaName', 'ID'], DISALLOW: ['deviceId', 'deviceIdX', 'zoneName'] },
-    EXB: { ALLOW: ['exbId', 'locationName', 'deviceId'] },
-    TX: { ALLOW: ['txId', 'btxId', 'minor'] },
-    LOCATION: { ALLOW: ['locationId', 'locationCd', 'locationName'] },
-    POT: { ALLOW: ['potId', 'potName', 'potCd'] },
-    CATEGORY: { ALLOW: ['categoryId', 'categoryName', 'display'] },
-    GROUP: { ALLOW: ['groupId', 'groupName', 'display'] },
-    USER: { ALLOW: ['userId', 'loginId', 'roleName'], DISALLOW: ['potName'] },
-    ROLE: { ALLOW: ['roleId', 'roleName'], DISALLOW: ['loginId'] },
-    ROLE_FEATURE: { ALLOW: ['roleId', 'featureId', 'mode'] },
-    ZONE: { ALLOW: ['zoneId', 'zoneName'] },
+    REGION: { ALLOW: ['updateKey', 'ID', 'regionName', 'meshId'] },
+    AREA: { ALLOW: ['updateKey', 'ID', 'areaName'], DISALLOW: ['deviceId', 'deviceIdX', 'zoneName'] },
+    EXB: { ALLOW: ['updateKey', 'threshold1'] },
+    TX: { ALLOW: ['updateKey'], DISALLOW: ['threshold1'] },
+    LOCATION: { ALLOW: ['updateKey', 'ID', 'locationName', 'txViewType'] },
+    POT: { ALLOW: ['updateKey', 'ID', 'potName', 'potType'] },
+    CATEGORY: { ALLOW: ['updateKey', 'ID', 'categoryName', 'categoryTypeName', 'color', 'bgColor', 'shape' ] },
+    AUTH_CATEGORY: { ALLOW: ['updateKey', 'ID', 'categoryName', 'categoryTypeName', 'color', 'bgColor', 'shape' ] },
+    GROUP: { ALLOW: ['updateKey', 'ID', 'groupName', 'color', 'bgColor', 'shape'] },
+    USER: { ALLOW: ['updateKey', 'loginId', 'roleName'], DISALLOW: ['potName'] },
+    ROLE: { ALLOW: ['updateKey', 'roleName'], DISALLOW: ['loginId'] },
+    ROLE_FEATURE: { ALLOW: ['updateKey', 'modeText'] },
+    ZONE: { ALLOW: ['updateKey', 'ID', 'zoneName'] },
   }
 }
 
@@ -180,19 +200,58 @@ export const EXB = {
   }
 }
 
+export const LOCATION = {
+  EXT_VALUE: {
+    TOILET: {
+      MALE: 'male',
+      FEMALE: 'female',
+      SHARE: 'share',
+      MULTIP: 'multip',    
+    }
+  }
+}
+
+export const POT_TYPE = {
+  PERSON: 1,
+  THING: 2,
+  OTHER: 3,
+  getTypes(){
+    return [
+      {value: POT_TYPE.PERSON, text: i18n.tnl('label.person')},
+      {value: POT_TYPE.THING, text: i18n.tnl('label.thing')},
+      {value: POT_TYPE.OTHER, text: i18n.tnl('label.potOther')},
+    ]
+  },
+}
+
 export const CATEGORY = {
   PERSON: 1,
   THING: 2,
   ZONE: 3,
-  getTypes(){ 
+  AUTH: 4,
+  OTHER: 5,
+  getTypes(includeAuth){
     return [
       {value: CATEGORY.PERSON, text: i18n.tnl('label.person')},
       {value: CATEGORY.THING, text: i18n.tnl('label.thing')},
       {value: CATEGORY.ZONE, text: i18n.tnl('label.zone')},
-    ]
+      includeAuth? {value: CATEGORY.AUTH, text: i18n.tnl('label.auth')}: null,
+      {value: CATEGORY.OTHER, text: i18n.tnl('label.potOther')},
+    ].filter(val => val)
   },
-  POT_AVAILABLE: [1, 2],
+  POT_AVAILABLE: [1, 2, 5],
   ZONE_AVAILABLE: [3],
+}
+
+export const TYPE_RELATION = {
+  getPotCategory() {
+    return {
+      [POT_TYPE.PERSON]: CATEGORY.PERSON,
+      [POT_TYPE.THING]: CATEGORY.THING,
+      [POT_TYPE.ZONE]: CATEGORY.ZONE,
+      [POT_TYPE.OTHER]: CATEGORY.OTHER,
+    }
+  }
 }
 
 export const PROCESS_SUM = {
@@ -200,7 +259,7 @@ export const PROCESS_SUM = {
   PROCESSING: {value: 2, label: 'processing'},
   NOT_SMOOTH: {value: 3, label: 'notSmooth', error: true},
   LATE: {value: 4, label: 'processLate', error: true},
-  getTypes(){ 
+  getTypes(){
     return [
       {value: CATEGORY.THING, text: i18n.tnl('label.thing')},
       {value: CATEGORY.PERSON, text: i18n.tnl('label.person')},
@@ -232,10 +291,19 @@ export const SHAPE = {
 export const ZONE = {
   COORDINATE: 0,
   NON_COORDINATE: 1,
-  getTypes(){ 
+  GUARD: 2,
+  DOOR: 3,
+  getTypes(){
     return [
       {value: ZONE.COORDINATE, text: i18n.tnl('label.coordinate')},
       {value: ZONE.NON_COORDINATE, text: i18n.tnl('label.nonCoordinate')},
+    ]
+  },
+  getOptions(){
+    return [
+      { value: ZONE.NON_COORDINATE, text: i18n.tnl('label.normal') },
+      { value: ZONE.GUARD, text: i18n.tnl('label.zoneGuard') },
+      { value: ZONE.DOOR, text: i18n.tnl('label.zoneDoor') },
     ]
   },
   MIN_WIDTH: 50,
@@ -246,7 +314,7 @@ export const SENSOR = {
   TEMPERATURE: 1,
   PIR: 2,
   THERMOPILE: 3,
-  LED: 4,
+  LED_TYPE2: 4,
   MEDITAG: 5,
   MAGNET: 6,
   BUTTON: 7,
@@ -254,11 +322,13 @@ export const SENSOR = {
   OMR_ENV: 9,
   OMR_TP_HUMAN: 10,
   OMR_TP_ENV: 11,
+  LED_TYPE5: 12,
   MAGNET_STATUS: {
     OFF: 0,
     ON: 4,
   },
-  STRING: ['','temperature','pir','thermopile','led','meditag','magnet','button','pressure','omr-env','omr-tp-human','omr-tp-env']
+  STRING: ['','temperature','pir','thermopile','led_type2','meditag','magnet','button','pressure','omr-env','omr-tp-human','omr-tp-env','led_type5'],
+  NAMES: ['','thermohumidity','pir','thermopile','led_type2','meditag','magnet','button','pressure','omr-env','omr-tp-human','omr-tp-env','led_type5']
 }
 
 export const SUM_UNIT = {
@@ -397,6 +467,7 @@ export const LED_COLORS = {
 }
 
 export const LED_BLINK_TYPES = {
+  ON: 0,
   CHANGE_SLOW: 1,
   CHANGE_FAST: 2,
   BLINK_SLOW: 3,
@@ -487,7 +558,7 @@ export const TX_VIEW_TYPES = {
 }
 
 export const POSITION_STACK_TYPES = {
-  getTypes(){ 
+  getTypes(){
     return [
       {text: i18n.tnl('label.area'), value: 1, className: 'area'},
       {text: i18n.tnl('label.zone'), value: 2, className: 'zone'},
@@ -504,18 +575,27 @@ export const FONT = {
   SIZE: {
     MIN: 6,
   },
+  OPTION: {
+    BOLD: ' bold ',
+  },
   TYPE: 'px sans-serif',
 }
 
 export const SETTING = {
-  VALUES: ['string', 'stringList', 'number', 'numberList', 'boolean', 'json'],
+  SPLITTER: ':',
+  VALUES: ['string', 'stringList', 'number', 'numberList', 'boolean', 'date', 'datetime', 'time', 'json'],
   STRING: 'string',
   STRING_LIST: 'stringList',
   NUMBER: 'number',
   NUMBER_LIST: 'numberList',
   BOOLEAN: 'boolean',
+  DATE: 'date',
+  DATETIME: 'datetime',
+  TIME: 'time',
   JSON: 'json',
   SELECT: 'select',
+  OTHER_CATEGORY: 'OTHER_CATEGORY',
+  DATE_NOTATION: 'YYYY-MM-DD HH:mm:ss',
   getOptions(){
     return [
       {text: i18n.tnl('label.string'), value: 'string'},
@@ -523,6 +603,9 @@ export const SETTING = {
       {text: i18n.tnl('label.number'), value: 'number'},
       {text: i18n.tnl('label.numberList'), value: 'numberList'},
       {text: i18n.tnl('label.boolean'), value: 'boolean'},
+      {text: i18n.tnl('label.date'), value: 'date'},
+      {text: i18n.tnl('label.datetime'), value: 'datetime'},
+      {text: i18n.tnl('label.time'), value: 'time'},
       {text: 'json', value: 'json'},
     ]
   },
@@ -531,10 +614,10 @@ export const SETTING = {
       APP: {
         POS: {
           MOVING_AVERAGE_TIME: SETTING.NUMBER,
-          PROHIBIT_GROUPS: SETTING.NUMBER_LIST,
+          PROHIBIT_GROUP_ZONE: SETTING.JSON,
           PROHIBIT_ALERT: SETTING.STRING_LIST,
           LOST_ALERT: SETTING.STRING_LIST,
-          LOST_GROUPS: SETTING.NUMBER_LIST,
+          LOST_GROUP_ZONE: SETTING.JSON,
           PROHIBIT: {
             DUPLICATE_MAIL_TIME: SETTING.NUMBER,
           },
@@ -543,33 +626,56 @@ export const SETTING = {
           },
         },
         SENSOR: {
-          EXB_SENSOR: SETTING.NUMBER_LIST,
           TX_SENSOR: SETTING.NUMBER_LIST,
         },
         POS_LIST: {
           WITH: SETTING.STRING_LIST,
-        }, 
+        },
+        POS_STACK: {
+          ADJUST_POPUP: SETTING.STRING_LIST,
+          USE_POPUP: SETTING.BOOLEAN,
+        },
         TX: {
           WITH: SETTING.STRING_LIST,
-        }, 
+        },
         EXB: {
           SENSOR: SETTING.NUMBER_LIST,
-        }, 
+        },
         LOCATION: {
           WITH: SETTING.STRING_LIST,
           TYPE: {
             WITH: SETTING.STRING_LIST,
           },
+          EXT_DEF: SETTING.JSON,
         },
         USER: {
           WITH: SETTING.STRING_LIST,
-        }, 
+        },
         POT: {
           WITH: SETTING.STRING_LIST,
           EXT_DEF: SETTING.JSON,
-        }, 
+        },
+        PERSON: {
+          WITH: SETTING.STRING_LIST,
+          EXT_DEF: SETTING.JSON,
+        },
+        THING: {
+          WITH: SETTING.STRING_LIST,
+          EXT_DEF: SETTING.JSON,
+        },
         CATEGORY: {
           TYPES: SETTING.NUMBER_LIST,
+          WITH: SETTING.STRING_LIST,
+          EXT_DEF: SETTING.JSON,
+        },
+        GROUP: {
+          WITH: SETTING.STRING_LIST,
+          EXT_DEF: SETTING.JSON,
+        },
+        ZONE: {
+          TYPES: SETTING.NUMBER_LIST,
+          WITH: SETTING.STRING_LIST,
+          EXT_DEF: SETTING.JSON,
         },
         NOTIFY: {
           MIDIUM_TYPES: SETTING.NUMBER_LIST,
@@ -588,13 +694,16 @@ export const SETTING = {
         TXDETAIL: {
           ITEMS: SETTING.STRING_LIST,
         },
+        ENTER: {
+          START_TIME: SETTING.DATETIME,
+        },
         SVC: {
           SLACK_CHANNEL: SETTING.STRING,
           SLACK_TOKEN: SETTING.STRING,
           STAY_SUM: {
             START: SETTING.NUMBER,
-            END: SETTING.NUMBER, 
-            INTERVAL: SETTING.NUMBER, 
+            END: SETTING.NUMBER,
+            INTERVAL: SETTING.NUMBER,
             CALC_BY: SETTING.STRING,
             ADJUST_TIME: SETTING.NUMBER,
             REAL_TIME: SETTING.BOOLEAN,
@@ -650,6 +759,12 @@ export const SETTING = {
           PROXIMITY: {
             CRON: SETTING.STRING,
           },
+          AD_SYNC: {
+            CRON: SETTING.STRING,
+          },
+          ENTER_COUNT: {
+            CRON: SETTING.STRING,
+          },
           LOST_ZONE: {
             INTERVAL: SETTING.NUMBER,
           },
@@ -657,10 +772,20 @@ export const SETTING = {
             INTERVAL: SETTING.NUMBER,
           },
         },
+        MANAGE: {
+          SETTING_CATEGORY: SETTING.STRING_LIST,
+        },
+        OTHER: {
+          EXT_DEF: SETTING.JSON,
+        }
       },
       DISP: {
         TX: {
           ABSENT_ZONE_DISPLAY_TYPES: SETTING.STRING_LIST,
+        },
+        EXB_LOC: {
+          BGCOLOR_PATTERN: SETTING.STRING_LIST,
+          BGCOLOR_PATTERN_NOTX: SETTING.STRING_LIST,
         },
         THERMOH: {
           PATTERN: SETTING.STRING_LIST,
@@ -678,6 +803,12 @@ export const SETTING = {
         SIMULATION_MOVE_PERCENT: SETTING.NUMBER,
         SIMULATION_MOVE_AREA_PERCENT: SETTING.NUMBER,
       },
+      EXSERVER: {
+        BASE_URL: SETTING.STRING,
+        MULTI_API: SETTING.BOOLEAN,
+        TIME_RANGE: SETTING.NUMBER,
+        MAX_DEVICES: SETTING.NUMBER,
+      },
     }
   },
   getDefault() {
@@ -693,11 +824,11 @@ export const SETTING = {
         },
         SVC: {
           STAY_SUM: {
-            STAY_SUM_START: 0, 
-            STAY_SUM_END: 2400, 
-            STAY_SUM_INTERVAL: 5, 
-            STAY_SUM_CALC_BY: "location",
-            STAY_SUM_ADJUST_TIME: 4,
+            START: 0,
+            END: 2400,
+            INTERVAL: 60,
+            CALC_BY: "location",
+            ADJUST_TIME: 4,
           },
           PROXIMITY:{
             BLANK_RANGE: 60000,
@@ -706,7 +837,7 @@ export const SETTING = {
         },
       },
     }
-  },  
+  },
 }
 
 export const FORCE_PUSH_MENU = [
@@ -783,6 +914,11 @@ export const MENU = [
       icon: 'building',
     },
     {
+      key: 'enterTable',
+      path: 'enter-table',
+      icon: 'table',
+    },
+    {
       key: 'pirMenu',
       path: 'pir',
       icon: 'users',
@@ -801,7 +937,12 @@ export const MENU = [
       key: 'ledOperation',
       path: 'led',
       icon: 'lightbulb',
-    }
+    },
+    {
+      key: 'toiletStatus',
+      path: 'toilet',
+      icon: 'toilet',
+    },
     ]
   },
   {
@@ -822,11 +963,13 @@ export const MENU = [
       },
       {
         key: 'exb',
+        label: 'masterExb',
         path: 'exb',
         icon: 'hdd',
       },
       {
         key: 'tx',
+        label: 'masterTx',
         path: 'tx',
         // icon: 'fal fa-location',
         // icon: 'fas fa-user-tag',
@@ -843,19 +986,49 @@ export const MENU = [
         icon: 'location-arrow',
       },
       {
-        key: 'txLocationSetting',
-        path: 'txlocation/position',
-        icon: 'map-pin',
-      },
-      {
         key: 'pot',
         path: 'pot',
         icon: 'id-card',
       },
       {
+        key: 'potPerson',
+        path: 'potPerson',
+        icon: 'id-card',
+      },
+      {
+        key: 'potThing',
+        path: 'potThing',
+        icon: 'cubes',
+      },
+      {
+        key: 'potOther',
+        path: 'potOther',
+        icon: 'cubes',
+      },
+      {
         key: 'category',
         path: 'category',
         icon: 'object-group',
+      },
+      {
+        key: 'categoryPerson',
+        path: 'categoryPerson',
+        icon: 'users',
+      },
+      {
+        key: 'categoryThing',
+        path: 'categoryThing',
+        icon: 'object-group',
+      },
+      {
+        key: 'categoryZone',
+        path: 'categoryZone',
+        icon: 'object-ungroup',
+      },
+      {
+        key: 'categoryAuth',
+        path: 'categoryAuth',
+        icon: 'key',
       },
       {
         key: 'group',
@@ -888,7 +1061,7 @@ export const MENU = [
         icon: 'envelope',
       },
       {
-        key: 'gateway',
+        key: 'masterGateway',
         path: 'gateway',
         icon: 'road',
         exserver: true,
@@ -1028,6 +1201,11 @@ export const MENU = [
       icon: 'user-cog',
     },
     {
+      key: 'systemChild',
+      path: 'appSystem',
+      icon: 'cogs',
+    },
+    {
       key: 'system',
       path: 'system',
       icon: 'cogs',
@@ -1069,6 +1247,8 @@ export const SYSTEM_ZONE_CATEGORY_NAME = {
   ABSENT: 'ABSENT',
   PROHIBIT: 'PROHIBIT',
   ABSENT_DISPLAY: 'ABSENT_DISPLAY',
+  TOILET: 'TOILET',
+  FIXED_POS: 'FIXED_POS',
 }
 
 export const PLUGIN_CONSTANTS = {

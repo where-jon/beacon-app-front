@@ -847,7 +847,7 @@ export default {
     },
     positionCsvItems() {
       return [
-        { isActive: true, displayName: this.getLabel('btx_id'), keyName: 'btx_id' },
+        { isActive: true, displayName: this.getLabel('btxId'), keyName: 'btxId' },
         { isActive: true, displayName: this.getLabel('major'), keyName: 'major' },
         { isActive: true, displayName: this.getLabel('minor'), keyName: 'minor' },
         { isActive: true, displayName: this.getLabel('name'), keyName: 'name' },

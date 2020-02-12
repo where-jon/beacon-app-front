@@ -1,18 +1,23 @@
 <template>
   <div class="container-fluid">
     <breadcrumb :items="items" />
-    <m-list :params="params" :list="groups" />
+    <m-list :params="params" compact-mode />
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import { APP } from '../../../sub/constant/config'
+import { SHAPE } from '../../../sub/constant/Constants'
 import * as ColorUtil from '../../../sub/util/ColorUtil'
+import * as Util from '../../../sub/util/Util'
+import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as StyleHelper from '../../../sub/helper/ui/StyleHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
-import reloadmixin from '../../../components/mixin/reloadmixin.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
 import mList from '../../../components/page/list.vue'
 
 export default {
@@ -20,7 +25,7 @@ export default {
     breadcrumb,
     mList, 
   },
-  mixins: [reloadmixin],
+  mixins: [commonmixin],
   data() {
     return {
       params: {
@@ -31,54 +36,47 @@ export default {
         bulkEditPath: '/master/group/bulkedit',
         appServicePath: '/basic/group',
         csvOut: true,
-        custumCsvColumns: ['ID', 'groupName', 'ruby', 'color', 'bgColor', 'display.shape', 'description'],
-        fields: ViewHelper.addLabelByKey(this.$i18n, [ 
-          {key: 'groupCd', label: 'id', sortable: true },
-          {key: 'groupName', sortable: true },
-          {key: 'ruby', sortable: true },
+        fields: this.getFields(),
+        sortBy: 'ID',
+      },
+      items: ViewHelper.createBreadCrumbItems('master', 'group'),
+    }
+  },
+  methods: {
+    getFields(){
+      return ViewHelper.addLabelByKey(this.$i18n, [ 
+        {key: 'ID', label: 'id', sortable: true },
+        {key: 'groupName', sortable: true }
+      ].concat(this.createCustomColumn())
+        .concat([
           {key: 'style', label: 'display' } ,
           {key: 'description' },
           {key: 'actions', thStyle: {width:'130px !important'} }
-        ]),
-        sortBy: 'groupCd',
-        initTotalRows: this.$store.state.app_service.groups.length
-      },
-      items: ViewHelper.createBreadCrumbItems('master', 'group'),
-      groupStyles: [],
-    }
-  },
-  computed: {
-    ...mapState('app_service', [
-      'groups',
-    ]),
-  },
-  methods: {
-    onSaved(){
-      StateHelper.setForceFetch('pot', true)
-      StateHelper.setForceFetch('tx', true)
+        ])
+        .filter(val => val))
     },
-    async fetchData(payload) {
-      try {
-        this.showProgress()
-        await StateHelper.load('group')
-        this.groupStyles = StyleHelper.getStyleDisplay(this.groups)
-        if (payload && payload.done) {
-          payload.done()
+    createCustomColumn(isDownload){
+      const ret = []
+      APP.GROUP.WITH.forEach(val => {
+        if(!isDownload && !ExtValueHelper.isShowList(APP.GROUP, val)) {
+          return
         }
-      }
-      catch(e) {
-        console.error(e)
-      }
-      this.hideProgress()
+        ret.push({key: val, label: val, sortable: true})
+      })
+      return ret
+    },
+    getCustumCsvColumns(){
+      return ['ID', 'groupName']
+        .concat(this.createCustomColumn(true).map(val => val.key))
+        .concat(['color', 'bgColor', 'shape', 'description'])
+        .filter(val => val)
+    },
+    async onSaved(){
+      // StateHelper.setForceFetch('pot', true)
+      // StateHelper.setForceFetch('tx', true)
     },
     style(row) {
-      const groupStyle = this.groupStyles.find((val) => val.entity.groupId == row.groupId)
-      return groupStyle? groupStyle.style: null
-    },
-    customCsvData(val){
-      val.ID = val.groupCd
-      val.color = ColorUtil.colorCd4display(val.display.color)
-      val.bgColor = ColorUtil.colorCd4display(val.display.bgColor)
+      return StyleHelper.getStyleDisplay1(row)
     },
   }
 }

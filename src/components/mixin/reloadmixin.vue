@@ -40,7 +40,6 @@ export default {
       Util.registerInterval(() => {
         EventBus.$emit('positionReload', {
           disabledProgress: true,
-          disabledOther: true,
         })
       }, APP.POS.AUTO_RELOAD)
     },

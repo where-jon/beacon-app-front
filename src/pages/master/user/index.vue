@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <breadcrumb :items="items" />
-    <m-list :params="params" :list="users" />
+    <m-list :params="params" compact-mode />
   </div>
 </template>
 
@@ -9,6 +9,7 @@
 import { mapState } from 'vuex'
 import { APP } from '../../../sub/constant/config'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import reloadmixin from '../../../components/mixin/reloadmixin.vue'
@@ -31,35 +32,23 @@ export default {
         bulkEditPath: '/master/user/bulkedit',
         appServicePath: '/meta/user',
         csvOut: true,
-        custumCsvColumns: this.getCustomCsvColumns(),
         fields: this.getFields(),
         sortBy: 'loginId',
-        initTotalRows: this.$store.state.app_service.users.length
       },
       items: ViewHelper.createBreadCrumbItems('master', 'user'),
     }
   },
   computed: {
     ...mapState('app_service', [
-      'users',
       'regions',
     ]),
   },
   async created() {
-    await StateHelper.load('region')
+    // await StateHelper.load('region')
   },
   methods: {
     createCustomColumn(){
       return APP.USER.WITH.map(val => ({key: val == 'region'? 'regionNames': val, label: val, sortable: true}))
-    },
-    getCustomCsvColumns(){
-      return ['loginId', 'pass']
-        .concat(this.createCustomColumn().map(val => val.key))
-        .concat('roleName', 'description')
-        .filter(val => val)
-    },
-    customCsvData(val){
-      val.regionNames = val.regionNames.join(';')
     },
     getFields(){
       return ViewHelper.addLabelByKey(this.$i18n, [ 
@@ -71,21 +60,8 @@ export default {
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]))
     },
-    onSaved(){
-      StateHelper.setForceFetch('pot', true)
-    },
-    async fetchData(payload) {
-      try {
-        this.showProgress()
-        await StateHelper.load('user')
-        if (payload && payload.done) {
-          payload.done()
-        }
-      }
-      catch(e) {
-        console.error(e)
-      }
-      this.hideProgress()
+    async onSaved(){
+      // StateHelper.setForceFetch('pot', true)
     },
   }
 }

@@ -5,13 +5,14 @@
 
 import h337 from 'heatmap.js'
 import _ from 'lodash'
+import { DISP } from '../../constant/config'
 import * as Util from '../../util/Util'
 import * as VueUtil from '../../util/VueUtil'
 
 /**
  * ヒートマップのキャンバス要素を全て取得する。
  * @method
- * @param {Element} mapElement 
+ * @param {Element} mapElement
  * @return {Element[]}
  */
 export const getCanvasElements = mapElement => {
@@ -27,7 +28,7 @@ export const getCanvasElements = mapElement => {
 /**
  * ヒートマップを削除する。
  * @method
- * @param {Element} mapElement 
+ * @param {Element} mapElement
  * @return {Object}
  */
 export const removeHeatmap = mapElement => {
@@ -43,13 +44,18 @@ export const removeHeatmap = mapElement => {
 /**
  * ヒートマップ要素を作成する。
  * @method
- * @param {String} elementId 
- * @param {String} [mapSrc = null] 
- * @param {Function} [onLoad = null] 
+ * @param {String} elementId
+ * @param {String} [mapSrc = null]
+ * @param {Function} [onLoad = null]
+ * @param {Function} [onFinally = null]
  * @return {Element}
  */
-export const create = (vueComponent, elementId, mapSrc = null, onLoad = null) => {
+export const create = (vueComponent, elementId, mapSrc = null, onLoad = null, onFinally = null) => {
   const mapElement = document.getElementById(elementId)
+  if(mapElement == null){
+    onFinally && onFinally()
+    return null
+  }
   while (mapElement && mapElement.firstChild) {
     mapElement.removeChild(mapElement.firstChild)
   }
@@ -60,12 +66,14 @@ export const create = (vueComponent, elementId, mapSrc = null, onLoad = null) =>
     }
     mapElement.appendChild(map)
     onLoad && onLoad(evt, mapElement, map)
+    onFinally && onFinally()
   }
   if(mapSrc){
     map.src = mapSrc
   }
   else{
     onLoad && onLoad(null, mapElement, map)
+    onFinally && onFinally()
   }
   return mapElement
 }
@@ -73,8 +81,8 @@ export const create = (vueComponent, elementId, mapSrc = null, onLoad = null) =>
 /**
  * ヒートマップを描画する。
  * @method
- * @param {Element} mapElement 
- * @param {Object[]} heatmapOptions 
+ * @param {Element} mapElement
+ * @param {Object[]} heatmapOptions
  * @param {Object} [heatmapData = null]
  */
 export const draw = (mapElement, heatmapOptions, heatmapData = null) => {
@@ -88,7 +96,7 @@ export const draw = (mapElement, heatmapOptions, heatmapData = null) => {
 /**
  * ヒートマップで使用するデータを集計する。
  * @method
- * @param {Obejct[]} heatmapSrcList 
+ * @param {Obejct[]} heatmapSrcList
  * @param {Object} [heatmapOptions = null]
  * @param {Function} [getKeyFunc = () => 'key']
  * @param {Function} [getValueFunc = () => 0]
@@ -130,7 +138,7 @@ export const createGradient = (gradientArray = null) => {
     return null
   }
   const ret = {}
-  
+
   const per = Math.floor(1 / (gradientArray.length + 1) * 100) / 100
   let level = per
   gradientArray.forEach(gradient => {
@@ -138,4 +146,52 @@ export const createGradient = (gradientArray = null) => {
     level += per
   })
   return ret
+}
+
+/**
+ * 分析用ヒートマップの情報を作成する。
+ * @method
+ * @param {Object[]} dataList
+ * @param {umber} mapScale
+ * @return {Object}
+ */
+export const creteAnalysisHeatmapData = (dataList, mapScale) =>{
+  let positions = _.reduce(dataList, (ary, hist) => {
+    if (ary[hist.locationId]) {
+      ary[hist.locationId].value++
+    } else {
+      ary[hist.locationId] = {
+        locationId: hist.locationId,
+        x: Math.round(hist.x * mapScale),
+        y: Math.round(hist.y * mapScale),
+        value: 1,
+      }
+    }
+    return ary
+  }, [])
+  positions = _.compact(positions)
+  const maxValue = _.maxBy(positions, 'value').value
+  return { max: maxValue, data: positions }
+}
+
+/**
+ * 分析用ヒートマップを描画する。
+ * @method
+ * @param {Object} container
+ * @param {Object[]} dataList
+ * @param {Number} mapScale
+ */
+export const drawAnalysisHeatmap = (container, dataList, mapScale) => {
+  if(!Util.hasValue(container)){
+    return
+  }
+  if(!Util.hasValue(dataList)){
+    removeHeatmap(container)
+    return
+  }
+  draw(
+    container,
+    { radius: DISP.ANALYSIS.HEATMAP.RADIUS * mapScale, container: container },
+    creteAnalysisHeatmapData(dataList, mapScale),
+  )
 }

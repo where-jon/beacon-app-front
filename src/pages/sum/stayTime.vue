@@ -93,6 +93,7 @@ import * as DateUtil from '../../sub/util/DateUtil'
 import * as Util from '../../sub/util/Util'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as ValidateHelper from '../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import * as StayTimeHelper from '../../sub/helper/domain/StayTimeHelper'
@@ -157,7 +158,7 @@ export default {
     },
   },
   async created() {
-    await Promise.all(['pot','area','zone','category','group'].map(StateHelper.load))
+    // await Promise.all(['pot','area','zone','category','group'].map(StateHelper.load))
     const date = DateUtil.getDefaultDate()
     this.form.datetimeFrom = DateUtil.getDatetime(date, {date: -3})
     this.form.datetimeTo = DateUtil.getDatetime(date)
@@ -192,7 +193,7 @@ export default {
         this.filterIdOptions = this.zones.map(e => ({value: e.zoneId,label: e.zoneName}))
         break
       case 'zoneCategory':
-        this.filterIdOptions = this.categories.filter(e => e.categoryType == 3).map(e => ({value: e.categoryId, label: e.categoryName}))
+        this.filterIdOptions = this.categories.filter(e => e.categoryType == 3).map(e => ({value: e.categoryId, label: MasterHelper.getDispCategoryName(e)}))
         break
       default:
         this.filterIdOptions = []
@@ -256,8 +257,18 @@ export default {
         return
       }
 
+      const categoryMap = {}
+      this.categories.forEach(c => categoryMap[c.categoryName] = MasterHelper.getDispCategoryName(c))
+      sumData.forEach(data => {
+        ['axis', 'stack'].forEach(column => {
+          const catName = data[column]
+          if(Util.hasValue(catName) && Util.hasValue(categoryMap[catName])) {
+            data[column] = categoryMap[catName]
+          }
+        })
+      })
       // show Chart
-      let err = StayTimeHelper.showChart(this, sumData)
+      const err = StayTimeHelper.showChart(this, sumData)
       if (err) {
         this.message = this.$i18n.t('message.' + err)
         this.replace({showAlert: true})

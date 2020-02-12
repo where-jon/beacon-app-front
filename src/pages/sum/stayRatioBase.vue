@@ -155,7 +155,7 @@
       </b-form>
       <slot />
       <b-row class="mt-3" />
-      <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" stacked="md" striped hover outlined>
+      <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" :sort-compare="defaultSortCompare" stacked="md" striped hover outlined>
         <template v-for="field in fields" slot-scope="data" :slot="`HEAD_${field.key}`">
           <span v-html="data.label" :key="field.key"></span><span v-if="field.bgColor" :style="`color: ${field.bgColor};`" :key="field.key">■</span>
         </template>
@@ -299,7 +299,7 @@ export default {
     },
   },
   async created() {
-    await Promise.all(['groups','pots','categories','areas'].map(StateHelper.load))
+    // await Promise.all(['groups','pots','categories','areas'].map(StateHelper.load))
     this.form.date = DEV.DEFAULT_DATE != '' ? new Date(DEV.DEFAULT_DATE) : moment().add(-1, 'days').format('YYYYMMDD')
     let sortedArea = _.cloneDeep(this.areas)
     ArrayUtil.sortIgnoreCase(sortedArea, 'areaName')
@@ -313,7 +313,7 @@ export default {
       this.setGraphTimeDisplay()
     })
     this.updateColumnName()
-    await StateHelper.load('category')
+    // await StateHelper.load('category')
     if (this.categories.length < 1) {
       return
     }
@@ -457,27 +457,34 @@ export default {
     async displayImpl(){
       this.replace({showAlert: false})
       this.showProgress()
-      await Promise.all(['zones','pots','groups'].map(StateHelper.load))
-      
-      if (!this.form.date || this.form.date.length == 0) {
-        this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
-        this.replace({showAlert: true})
-        this.hideProgress()
-        return
+      try {
+        // await Promise.all(['zones','pots','groups'].map(StateHelper.load))
+        
+        if (!this.form.date || this.form.date.length == 0) {
+          this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
+          this.replace({showAlert: true})
+          this.hideProgress()
+          return
+        }
+
+        const sumData = await HttpHelper.getAppService(this.getApiUrl(this.form))
+        if (_.isEmpty(sumData)) {
+          this.message = this.$i18n.t('message.listEmpty')
+          this.replace({showAlert: true})
+          this.hideProgress()
+          return
+        }
+
+        this.viewList = this.getStayDataList(moment(this.form.date).format('YYYY-MM-DD'), sumData, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
+
+        this.totalRows = this.viewList.length
       }
-
-      const sumData = await HttpHelper.getAppService(this.getApiUrl(this.form))
-      if (_.isEmpty(sumData)) {
-        this.message = this.$i18n.t('message.listEmpty')
-        this.replace({showAlert: true})
-        this.hideProgress()
-        return
+      catch(e) {
+        console.error(e)
       }
-
-      this.viewList = this.getStayDataList(moment(this.form.date).format('YYYY-MM-DD'), sumData, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
-
-      this.totalRows = this.viewList.length
-      this.hideProgress()
+      finally {
+        this.hideProgress()
+      }
     },
     isAbsentZoneData(categoryId) {
       let category = !this.isLostData(categoryId)? this.categories.find((e) => e.categoryId == categoryId): null
@@ -776,68 +783,74 @@ export default {
     async downloadMonth(key){
       this.replace({showAlert: false})
       this.showProgress()
-      await Promise.all(['zones', 'pots', 'groups'].map(StateHelper.load))
+      try {
+        // await Promise.all(['zones', 'pots', 'groups'].map(StateHelper.load))
 
-      if (!this.form.date || this.form.date.length == 0) {
-        this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
-        this.replace({showAlert: true})
-        this.hideProgress()
-        return
-      }
-
-      this.form.date = moment(this.form.date).format('YYYYMMDD')
-      const diff = moment().startOf('months').diff(moment(this.form.date).startOf('months'), 'months')
-      let startDate, endDate
-
-      // 取得する日付開始、終了日を設定する
-      if (diff == 0) {
-        endDate = moment().subtract(1, 'd')
-      } else if (diff >= 0) {
-        endDate = moment(this.form.date).endOf('months')
-      } else {
-        // 未来月の場合はエラーとする
-        this.message = this.$i18n.terror('message.invalid', {target: this.$i18n.tnl('label.date')})
-        this.replace({showAlert: true})
-        this.hideProgress()
-        return
-      }
-      startDate = moment(this.form.date).startOf('months')
-
-      let csvList = []
-      const groupBy = this.form.groupId? '&groupId=' + this.form.groupId: ''
-      const categoryBy = this.form.categoryId? '&categoryId=' + this.form.categoryId: ''
-      while (startDate.diff(endDate) <= 0) {
-        const searchDate = startDate.format('YYYYMMDD')
-        const url = '/office/stayTime/sumByDay/' + searchDate + '/zoneCategory?from=' + APP.STAY_SUM.FROM + '&to=' + APP.STAY_SUM.TO + groupBy + categoryBy
-        const sumData = await HttpHelper.getAppService(url)
-        if (_.isEmpty(sumData)) {
-          Util.debug('searchDate: ' + searchDate)
-          this.message = this.$i18n.t('message.listEmpty')
+        if (!this.form.date || this.form.date.length == 0) {
+          this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
           this.replace({showAlert: true})
           this.hideProgress()
           return
         }
 
-        let list = this.getStayDataList(moment(searchDate).format('YYYY-MM-DD'), sumData, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
-        ArrayUtil.sortIgnoreCase(list, 'name')
-        const dateList = this.getCsvList(key, list)
-        csvList = csvList.isEmpty? dateList: csvList.concat(dateList)
-        startDate.add(1, 'days')
+        this.form.date = moment(this.form.date).format('YYYYMMDD')
+        const diff = moment().startOf('months').diff(moment(this.form.date).startOf('months'), 'months')
+        let startDate, endDate
+
+        // 取得する日付開始、終了日を設定する
+        if (diff == 0) {
+          endDate = moment().subtract(1, 'd')
+        } else if (diff >= 0) {
+          endDate = moment(this.form.date).endOf('months')
+        } else {
+          // 未来月の場合はエラーとする
+          this.message = this.$i18n.terror('message.invalid', {target: this.$i18n.tnl('label.date')})
+          this.replace({showAlert: true})
+          this.hideProgress()
+          return
+        }
+        startDate = moment(this.form.date).startOf('months')
+
+        let csvList = []
+        const groupBy = this.form.groupId? '&groupId=' + this.form.groupId: ''
+        const categoryBy = this.form.categoryId? '&categoryId=' + this.form.categoryId: ''
+        while (startDate.diff(endDate) <= 0) {
+          const searchDate = startDate.format('YYYYMMDD')
+          const url = '/office/stayTime/sumByDay/' + searchDate + '/zoneCategory?from=' + APP.STAY_SUM.FROM + '&to=' + APP.STAY_SUM.TO + groupBy + categoryBy
+          const sumData = await HttpHelper.getAppService(url)
+          if (_.isEmpty(sumData)) {
+            Util.debug('searchDate: ' + searchDate)
+            this.message = this.$i18n.t('message.listEmpty')
+            this.replace({showAlert: true})
+            this.hideProgress()
+            return
+          }
+
+          let list = this.getStayDataList(moment(searchDate).format('YYYY-MM-DD'), sumData, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
+          ArrayUtil.sortIgnoreCase(list, 'name')
+          const dateList = this.getCsvList(key, list)
+          csvList = csvList.isEmpty? dateList: csvList.concat(dateList)
+          startDate.add(1, 'days')
+        }
+
+        const group = this.form.groupId? this.groups.find((val) => val.groupId == this.form.groupId): null
+        const groupName =  group? '_' + group.groupName: ''
+        const category = this.form.categoryId? this.categories.find((val) => val.categoryId == this.form.categoryId): null
+        const categoryName =  !category? '': category.systemUse == 1? category.systemCategoryName: '_' + category.categoryName
+
+        const convertedCsvData = this.convertCsvData(key, csvList)
+        BrowserUtil.fileDL(
+          moment(this.form.date).format('YYYY-MM') + groupName + categoryName + '_stayRatio.csv',
+          convertedCsvData,
+          getCharSet(this.$store.state.loginId)
+        )
       }
-
-      const group = this.form.groupId? this.groups.find((val) => val.groupId == this.form.groupId): null
-      const groupName =  group? '_' + group.groupName: ''
-      const category = this.form.categoryId? this.categories.find((val) => val.categoryId == this.form.categoryId): null
-      const categoryName =  !category? '': category.systemUse == 1? category.systemCategoryName: '_' + category.categoryName
-
-      const convertedCsvData = this.convertCsvData(key, csvList)
-      BrowserUtil.fileDL(
-        moment(this.form.date).format('YYYY-MM') + groupName + categoryName + '_stayRatio.csv',
-        convertedCsvData,
-        getCharSet(this.$store.state.loginId)
-      )
-
-      this.hideProgress()
+      catch(e) {
+        console.error(e)
+      }
+      finally {
+        this.hideProgress()
+      }
     },
     pickerChanged() {
       if (!Util.hasValue(this.form.date) || DateUtil.isAfterNextMonth(this.form.date)) {

@@ -4,7 +4,7 @@
                 :reload="reload" :short-name="shortName"
     />
     <alert v-model="showDismissibleAlert" :message="message" :fix="fixHeight" :prohibit=showDismissibleAlert :prohibit-view="isProhibitView" :alert-style="alertStyle" />
-    <m-list :params="params" :list="positionList" :alert-force-hide=true :use-detail-filter="useDetailFilter" />
+    <m-list :params="params" :totalRows="totalRows" :list="positionList" :alert-force-hide=true :use-detail-filter="useDetailFilter" />
   </div>
 </template>
 
@@ -41,7 +41,7 @@ export default {
         id: 'positionListId',
         fields: ViewHelper.addLabelByKey(this.$i18n, [
           APP.TX.BTX_MINOR == 'minor' ? {key: 'minor', label: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
-          APP.TX.BTX_MINOR != 'minor' ? {key: 'btx_id', label: 'btxId', sortable: true, tdClass: 'action-rowdata' }: null,
+          APP.TX.BTX_MINOR != 'minor' ? {key: 'btxId', label: 'btxId', sortable: true, tdClass: 'action-rowdata' }: null,
           APP.TX.BTX_MINOR == 'both' ? {key: 'minor', label:'minor', sortable: true, tdClass: 'action-rowdata' }: null,
           ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'potCd') ? {key: 'potCd', label: 'potCd', sortable: true, tdClass: 'action-rowdata'} : null,
           {key: 'potName', label: 'name', sortable: true, tdClass: 'action-rowdata'},
@@ -51,17 +51,21 @@ export default {
           {key: 'state', sortable: true, tdClass: 'action-rowdata'},
           APP.POSITION_WITH_AREA ? {key: 'areaName', label: 'area', sortable: true, tdClass: 'action-rowdata'} : null,
           {key: 'locationName', label: 'finalReceiveLocation', sortable: true, tdClass: 'action-rowdata'},
-          {key: 'updatetime', label: 'finalReceiveTimestamp', sortable: true, tdClass: 'action-rowdata'},
+          {key: 'updatetime', label: 'finalReceiveTimestamp', sortable: true, filterable: false, tdClass: 'action-rowdata'},
           // {key: 'powerLevel', label: 'powerLevel', tdClass: 'action-rowdata', 'class': 'text-md-center'},
-          {key: 'mapDisplay', tdClass: 'action-rowdata'},
+          ArrayUtil.includesIgnoreCase(APP.POS_LIST.WITH, 'mapDisplay')? {key: 'mapDisplay', tdClass: 'action-rowdata'}: null,
         ]),
         extraFilter: _(['detectState',
           MenuHelper.useMaster('group') && APP.POS.WITH.GROUP? 'group' : null,
           MenuHelper.useMaster('category') && APP.POS.WITH.CATEGORY? 'category' : null,
           APP.POSITION_WITH_AREA? 'area' : null]).compact().value(),
-        initTotalRows: this.$store.state.app_service.positionList.length,
+        commonFilter: _([
+          MenuHelper.useMaster('group') && APP.POS.WITH.GROUP? 'group' : null,
+          MenuHelper.useMaster('category') && APP.POS.WITH.CATEGORY? 'category' : null,
+        ]).compact().value(),
         disableTableButtons: true,
       },
+      totalRows: 0,
       items: ViewHelper.createBreadCrumbItems('main', 'positionList'),
       message: '',
       extraNavSpec: EXTRA_NAV,
@@ -70,7 +74,9 @@ export default {
       prohibitDetectList : null,
       showDismissibleAlert: false,
       count: 0, // mockテスト用
-      loadStates: ['tx', 'exb', 'location', 'area'],
+      // loadStates: ['tx', 'exb', 'location', 'area'],
+      loadStates: [],
+      positionList: [],
     }
   },
   computed: {
@@ -78,7 +84,6 @@ export default {
       'txs',
       'areas',
       'locations',
-      'positionList',
       'prohibits',
       'lostZones',
     ]),
@@ -103,14 +108,15 @@ export default {
           this.loadStates.push('lostZones')
         }
         await Promise.all(this.loadStates.map(StateHelper.load))
-        await PositionHelper.storePositionHistory(0, true)
-        let positions = PositionHelper.getPositions(true)
-        Util.debug(positions)
+        await PositionHelper.loadPosition(0, true)
+        let positions = PositionHelper.filterPositions(undefined, true)
+        Util.debug('after filter', positions)
 
         let prohibitCheck = false
         const minorMap = {}
 
-        if (Util.hasValue(APP.POS.PROHIBIT_ALERT) && Util.hasValue(APP.POS.PROHIBIT_GROUPS)) {
+        if (Util.hasValue(APP.POS.PROHIBIT_ALERT)
+          && (Util.hasValue(APP.POS.PROHIBIT_GROUP_ZONE)||Util.hasValue(APP.POS.LOST_GROUP_ZONE))) {
           ProhibitHelper.setProhibitDetect('list', this)
           this.replace({showAlert: this.showDismissibleAlert})
           this.prohibitDetectList? this.prohibitDetectList.forEach((p) => minorMap[p.minor] = p) : null
@@ -123,31 +129,31 @@ export default {
           }
         })
 
-        positions = positions.map(pos => {
+        positions = positions.filter(pos => pos.exb && pos.exb.location).map(pos => {
           prohibitCheck = minorMap[pos.minor] != null
 
-          const location = pos.location? locationMap[pos.location.locationId]: {}
+          const location = pos.exb.location? locationMap[pos.exb.location.locationId]: {}
           return {
             ...pos,
             // powerLevel: this.getPowerLevel(pos),
             txId: Util.getValue(pos, 'tx.txId' , null),
-            potCd: Util.getValue(pos, 'tx.potCd', null),
-            potName: Util.getValue(pos, 'tx.potName', null),
-            tel: Util.getValue(pos, 'tx.extValue.tel', null),
-            categoryName: Util.getValue(pos, 'tx.categoryName', null),
-            groupName: Util.getValue(pos, 'tx.groupName', null),
-            areaName: Util.getValue(pos, 'location.areaName', null),
+            potCd: Util.getValue(pos, 'tx.pot.potCd', null),
+            tel: Util.getValue(pos, 'tx.pot.extValue.tel', null),
             locationName: Util.getValue(pos, 'location.locationName', null),
+            potName: Util.getValue(pos, 'tx.pot.potName', null),
+            areaName: Util.getValue(pos, 'location.area.areaName', null),
+            groupName: Util.getValue(pos, 'tx.pot.group.groupName', null),
+            categoryName: Util.getValue(pos, 'tx.pot.category.categoryName', null),
             // 追加フィルタ用
-            groupId: Util.getValue(pos, 'tx.groupId').val,
-            categoryId: Util.getValue(pos, 'tx.categoryId').val,
-            areaId: Util.getValue(pos, 'location.areaId').val,
+            groupId: Util.getValue(pos, 'tx.pot.groupId'),
+            categoryId: Util.getValue(pos, 'tx.pot.category.categoryId'),
+            areaId: Util.getValue(pos, 'location.areaId'),
             blinking : prohibitCheck? 'blinking' : null,
             isDisableArea: Util.getValue(location, 'isAbsentZone', false),
           }
         })
-        Util.debug(positions)
-        this.replaceAS({positionList: positions})
+        this.totalRows = positions.length
+        this.positionList = positions
         if (payload && payload.done) {
           payload.done()
         }

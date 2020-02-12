@@ -9,6 +9,7 @@ import * as Util from '../../util/Util'
 import * as ConfigHelper from './ConfigHelper'
 import * as SensorHelper from '../domain/SensorHelper'
 import * as StateHelper from './StateHelper'
+import * as MasterHelper from '../domain/MasterHelper'
 
 let i18n
 
@@ -28,7 +29,7 @@ export const setApp = pi18n => {
  * @return {Object[]}
  */
 export const getExbOptions = (isBlank = false) => {
-  return StateHelper.getOptionsFromState('sensor',
+  return MasterHelper.getOptionsFromState('sensor',
     sensor => i18n.tnl('label.' + sensor.sensorName),
     {value: null, text: isBlank? i18n.tnl('label.null'): i18n.tnl('label.normal')},
     sensor => APP.EXB.SENSOR.includes(sensor.sensorId)
@@ -42,7 +43,7 @@ export const getExbOptions = (isBlank = false) => {
  * @return {Object[]}
  */
 export const getTxOptions = (isBlank = false) => {
-  return StateHelper.getOptionsFromState('sensor',
+  return MasterHelper.getOptionsFromState('sensor',
     sensor => i18n.tnl('label.' + sensor.sensorName),
     {value: null, text: isBlank? i18n.tnl('label.null'): i18n.tnl('label.normal')},
     sensor => APP.SENSOR.TX_SENSOR.includes(sensor.sensorId)
@@ -55,11 +56,25 @@ export const getTxOptions = (isBlank = false) => {
  * @param {Number[]} ignoreIds
  * @return {Object[]}
  */
-export const getAllSensorOptions = (ignoreIds = [SENSOR.LED, SENSOR.BUTTON]) => {
-  return StateHelper.getOptionsFromState('sensor', 
+export const getAllSensorOptions = (ignoreIds = [SENSOR.LED_TYPE2, SENSOR.LED_TYPE5, SENSOR.BUTTON]) => {
+  return MasterHelper.getOptionsFromState('sensor', 
     sensor => i18n.tnl('label.' + sensor.sensorName),
     true,
     sensor => SensorHelper.availableSensorAll().includes(sensor.sensorId) && !ignoreIds.includes(sensor.sensorId)
+  )
+}
+
+/**
+ * センサの選択肢を取得する。
+ * @method
+ * @param {Number[]} ignoreIds
+ * @return {Object[]}
+ */
+export const getGraphSensorOptions = (ignoreIds = [SENSOR.LED, SENSOR.BUTTON]) => {
+  return MasterHelper.getOptionsFromState('sensor', 
+    sensor => i18n.tnl('label.' + sensor.sensorName),
+    true,
+    sensor => SensorHelper.availableSensorGraph().includes(sensor.sensorId) && !ignoreIds.includes(sensor.sensorId)
   )
 }
 
@@ -69,7 +84,7 @@ export const getAllSensorOptions = (ignoreIds = [SENSOR.LED, SENSOR.BUTTON]) => 
  * @return {Object[]}
  */
 export const getGroupOptions = () => {
-  return StateHelper.getOptionsFromState('group', false, true)
+  return MasterHelper.getOptionsFromState('group', false, true)
 }
 
 /**
@@ -79,7 +94,7 @@ export const getGroupOptions = () => {
  * @return {Object[]}
  */
 export const getCategoryOptions = (includeTypes = []) => {
-  return StateHelper.getOptionsFromState('category',
+  return MasterHelper.getOptionsFromState('category',
     false,
     true,
     category => !Util.hasValue(includeTypes) || includeTypes.includes(category.categoryType)
@@ -94,8 +109,8 @@ export const getCategoryOptions = (includeTypes = []) => {
  */
 export const getZoneCategoryOptions = zoneCategoryList => {
   const zoneCategoryIds = zoneCategoryList.filter(zoneCategory => zoneCategory.categoryId >= 0).map(zoneCategory => zoneCategory.categoryId)
-  return StateHelper.getOptionsFromState('category',
-    category => StateHelper.getDispCategoryName(category),
+  return MasterHelper.getOptionsFromState('category',
+    category => MasterHelper.getDispCategoryName(category),
     true,
     category => zoneCategoryIds.includes(`${category.categoryId}`)
   )
@@ -137,7 +152,7 @@ export const getSensorOptions = (entity, isBlank) => {
     ids = APP.SENSOR.TX_SENSOR
   }
 
-  return StateHelper.getOptionsFromState('sensor',
+  return MasterHelper.getOptionsFromState('sensor',
     sensor => i18n.tnl('label.' + sensor.sensorName),
     {value: null, text: isBlank? i18n.tnl('label.null'): i18n.tnl('label.normal')},
     sensor => ids.includes(sensor.sensorId)
@@ -155,6 +170,7 @@ export const getLocationDispOptions = () => {
     { text: i18n.tnl('label.locationCdComp'), value: 'locationCd' },
     ConfigHelper.includesDeviceType('deviceId')? { text: i18n.tnl('label.EXBeacon'), value: 'deviceId' }: null,
     ConfigHelper.includesDeviceType('deviceIdX')? { text: i18n.tnl('label.EXBeaconX'), value: 'deviceIdX' }: null,
+    { text: i18n.tnl('label.tx'), value: 'txName' },
   ].filter(val => val)
 }
 
@@ -166,7 +182,7 @@ export const getLocationDispOptions = () => {
  * @return {Object[]}
  */
 export const getLocationOptions = (workLocationList, column) => {
-  return StateHelper.getOptionsFromState('location',
+  return MasterHelper.getOptionsFromState('location',
     column,
     {value: '', text: i18n.tnl('label.emptyLocation'), label: i18n.tnl('label.emptyLocation')},
     location => {
@@ -177,18 +193,20 @@ export const getLocationOptions = (workLocationList, column) => {
 }
 
 /**
- * 場所選択（EXB）の選択肢を取得する。
+ * 場所選択（デバイス）の選択肢を取得する。
  * @method
- * @param {Object[]} workExbList 
+ * @param {Object[]} workDeviceList 
+ * @param {String} deviceType 
  * @param {String} column 
  * @return {Object[]}
  */
-export const getLocationExbOptions = (workExbList, column) => {
-  return StateHelper.getOptionsFromState('exb',
+export const getLocationDeviceOptions = (workDeviceList, deviceType, column) => {
+  return MasterHelper.getOptionsFromState(deviceType,
     column,
     true,
-    exb => {
-      const target = workExbList.find(val => val.exbId == exb.exbId)
+    device => {
+      const pKey = deviceType + 'Id'
+      const target = workDeviceList.find(val => val[pKey] == device[pKey])
       return target? !Util.hasValue(target.locationId): false
     }
   )

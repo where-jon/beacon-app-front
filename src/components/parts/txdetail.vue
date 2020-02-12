@@ -19,7 +19,7 @@
           </div>
           <div class="description">
             <div v-for="item in getDispItems()" :key="item.key">
-              <div v-if="item.key !== 'name'">{{ item.val }}</div>
+              <div v-if="item.key !== 'name' || !inMsTeams">{{ item.val }}</div>
               <div v-else><a href="#" @click="moveToChat">{{ item.val }}</a></div>
             </div>
           </div>
@@ -40,7 +40,9 @@
         <div class="descriptionSensor">
           <div v-for="item in getDispItems()" :key="item.key">
             <div v-if="item.key !== 'name'">{{ item.val }}</div>
-            <div v-else><a href="#" @click="moveToChat">{{ item.val }}</a></div>
+            <div v-else>
+              <a href="#" v-if="inMsTeams" @click="moveToChat">{{ item.val }}</a>
+            </div>
           </div>
         </div>
       </div>
@@ -55,6 +57,7 @@ import { FONT } from '../../sub/constant/Constants'
 import * as ColorUtil from '../../sub/util/ColorUtil'
 import * as NumberUtil from '../../sub/util/NumberUtil'
 import * as StringUtil from '../../sub/util/StringUtil'
+import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import meditag from './meditag.vue'
 import txdetailmodal from './txdetailmodal.vue'
 import * as microsoftTeams from "@microsoft/teams-js"
@@ -99,6 +102,7 @@ export default {
       left: 0,
       meditagWidth: 266,
       blackColor: FONT.COLOR.BLACK,
+      inMsTeams: BrowserUtil.inIframe()
     }
   },
   computed: {

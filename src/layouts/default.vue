@@ -3,7 +3,7 @@
     <m-nav />
     <b-container fluid>
       <b-row v-if="!isLoginPage" class="flex-xl-nowrap2">
-        <b-col v-if="getShowSideBar()" id="bd-sidebar" :class="sidebarClasses" md="2" xl="2" class="d-none d-sm-none d-md-block">
+        <b-col v-if="getShowSideBar()" id="bd-sidebar" :class="sidebarClasses" md="2" xl="2" class="d-none d-sm-none d-md-block" :style="sidebarStyle">
           <m-sidebar />
         </b-col>
         <b-col id="bd-page" :md="getShowSideBar()? 10: 12" class="pl-0 pr-0">
@@ -11,15 +11,15 @@
             <b-row>
               <b-col class="pl-md-5 pl-xl-5 pr-xl-5 bd-content">
                 <nuxt />
-                <div v-if="showProgress" class="spinner-parent">
-                  <vue-simple-spinner size="large" line-fg-color="#a09e9e" line-bg-color="#dee2e6" />
-                </div>
               </b-col>
             </b-row>
           </b-container>
         </b-col>
       </b-row>
       <nuxt v-else />
+      <div v-if="showProgress" class="spinner-parent">
+        <vue-simple-spinner size="large" line-fg-color="#a09e9e" line-bg-color="#dee2e6" />
+      </div>
       <!-- modal -->
       <b-modal id="modalRootError" :title="$t('label.error')" ok-only>
         {{ errorMessage }}
@@ -42,8 +42,9 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { fas } from '@fortawesome/free-solid-svg-icons'
 
-import { APP, DISP, DEV, EXCLOUD } from '../sub/constant/config'
+import { APP, DISP, DEV, EXCLOUD, MSTEAMS_APP } from '../sub/constant/config'
 import { getLangShort } from '../sub/util/BrowserUtil'
+import { EventBus } from '../sub/helper/base/EventHelper'
 import * as LocaleHelper from '../sub/helper/base/LocaleHelper'
 import { getThemeColor, getThemeClasses } from '../sub/helper/ui/ThemeHelper'
 
@@ -67,6 +68,9 @@ export default {
         disp: DISP,
         dev: DEV,
         excloud: EXCLOUD,
+      },
+      sidebarStyle: {
+        'min-height': null,
       },
     }
   },
@@ -95,7 +99,10 @@ export default {
         'bd-sidebar': true,
         ...getThemeClasses()
       }
-    }
+    },
+    eventBus() {
+      return EventBus
+    },
   },
   watch: {
     sidebarClasses: function(newVal, oldVal) {
@@ -103,6 +110,8 @@ export default {
     }
   },
   mounted() {
+    EventBus.$off('pluginUpdateDefault')
+    EventBus.$on('pluginUpdateDefault', height => this.sidebarStyle['min-height'] = height? height + 'px': null)
     this.setDropdownMenuColor()
     this.setLang(LocaleHelper.getLocale(getLangShort()))
   },
@@ -121,7 +130,8 @@ export default {
       this.setColor('dropdown-item', color)
     },
     getShowSideBar(){
-      return this.conf.disp.MENU.SHOW_SIDEBAR
+      // MS Teams内で実行する場合、サイドバーを表示しない
+      return this.conf.disp.MENU.SHOW_SIDEBAR && (!MSTEAMS_APP.IS_COOPERATION)
     },
   },
   head() { // browser tab title

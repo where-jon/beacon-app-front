@@ -71,7 +71,7 @@ const addApiKey = (config = {}) => {
     config.headers = {}
   }
   if (apiKey || context.app.store.state.apiKey) {
-    config.headers.apiKey = md5(apiKey || context.app.store.state.apiKey)
+    config.headers['x-apiKey'] = md5(apiKey || context.app.store.state.apiKey)
   }
   return config
 }
@@ -362,3 +362,11 @@ export const addTimeToPath = path => {
   }
   return path + (path.includes('?')? '&': '?') + '_=' + new Date().getTime()
 }
+
+/**
+ * オブジェクトからクエリを作成する。
+ * @method
+ * @param {Object} query
+ * @return {String}
+ */
+export const createQuery = query => Object.keys(query).map(key => `${key}=${query[key]}`).join('&')

@@ -6,13 +6,15 @@
 import { DISP } from '../../constant/config'
 import { SHAPE, FONT } from '../../constant/Constants'
 import * as ColorUtil from '../../util/ColorUtil'
+import * as StringUtil from '../../util/StringUtil'
+import * as SensorHelper from '../domain/SensorHelper'
 import * as Util from '../../util/Util'
 
 
 /**
  * カテゴリ、グループのサンプル矩形スタイルを取得する。
  * @method
- * @param {Object[]} entity 
+ * @param {Object[]} entity
  * @return {Object[]}
  */
 export const getStyleDisplay = entity => entity.map(val => ({entity: val, style: getStyleDisplay1(val)}))
@@ -20,8 +22,8 @@ export const getStyleDisplay = entity => entity.map(val => ({entity: val, style:
 /**
  * サンプル矩形スタイルを取得する。
  * @method
- * @param {{shape: Number, color: String, bgColor: String}} val 
- * @param {{reverceColor: Boolean, fixSize: Boolean}} [option = {reverceColor: false, fixSize: true}] 
+ * @param {{shape: Number, color: String, bgColor: String}} val
+ * @param {{reverceColor: Boolean, fixSize: Boolean}} [option = {reverceColor: false, fixSize: true}]
  * @return {Object}
  */
 export const getStyleDisplay1 = (val, option = {reverceColor: false, fixSize: true}) => {
@@ -60,9 +62,10 @@ export const getStyleDisplay1 = (val, option = {reverceColor: false, fixSize: tr
  * @param {String} text
  * @param {Number} width 最大幅
  * @param {Number} height 最大高さ
+ * @param {Number} maxFontSize 最大フォントサイズ
  * @return {String}
  */
-export const getInRectFontSize = (text, width, height) => {
+export const getInRectFontSize = (text, width, height, maxFontSize) => {
   if(!Util.hasValue(text)){
     return getAdjustFontSize(() => 0)
   }
@@ -73,7 +76,8 @@ export const getInRectFontSize = (text, width, height) => {
   const metrix = context.measureText(text)
   const w = Math.floor(dummyFontSize * width / metrix.width)
   const h = Math.floor(dummyFontSize * height / dummyFontSize) - 5
-  return getAdjustFontSize(() => (w > h? h: w) - 1)
+  const inRectSize = (w > h? h: w) - 1
+  return getAdjustFontSize(() => maxFontSize != null && maxFontSize < inRectSize? maxFontSize: inRectSize)
 }
 
 /**
@@ -110,4 +114,59 @@ export const inLabel = (iconRadius, font, useLabel) => {
   const fontSize = typeof font == 'number'? font: getFont2Size(font)
   return iconRadius >= fontSize * 1.5
 }
+
+/**
+ * 位置表示用のアイコンスタイルを取得する。
+ * @method
+ * @param {Object} tx
+ * @return {{color: String, bgColor: String, shape: Number}}
+ */
+export const getPositionDisplay = tx => {
+  const display = tx.display? tx.display: Util.getValue(tx, DISP.TX.DISPLAY_PRIORITY + '.display', {})
+  return {
+    color: StringUtil.addPrefix(display.color || DISP.TX.COLOR, '#'),
+    bgColor: StringUtil.addPrefix(display.bgColor || DISP.TX.BGCOLOR, '#'),
+    shape: display.shape || SHAPE.CIRCLE
+  }
+}
+
+/**
+ * 位置表示Txアイコンの文字色を取得する。
+ * @method
+ * @param {Object} display
+ * @param {Object} meditag
+ * @param {Object} magnet
+ * @return {String}
+ */
+export const getTxIconColor = (display, meditag, magnet) => meditag? '#000': SensorHelper.isMagnetOn(magnet)? display.bgColor : display.color
+
+/**
+ * 位置表示Txアイコンの背景色を取得する。
+ * @method
+ * @param {Object} display
+ * @param {Object} meditag
+ * @param {Object} magnet
+ * @return {String}
+ */
+export const getTxIconBgColor = (display, meditag, magnet) => meditag? meditag.bg: SensorHelper.isMagnetOn(magnet)? display.color: display.bgColor
+
+/**
+ * 長方形配置時の、原点からの距離(半径)を取得する
+ * @method
+ * @param {Number} index
+ * @param {Number} radius
+ * @return {Number}
+ */
+export const getRadiusSquare = (index, radius) => index % 2 === 0 ? radius : Math.sqrt(Math.pow(radius, 2) * 2)
+
+/**
+ * ひし形配置時の、原点からの距離(半径)を取得する
+ * @method
+ * @param {Number} index
+ * @param {Number} radius
+ * @return {Number}
+ */
+export const getRadiusDiamond = (index, radius) => (index % 2 !== 0 && index % 6 !== 0) ? radius : radius * 1.5
+
+
 

@@ -150,7 +150,7 @@
           {{ validationMessage }}
         </div>
       </b-alert>
-      <system-setting ref="systemSetting" :p-setting-list="editSettingList" :regist-func="(setting) => onRegistSubmit(setting)" />
+      <system-setting ref="systemSetting" :p-setting-list="editSettingList" :regist-func="(setting) => onRegistSubmit(setting)" use-regist-form use-key-category-filter use-init-filter />
     </b-modal>
   </div>
 </template>
@@ -173,9 +173,9 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import commonmixin from '../../../components/mixin/commonmixin.vue'
 import editmixin from '../../../components/mixin/editmixin.vue'
 import featureList from '../../../components/page/featureList.vue'
+import systemSetting from '../../../components/page/systemSetting.vue'
 import alert from '../../../components/parts/alert.vue'
 import chromeInput from '../../../components/parts/chromeinput.vue'
-import systemSetting from '../../setting/system/index.vue'
 
 export default {
   components: {

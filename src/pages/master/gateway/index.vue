@@ -29,17 +29,17 @@ export default {
     return {
       params: {
         name: 'gateway',
-        id: 'deviceid',
-        confirmName: 'deviceid',
+        id: 'deviceId',
+        confirmName: 'deviceId',
         indexPath: '/master/gateway',
         editPath: '/master/gateway/edit',
         appServicePath: '/core/excloud/gwlist',
         csvOut: false,
         fields: this.getFields(),
-        sortBy: 'deviceid',
+        sortBy: 'deviceId',
         initTotalRows: 0
       },
-      items: ViewHelper.createBreadCrumbItems('master', 'gateway'),
+      items: ViewHelper.createBreadCrumbItems('master', 'masterGateway'),
       gateways: []
     }
   },
@@ -53,9 +53,9 @@ export default {
   methods: {
     getFields(){
       return ViewHelper.addLabelByKey(this.$i18n, [
-          {key: 'deviceid', label:'deviceId', sortable: true,},
-          {key: 'meshid', label:'meshId', sortable: true,},
-          {key: 'actions', thStyle: {width: '130px !important'} }
+        {key: 'deviceId', label:'deviceId', sortable: true,},
+        {key: 'meshid', label:'meshId', sortable: true,},
+        {key: 'actions', thStyle: {width: '130px !important'} }
       ])
     },
     async fetchData(payload) {

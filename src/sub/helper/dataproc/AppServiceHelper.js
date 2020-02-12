@@ -14,6 +14,18 @@ import * as HttpHelper from '../base/HttpHelper'
  * @method
  * @async
  * @param {String} target 
+ * @param {Object} option 
+ * @return {Object[]}
+ */
+export const fetchCompactList = async (target, option) => {
+  return await HttpHelper.getAppService(target + '?_=' + new Date().getTime() + '&params=' + encodeURI(JSON.stringify(option)), {})
+}
+
+/**
+ * app-serviceから情報を取得するためにリクエストを行う。
+ * @method
+ * @async
+ * @param {String} target 
  * @param {String} sortBy 
  * @param {Object} option 
  * @param {Object[]} pMock 
@@ -82,7 +94,7 @@ export const save = async (target, entity, updateOnlyNN = UPDATE_ONLY_NN.NONE) =
   const path = target
   var params = new URLSearchParams()
   _.forEach(entity, (value, key) => {
-    params.append(key, value || '')
+    params.append(key, value != null? value: '')
   })
 
   let data = DEV.USE_MOCK_APS? mock[target]:
@@ -104,7 +116,7 @@ export const update = async (target, entity, updateOnlyNN = UPDATE_ONLY_NN.NONE)
   const path = target
   var params = new URLSearchParams()
   _.forEach(entity, (value, key) => {
-    params.append(key, value || '')
+    params.append(key, value != null? value: '')
   })
 
   let data = DEV.USE_MOCK_APS? mock[target]:

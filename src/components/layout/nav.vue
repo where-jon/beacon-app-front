@@ -45,12 +45,14 @@
                       {{ this.$store.state.currentRegion? this.$store.state.currentRegion.regionName: '' }}
                     </em>
                   </template>
-                  <b-dropdown-item v-for="region in regionOptions(regions)" :key="region.regionId" :class="navbarClasses" href="#" @click="switchRegion($event.target, region)">
-                    <font-awesome-icon v-if="getStyleDropdownRegion(region.regionId)" icon="building" fixed-width />
-                    <span :style="{marginLeft: getStyleDropdownRegion(region.regionId)? '0px' : '20px'}">
-                      {{ region.regionName }}
-                    </span>
-                  </b-dropdown-item>
+                  <div :style="getNavBarHightStyle()">
+                    <b-dropdown-item v-for="region in regionOptions(regions)" :key="region.regionId" :class="navbarClasses" href="#" @click="switchRegion($event.target, region)">
+                      <font-awesome-icon v-if="getStyleDropdownRegion(region.regionId)" icon="building" fixed-width />
+                      <span :style="{marginLeft: getStyleDropdownRegion(region.regionId)? '0px' : '20px'}">
+                        {{ region.regionName }}
+                      </span>
+                    </b-dropdown-item>
+                  </div>
                 </b-nav-item-dropdown>
               </div>
             </td>
@@ -67,7 +69,7 @@
                 <b-dropdown-item href="#" @click="move('/setting/personal')">
                   <font-awesome-icon icon="user-cog" fixed-width />&nbsp;&nbsp;{{ $t('label.personal') }}
                 </b-dropdown-item>
-                <b-dropdown-item href="#" @click="openHelp">
+                <b-dropdown-item href="#" v-if="showHelp" @click="openHelp">
                   <font-awesome-icon icon="question-circle" fixed-width />&nbsp;&nbsp;{{ $t('label.help') }}
                 </b-dropdown-item>
                 <b-dropdown-item href="#" @click="logout">
@@ -91,7 +93,7 @@
                 <b-dropdown-item href="#" @click="move('/setting/personal')">
                   <font-awesome-icon icon="user-cog" fixed-width />&nbsp;&nbsp;{{ $t('label.personal') }}
                 </b-dropdown-item>
-                <b-dropdown-item href="#" @click="openHelp">
+                <b-dropdown-item href="#" v-if="showHelp" @click="openHelp">
                   <font-awesome-icon icon="question-circle" fixed-width />&nbsp;&nbsp;{{ $t('label.help') }}
                 </b-dropdown-item>
                 <b-dropdown-item href="#" @click="logout">
@@ -155,6 +157,9 @@ export default {
     linkUrl(){
       return APP.MENU.SHOW_MENU_LINK_URL
     },
+    showHelp(){
+      return DISP.MENU.SHOW_HELP
+    },
     ...mapState('app_service', [
       'pots', 'regions',
     ]),
@@ -200,7 +205,7 @@ export default {
       this.$forceUpdate()
     })
     if(LocalStorageHelper.existLocalStorage('login')){
-      await StateHelper.load('region', true)
+      // await StateHelper.load('region', true)
       this.$forceUpdate()
     }
   },
@@ -303,7 +308,14 @@ export default {
       topLogo.width = Math.ceil(topLogo.naturalWidth * ratio)
       topLogo.height = Math.ceil(topLogo.naturalHeight * ratio)
       this.adjustLogoOffsetX()
-    }
+    },
+    getNavBarHightStyle(){
+      const ret = {
+        'overflow-y': 'auto',
+        'max-height': '400px',
+      }
+      return ret
+    },
   }
 }
 </script>

@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <breadcrumb :items="items" />
-    <bulkedit :id="id" ref="bulkEdit" :name="name" :back-path="backPath" :app-service-path="appServicePath" />
+    <bulkedit :id="id" ref="bulkEdit" :name="name" :back-path="backPath" :app-service-path="pAppServicePath" />
   </div>
 </template>
 
@@ -9,15 +9,35 @@
 import { mapState } from 'vuex'
 import _ from 'lodash'
 import { APP } from '../../../sub/constant/config'
-import { CATEGORY } from '../../../sub/constant/Constants'
+import { CATEGORY, POT_TYPE, BULK } from '../../../sub/constant/Constants'
+import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import * as PotHelper from '../../../sub/helper/domain/PotHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
 
 export default {
+  props: {
+    pName: {
+      type: String,
+      default: '',
+    },
+    pPath: {
+      type: String,
+      default: '/master/pot',
+    },
+    pAppServicePath: {
+      type: String,
+      default: '/basic/pot',
+    },
+    pTypeList: {
+      type: Array,
+      default: () => [POT_TYPE.PERSON, POT_TYPE.THING, POT_TYPE.OTHER],
+    },
+  },
   components: {
     breadcrumb,
     bulkedit,
@@ -26,23 +46,25 @@ export default {
     return {
       name: 'pot',
       id: 'potId',
-      backPath: '/master/pot',
-      appServicePath: '/basic/pot',
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'pot', href: '/master/pot'}, 'bulkRegister'),
-      category: _.slice(CATEGORY.getTypes(), 0, 2).filter((val) => APP.CATEGORY.TYPES.includes(val.value)),
     }
   },
   computed: {
     ...mapState('app_service', [
       'pot', 'pots', 'potImages', 'categories', 'groups', 'txs'
     ]),
+    backPath() {
+      return this.pPath
+    },
+    items() {
+      return ViewHelper.createBreadCrumbItems('master', {text: StringUtil.concatCamel('pot', this.pName), href: this.backPath}, 'bulkRegister')
+    },
   },
   async created() {
-    await StateHelper.load('pot')
+    // await StateHelper.load('pot')
   },
   methods: {
     async onSaving() {
-      await Promise.all(['pot', 'category', 'group', 'tx'].map(StateHelper.load))
+      // await Promise.all(['pot', 'category', 'group', 'tx'].map(StateHelper.load))
       await this.$refs.bulkEdit.bulkSave({numberList: 'potType'})
     },
     restructTx(entity, dummyKey){
@@ -84,28 +106,38 @@ export default {
       return dummyKey
     },
     onRestruct(entity, dummyKey){
+      entity.extValue = {}
       if(Util.hasValue(entity.ruby)){
         Util.setValue(entity, 'extValue.ruby', entity.ruby)
       }
-      PotHelper.getPotExtKeys().forEach(ext => {
+      PotHelper.getPotExtKeys(this.pName).forEach(ext => {
         Util.setValue(entity, 'extValue.' + ext, entity[ext])
       })
 
-      if(!isNaN(entity.potType) && !this.category.find(cat => cat.value == entity.potType)){
-        entity['potTypeOneOf'] = this.category.map(cat => cat.value)
+      if(!isNaN(entity.potType) && !APP.POT.TYPES.includes(entity.potType)){
+        entity['potTypeOneOf'] = APP.POT.TYPES
       }
+
       if(!Util.hasValue(entity.potType) && !Util.hasValue(entity.categoryName)){
-        entity.potType = CATEGORY.PERSON
+        entity.potType = this.pTypeList[0]
       }
       entity.potCd = entity.ID
+
+      if(Util.hasValue(entity.auth)){
+        entity.potCategoryList = entity.auth.split(BULK.SPLITTER).map(val => ({
+          potCategoryPK: { potId: dummyKey--, categoryId: dummyKey-- },
+          categoryName: val,
+          categoryType: CATEGORY.AUTH
+        }))
+      }
 
       dummyKey = this.restructTx(entity, dummyKey)
       dummyKey = this.restructUser(entity, dummyKey)
       return dummyKey
     },
-    onSaved(){
-      StateHelper.setForceFetch('tx', true)
-      StateHelper.setForceFetch('user', true)
+    async onSaved(){
+      // StateHelper.setForceFetch('tx', true)
+      // StateHelper.setForceFetch('user', true)
     },
   }
 }

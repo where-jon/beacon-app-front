@@ -68,7 +68,7 @@ export const vueSelectCutOn = (selected, required = false) => {
  * @return {Boolean}
  */
 export const isVueSelectCutOn = selected => {
-  return vueSelectCutOn(selected) != Util.getValue(selected, 'label', null)
+  return vueSelectCutOn(selected) != Util.getValue(selected, 'label')
 }
 
 /**
@@ -79,7 +79,7 @@ export const isVueSelectCutOn = selected => {
  */
 export const vueSelectTitle = selected => {
   if(isVueSelectCutOn(selected)){
-    return Util.getValue(selected, 'label', null)
+    return Util.getValue(selected, 'label')
   }
   return null
 }
