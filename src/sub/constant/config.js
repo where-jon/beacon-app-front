@@ -21,7 +21,7 @@ export const APP = { // 機能面に関する設定
   },
   SYS: {
     TIMEOUT: 60 * 60 * 1000, // session timeout(using local storage)
-    STATE_EXPIRE_TIME: 10 * 60 * 1000, // マスタキャッシュ有効時間(ミリ秒)
+    STATE_EXPIRE_TIME: 3 * 60 * 1000, // マスタキャッシュ有効時間(ミリ秒)
   },
   MENU: {
     SHOW_MENU_LINK: '',

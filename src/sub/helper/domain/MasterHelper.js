@@ -558,6 +558,7 @@ const storeCommit = (masters, idmaps) => {
     }
   })
 
+  StateHelper.storeCommit('lastMasterFetchTime', new Date().getTime())
 }
 
 

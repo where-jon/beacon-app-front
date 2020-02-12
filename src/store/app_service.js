@@ -46,6 +46,7 @@ export const state = () => ({
   forceFetchExb: true,
   forceFetchZone: true,
   forceFetchTemplate: true,
+  lastMasterFetchTime: 0,
   listMessage: null,
   showLine: false,
   pageSendParam: null,
