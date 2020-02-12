@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { APP } from '../../sub/constant/config'
+import { APP, DISP } from '../../sub/constant/config'
 import { SYSTEM_ZONE_CATEGORY_NAME } from '../../sub/constant/Constants'
 import { mapState } from 'vuex'
 import * as StringUtil from '../../sub/util/StringUtil'
@@ -101,7 +101,7 @@ export default {
         if(Util.hasValue(location.posId)){
           locationMap[location.posId] = location
         }
-        if(this.displayZone && !Util.hasValue(location.zoneIdList)){
+        if(DISP.POS_STACK.ZONE_OTHER && this.displayZone && !Util.hasValue(location.zoneIdList)){
           showExt = true
         }
       })
@@ -126,12 +126,13 @@ export default {
           }else if(absentZone){
             // 不在ゾーンへの登録
             if(hasMasterId){
-              tempMasterMap[absentZone.zoneId].positions.push(pos)
+              tempMasterMap[absentZone.zoneCd].positions.push(pos)
             }
           }
         })
       })
-      const ret = _.sortBy(tempMasterMap, tmm => this.displayArea? tmm.areaCd : tmm.label)
+      const ret = _.sortBy(tempMasterMap, tmm => this.displayArea? tmm.areaCd : tmm.zoneCd)
+      console.log(tempMasterMap)
       if(showExt){
         ret.push(tempMasterExt)
       }
