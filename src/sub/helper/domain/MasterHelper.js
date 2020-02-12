@@ -40,7 +40,7 @@ export const loadMaster = async () => {
   const masterAll = await HttpHelper.getAppService('/core/region/masterall')
 
   console.log('parse', new Date())
-  const res = Papa.parse(masterAll)
+  const res = Papa.parse(masterAll, {delimiter: ','})
   if (res.errors.length > 0) {
     res.errors.forEach(e => {
       console.error(e)
@@ -74,9 +74,12 @@ export const loadMaster = async () => {
 const buildMasters = (data) => {
   let masters = {}
   let idmaps = {}
+  idmaps['btx'] ={}
+  idmaps['device'] ={}
   let currentMaster
   let currentColumn
   let isData
+
   data.forEach(row => {
     if (row.length == 0) return
 
@@ -193,15 +196,9 @@ const buildMasters = (data) => {
       }
       else {
         if (currentMaster == 'tx') {
-          if (!idmaps['btx']) {
-            idmaps['btx'] ={}
-          }
           idmaps['btx'][row[1]] = obj
         }
         if (currentMaster == 'exb') {
-          if (!idmaps['device']) {
-            idmaps['device'] ={}
-          }
           idmaps['device'][row[1]] = obj
         }
         idmaps[currentMaster][row[0]] = obj
