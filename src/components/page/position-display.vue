@@ -125,9 +125,7 @@ export default {
             obj.positions.push(pos)
           }else if(absentZone){
             // 不在ゾーンへの登録
-            if(hasMasterId){
-              tempMasterMap[absentZone.zoneCd].positions.push(pos)
-            }
+            tempMasterMap[absentZone.zoneId].positions.push(pos)
           }
         })
       })
