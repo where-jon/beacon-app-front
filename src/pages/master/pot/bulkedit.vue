@@ -141,12 +141,12 @@ export default {
     },
     getConf() {
       return {
-        with: APP.POT.WITH,
-        multiTx: APP.POT.MULTI_TX,
-        txMax: APP.POT.TX_MAX,
-        types: APP.POT.TYPES,
-        allow: BULK.REQUIRE.POT.ALLOW,
-        disallow: BULK.REQUIRE.POT.DISALLOW,
+        with: APP.POT['WITH'] ? APP.POT.WITH : [],
+        multiTx: APP.POT['MULTI_TX'] ? APP.POT.MULTI_TX : false,
+        txMax: APP.POT['TX_MAX'] ? APP.POT.TX_MAX : 1,
+        types: APP.POT['TYPES'] ? APP.POT.TYPES : [],
+        allow: BULK.REQUIRE.POT['ALLOW'] ? BULK.REQUIRE.POT.ALLOW : [],
+        disallow: BULK.REQUIRE.POT['DISALLOW'] ? BULK.REQUIRE.POT.DISALLOW : [],
       }
     }
   }
