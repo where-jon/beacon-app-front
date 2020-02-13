@@ -128,7 +128,7 @@ export default {
         })
       })
       const ret = _.sortBy(tempMasterMap, tmm => this.displayArea? tmm.areaCd : tmm.zoneCd)
-      console.log(tempMasterMap)
+      Util.debug('tempMasterMap', tempMasterMap)
       if(showExt){
         ret.push(tempMasterExt)
       }
