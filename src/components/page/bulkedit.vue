@@ -160,7 +160,6 @@ export default {
       formData.append('csvFile', this.form.csvFile)
       formData.append('conf', JSON.stringify(conf))
       const charSet = CHAR_SET.find(e => e.id == this.csvCharSet)
-      console.log('!!!99')
       let result = await AppServiceHelper.bulkSave2(this.appServicePath, formData, charSet.name, UPDATE_ONLY_NN.NONE, IGNORE.ON)
       
       // const reader = new FileReader()
