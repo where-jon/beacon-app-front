@@ -189,14 +189,12 @@ export default {
   async created() {
     this.initExbSensorList()
     this.changeSensors()
-    // await StateHelper.load('sensor')
     this.$nextTick(() => {
       ValidateHelper.setCustomValidationMessage()
       VueSelectHelper.disabledAllSubmit()
     })
   },
   async mounted() {
-    // await Promise.all(['area', 'location'].map(StateHelper.load))
     this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, this.form.areaId)
     this.$nextTick(() => this.vueSelected.location = VueSelectHelper.getVueSelectData(this.getLocationOptions(), this.form.locationId))
     this.deviceId = this.form.deviceId

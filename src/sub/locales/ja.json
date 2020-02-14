@@ -163,7 +163,6 @@
     "settingNow": "設定中",
     "mapRatioSetting": "マップ比率設定方法",
 
-    "posId": "pos ID",
     "positionHistory": "位置情報",
     "positionHistoryExc": "位置情報(Exc)",
     "positionHistoryId": "Tx位置ID",
@@ -844,6 +843,7 @@
       "POT": {
         "WITH": "人＆物画面で使用する項目::人＆物画面で使用する項目を設定します。設定可能な値は次の通りです。★{POT}",
         "MULTI_TX": "人＆物に複数のTxを登録する::人＆物画面で複数のTxを登録可能にします。",
+        "CSV_USER": "CSVファイルにユーザー登録を含める::CSVファイルにユーザー登録を含めます。",
         "TX_MAX": "人＆物に登録するTxの最大数::人＆物画面で登録可能なTxの最大数を設定します。",
         "EXT_DEF": "人＆物拡張項目::人＆物に設定可能な拡張項目をJSON形式で定義します。"
       },
@@ -1155,7 +1155,8 @@
         "EXSERVER": "EXServerを使用する::EXServerを使用します。"
       },
       "POS_STACK": {
-        "TYPE": "位置情報（全体）の表示方法::位置情報（全体）の表示方法を指定します。(1:エリア 2:ゾーン)"
+        "TYPE": "位置情報（全体）の表示方法::位置情報（全体）の表示方法を指定します。(1:エリア 2:ゾーン)",
+        "ZONE_OTHER": "ゾーンその他表示::位置情報（全体）にてゾーンその他を表示する。"
       }
   },
     "DEV": {
@@ -1308,7 +1309,6 @@
         "deviceId": "deviceId::デバイスID",
         "deviceIdX": "deviceIdX::デバイスID(16進数)",
         "locationName": "locationName::場所名",
-        "posId": "posId::posId",
         "areaName": "areaName::エリア名",
         "x": "x::X座標",
         "y": "y::Y座標"
@@ -1325,7 +1325,6 @@
         "dispAlways": "dispAlways::常時表示"
       },
       "LOCATION": {
-        "posId": "posId::posId",
         "zoneBlock": "zoneBlock::ゾーン(区画)",
         "zoneClass": "zoneClass::ゾーン(分類)"
       },
@@ -1357,7 +1356,6 @@
         "locationName": "locationName::最終取得場所"
       },
       "SENSOR_LIST": {
-        "posId": "posId::posId",
         "deviceId": "deviceId::デバイスID",
         "deviceIdX": "deviceIdX::デバイスID(16進数)"
       },

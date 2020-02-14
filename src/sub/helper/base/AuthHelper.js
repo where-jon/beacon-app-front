@@ -116,7 +116,6 @@ export const getUserInfo = async (tenantAdmin) => {
   // get region
   const currentRegion = await HttpHelper.getAppService('/core/region/current')
   LocalStorageHelper.setLocalStorage(KEY.CURRENT.REGION, currentRegion.regionId)
-  // await StateHelper.load('region', true)
 
   // get setting (again in case failed on init or reload)
   const setting = await HttpHelper.getAppService('/meta/setting/wsByTenant/' + getTenantCd('default') + '/' + getRegionId(currentRegion.regionId))

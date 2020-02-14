@@ -56,9 +56,7 @@ export default {
   },
   methods: {
     async onSaved(){
-      // StateHelper.setForceFetch('tx', true)
-      // StateHelper.setForceFetch('exb', true)
-      // StateHelper.setForceFetch('zone', true)
+      this.$store.commit('main/replaceMain', {selectedArea: null})
     },
     thumbnail(row) {
       let addUrlParam = ''

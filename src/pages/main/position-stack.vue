@@ -103,7 +103,6 @@ export default {
     },
   },
   async mounted() {
-    // await StateHelper.load('category')
   },
   methods: {
     isShow(type){

@@ -94,7 +94,6 @@ export default {
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
     },
     async onSaved(){
-      // StateHelper.setForceFetch('user', true)
       await AuthHelper.switchAppService()
     },
     onBeforeReload(){

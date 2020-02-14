@@ -79,7 +79,6 @@ export default {
   },
   methods: {
     async onSaved(){
-      // StateHelper.setForceFetch('user', true)
     },
     async onSaving() {
       let entity = {

@@ -206,8 +206,6 @@ export default {
   },
   async mounted() {
     Util.applyDef(this.form, this.defValue)
-    // StateHelper.load('sensor')
-    // await Promise.all(['category', 'group', 'area', 'location'].map(StateHelper.load))
     this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryOptions, this.form.categoryId)
     this.vueSelected.group = VueSelectHelper.getVueSelectData(this.groupOptions, this.form.groupId)
     this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, this.form.areaId)
@@ -238,7 +236,6 @@ export default {
       this.vueSelected.location = null
     },
     async onSaved(){
-      // StateHelper.setForceFetch('pot', true)
     },
     async onSaving() {
       const txId = Util.hasValue(this.form.txId)? this.form.txId: -1
@@ -268,8 +265,6 @@ export default {
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
     },
     async getRelatedPot(txId) {
-      // StateHelper.setForceFetch('pot', true)
-      // await StateHelper.load('pot')
       const randName = () =>  txId + '_' + (new Date().getTime() % 10000)
       const relatedPot = _.find(this.pots, (pot) => pot.potId == this.form.potId)
       const isPotForm = this.form.potId || this.form.categoryId || this.form.groupId

@@ -78,10 +78,6 @@ export default {
       return dummyKey
     },
     async onSaved(){
-      // StateHelper.setForceFetch('tx', true)
-      // StateHelper.setForceFetch('exb', true)
-      // StateHelper.setForceFetch('category', true)
-      // StateHelper.setForceFetch('location', true)
     },
   }
 }

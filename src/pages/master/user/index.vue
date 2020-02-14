@@ -44,7 +44,6 @@ export default {
     ]),
   },
   async created() {
-    // await StateHelper.load('region')
   },
   methods: {
     createCustomColumn(){
@@ -61,7 +60,6 @@ export default {
         ]))
     },
     async onSaved(){
-      // StateHelper.setForceFetch('pot', true)
     },
   }
 }

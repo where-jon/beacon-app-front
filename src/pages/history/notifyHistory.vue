@@ -323,7 +323,6 @@ export default {
   },
   mounted() {
     ViewHelper.importElementUI()
-    // StateHelper.load('tx')
     this.changeTx(this.form.txId)
     this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`
   },

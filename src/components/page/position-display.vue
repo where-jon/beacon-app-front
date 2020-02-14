@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { APP } from '../../sub/constant/config'
+import { APP, DISP } from '../../sub/constant/config'
 import { SYSTEM_ZONE_CATEGORY_NAME } from '../../sub/constant/Constants'
 import { mapState } from 'vuex'
 import * as StringUtil from '../../sub/util/StringUtil'
@@ -59,7 +59,6 @@ export default {
       listName: StringUtil.single2multi(this.masterName),
       eachListName: StringUtil.concatCamel('each', StringUtil.single2multi(this.masterName)),
       prohibitDetectList : null,
-      // loadStates: ['area', 'zone', 'tx', 'location', 'lostZones','prohibit', 'category', 'group', 'exb', 'pot'],
       loadStates: [],
       showDismissibleAlert: false,
       positions: [],
@@ -71,6 +70,7 @@ export default {
       'areas',
       'zones',
       'locations',
+      'locationIdMap',
       'prohibits',
       'lostZones',
     ]),
@@ -97,12 +97,8 @@ export default {
       this[this.listName].forEach(obj => tempMasterMap[obj[this.id]] = {...obj, [this.id]: obj[this.id], label: obj[this.name], positions: []})
       const tempMasterExt = {[this.id]: -1, label: this.$i18n.tnl('label.other'), positions: []}
       let showExt = false
-      const locationMap = {}
       this.locations.forEach(location => {
-        if(Util.hasValue(location.posId)){
-          locationMap[location.posId] = location
-        }
-        if(this.displayZone && !Util.hasValue(location.zoneIdList)){
+        if(DISP.POS_STACK.ZONE_OTHER && this.displayZone && !Util.hasValue(location.zoneIdList)){
           showExt = true
         }
       })
@@ -110,7 +106,7 @@ export default {
       const absentZone = _.find(this.zones, zone => zone.categoryName == SYSTEM_ZONE_CATEGORY_NAME.ABSENT_DISPLAY)
 
       _.forEach(positions, pos => {
-        const location = locationMap[pos.pos_id]
+        const location = this.locationIdMap[pos.locationId]
         prohibitDetectList? prohibitDetectList.some(data => {
           if(data.minor == pos.minor){
             pos.blinking = 'blinking'
@@ -126,13 +122,12 @@ export default {
             obj.positions.push(pos)
           }else if(absentZone){
             // 不在ゾーンへの登録
-            if(hasMasterId){
-              tempMasterMap[absentZone.zoneId].positions.push(pos)
-            }
+            tempMasterMap[absentZone.zoneId].positions.push(pos)
           }
         })
       })
-      const ret = _.sortBy(tempMasterMap, tmm => this.displayArea? tmm.areaCd : tmm.label)
+      const ret = _.sortBy(tempMasterMap, tmm => this.displayArea? tmm.areaCd : tmm.zoneCd)
+      Util.debug('tempMasterMap', tempMasterMap)
       if(showExt){
         ret.push(tempMasterExt)
       }

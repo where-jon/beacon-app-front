@@ -149,7 +149,6 @@ export default {
   },
   methods: {
     initAreaNames() {
-      // await StateHelper.load('area')
       this.areaNames = MasterHelper.getOptionsFromState('area', false, true)
       let areaId
       if(this.pageSendParam){
@@ -158,7 +157,7 @@ export default {
         this.replaceAS({pageSendParam: null})
       }
       else{
-        areaId = this.areaNames[0].value
+        areaId = Util.getValue(this, 'areaNames.0.value')
         this.vueSelected.category = VueSelectHelper.getVueSelectData(this.areaNames, this.areaId)
       }
       this.$nextTick(() => {
@@ -166,7 +165,6 @@ export default {
       })
     },
     async initCategoryNames() {
-      // await StateHelper.load('category')
       this.categoryNames = MasterHelper.getOptionsFromState('category',
         category => MasterHelper.getDispCategoryName(category),
         true, 
@@ -230,11 +228,6 @@ export default {
         this.isCompleteRegist = true
         // ストア内のゾーンレコードを最新に更新する
         await MasterHelper.loadMaster()
-        // await StateHelper.load('zone', true)
-        // StateHelper.setForceFetch('tx', true)
-        // StateHelper.setForceFetch('exb', true)
-        // StateHelper.setForceFetch('category', true)
-        // StateHelper.setForceFetch('location', true)
       } catch (e) {
         e.bulkError = e.response.data
         this.message = ViewHelper.getSubmitErrorMessage(e, this.showLine, this.crud, this.name)

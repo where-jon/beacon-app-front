@@ -70,7 +70,6 @@ export default {
     }
   },
   async mounted() {
-    // await StateHelper.load('area')
     this.loading = false
     this.submittable = false
     fileReader = new FileReader()
