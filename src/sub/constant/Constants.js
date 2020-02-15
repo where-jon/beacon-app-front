@@ -1148,6 +1148,11 @@ export const MENU = [
         icon: 'clock',
       },
       {
+        key: 'stayRatioStack',
+        path: 'stayRatioStack',
+        icon: 'clock',
+      },
+      {
         key: 'proximityGraph',
         path: 'proximityGraph',
         icon: 'chart-bar',
