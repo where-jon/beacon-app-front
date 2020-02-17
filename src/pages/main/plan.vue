@@ -183,7 +183,7 @@ export default {
       resizeHandler: null,
 
       // マスタ情報
-      loadStates: ['area', 'zone', 'location', 'group', 'category', 'pot'],
+      loadStates: ['areas', 'zones', 'locations', 'groups', 'categories', 'pots'],
       options: [],
       potPersonOpts: [],
       potThingOpts: [],
@@ -191,16 +191,16 @@ export default {
       // フィルター
       normalFilterTypeOpts: [
         {value:null, text: ''},
-        {value:'area', text: this.$t('label.area')},
-        {value:'zone', text: this.$t('label.zone')},
-        {value:'location', text: this.$t('label.location')},
-        {value:'group', text: this.$t('label.group')},
-        {value:'category', text: this.$t('label.category')},
-        {value:'pot', text: this.$t('label.pot')},
+        {value:'areas', text: this.$t('label.area')},
+        {value:'zones', text: this.$t('label.zone')},
+        {value:'locations', text: this.$t('label.location')},
+        {value:'groups', text: this.$t('label.group')},
+        {value:'categories', text: this.$t('label.category')},
+        {value:'pots', text: this.$t('label.pot')},
         {value:'potPerson', text: this.$t('label.potPerson')},
       ],
       mRoomFilterTypeOpts: [
-        {value:'area', text: this.$t('label.area')},
+        {value:'areas', text: this.$t('label.area')},
       ],
       filterTypeOpts: [],
       filterOpts: [],
@@ -245,10 +245,10 @@ export default {
   },
   computed: {
     zoneOpts() {
-      return this.getOpts('zone')
+      return this.options['zones']
     },
     locationOpts() {
-      return this.getOpts('location')
+      return this.options['locations']
     },
     cssVars() {
       return {
@@ -312,7 +312,8 @@ export default {
         this.selectedFilter.filterIds = []
         this.vueSelected.filter = null
         this.vueSelected.filters = []
-        this.filterOpts = this.loadStates.includes(newVal) ? this.getOpts(newVal) : []
+        this.filterOpts = this.loadStates.includes(newVal) ? this.options[newVal] : []
+        console.log('!!!', this.filterOpts)
         if (!newVal) {
           this.fetchData()
         }
@@ -388,18 +389,37 @@ export default {
     },
     // マスタ
     async loadMaster() {
-      await Promise.all(this.loadStates.map(state => StateHelper.load(state)))
-      this.options = this.loadStates.map(state => StateHelper.getOptionsFromState(state, false, true))
-      this.potPersonOpts = StateHelper.getOptionsFromState('pot', false, true, pot => pot.potType == CATEGORY.PERSON)
-      this.potThingOpts = StateHelper.getOptionsFromState('pot', false, true, pot => pot.potType == CATEGORY.THING)
-      this.headerOptsMeetingRoom = StateHelper.getOptionsFromState('zone', false, true, z => {
-        return z.zoneCategoryList.map(c => c.category.categoryCd=='MEETING_ROOM').includes(true)
+      await this.loadStates.map(state => StateHelper.load(state))
+      this.potPersonOpts = this.pots.filter(pot => pot.potType == CATEGORY.PERSON).map(pot => {
+        return {value: pot.potId, label: pot.potName}
       })
+      this.potThingOpts = this.pots.filter(pot => pot.potType == CATEGORY.THING).map(pot => {
+        return {value: pot.potId, label: pot.potName}
+      })
+      this.headerOptsMeetingRoom = this.zones.filter(z => {
+        return z.categoryList.map(cate => cate.categoryCd=='MEETING_ROOM').includes(true)
+      })
+      this.makeOpts()
     },
-    getOpts(master) {
-      if (this.options.length == 0 || !this.loadStates.includes(master)) return []
-      const idx = this.loadStates.indexOf(master)
-      return this.options[idx]
+    async makeOpts() {
+      this.loadStates.forEach( st => {
+        this.options[st] = this[st].map( e => {
+          switch (st) {
+          case 'areas': 
+            return {value: e.areaId, label: e.areaName}
+          case 'zones': 
+            return {value: e.zoneId, label: e.zoneName}
+          case 'locations': 
+            return {value: e.locationId, label: e.locationName}
+          case 'groups': 
+            return {value: e.groupId, label: e.groupName}
+          case 'categories': 
+            return {value: e.categoryId, label: e.categoryName}
+          case 'pots': 
+            return {value: e.potId, label: e.potName}
+          }
+        })
+      })
     },
     onClickNavi(e) {
       var action = e.target.dataset ? e.target.dataset.action : e.target.getAttribute('data-action')

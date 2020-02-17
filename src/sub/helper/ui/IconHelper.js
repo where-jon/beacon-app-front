@@ -577,6 +577,14 @@ export const createExbIcon = (exb, exbSensorIdList, mapScale, stage) => {
     // only for Exhibition（delete immediately）
     exbBtn = createCountButton(exb.count, mapScale)
     exbBtn.cursor = ''
+  }
+  else if (SensorHelper.match(exb.sensorIds, SENSOR.PRESSURE, exbSensorIdList) && exb.pressVol != null) {
+    exbBtn = createUseStateIcon(exb.sensorId, exb.pressVol, mapScale)
+    exbBtn.cursor = ''
+  }
+  else if (SensorHelper.match(exb.sensorIds, SENSOR.PIR, exbSensorIdList)) {
+    exbBtn = createUseStateIcon(exb.sensorId, exb.count, mapScale)
+    exbBtn.cursor = ''
   } else {
     if (exb.sensorId == SENSOR.PRESSURE && exb.pressVol != null) {
       exbBtn = showMRoomStatus
@@ -589,18 +597,6 @@ export const createExbIcon = (exb, exbSensorIdList, mapScale, stage) => {
         : createUseStateIcon(exb.sensorId, exb.count, mapScale)
       exbBtn.cursor = ''
     }
-  }
-  else if (SensorHelper.match(exb.sensorIds, SENSOR.PRESSURE, exbSensorIdList) && exb.pressVol != null) {
-    exbBtn = createUseStateIcon(exb.sensorId, exb.pressVol, mapScale)
-    exbBtn.cursor = ''
-  }
-  else if (SensorHelper.match(exb.sensorIds, SENSOR.PIR, exbSensorIdList)) {
-    exbBtn = createUseStateIcon(exb.sensorId, exb.count, mapScale)
-    exbBtn.cursor = ''
-  }
-  else {
-    console.error('Sensor Not match', exb.sensorIds, exbSensorIdList)
-    return
   }
   exbBtn.deviceId = exb.deviceId
   exbBtn.exbId = exb.exbId

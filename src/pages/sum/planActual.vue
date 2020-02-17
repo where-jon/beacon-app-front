@@ -145,18 +145,17 @@ export default {
 
       // マスタ情報
       loadStates: ['area', 'zone', 'location', 'category', 'pot'],
-      options: [],
       zoneCategoryOpts: [],
       potThingOpts: [],
 
       // フィルター
       filterTypeOpts: [
         {value:null, text: ''},
-        {value:'area', text: this.$t('label.area')},
-        {value:'zone', text: this.$t('label.zone')},
-        {value:'location', text: this.$t('label.location')},
-        {value:'category', text: this.$t('label.zoneCategory')},
-        {value:'pot', text: this.$t('label.potThing')},
+        {value:'areas', text: this.$t('label.area')},
+        {value:'zones', text: this.$t('label.zone')},
+        {value:'locations', text: this.$t('label.location')},
+        {value:'categories', text: this.$t('label.zoneCategory')},
+        {value:'pots', text: this.$t('label.potThing')},
       ],
       filterOpts: [],
       selectedFilter: {
@@ -224,14 +223,11 @@ export default {
     // マスタ
     async loadMaster() {
       await Promise.all(this.loadStates.map(state => StateHelper.load(state)))
-      this.options = this.loadStates.map(state => StateHelper.getOptionsFromState(state, false, true))
-      this.zoneCategoryOpts = StateHelper.getOptionsFromState('category', false, true, cate => cate.categoryType == CATEGORY.ZONE)
-      this.potThingOpts = StateHelper.getOptionsFromState('pot', false, true, pot => pot.potType == CATEGORY.THING)
+      this.zoneCategoryOpts = this.categories.filter(cate => cate.categoryType == CATEGORY.ZONE)
+      this.potThingOpts = this.pots.filter(pot => pot.potType == CATEGORY.THING)
     },
     getOpts(master) {
-      if (this.options.length == 0 || !this.loadStates.includes(master)) return []
-      const idx = this.loadStates.indexOf(master)
-      return this.options[idx]
+      return this[master]
     },
     onClickDisplay(e) {
       this.fetchData()
