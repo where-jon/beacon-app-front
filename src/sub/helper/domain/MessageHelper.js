@@ -6,7 +6,7 @@
 import { APP } from '../../constant/config'
 import * as Util from '../../util/Util'
 import * as SensorHelper from './SensorHelper'
-import * as StateHelper from '../dataproc/StateHelper'
+import * as MasterHelper from '../domain/MasterHelper'
 
 let i18n
 
@@ -72,9 +72,9 @@ export const createHumidityWarnMessage = (txIcons, exbIcons) => {
   }))
 
   const ret = []
-  const exbIdName = StateHelper.getDeviceIdName({exbId: true})
-  const txIdPotName = StateHelper.getDeviceIdName({txId: true}, {forceSensorName: true})
-  const txIdName = StateHelper.getDeviceIdName({txId: true})
+  const exbIdName = MasterHelper.getDeviceIdName({exbId: true})
+  const txIdPotName = MasterHelper.getDeviceIdName({txId: true}, {forceSensorName: true})
+  const txIdName = MasterHelper.getDeviceIdName({txId: true})
   pattern.forEach(conf => {
     if(conf.exbs.length == 0 && conf.txs.length == 0){
       return

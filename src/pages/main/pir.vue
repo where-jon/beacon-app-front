@@ -32,10 +32,11 @@ export default {
     captionList(){
       return ['main', 'pirMenu']
     },
-    mergeSensors(){
-      // return [...APP.EXB.SENSOR, ...APP.SENSOR.TX_SENSOR].filter(e => [SENSOR.PIR, SENSOR.THERMOPILE, SENSOR.PRESSURE, SENSOR.MAGNET].includes(e))
-      const tx = getTxOptions().map(val => val.value)
-      return tx.concat(this.exbSensors).filter(e => e != null).filter((e, idx, self) => self.indexOf(e) === idx)
+    exbSensors(){
+      return [SENSOR.PIR, SENSOR.THERMOPILE, SENSOR.PRESSURE, SENSOR.MAGNET]
+    },
+    mergeSensors(){ // FIXME: あとでマージすればいいのでは
+      return [...APP.EXB.SENSOR, ...APP.SENSOR.TX_SENSOR].filter(e => [SENSOR.PIR, SENSOR.THERMOPILE, SENSOR.PRESSURE, SENSOR.MAGNET].includes(e))
     },
     txSensors(){
       return getTxOptions().map(val => val.value)

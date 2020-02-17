@@ -45,11 +45,10 @@ export default {
     }
   },
   async created() {
-    await StateHelper.load('zone')
   },
   methods: {
     async onSaving() {
-      await this.$refs.bulkEdit.bulkSave({numberList: ['posId', 'x', 'y'], nullableList: ['posId', 'x', 'y']})
+      await this.$refs.bulkEdit.bulkSave({numberList: ['x', 'y'], nullableList: ['x', 'y']})
     },
     restructExb(entity, dummyKey){
       ['deviceId', 'deviceIdX'].forEach(key => {

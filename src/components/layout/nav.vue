@@ -45,12 +45,14 @@
                       {{ this.$store.state.currentRegion? this.$store.state.currentRegion.regionName: '' }}
                     </em>
                   </template>
-                  <b-dropdown-item v-for="region in regionOptions(regions)" :key="region.regionId" :class="navbarClasses" href="#" @click="switchRegion($event.target, region)">
-                    <font-awesome-icon v-if="getStyleDropdownRegion(region.regionId)" icon="building" fixed-width />
-                    <span :style="{marginLeft: getStyleDropdownRegion(region.regionId)? '0px' : '20px'}">
-                      {{ region.regionName }}
-                    </span>
-                  </b-dropdown-item>
+                  <div :style="getNavBarHightStyle()">
+                    <b-dropdown-item v-for="region in regionOptions(regions)" :key="region.regionId" :class="navbarClasses" href="#" @click="switchRegion($event.target, region)">
+                      <font-awesome-icon v-if="getStyleDropdownRegion(region.regionId)" icon="building" fixed-width />
+                      <span :style="{marginLeft: getStyleDropdownRegion(region.regionId)? '0px' : '20px'}">
+                        {{ region.regionName }}
+                      </span>
+                    </b-dropdown-item>
+                  </div>
                 </b-nav-item-dropdown>
               </div>
             </td>
@@ -203,7 +205,6 @@ export default {
       this.$forceUpdate()
     })
     if(LocalStorageHelper.existLocalStorage('login')){
-      await StateHelper.load('region', true)
       this.$forceUpdate()
     }
   },
@@ -306,7 +307,14 @@ export default {
       topLogo.width = Math.ceil(topLogo.naturalWidth * ratio)
       topLogo.height = Math.ceil(topLogo.naturalHeight * ratio)
       this.adjustLogoOffsetX()
-    }
+    },
+    getNavBarHightStyle(){
+      const ret = {
+        'overflow-y': 'auto',
+        'max-height': '400px',
+      }
+      return ret
+    },
   }
 }
 </script>

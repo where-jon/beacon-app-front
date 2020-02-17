@@ -5,7 +5,8 @@
 </template>
 
 <script>
-import { APP } from '../../sub/constant/config'
+import { APP, DISP } from '../../sub/constant/config'
+import { SYSTEM_ZONE_CATEGORY_NAME } from '../../sub/constant/Constants'
 import { mapState } from 'vuex'
 import * as StringUtil from '../../sub/util/StringUtil'
 import * as Util from '../../sub/util/Util'
@@ -58,8 +59,9 @@ export default {
       listName: StringUtil.single2multi(this.masterName),
       eachListName: StringUtil.concatCamel('each', StringUtil.single2multi(this.masterName)),
       prohibitDetectList : null,
-      loadStates: ['area', 'zone', 'tx', 'location', 'lostZones','prohibit'],
+      loadStates: [],
       showDismissibleAlert: false,
+      positions: [],
     }
   },
   computed: {
@@ -68,7 +70,7 @@ export default {
       'areas',
       'zones',
       'locations',
-      'positions',
+      'locationIdMap',
       'prohibits',
       'lostZones',
     ]),
@@ -95,18 +97,16 @@ export default {
       this[this.listName].forEach(obj => tempMasterMap[obj[this.id]] = {...obj, [this.id]: obj[this.id], label: obj[this.name], positions: []})
       const tempMasterExt = {[this.id]: -1, label: this.$i18n.tnl('label.other'), positions: []}
       let showExt = false
-      const locationMap = {}
       this.locations.forEach(location => {
-        if(Util.hasValue(location.posId)){
-          locationMap[location.posId] = location
-        }
-        if(this.displayZone && !Util.hasValue(location.zoneIdList)){
+        if(DISP.POS_STACK.ZONE_OTHER && this.displayZone && !Util.hasValue(location.zoneIdList)){
           showExt = true
         }
       })
 
+      const absentZone = _.find(this.zones, zone => zone.categoryName == SYSTEM_ZONE_CATEGORY_NAME.ABSENT_DISPLAY)
+
       _.forEach(positions, pos => {
-        const location = locationMap[pos.pos_id]
+        const location = this.locationIdMap[pos.locationId]
         prohibitDetectList? prohibitDetectList.some(data => {
           if(data.minor == pos.minor){
             pos.blinking = 'blinking'
@@ -114,15 +114,20 @@ export default {
           }
         }): false
         pos.isDisableArea = Util.getValue(location, 'isAbsentZone', false)
-        const posMasterIds = this.displayZone? Util.getValue(pos, 'location.' + this.id + 'List', [null]): [Util.getValue(pos, 'location.' + this.id, null)]
+        const posMasterIds = this.displayZone? Util.getValue(pos, 'location.zoneIdList', [null]): [Util.getValue(pos, 'location.areaId', null)]
         posMasterIds.forEach(posMasterId => {
-          const obj = Util.hasValue(posMasterId)? tempMasterMap[posMasterId]: tempMasterExt
+          const hasMasterId = Util.hasValue(posMasterId)
+          const obj = hasMasterId ? tempMasterMap[posMasterId]: tempMasterExt
           if(!pos.noSelectedTx && !Util.getValue(location, 'isAbsentZone', false)){
             obj.positions.push(pos)
+          }else if(absentZone){
+            // 不在ゾーンへの登録
+            tempMasterMap[absentZone.zoneId].positions.push(pos)
           }
         })
       })
-      const ret = _.sortBy(tempMasterMap, tmm => this.displayArea? tmm.areaCd : tmm.label)
+      const ret = _.sortBy(tempMasterMap, tmm => this.displayArea? tmm.areaCd : tmm.zoneCd)
+      Util.debug('tempMasterMap', tempMasterMap)
       if(showExt){
         ret.push(tempMasterExt)
       }
@@ -132,10 +137,16 @@ export default {
       try {
         this.replace({showAlert:false})
         this.showProgress()
+        if (APP.POS.PROHIBIT_ALERT) {
+          this.loadStates.push('prohibit')
+        }
+        if (APP.POS.LOST_ALERT) {
+          this.loadStates.push('lostZones')
+        }
         await Promise.all(this.loadStates.map(StateHelper.load))
         // positionデータ取得
-        await PositionHelper.storePositionHistory(null, true, true)
-        this.replaceAS({positions: PositionHelper.getPositions(false, false, true, null, null, null, null)})
+        await PositionHelper.loadPosition(null, true, true)
+        this.positions = PositionHelper.filterPositions(undefined, false, true, null, null, null, null)
 
         if (Util.hasValue(APP.POS.PROHIBIT_ALERT)
           && (Util.hasValue(APP.POS.PROHIBIT_GROUP_ZONE)||Util.hasValue(APP.POS.LOST_GROUP_ZONE))) {

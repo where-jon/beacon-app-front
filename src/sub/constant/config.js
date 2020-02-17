@@ -1,7 +1,7 @@
 // configuration for app
 // Basically using const but values are not primitive but objects or arrays because it may change from outside.
 
-import { DETECT_STATE, LOGIN_MODE } from './Constants'
+import { DETECT_STATE, LOGIN_MODE, SHAPE } from './Constants'
 
 export const DEV = { // 開発デバッグ関連
   DEBUG: 0, // デバッグモード (0:なし、1以上デバッグレベル)
@@ -15,13 +15,13 @@ export const APP = { // 機能面に関する設定
   LOGIN_MODE: LOGIN_MODE.APP_SERVICE, // ログインモード(なし、ローカル、AppService)
   SAAS_DOMAIN: '.saas.',
   COMMON: {
-    VERSION: 'Version 1.3.1', // バージョン　this application version
+    VERSION: 'Version 1.3.2', // バージョン　this application version
     TIME_ZONE: 'JST', // 午前0時を決定するためのタイムゾーン
     AUTO_RELOAD: 60000, // 自動リロード間隔(ミリ秒)
   },
   SYS: {
     TIMEOUT: 60 * 60 * 1000, // session timeout(using local storage)
-    STATE_EXPIRE_TIME: 10 * 60 * 1000, // マスタキャッシュ有効時間(ミリ秒)
+    STATE_EXPIRE_TIME: 3 * 60 * 1000, // マスタキャッシュ有効時間(ミリ秒)
   },
   MENU: {
     SHOW_MENU_LINK: '',
@@ -49,7 +49,6 @@ export const APP = { // 機能面に関する設定
     TRANSPARENT_TIME: 60 * 1000, // 半透明：現在時刻から経過した段階で半透明（ミリ秒）
     LOST_TIME: 10 * 60 * 1000, // 消失とみなす時間（ミリ秒）
     UNDETECT_TIME: 60 * 60 * 1000, // 未検知とみなす時間（ミリ秒）
-    USE_POSITION_HISTORY: true, // 位置情報にT_POSITION_HISTORYを使う
     TX_POS_ONE_TO_ONE: false, // 1つの場所に1TXのみ存在可能
     RSSI_MIN: -99, // RSSI下限値
     MOVING_AVERAGE: 5, // 5回分移動平均
@@ -103,7 +102,15 @@ export const APP = { // 機能面に関する設定
   },
   // 位置表示(一覧)
   POS_LIST: {
-    WITH: [''],
+    WITH: ['mapDisplay'],  // 表示対象の文字列を配列に追加で列を表示する。mapDisplay:「マップ表示」列、tel:「電話番号」列
+  },
+  // 位置表示(全体)
+  POS_STACK: {
+    USE_POPUP: false,   // Txアイコンクリック時にポップアップ表示する
+    ADJUST_POPUP: {   // ポップアップの調整　設定した座標だけマイナス
+      X: 15,                   // X座標　増加分、右に移動
+      Y: 5,                     // Y座標　増加分、下に移動
+    },
   },
   // TX関連設定
   TX: {
@@ -143,6 +150,7 @@ export const APP = { // 機能面に関する設定
   POT: {
     WITH: ['thumbnail', 'category', 'user', 'ruby', 'description'],
     MULTI_TX: false,         // 複数Tx使用
+    CSV_USER: false,
     TX_MAX: 2,   // 所持Tx最大数
     TYPES: [1, 2, 3],   // 選択可能な種別（1人,2物,3物(その他)）
     // 拡張項目定義（サンプル）
@@ -271,7 +279,7 @@ export const APP = { // 機能面に関する設定
     POWER_LEVEL_WARN: 30,  // 電池レベルで減少とみなす下限値
   },
   SENSOR_LIST: {
-    WITH: ['posId', 'deviceId', 'deviceIdX'],
+    WITH: ['deviceId', 'deviceIdX'],
   },
   SENSORGRAPH: {
     SENSOR: [1,2,3,4,5,6,7,8,9],        // グラフで利用するセンサー一覧
@@ -388,10 +396,20 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     VERTICAL: 10, // TXアイコンタイル表示時の行数
     DISPLAY_PRIORITY: 'category', // TX表示の際に参照するdisplay方法
     ABSENT_ZONE_DISPLAY_TYPES: ['undetected','lost','absent'],   // undetected:未検知, lost:消失, absent:不在ゾーン）
+    FIXED_POS: {
+      APPLY_COLOR: true, // この設定を適用するか。falseの場合、カテゴリ/グループの色と不在時の透過を用いる
+      SHAPE: SHAPE.CIRCLE,
+      R: 10,
+      COLOR: '#FFFFFF',
+      IN_ZONE_BGCOLOR: '#4472C4', // 固定ゾーンにいる場合
+      OUT_ZONE_BGCOLOR: '#C00000', // 固定ゾーン外の同一エリアに居る場合
+      UNDETECT_BGCOLOR: '#B78811', // 未検知
+      LOST_BGCOLOR: '#3D3D3D', // 消失
+    }
   },
   // 位置表示(数量)：TX
   TX_NUM: {
-    R: 30, // Txの半径
+    R: 20, // Txの半径
     ROUNDRECT_RADIUS: 13, // Tx角丸表示時のRADIUS
     BGCOLOR: '#ff7f50', // Tx表示時のデフォルト背景色
     COLOR: '#000000', // Tx表示時のデフォルト文字色
@@ -565,7 +583,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   TXMEDITAG_POPUP_SIZE: 230, // TXMEDITAG表示ポップアップの高さ
 
   POSITION_HISTORY: {
-    HEADERS: ['potName', 'major', 'minor', 'deviceId', 'locationName', 'posId', 'areaName'], // 位置表示履歴の表示カラム
+    HEADERS: ['potName', 'major', 'minor', 'deviceId', 'locationName', 'areaName'], // 位置表示履歴の表示カラム
   },
 
   GATEWAY: { // ゲートウエイ
@@ -608,6 +626,12 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
 
   POS: {
     EXSERVER: false, // EXServerを使う
+  },
+
+  // 位置表示（全体）
+  POS_STACK: {
+    TYPE: 1, // 表示方法
+    ZONE_OTHER: true // ゾーンその他を表示する
   },
 }
 

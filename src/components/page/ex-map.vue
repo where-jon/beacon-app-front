@@ -174,7 +174,7 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import { SENSOR, TX, CATEGORY, POT_TYPE, SHAPE, KEY } from '../../sub/constant/Constants'
+import { SENSOR, TX, POT_TYPE, SHAPE, KEY } from '../../sub/constant/Constants'
 import { APP, DISP, DEV, APP_SERVICE, EXCLOUD, MSTEAMS_APP } from '../../sub/constant/config'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
@@ -186,10 +186,7 @@ import * as StringUtil from '../../sub/util/StringUtil'
 import * as Util from '../../sub/util/Util'
 import * as VueUtil from '../../sub/util/VueUtil'
 import * as AnalysisHelper from '../../sub/helper/domain/AnalysisHelper'
-import * as AppServiceHelper from '../../sub/helper/dataproc/AppServiceHelper'
-import * as EXCloudHelper from '../../sub/helper/dataproc/EXCloudHelper'
 import * as HeatmapHelper from '../../sub/helper/ui/HeatmapHelper'
-import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 import * as IconHelper from '../../sub/helper/ui/IconHelper'
 import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
 import * as MessageHelper from '../../sub/helper/domain/MessageHelper'
@@ -380,7 +377,7 @@ export default {
       isLoading: false,
       isMsTeams: MSTEAMS_APP.IS_COOPERATION,
       noImageErrorKey: 'noMapImage',
-      loadStates: ['sensor', 'category', 'group', 'tx', 'exb', 'location', 'pot', 'absentDisplayZones'],
+      loadStates: ['absentDisplayZones'],
       detectedCount: 0,
       thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
       keepExbPosition: false,
@@ -397,13 +394,6 @@ export default {
       icons: {},
       exbIcons: [],
       txIcons: [],
-      // リスト→map変換
-      txsMap: {},
-      locationsMap: {},
-      potsMap: {},
-      sensorMap: {},
-      positionedExbMap: {},
-      positionedTxMap: {},
       // 凡例
       legendItems: null,
       // 検知
@@ -413,6 +403,9 @@ export default {
       showDismissibleAlert: false,
       prohibitInterval: null,
       lostInterval: null,
+      absentZonePosition: null, // 不在表示ゾーン
+      // センサー
+      sensorMap: {},
       // 温湿度
       isShownChart: false, // 温湿度モーダル表示
       iconTicker: null,
@@ -422,9 +415,7 @@ export default {
       fixHeight: DISP.THERMOH.ALERT_FIX_HEIGHT,
       chartTitle: '',
       // 数量表示
-      locationPersonList: {},
-      locationObjectList: {},
-      locationOtherList: {},
+      detectCount: {},
       isQuantity: false,
       // ツールチップ
       toolTipShow: false,
@@ -451,6 +442,11 @@ export default {
       'lostZones',
       'absentDisplayZones',
       'txs',
+      'btxIdMap',
+      'txIdMap',
+      'deviceIdMap',
+      'potIdMap',
+      'locationIdMap',
       'locations',
       'pots',
     ]),
@@ -464,7 +460,7 @@ export default {
       if (!Util.getValue(this.selectedTx, 'btxId', null)) {
         return []
       }
-      const ret = SensorHelper.getSensorFromBtxId('meditag', this.positionedTxMap.meditag, this.selectedTx.btxId)
+      const ret = SensorHelper.getSensorFromBtxId('meditag', this.sensorMap.meditag, this.selectedTx.btxId)
       return ret? [ret]: []
     },
     maxFilterLength() {
@@ -499,7 +495,7 @@ export default {
     'vueSelected.category': {
       handler: function(newVal, oldVal){
         this.selectedCategory = Util.getValue(newVal, 'value', null)
-        if(Util.hasValue(this.form.potId) && Util.getValue(this.potsMap[this.form.potId], 'categoryId', null) != this.selectedCategory){
+        if(Util.hasValue(this.form.potId) && Util.getValue(this.potIdMap[this.form.potId], 'categoryId', null) != this.selectedCategory){
           this.vueSelected.individual = null
         }
       },
@@ -508,7 +504,7 @@ export default {
     'vueSelected.group': {
       handler: function(newVal, oldVal){
         this.selectedGroup = Util.getValue(newVal, 'value', null)
-        if(Util.hasValue(this.form.potId) && Util.getValue(this.potsMap[this.form.potId], 'groupId', null) != this.selectedGroup){
+        if(Util.hasValue(this.form.potId) && Util.getValue(this.potIdMap[this.form.potId], 'groupId', null) != this.selectedGroup){
           this.vueSelected.individual = null
         }
       },
@@ -538,22 +534,15 @@ export default {
       this.loadStates.push('lostZones')
     }
     await Promise.all(this.loadStates.map(state => StateHelper.load(state)))
-    this.txs.forEach(t => this.txsMap[t.btxId] = t)
     // ゾーン表示時「・・・」用TXを追加しておく
-    this.txsMap[PositionHelper.zoneLastTxId()] = { txId: PositionHelper.zoneLastTxId(), disp: 1, tx: {disp: 1} }
-    this.locations.forEach(l => {
-      if(Util.hasValue(l.posId)){
-        this.locationsMap[l.posId] = l
-      }
-    })
-    this.pots.forEach(e => this.potsMap[e.potId] = e)
+    this.btxIdMap[PositionHelper.zoneLastTxId()] = { txId: PositionHelper.zoneLastTxId(), disp: 1, tx: {disp: 1} }
     this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryOptions, this.selectedCategory, false)
     this.vueSelected.group = VueSelectHelper.getVueSelectData(this.groupOptions, this.selectedGroup, false)
     if(this.pSplitAutoReload){
       this.startPositionAutoReload()
       this.startOtherAutoReload()
     }
-    this.changeArea(this.selectedArea)
+    this.changeArea(this.selectedArea) // ここが処理の起点。this.onChangeAreaDone()が呼ばれ、showMapImage()が呼ばれる
     document.addEventListener('touchstart', this.touchEnd)
     // Canvas内クリックからの伝搬を止める
     document.getElementById('map').addEventListener('click', function(e) {
@@ -604,7 +593,7 @@ export default {
       return BrowserUtil.isResponsiveMode()
     },
     hasMeditagSensors () {
-      return Util.hasValue(this.positionedTxMap.meditag)
+      return Util.hasValue(this.sensorMap.meditag)
     },
     iconMouseOver(event){
       if(this.pQuantity){
@@ -745,11 +734,6 @@ export default {
     changeDatetimeFrom(newVal = this.form.datetimeFrom) {
       this.form.datetimeTo = newVal? DateUtil.getDatetime(newVal, {minutes: APP.ANALYSIS.DATETIME_INTERVAL}): null
     },
-    async refreshTxInfo(){
-      await StateHelper.load('tx', true)
-      this.txsMap = {}
-      this.txs.forEach(t => this.txsMap[t.btxId] = t)
-    },
     // Txアイコンを選択した場合のポップアップ
     setupSelectedTx (tx, x, y, isDispThumbnail) {
       const map = DomUtil.getRect('#map')
@@ -777,7 +761,7 @@ export default {
       if (PositionHelper.isDoubleTx(btxId)) {
         btxId = PositionHelper.getDoubleDefaultTxId(btxId)
       }
-      const tx = this.txsMap[btxId]
+      const tx = this.btxIdMap[btxId]
 
       // サムネイル表示無しの設定になっているか？
       const isNoThumbnail = APP.TXDETAIL.NO_UNREGIST_THUMB? !tx.existThumbnail: false
@@ -799,10 +783,10 @@ export default {
     },
     updateTxBtn(pos, tx, meditag, magnet){
       const display = StyleHelper.getPositionDisplay(tx)
-      const color = PositionHelper.getTxIconColor(display, meditag, magnet)
-      const bgColor = PositionHelper.getTxIconBgColor(display, meditag, magnet)
+      const color = StyleHelper.getTxIconColor(display, meditag, magnet)
+      const bgColor = StyleHelper.getTxIconBgColor(display, meditag, magnet)
 
-      if(SensorHelper.includesSensorId(this.pMergeSensorIds, SENSOR.TEMPERATURE) && tx.sensorId == SENSOR.TEMPERATURE){
+      if(SensorHelper.match(this.pMergeSensorIds, SENSOR.TEMPERATURE, tx.sensorId)) {
         const ret = IconHelper.createThermohIcon(tx, this.getMapScale(), this.stage)
         ret.txId = tx.txId
         ret.x = pos.x
@@ -812,36 +796,37 @@ export default {
         ret.on('click', async evt => this.showChart(tx, await SensorHelper.getTodayThermoHumidityInfo(tx.txId, false)))
         return ret
       }
-      // 既に該当btx_idのTXアイコンが作成済みか?
-      let txBtn = this.icons[pos.btx_id]
+      // 既に該当btxIdのTXアイコンが作成済みか?
+      // console.error(pos.btxId + '_' + pos.isFixedPosition, pos.x, pos.y)
+      let txBtn = this.icons[pos.btxId + '_' + pos.isFixedPosition]
       if (!txBtn || txBtn.color != color || txBtn.bgColor != bgColor || txBtn.transparent != pos.transparent) {
         // 作成されていない場合、新規作成してからiconsに登録
         txBtn = IconHelper.createTxBtn(pos, display.shape, color, bgColor, this.getMapScale())
         txBtn.on('click', evt => this.txOnClick(evt))
-        this.icons[pos.btx_id] = txBtn
+        this.icons[pos.btxId + '_' + pos.isFixedPosition] = txBtn
       } else {
         // 作成済みの場合、座標値のみセットする
         txBtn.x = pos.x
         txBtn.y = pos.y
       }
-      if (PositionHelper.isFixTx(tx, this.selectedArea)) {
-        Util.debug('fixed location', tx)
-        txBtn.x = tx.location.x
-        txBtn.y = tx.location.y
-      }
+      // if (PositionHelper.isFixedPosOnArea(tx, this.selectedArea)) {
+      //   Util.debug('fixed location', tx)
+      //   txBtn.x = tx.location.x
+      //   txBtn.y = tx.location.y
+      // }
       return txBtn
     },
     updateZoneTxBtn(pos, tx, meditag, magnet){
       const display = StyleHelper.getPositionDisplay(tx)
-      const color = PositionHelper.getTxIconColor(display, meditag, magnet)
-      const bgColor = PositionHelper.getTxIconBgColor(display, meditag, magnet)
+      const color = StyleHelper.getTxIconColor(display, meditag, magnet)
+      const bgColor = StyleHelper.getTxIconBgColor(display, meditag, magnet)
 
-      // 既に該当btx_idのTXアイコンが作成済みか?
-      const zoneBtx_id = PositionHelper.zoneBtxIdAddNumber + pos.btx_id
-      let txBtn = this.icons[zoneBtx_id]
+      // 既に該当btxIdのTXアイコンが作成済みか?
+      const zoneBtxId = PositionHelper.zoneBtxIdAddNumber + pos.btxId
+      let txBtn = this.icons[zoneBtxId]
       if (!txBtn || txBtn.color != color || txBtn.bgColor != bgColor) {
         // 作成されていない場合、新規作成してからiconsに登録
-        if (pos.btx_id == PositionHelper.zoneLastTxId()) {
+        if (pos.btxId == PositionHelper.zoneLastTxId()) {
           txBtn = IconHelper.createLastSystemTx(pos, this.getMapScale())
         } else {
           txBtn = IconHelper.createTxBtn(pos, display.shape, color, bgColor, this.getMapScale(), true)
@@ -849,26 +834,40 @@ export default {
         }
         txBtn.color = color
         txBtn.bgColor = bgColor
-        this.icons[zoneBtx_id] = txBtn
+        this.icons[zoneBtxId] = txBtn
       } else {
         // 作成済みの場合、座標値のみセットする
         txBtn.x = pos.x
         txBtn.y = pos.y
       }
-      return { txBtn, zoneBtx_id }
+      return { txBtn, zoneBtxId }
     },
-    setNomalTx() {
+    showNomalTx(positions) {
       if(!Util.hasValue(this.pShowTxSensorIds)){
         return
       }
-      let position = PositionHelper.getPositionsWithAdjust(this.selectedArea, 1 / this.canvasScale, this.pDisabledFilter)
-      if (APP.SENSOR.USE_MEDITAG && this.positionedTxMap.meditag) { // TODO: 場所OK???
-        position = SensorHelper.setStress(position, this.positionedTxMap.meditag)
+
+      // 表示Txの画面上の座標位置の決定
+      if(APP.POS.USE_MULTI_POSITIONING){
+        // ３点測位はUSE_POSITION_HISTORYには非対応 TODO:要対応
+        positions = PositionHelper.calcCoordinatesForMultiPosition(positions, this.selectedArea)
       }
-      position.forEach(pos => this.showTx(pos))
-      return position
+      else {
+        positions = PositionHelper.calcScreenCoordinates(positions, 1 / this.canvasScale, this.locations, this.selectedArea, true)
+      }
+
+      if (APP.SENSOR.USE_MEDITAG && this.sensorMap.meditag) { // FIXME: 実装場所移す
+        positions = SensorHelper.setStress(positions, this.sensorMap.meditag)
+      }
+
+      // Txアイコンを表示する
+      positions.forEach(pos => this.showTx(pos))
+      this.positions = positions
+      this.stage.update()
+      this.reShowTxDetail(positions)
+
     },
-    setAbsentZoneTx() {
+    showAbsentZoneTxAll() {
       if (!this.pShowAbsent) {
         return
       }
@@ -878,12 +877,10 @@ export default {
         return
       }
       const ratio = DISP.TX.R_ABSOLUTE? 1 / this.canvasScale: 1
-      const absentZonePositions = PositionHelper.adjustZonePosition(PositionHelper.getPositions(false, true), ratio, this.locations, absentDisplayZone)
-
-      absentZonePositions.forEach(pos => this.showAbsentZoneTx(pos))
-      return absentZonePositions
+      this.absentZonePositions = PositionHelper.calcCoordinatesForZone(PositionHelper.filterPositions(undefined, false, true), ratio, this.locations, absentDisplayZone)
+      this.absentZonePositions.forEach(pos => this.showAbsentZoneTx(pos))
     },
-    reShowTxDetail(position, absentPositions){ // position
+    reShowTxDetail(positions){ // positions
       if (!this.pShowDetail) {
         return
       }
@@ -892,126 +889,106 @@ export default {
       }
 
       const tx = this.selectedTx
-      const selectedAbsentTxPosition = _.find(absentPositions, pos => pos.btx_id == tx.btxId)
+      const selectedAbsentTxPosition = _.find(this.absentZonePosition, pos => pos.btxId == tx.btxId)
       // 不在表示用ゾーンに表示されている方を優先して表示する
       if (selectedAbsentTxPosition) {
         this.showDetail(tx.btxId, selectedAbsentTxPosition.x, selectedAbsentTxPosition.y)
       } else {
-        const selectedTxPosition = position.find(pos => pos.btx_id == tx.btxId)
+        const selectedTxPosition = positions.find(pos => pos.btxId == tx.btxId)
         if (!selectedTxPosition || !selectedTxPosition.tx) {
           return
         }
-        const location = PositionHelper.isFixTx(selectedTxPosition.tx)? selectedTxPosition.tx.location: null
+        const location = PositionHelper.isFixedPosOnArea(selectedTxPosition.tx, this.selectedArea)? selectedTxPosition.tx.location: null
         const x = location? location.x: selectedTxPosition.x
         const y = location? location.y: selectedTxPosition.y
         this.showDetail(tx.btxId, x, y)
       }
     },
     showAbsentZoneTx(pos) {
-      const tx = this.txsMap[pos.btx_id]
-      if(!SensorHelper.includesSensorId(this.pShowTxSensorIds, tx.sensorId) || !this.pShowAbsent){
+      const tx = this.btxIdMap[pos.btxId]
+      if(!SensorHelper.match(this.pShowTxSensorIds, tx.sensorId) || !this.pShowAbsent){
         return
       }
       if(!PositionHelper.checkTxAllow(pos, tx, this.selectedArea, true)){
         return
       }
-      const magnet = tx.sensorId === SENSOR.MAGNET? SensorHelper.getSensorFromBtxId('magnet', this.positionedTxMap.magnet, tx.btxId): null
-      const meditag = tx.sensorId === SENSOR.MEDITAG? SensorHelper.getSensorFromBtxId('meditag', this.positionedTxMap.meditag, tx.btxId): null
+      const magnet = tx.sensorId === SENSOR.MAGNET? SensorHelper.getSensorFromBtxId('magnet', this.sensorMap.magnet, tx.btxId): null
+      const meditag = tx.sensorId === SENSOR.MEDITAG? SensorHelper.getSensorFromBtxId('meditag', this.sensorMap.meditag, tx.btxId): null
 
       const txBtnInfo = this.updateZoneTxBtn(pos, tx, meditag, magnet)
       const txBtn = txBtnInfo.txBtn
-      if(this.reloadSelectedTx.btxId == txBtnInfo.zoneBtx_id){
+      if(this.reloadSelectedTx.btxId == txBtnInfo.zoneBtxId){
         this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
       }
       this.txCont.addChild(txBtn)
     },
-    showTx(pos) {
-      let tx = this.txsMap[pos.btx_id]
-      if(!SensorHelper.includesSensorId(this.pShowTxSensorIds, tx.sensorId)){
-        return
+    checkTxSensor(pos) {
+      let tx = pos.tx
+
+      if (!SensorHelper.match(this.pShowTxSensorIds, tx.sensorId)) {
+        return {res:false}
       }
       if(!PositionHelper.checkTxAllow(pos, tx, this.selectedArea, false, this.pOnlyFixTx)){
-        return
+        return {res:false}
       }
-      if (tx.sensorId === SENSOR.TEMPERATURE && SensorHelper.includesSensorId(this.pMergeSensorIds, SENSOR.TEMPERATURE)) {
-        const temperature = SensorHelper.getSensorFromBtxId('temperature', Util.getValue(this, 'positionedTxMap.temperature', []), tx.btxId)
+      let temperature
+      if (SensorHelper.match(this.pMergeSensorIds, SENSOR.TEMPERATURE, tx.sensorId)) {
+        temperature = SensorHelper.getSensorFromBtxId('temperature', Util.getValue(this.sensorMap, 'temperature', []), tx.btxId)
         if(!temperature){
-          return null
+          return {res:false}
         }
-        tx = Util.merge(Util.merge({}, tx), temperature, ['areaId', 'areaName', 'x', 'y'])
       }
-      let magnet = null
-      if (tx.sensorId === SENSOR.MAGNET && SensorHelper.includesSensorId(this.pMergeSensorIds, SENSOR.MAGNET)) {
-        magnet = SensorHelper.getSensorFromBtxId('magnet', this.positionedTxMap.magnet, tx.btxId)
-        if(!magnet){
-          return null
-        }
+      let magnet = false
+      if (SensorHelper.match(this.pMergeSensorIds, SENSOR.MAGNET, tx.sensorId)) {
+        magnet = SensorHelper.getSensorFromBtxId('magnet', this.sensorMap.magnet, tx.btxId)
+        // if(!magnet){
+        //   return {res:false}
+        // }
       }
       let meditag = null
-      if (tx.sensorId === SENSOR.MEDITAG && SensorHelper.includesSensorId(this.pMergeSensorIds, SENSOR.MEDITAG) && APP.SENSOR.USE_MEDITAG) {
-        meditag = SensorHelper.getSensorFromBtxId('meditag', this.positionedTxMap.meditag, tx.btxId)
-        if(!meditag){
-          return null
-        }
+      if (SensorHelper.match(this.pMergeSensorIds, SENSOR.MEDITAG, tx.sensorId) && APP.SENSOR.USE_MEDITAG) {
+        meditag = SensorHelper.getSensorFromBtxId('meditag', this.sensorMap.meditag, tx.btxId)
+        // if(!meditag){
+        //   return {res:false}
+        // }
       }
+      return {res:true, temperature, magnet, meditag}
+    },
+    showTx(pos) {
+      let {res, temperature, meditag, magnet} = this.checkTxSensor(pos)
+      if (!res) {
+        return
+      }
+      if (temperature) {
+        pos.tx = Util.merge(Util.merge({}, pos.tx), temperature, ['areaId', 'areaName', 'x', 'y'])
+      }
+
       // フリーアドレスTXが不在エリア検知の場合は以降処理を行わない
-      const isFixTx = PositionHelper.isFixTx(tx, this.selectedArea)
+      const isFixedPosOnArea = PositionHelper.isFixedPosOnArea(pos.tx, this.selectedArea)
       const isAbsentZone = Util.getValue(pos, 'location.isAbsentZone', false)
-      if (isAbsentZone && !isFixTx) {
+      if (isAbsentZone && !isFixedPosOnArea) {
         return
       }
 
-      pos.transparent = pos.transparent || ((isAbsentZone || PositionHelper.isOtherFloorFixTx(tx, pos.location)) && PositionHelper.isFixTx(tx))
-      const txBtn = this.updateTxBtn(pos, tx, meditag, magnet)
-      if(this.reloadSelectedTx.btxId == pos.btx_id){
+      pos.transparent = pos.transparent || isAbsentZone // TODO: 別の場所に移動
+      const txBtn = this.updateTxBtn(pos, pos.tx, meditag, magnet)
+      if(this.reloadSelectedTx.btxId == pos.btxId){
         this.showDetail(txBtn.btxId, txBtn.x, txBtn.y)
       }
-      this.txIcons.push({ button: txBtn, device: tx, config: txBtn.iconInfo, sign: -1 })
+      this.txIcons.push({ button: txBtn, device: pos.tx, config: txBtn.iconInfo, sign: -1 })
       this.txCont.addChild(txBtn)
-      this.detectedCount++  // 検知数カウント増加
     },
-    setQuantityTx() {
-      let position = PositionHelper.getPositions()
-      const ratio = 1 / this.canvasScale
-      position = PositionHelper.adjustPosition(position, ratio, this.locations, this.selectedArea)
-      position.forEach((pos) => {
-        
-        const tx = this.txsMap[pos.btx_id]
-        let locationKey = pos.location.locationId
-        Util.debug('showTx', pos, tx && tx.sensor)
-        if (!PositionHelper.checkTxAllow(pos, tx, this.selectedArea, false, this.pOnlyFixTx)){
+    showQuantityTx(positions) { // 数量アイコン表示
+      positions = PositionHelper.calcScreenCoordinates(positions, 1 / this.canvasScale, this.locations, this.selectedArea)
+      positions.forEach((pos) => {
+        if (pos.hasAnother) return // 固定座席でフリー位置で検知されている場合はスキップ
+        if (!PositionHelper.checkTxAllow(pos, pos.tx, this.selectedArea, false, this.pOnlyFixTx)){
+          console.error('notallow')
           return
         }
 
-        // 固定座席の場合、TXが保持している位置に集計する
-        if (PositionHelper.isFixTx(tx)) {
-          locationKey = pos.tx.location.locationId
-        }
-
-        if (tx.potType == POT_TYPE.PERSON) {
-          let locationVal = this.locationPersonList[locationKey]
-          if (!Util.hasValue(locationVal)) {
-            this.locationPersonList[locationKey] = 1
-          } else {
-            this.locationPersonList[locationKey]++
-          }
-        } else if (tx.potType == POT_TYPE.THING) {
-          let locationVal = this.locationObjectList[locationKey]
-          if (!Util.hasValue(locationVal)) {
-            this.locationObjectList[locationKey] = 1
-          } else {
-            this.locationObjectList[locationKey]++
-          }
-        } else {
-          let locationVal = this.locationOtherList[locationKey]
-          if (!Util.hasValue(locationVal)) {
-            this.locationOtherList[locationKey] = 1
-          } else {
-            this.locationOtherList[locationKey]++
-          }
-        }
-
-        this.detectedCount++  // 検知数カウント増加
+        // 固定座席の場合、TXが保持している位置に集計 → 変更：同じゾーンにいれば、固定座席位置、そうでない場合はフリー位置で集計
+        this.incDetectCount(pos.location.locationId, pos.tx.potType)
       })
 
       _.filter(this.locations, location => location.areaId == this.selectedArea && location.x != null && location.y != null)
@@ -1023,8 +1000,29 @@ export default {
           txBtn.transparent
           txBtn.cursor = 'pointer'
           this.txCont.addChild(txBtn)
-      })
-      return position
+        })
+
+      this.positions = positions
+      this.stage.update()
+      this.stage.enableMouseOver()
+      this.reShowTxDetail(positions)
+      // パラメータリセット
+      this.detectCount = {}
+    },
+    incDetectCount(locationId, potType) {
+      if (!this.detectCount[locationId]) {
+        this.detectCount[locationId] = {person: 0, thing:0, other:0}
+      }
+      switch(potType) {
+      case POT_TYPE.PERSON:
+        this.detectCount[locationId].person++
+        break
+      case POT_TYPE.THING:
+        this.detectCount[locationId].thing++
+        break
+      default:
+        this.detectCount[locationId].other++
+      }
     },
     createQuantityTxBtn(location, shape, color, bgColor, isAbsent = false){ // position
       let txBtn = this.createQuantityTxIcon(location.locationId, shape, color, bgColor)
@@ -1046,25 +1044,10 @@ export default {
     },
     createQuantityTxIcon(locationId, shape, color, bgColor){ // position
       const txRadius = DISP.TX_NUM.R / this.getMapScale()
-      // 人数
-      let locationPerson = this.locationPersonList[locationId]
-      if (!NumberUtil.isNumber(locationPerson)) {
-        locationPerson = 0
-      }
-      // 品数
-      let locationObject = this.locationObjectList[locationId]
-      if (!NumberUtil.isNumber(locationObject)) {
-        locationObject = 0
-      }
-      // その他
-      let locationOther = this.locationOtherList[locationId]
-      if (!NumberUtil.isNumber(locationOther)) {
-        locationOther = 0
-      }
       const line = [
-        this.$i18n.tnl('label.peopleNum') + locationPerson,
-        this.$i18n.tnl('label.objectNum') + locationObject,
-        this.$i18n.tnl('label.other') + ':' + locationOther,
+        this.$i18n.tnl('label.peopleNum') + Util.getValue(this, 'detectCount.'+locationId+'.person', 0),
+        this.$i18n.tnl('label.objectNum') + Util.getValue(this, 'detectCount.'+locationId+'.thing', 0),
+        this.$i18n.tnl('label.other') + ':' + Util.getValue(this, 'detectCount.'+locationId+'.other', 0),
       ]
       const label = line.join('\r\n')
       const fontSize = line.map(str => StyleHelper.getFont2Size(StyleHelper.getInRectFontSize(str, txRadius, txRadius))).reduce((a, b) => a < b? a: b)
@@ -1083,9 +1066,7 @@ export default {
       this.resetDetail()
       if (!this.isQuantity) {
         this.isQuantity = true
-        this.locationPersonList = {}
-        this.locationObjectList = {}
-        this.locationOtherList = {}
+        this.detectCount = {}
         this.showTxAll()
       }
     },
@@ -1094,39 +1075,35 @@ export default {
       this.resetDetail()
       if (this.isQuantity) {
         this.isQuantity = false
-        
         this.showTxAll()
       }
     },
-    showTxAll() {
-      if(!Util.hasValue(this.pShowTxSensorIds) || this.pShowMRoomStatus){
+    showTxAll() { // TXアイコン個別表示
+      if(!Util.hasValue(this.pShowTxSensorIds)){
         return
       }
       if (!this.txCont) {
         this.txCont = ViewHelper.addContainerOnStage(this.stage, this.bitmap.width, this.bitmap.height)
       }
       this.txCont.removeAllChildren()
-      PositionHelper.disableLocationsCheck(this.locations)
-      this.detectedCount = 0
 
-      const absentZonePosition = this.pShowAbsent? this.setAbsentZoneTx(): []
+      // 不在表示用ゾーン
+      if (this.pShowAbsent) {
+        this.showAbsentZoneTxAll()
+      }
 
-      // 数量ボタン押下時
-      if (this.isQuantity){
-        const position = this.setQuantityTx()
-        this.positions = position
-        this.stage.update()
-        this.stage.enableMouseOver()
-        this.reShowTxDetail(position, absentZonePosition)
-        // パラメータリセット
-        this.locationPersonList = {}
-        this.locationObjectList = {}
-        this.locationOtherList = {}
-      } else {
-        const position = this.setNomalTx()
-        this.positions = position
-        this.stage.update()
-        this.reShowTxDetail(position, absentZonePosition)
+      let positions = this.$store.state.main.positions
+      if (!this.pInstallation) {
+        positions = PositionHelper.addFixedPosition(positions, this.locations, this.selectedArea) // 固定位置追加
+      }
+      // 表示Txのフィルタリング
+      positions = this.pDisabledFilter? PositionHelper.filterPositions(positions, false, undefined, null, null, null): PositionHelper.filterPositions(positions)
+      this.detectedCount = PositionHelper.getDetectCount(positions, this.selectedArea)  // 検知数カウント増加
+
+      if (this.isQuantity) { // 数量ボタン押下時
+        this.showQuantityTx(positions)
+      } else { // 個別ボタン押下時
+        this.showNomalTx(positions)
       }
     },
     showExb(exb, bgColor = null) {
@@ -1134,7 +1111,7 @@ export default {
       if(!icon){
         return
       }
-      if(SensorHelper.includesSensorId(this.pMergeSensorIds, SENSOR.TEMPERATURE) && exb.sensorId == SENSOR.TEMPERATURE){
+      if(SensorHelper.match(this.pMergeSensorIds, SENSOR.TEMPERATURE, exb.sensorId)){
         icon.on('mouseover', this.iconMouseOver)
         icon.on('mouseout', this.iconMouseOut)
         icon.on('click', async evt => this.showChart(exb, await SensorHelper.getTodayThermoHumidityInfo(exb.exbId, true)))
@@ -1142,55 +1119,13 @@ export default {
       this.exbIcons.push({ button: icon, device: exb, config: icon.iconInfo, sign: -1 })
       this.exbCon.addChild(icon)
     },
-    showExbTx(tx) {
-      const icon = IconHelper.createExbIconForMagnet(tx, this.positionedExbMap.magnet, this.getMapScale())
+    showExbTx(tx) { // TODO: メソッド名がおかしい。マグネットセンサTX専用ならそうすべき
+      const icon = IconHelper.createExbIconForMagnet(tx, this.sensorMap.magnet, this.getMapScale())
       if(icon){
         this.exbCon.addChild(icon)
       }
     },
-    getBgColorByMRoomStatus(exb, locationMRoomMap, positionMap) {
-      let bgColor = DISP.PLAN.NO_ACTUAL_NO_PLAN_BG_COLOR
-      const locationId = exb.locationId
-      if (locationMRoomMap[locationId]) {
-        const mr = locationMRoomMap[exb.locationId]
-        if (exb.zoneId && exb.zoneId == mr.zoneId) {
-          const plans = mr.plans
-          if (plans.length == 0) {
-            if (positionMap[locationId]) {
-              bgColor = DISP.PLAN.ACTUAL_OUT_OF_PLAN_BG_COLOR
-            }
-          } else {
-            if (positionMap[locationId]) {
-              const positions = positionMap[locationId]
-              let hasPlan = false
-              for (let idx in positions) {
-                const pos = positions[idx]
-                const updTime = moment(pos.updatetime).valueOf()
-                for (let pIdx in plans) {
-                  const plan = plans[pIdx]
-                  if (plan.startDt <= updTime && updTime <= plan.endDt) {
-                    hasPlan = true
-                    break
-                  }
-                }
-                if (hasPlan) {
-                  break
-                }
-              }
-              if (hasPlan) {
-                bgColor = DISP.PLAN.ACTUAL_IN_PLAN_BG_COLOR
-              } else {
-                bgColor = DISP.PLAN.ACTUAL_OUT_OF_PLAN_BG_COLOR
-              }
-            } else {
-              bgColor = DISP.PLAN.NO_ACTUAL_IN_PLAN_BG_COLOR
-            }
-          }
-        }
-      }
-      return bgColor
-    },
-    showExbAll() {
+    showExbAll() { // EXB表示
       if(!Util.hasValue(this.pShowExbSensorIds)){
         return
       }
@@ -1207,16 +1142,10 @@ export default {
         this.exbCon = ViewHelper.addContainerOnStage(this.stage, this.bitmap.width, this.bitmap.height)
       }
       this.exbCon.removeAllChildren()
-      Object.keys(this.positionedExbMap).forEach( key => this.positionedExbMap[key].forEach(exb => {
-        let bgColor = null
-        if (this.pShowMRoomStatus) {
-          bgColor = this.getBgColorByMRoomStatus(exb, locationMRoomMap, positionMap)
-        }
-        this.showExb(exb, bgColor)
-      }))
+      _.forEach(this.sensorMap, exbList => exbList.forEach(exb => exb.exbId && exb.areaId == this.selectedArea? this.showExb(exb): null))
       this.keepExbPosition = false
       //　表示条件：マグネットセンサ、固定位置登録＆同一エリア、PIR画面表示設定
-      if(SensorHelper.includesSensorId(this.pShowExbSensorIds, SENSOR.MAGNET) && APP.SENSOR.SHOW_MAGNET_ON_PIR){
+      if(SensorHelper.match(this.pShowExbSensorIds, SENSOR.MAGNET) && APP.SENSOR.SHOW_MAGNET_ON_PIR){
         _(this.txs).filter(tx => tx.sensorId == SENSOR.MAGNET && tx.location && tx.location.x * tx.location.y > 0
           && tx.location.areaId == this.selectedArea && NumberUtil.bitON(tx.disp, TX.DISP.PIR))
           .forEach(tx => this.showExbTx(tx))
@@ -1226,21 +1155,6 @@ export default {
     resetDetail() { // p, pir, position
       const selectedTx = {}
       this.replaceMain({ selectedTx })
-    },
-    async fetchPosition(payload){
-      if(!payload.disabledOther){
-        const sensorObj = await PositionHelper.fetchPositionWithSensor(this.selectedArea, this.pShowTxSensorIds, this.pShowExbSensorIds, this.pMergeSensorIds)
-        this.sensorMap = sensorObj.sensorMap
-        this.positionedTxMap = sensorObj.positionedTxMap
-        this.positionedExbMap = sensorObj.positionedExbMap
-      }
-      if(!Util.hasValue(this.pShowTxSensorIds)){
-        return
-      }
-      if(!payload.disabledPosition){
-        const alwaysTxs = this.txs.some(tx => tx.areaId == this.selectedArea && NumberUtil.bitON(tx.disp, TX.DISP.ALWAYS))
-        await PositionHelper.storePositionHistory(this.count, alwaysTxs? true: false, false, this.pShowMRoomStatus)
-      }
     },
     // 分析用検索条件のバリデーション
     validate() {
@@ -1310,86 +1224,79 @@ export default {
       }
       this.hideProgress()
     },
-    // common
-    showMapImage(disableErrorPopup, payload) {
-      const cPayload = {
-        disabledPosition: Util.getValue(payload, 'disabledPosition', false),
-        disabledOther: Util.getValue(payload, 'disabledOther', false),
-        disabledProgress: Util.getValue(payload, 'disabledProgress', false),
+    async fetchData(payload) {
+      this.onMapImageShown(payload)
+    },
+    async onMapImageShown(payload) {
+      if (!payload) payload = {}
+
+      if(this.pAnalysis){
+        this.reloadState.prevent = false
+        this.createAnalysisHeatmap()
+        return
       }
-      this.showMapImageDef(async () => {
-        if(this.pAnalysis){
-          this.reloadState.prevent = false
-          this.createAnalysisHeatmap()
-          return
-        }
-        if(!cPayload.disabledProgress){
-          this.showProgress()
-        }
-        const reloadButton = document.getElementById('spinner')
-        if(!this.firstTime && reloadButton){
-          this.reloadState.isLoad = true
-          await this.refreshTxInfo()
-        }
-        this.exbIcons = []
-        this.txIcons = []
-        this.keepExbPosition = false
-        await this.fetchPosition(cPayload)
-        this.stage.on('click', evt => this.resetDetail())
+      if(!payload.disabledProgress){
+        this.showProgress()
+      }
+      const reloadButton = document.getElementById('spinner')
+      if(!this.firstTime && reloadButton){
+        this.reloadState.isLoad = true
+      }
+      this.exbIcons = []
+      this.txIcons = []
+      this.keepExbPosition = false
 
-        this.showExbAll()
-        this.showTxAll()
+      this.sensorMap = await SensorHelper.fetchSensorInfo(this.pMergeSensorIds)
 
-        if(this.pShowHeatmap){
-          this.isLoading = true
-          SensorHelper.createHeatmap(this,
-            { areaId: this.selectedArea, element: this.$refs.map, src: StateHelper.getMapImage(this.getInitAreaOption()), scale: this.canvasScale },
-            Util.getValue(this, 'positionedTxMap.temperature', []).concat(Util.getValue(this, 'positionedExbMap.temperature', [])),
-            null,
-            () => {
-              this.isLoading = false
-              this.reloadState.prevent = false
-            }
-          )
-        }else{
-          this.reloadState.prevent = false
-        }
+      if (Util.hasValue(this.pShowTxSensorIds) && !payload.disabledPosition){
+        const alwaysTxs = this.txs.some(tx => tx.areaId == this.selectedArea && NumberUtil.bitON(tx.disp, TX.DISP.ALWAYS))
+        await PositionHelper.loadPosition(this.count, alwaysTxs)
+      }
 
-        if (this.pShowProhibit && Util.hasValue(APP.POS.PROHIBIT_GROUP_ZONE)) {
-          ProhibitHelper.setProhibitDetect('pos', this, this.positions)
-          this.replace({ showAlert: this.showDismissibleAlert })
-        }
+      this.stage.on('click', evt => this.resetDetail())
 
-        this.addTick()
+      this.showExbAll()
+      this.showTxAll()
+
+      if(this.pShowHeatmap){
+        this.isLoading = true
+        SensorHelper.createHeatmap(this,
+          { areaId: this.selectedArea, element: this.$refs.map, src: StateHelper.getMapImage(this.getInitAreaOption()), scale: this.canvasScale },
+          Util.getValue(this.sensorMap, 'temperature', []),
+          null,
+          () => {
+            this.isLoading = false
+            this.reloadState.prevent = false
+          }
+        )
+      }else{
+        this.reloadState.prevent = false
+      }
+
+      if (this.pShowProhibit && Util.hasValue(APP.POS.PROHIBIT_GROUP_ZONE)) {
+        ProhibitHelper.setProhibitDetect('pos', this, this.positions)
+        this.replace({ showAlert: this.showDismissibleAlert })
+      }
+
+      this.addTick()
+      if (this.sensorMap.temperature) {
         this.warnMessage = MessageHelper.createHumidityWarnMessage(this.txIcons, this.exbIcons)
-        this.replace({ showWarn: Util.hasValue(this.warnMessage) })
+      }
+      this.replace({ showWarn: Util.hasValue(this.warnMessage) })
 
-        this.stage.enableMouseOver()
-        this.stage.update()
+      this.stage.enableMouseOver()
+      this.stage.update()
 
-        if(!this.firstTime && reloadButton){
-          this.reloadState.isLoad = false
-        }
-        this.firstTime = false
-        if(!cPayload.disabledProgress){
-          this.hideProgress()
-        }
-      }, disableErrorPopup)
+      if(!this.firstTime && reloadButton){
+        this.reloadState.isLoad = false
+      }
+      this.firstTime = false
+      if(!payload.disabledProgress){
+        this.hideProgress()
+      }
     },
-    async fetchMRoomPlan() {
-      const now = moment()
-      const startDt = now.format('YYYY-MM-DDT00:00:00.000')
-      const endDt = now.format('YYYY-MM-DDT23:59:59.999')
-      const url = `/office/plans/m-rooms?startDt=${startDt}&endDt=${endDt}&filterType=area&filterId=${this.selectedArea}`
-      const data = await HttpHelper.getAppService(url)
-      const locationMap = data.reduce((accum, elm) => {
-        elm.locationIds.forEach(locationId => accum[locationId] = elm)
-        return accum
-      }, {})
-      this.$store.commit('main/replaceMain', {locationMRoomPlanMap: locationMap})
-    },
-    // common
-    async fetchData(payload, disableErrorPopup) {
+    // エリア選択時に呼び出される
+    async onChangeAreaDone(payload, disableErrorPopup) {
       this.reloadState.prevent = true
       StateHelper.initShowMessage()
       this.showReady = false
@@ -1405,10 +1312,11 @@ export default {
             this.legendItems = this.$parent.$options.methods.getLegendItems.call(this.$parent, this)
           }
         })
-        if (this.pShowMRoomStatus) {
-          await this.fetchMRoomPlan()
-        }
-        this.showMapImage(disableErrorPopup, payload)
+        // マップ画像の表示
+        this.showMapImageDef(async () => {
+          this.onMapImageShown(payload) // (測位・センサデータの取得は地図読み込み後)
+        }, disableErrorPopup)
+
         if (payload && payload.done) {
           payload.done()
         }

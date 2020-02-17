@@ -90,8 +90,8 @@ export const BULK = {
   REQUIRE: {
     REGION: { ALLOW: ['updateKey', 'ID', 'regionName', 'meshId'] },
     AREA: { ALLOW: ['updateKey', 'ID', 'areaName'], DISALLOW: ['deviceId', 'deviceIdX', 'zoneName'] },
-    EXB: { ALLOW: ['updateKey', 'threshold1', 'sensor'] },
-    TX: { ALLOW: ['updateKey', 'sensor'], DISALLOW: ['threshold1'] },
+    EXB: { ALLOW: ['updateKey', 'threshold1'] },
+    TX: { ALLOW: ['updateKey'], DISALLOW: ['threshold1'] },
     LOCATION: { ALLOW: ['updateKey', 'ID', 'locationName', 'txViewType'] },
     POT: { ALLOW: ['updateKey', 'ID', 'potName', 'potType'] },
     CATEGORY: { ALLOW: ['updateKey', 'ID', 'categoryName', 'categoryTypeName', 'color', 'bgColor', 'shape' ] },
@@ -602,6 +602,7 @@ export const SETTING = {
   JSON: 'json',
   SELECT: 'select',
   OTHER_CATEGORY: 'OTHER_CATEGORY',
+  DATE_NOTATION: 'YYYY-MM-DD HH:mm:ss',
   getOptions(){
     return [
       {text: i18n.tnl('label.string'), value: 'string'},
@@ -637,6 +638,10 @@ export const SETTING = {
         POS_LIST: {
           WITH: SETTING.STRING_LIST,
         },
+        POS_STACK: {
+          ADJUST_POPUP: SETTING.STRING_LIST,
+          USE_POPUP: SETTING.BOOLEAN,
+        },
         TX: {
           WITH: SETTING.STRING_LIST,
         },
@@ -668,13 +673,16 @@ export const SETTING = {
         CATEGORY: {
           TYPES: SETTING.NUMBER_LIST,
           WITH: SETTING.STRING_LIST,
+          EXT_DEF: SETTING.JSON,
         },
         GROUP: {
           WITH: SETTING.STRING_LIST,
+          EXT_DEF: SETTING.JSON,
         },
         ZONE: {
           TYPES: SETTING.NUMBER_LIST,
           WITH: SETTING.STRING_LIST,
+          EXT_DEF: SETTING.JSON,
         },
         NOTIFY: {
           MIDIUM_TYPES: SETTING.NUMBER_LIST,
@@ -773,6 +781,9 @@ export const SETTING = {
         },
         MANAGE: {
           SETTING_CATEGORY: SETTING.STRING_LIST,
+        },
+        OTHER: {
+          EXT_DEF: SETTING.JSON,
         }
       },
       DISP: {
@@ -1260,6 +1271,7 @@ export const SYSTEM_ZONE_CATEGORY_NAME = {
   PROHIBIT: 'PROHIBIT',
   ABSENT_DISPLAY: 'ABSENT_DISPLAY',
   TOILET: 'TOILET',
+  FIXED_POS: 'FIXED_POS',
 }
 
 export const PLUGIN_CONSTANTS = {

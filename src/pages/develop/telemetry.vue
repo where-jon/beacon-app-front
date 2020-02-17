@@ -58,7 +58,7 @@ export default {
       return ViewHelper.addLabelByKey(null,
         [
           { key: 'meshid_deviceid' },
-          { key: 'deviceid' },
+          { key: 'deviceId' },
           { key: 'description' },
           { key: 'timestamp' },
           { key: 'firm_ver' },
@@ -78,7 +78,7 @@ export default {
     getCsvHeaders(){
       return {
         meshid_deviceid: 'meshid_deviceid',
-        deviceid: 'deviceid',
+        deviceId: 'deviceId',
         description: 'description',
         timestamp: 'timestamp',
         firm_ver: 'firm_ver',
@@ -135,7 +135,7 @@ export default {
     getCsvHeaderList(){
       return [
         'meshid_deviceid',
-        'deviceid',
+        'deviceId',
         'description',
         'timestamp',
         'firm_ver',

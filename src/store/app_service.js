@@ -4,7 +4,6 @@ import * as Util from '../sub/util/Util'
 export const state = () => ({
   pots: [],
   pot: {},
-  positionList: [],
   positions: [],
   sensors: [],
   potImages: [],
@@ -41,12 +40,13 @@ export const state = () => ({
   topNews: {},
   newsList: [],
   news: {},
-  forceFetchPot: true,
+  forceFetchPot: true, // TODO: 使わないので削除
   forceFetchTx: true,
   forceFetchUser: true,
   forceFetchExb: true,
   forceFetchZone: true,
   forceFetchTemplate: true,
+  lastMasterFetchTime: 0,
   listMessage: null,
   showLine: false,
   pageSendParam: null,

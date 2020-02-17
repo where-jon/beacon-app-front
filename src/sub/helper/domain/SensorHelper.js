@@ -1,3 +1,4 @@
+/* eslint-disable require-atomic-updates */
 /**
  * センサに関するヘルパーモジュール
  * @module helper/domain/SensorHelper
@@ -17,22 +18,26 @@ import * as ChartHelper from '../ui/ChartHelper'
 import * as ConfigHelper from '../dataproc/ConfigHelper'
 import * as EXCloudHelper from '../dataproc/EXCloudHelper'
 import * as HeatmapHelper from '../ui/HeatmapHelper'
-import * as StateHelper from '../dataproc/StateHelper'
+import * as MasterHelper from '../domain/MasterHelper'
 import * as StyleHelper from '../ui/StyleHelper'
+import * as PositionHelper from './PositionHelper'
 import { addLabelByKey } from '../ui/ViewHelper'
 
 let chart = null
 let subChart = null
 
+let store
 let i18n
 
 /**
  * vue.jsで使用するオブジェクトを設定する。
  * @method
- * @param {Object} pi18n
+ * @param {Object} pStore
+ * @param {Object} pI18n
  */
-export const setApp = pi18n => {
-  i18n = pi18n
+export const setApp = (pStore, pI18n) => {
+  store = pStore
+  i18n = pI18n
 }
 
 /**
@@ -322,7 +327,7 @@ export const createChartThermohumidityOptions = (chartData, by, isResponsive = f
         ticks: { min: 0, max: 100, stepSize: 25},
         position: 'right'
       }],
-      isResponsive
+    isResponsive
     )
   }
 }
@@ -334,37 +339,37 @@ export const createChartOmrEnvOptions = (chartData, by, isResponsive = false) =>
       labels: chartData.map(val => val.key),
       datasets: 
         createChartGraphDatasets('temperature', i18n.tnl('label.temperature'), chartData, 'temperature', DISP.TEMPERATURE_LINE_COLOR, by)
-        .concat(createChartGraphDatasets('humidity', i18n.tnl('label.humidity'), chartData, 'humidity', DISP.HUMIDITY_LINE_COLOR, by))
-        .concat(createChartGraphDatasets('ambientLight', i18n.tnl('label.ambientLight'), chartData, 'ambientLight', DISP.AMBIENT_LIGHT_COLOR, by))
-        .concat(createChartGraphDatasets('soundNoise', i18n.tnl('label.soundNoise'), chartData, 'soundNoise', DISP.SOUND_NOISE_COLOR, by))
+          .concat(createChartGraphDatasets('humidity', i18n.tnl('label.humidity'), chartData, 'humidity', DISP.HUMIDITY_LINE_COLOR, by))
+          .concat(createChartGraphDatasets('ambientLight', i18n.tnl('label.ambientLight'), chartData, 'ambientLight', DISP.AMBIENT_LIGHT_COLOR, by))
+          .concat(createChartGraphDatasets('soundNoise', i18n.tnl('label.soundNoise'), chartData, 'soundNoise', DISP.SOUND_NOISE_COLOR, by))
     },
     options: createChartGraphOptions([
-        {
-          id: 'temperature',
-          label: i18n.tnl('label.temperature') + ' (℃)',
-          ticks: { min: 0, max: 40 },
-          position: 'left'
-        }, 
-        {
-          id: 'humidity',
-          label: i18n.tnl('label.humidity') + ' (%)',
-          ticks: { min: 0, max: 100, stepSize: 25},
-          position: 'right'
-        },
-        {
-          id: 'ambientLight',
-          label: i18n.tnl('label.ambientLight'),
-          ticks: { min: 0, max: 1000, stepSize: 200},
-          position: 'left'
-        },
-        {
-          id: 'soundNoise',
-          label: i18n.tnl('label.soundNoise'),
-          ticks: { min: 0, max: 100, stepSize: 25},
-          position: 'right'
-        }
-      ],
-      isResponsive
+      {
+        id: 'temperature',
+        label: i18n.tnl('label.temperature') + ' (℃)',
+        ticks: { min: 0, max: 40 },
+        position: 'left'
+      }, 
+      {
+        id: 'humidity',
+        label: i18n.tnl('label.humidity') + ' (%)',
+        ticks: { min: 0, max: 100, stepSize: 25},
+        position: 'right'
+      },
+      {
+        id: 'ambientLight',
+        label: i18n.tnl('label.ambientLight'),
+        ticks: { min: 0, max: 1000, stepSize: 200},
+        position: 'left'
+      },
+      {
+        id: 'soundNoise',
+        label: i18n.tnl('label.soundNoise'),
+        ticks: { min: 0, max: 100, stepSize: 25},
+        position: 'right'
+      }
+    ],
+    isResponsive
     )
   }
 }
@@ -395,8 +400,8 @@ export const createChartPirOptions = (chartData, by, isResponsive = false) => {
         },
         position: 'left'
       }],
-      null,
-      isResponsive
+    null,
+    isResponsive
     )
   }
 }
@@ -427,8 +432,8 @@ export const createChartThermopileOptions = (chartData, by, isResponsive = false
         },
         position: 'left'
       }],
-      null,
-      isResponsive
+    null,
+    isResponsive
     )
   }
 }
@@ -462,8 +467,8 @@ export const createChartMagnetOptions = (chartData, by, isResponsive = false) =>
         },
         position: 'left'
       }],
-      null,
-      isResponsive
+    null,
+    isResponsive
     )
   }
 }
@@ -494,8 +499,8 @@ export const createChartPressureOptions = (chartData, by, isResponsive = false) 
         },
         position: 'left'
       }],
-      null,
-      isResponsive
+    null,
+    isResponsive
     )
   }
 }
@@ -530,7 +535,7 @@ export const createChartMeditagOptions = (chartData, by, isResponsive = false) =
         ticks: { min: 0, max: DISP.HEART_RATE_MAX, stepSize: DISP.HEART_RATE_STEP },
         position: 'right'
       }],
-      isResponsive
+    isResponsive
     )
   }
 }
@@ -566,7 +571,7 @@ export const createChartSubMeditagOptions = (chartData, by, isResponsive = false
         ticks: { min: 0, max: downMax },
         position: 'right'
       }],
-      isResponsive
+    isResponsive
     )
   }
 }
@@ -588,7 +593,7 @@ export const createChartGraph = (canvasId, sensorId, chartData, by, isResponsive
   if(subChart){
     subChart.destroy()
   }
-  chart = new Chart(canvasId,
+  chart = new Chart(canvasId, // TODO: switchを使う
     sensorId == SENSOR.PIR? createChartPirOptions(chartData, by, isResponsive):
       sensorId == SENSOR.THERMOPILE? createChartThermopileOptions(chartData, by, isResponsive):
         sensorId == SENSOR.MAGNET? createChartMagnetOptions(chartData, by, isResponsive):
@@ -682,7 +687,7 @@ export const getStressBg = stress => {
  */
 export const setStress = (positions, sensors) => {
   return positions.map(position => {
-    let sensor = sensors.find(sensor => sensor.btx_id == position.btx_id)
+    let sensor = sensors.find(sensor => sensor.btxId == position.btxId)
     return sensor? {...position, bg: getStressBg(sensor.stress)}: position
   })
 }
@@ -808,7 +813,7 @@ export const getFields9 = () => {
  * @param {Number} sensorId
  * @return {Object[]} 規定値がない場合は温湿度と同値
  */
-export const getFields = (sensorId) => {
+export const getFields = (sensorId) => { // TODO: switch文
   if(sensorId == SENSOR.TEMPERATURE){
     return getFields1()
   }
@@ -844,8 +849,8 @@ export const getSensors = exbSensorList => {
     return [{ sensorId: null, sensorName: 'normal' }]
   }
   return exbSensorList.map(exbSensor => ({
-    sensorId: Util.getValue(exbSensor, 'exbSensorPK.sensorId', null),
-    sensorName: Util.getValue(exbSensor, 'sensorName', null),
+    sensorId: Util.getValue(exbSensor, 'sensorId'),
+    sensorName: Util.getValue(exbSensor, 'sensorName'),
   })).filter(val => val.sensorId)
 }
 
@@ -856,7 +861,7 @@ export const getSensors = exbSensorList => {
  * @return {Object[]}
  */
 export const getSensorIds = exb => {
-  const exbSensorList = Util.getValue(exb, 'exbSensorList', []) // TODO: FIX
+  const exbSensorList = Util.getValue(exb, 'exbSensorList', []) // TODO: 冗長
   if(Util.hasValue(exbSensorList)){
     return exbSensorList.map(exbSensor => Util.getValue(exbSensor, 'sensor.sensorId', null)).filter(val => val)
   }
@@ -880,7 +885,7 @@ export const createTxLocationDummyName = tx => 'tx' + (APP.TX.BTX_MINOR == 'mino
  * @return {Object}
  */
 export const getSensorFromBtxId = (type, sensorList, btxId) => {
-  const sensor = sensorList? sensorList.find(sensor => sensor.btxId == btxId || sensor.btxid == btxId || sensor.btx_id == btxId): null
+  const sensor = sensorList? sensorList.find(sensor => sensor.btxId == btxId || sensor.btxId == btxId || sensor.btxId == btxId): null
   Util.debug(type, sensor)
   return sensor
 }
@@ -915,7 +920,7 @@ export const getMagnetGroupTypes = txList => txList.filter(val => val.groupId &&
  * @param {Object[]} categoryList
  * @return {Object[]}
  */
-export const getCategoryLegendElements = categoryList => categoryList.filter(category => !category.systemUse).map(val => ({ id: val.categoryId, name: StateHelper.getDispCategoryName(val), ...val,}))
+export const getCategoryLegendElements = categoryList => categoryList.filter(category => !category.systemUse).map(val => ({ id: val.categoryId, name: MasterHelper.getDispCategoryName(val), ...val,}))
 
 /**
  * グループの汎用を表示するための情報を取得する。
@@ -950,26 +955,32 @@ export const createTxLegends = (txList, categoryList, groupList) => {
       { id: 2, text: legendElement.name, style: {} },
     ]
   }))
-  // デフォルトは常に表示
-  const defaultStyle = { shape: SHAPE.CIRCLE, bgColor: DISP.TX.BGCOLOR, color: DISP.TX.COLOR }
-  ret.push({
-    id: 0,
-    items: [
-      { id: 5, text: 'A', style: StyleHelper.getStyleDisplay1(defaultStyle) },
-      { id: 6, text: i18n.tnl('label.defaultOther'), style: {} },
-    ]
-  })
+  // グループ、カテゴリに全てのTXが紐付いている場合は、デフォルトを非表示
+  if(!hasAllTxDisplayInfo(txList)){
+    const defaultStyle = { shape: SHAPE.CIRCLE, bgColor: DISP.TX.BGCOLOR, color: DISP.TX.COLOR }
+    ret.push({
+      id: 0,
+      items: [
+        { id: 5, text: 'A', style: StyleHelper.getStyleDisplay1(defaultStyle) },
+        { id: 6, text: i18n.tnl('label.defaultOther'), style: {} },
+      ]
+    })
+  }
   return ret
 }
 
 /**
  * 指定したセンサIDを含むか確認する。undefinedとnullは通常として扱う
+ * checkIdをつけた場合、targetSensorIdと一致するか確認する
  * @method
  * @param {Number[]} sensorIdList
  * @param {Number} targetSensorId
  * @return {Boolean}
  */
-export const includesSensorId = (sensorIdList, targetSensorId) => sensorIdList.some(sensorId => sensorId == targetSensorId)
+export const match = (sensorIdList, targetSensorId, checkId) => {
+  return sensorIdList.some(sensorId => sensorId == targetSensorId)
+    && (!checkId || checkId == targetSensorId || checkId.includes && checkId.includes(targetSensorId))
+}
 
 /**
  * サーバからセンサ情報を取得する。
@@ -978,7 +989,11 @@ export const includesSensorId = (sensorIdList, targetSensorId) => sensorIdList.s
  * @param {Object} sensorInfo
  * @return {Object[]}
  */
-export const fetchSensor = async sensorInfo => sensorInfo.data = sensorInfo.enable? await EXCloudHelper.fetchSensor(sensorInfo.id): []
+export const fetchSensor = async (sensorInfo) => {
+  if (sensorInfo.enable !== false) {
+    sensorInfo.data =  await EXCloudHelper.fetchSensor(sensorInfo.id)
+  }
+}
 
 /**
  * 指定したセンサ情報をサーバから取得する。
@@ -988,36 +1003,18 @@ export const fetchSensor = async sensorInfo => sensorInfo.data = sensorInfo.enab
  * @return {Object[]}
  */
 export const fetchAllSensor = async (sensorIds) => {
-  const ret = [
-    { id: SENSOR.TEMPERATURE, name: SENSOR.STRING[SENSOR.TEMPERATURE], enable: sensorIds.includes(SENSOR.TEMPERATURE) },
-    { id: SENSOR.PIR, name: SENSOR.STRING[SENSOR.PIR], enable: sensorIds.includes(SENSOR.PIR) },
-    { id: SENSOR.THERMOPILE, name: SENSOR.STRING[SENSOR.THERMOPILE], enable: sensorIds.includes(SENSOR.THERMOPILE) && APP.SENSOR.USE_THERMOPILE },
-    { id: SENSOR.MEDITAG, name: SENSOR.STRING[SENSOR.MEDITAG], enable: sensorIds.includes(SENSOR.MEDITAG) && APP.SENSOR.USE_MEDITAG },
-    { id: SENSOR.MAGNET, name: SENSOR.STRING[SENSOR.MAGNET], enable: sensorIds.includes(SENSOR.MAGNET) && APP.SENSOR.USE_MAGNET },
-    { id: SENSOR.PRESSURE, name: SENSOR.STRING[SENSOR.PRESSURE], enable: sensorIds.includes(SENSOR.PRESSURE) && APP.SENSOR.USE_PRESSURE }
-  ]
-  await Promise.all(ret.map(fetchSensor))
-  return ret
+  const sensorInfos = [
+    { id: SENSOR.TEMPERATURE},
+    { id: SENSOR.PIR },
+    { id: SENSOR.THERMOPILE, enable: APP.SENSOR.USE_THERMOPILE },
+    { id: SENSOR.MEDITAG, enable: APP.SENSOR.USE_MEDITAG},
+    { id: SENSOR.MAGNET, enable: APP.SENSOR.USE_MAGNET },
+    { id: SENSOR.PRESSURE, enable: APP.SENSOR.USE_PRESSURE }
+  ].filter(e => sensorIds.includes(e.id)).map(e => ({...e, name: SENSOR.STRING[e.id]})) // TODO: NAMEとSTRING紛らわしい
+  await Promise.all(sensorInfos.map(fetchSensor))
+  return sensorInfos
 }
 
-/**
- * 優先順位の高いセンサ情報を取得する。
- * @method
- * @param {Object} sensorDataMap
- * @param {Number[]} primarySensorList
- * @return {Object}
- */
-export const getPrimarySensor = (sensorDataMap, primarySensorList) => {
-  const primaryLength = primarySensorList.length
-  for(let idx = 0; idx < primaryLength; idx++){
-    const sensorId = primarySensorList[idx]
-    const sensorType = SENSOR.STRING[sensorId]
-    if(sensorDataMap[sensorType]){
-      return { id: sensorId, ...sensorDataMap[sensorType] }
-    }
-  }
-  return null
-}
 
 /**
  * ヒートマップで使用するデータを作成する。
@@ -1079,14 +1076,17 @@ export const createThermoLegends = () => {
   const thermoPatternConfig = getThermoPatternConfig()
   var index = 1
   var lastBase = null
+  var styleBase = null
   return _.map(thermoPatternConfig, config => {
     const style = { shape: SHAPE.CIRCLE, bgColor: config.color, color: DISP.TX.COLOR }
     const msg = config.base? config.base + i18n.tnl('message.underDegree'): lastBase + i18n.tnl('message.overDegree')
     lastBase = config.base
+    styleBase = StyleHelper.getStyleDisplay1(style)
+    styleBase['animation'] = 'legend-flash ' + config.flash + 'ms linear infinite'
     return {
       id: index++,
       items: [
-        { id: 1, text: '', style: StyleHelper.getStyleDisplay1(style) },
+        { id: 1, text: '', style: styleBase },
         { id: 2, text: msg, style: {} },
       ]
     }
@@ -1113,4 +1113,159 @@ export const getTodayThermoHumidityInfo = async (id, isExb) => {
     }
   })
   return sensorData
+}
+
+/**
+ * センサ情報を取得し、TXやEXB等の情報を付加する。
+ * @method
+ * @param {Number[]} [targetSensorIds = []]
+ * @return {Object[]}
+ */
+export const fetchSensorInfo = async (targetSensorIds = []) => {
+  const deviceIdMap = store.state.app_service.deviceIdMap
+  const btxIdMap = store.state.app_service.btxIdMap
+  const sensorInfos = await fetchAllSensor(targetSensorIds)
+
+  const sensorMap = {}
+  sensorInfos.forEach(sensor => {
+    let sensorInfo = _(sensor.data).filter(sensor => {      
+      const tx = btxIdMap[sensor.btxId]
+      const exb = deviceIdMap[sensor.deviceId]
+      const hasTime = sensor.timestamp || sensor.updatetime // 日時がないのは除外
+      // const fixedPos = tx.location && tx.location.x && tx.location.y > 0 // TODO: ここで固定位置かどうかの条件は不要と思われる
+      return (tx || exb) && hasTime
+    }
+    ).map(sensor => addSensorInfo(sensor))
+    // pir: val.count >= DISP.PIR.MIN_COUNT // TODO: 元のソースにあったfilter条件。多分不要。
+    // exb.sensorId == SENSOR.PRESSURE? exb.pressVol <= DISP.PRESSURE.VOL_MIN || DISP.PRESSURE.EMPTY_SHOW: exb.count > 0 || DISP.PIR.EMPTY_SHOW
+    // APP.SENSOR.SHOW_MAGNET_ON_PIR) 
+    sensorMap[sensor.name] = sensorInfo.sortBy(sensor => 
+      sensor.sensorId == SENSOR.MEDITAG && (new Date().getTime() - sensor.downLatest < APP.SENSOR.MEDITAG.DOWN_RED_TIME)?
+        sensor.downLatest * -1
+        : sensor.btxId
+    ).value()
+  })
+
+  return sensorMap
+
+}
+
+/**
+ * センサ情報にTX,EXB,POS情報を付加する
+ * 
+ * @param {}} sensor 
+ * @param {*} txMap 
+ * @param {*} exbMap 
+ * @param {*} pos 
+ */
+const addSensorInfo = (sensor, pos) => {
+  const deviceIdMap = store.state.app_service.deviceIdMap
+  const btxIdMap = store.state.app_service.btxIdMap
+
+  const exb = deviceIdMap[sensor.deviceId]
+  let tx = btxIdMap[sensor.btxId]
+  let location, areaId, areaName, zoneIdList, zoneCategoryIdList
+  if (tx && pos && !PositionHelper.hasTxLocation(pos.tx)) { // MEDiTAGのように固定TXではない場合、現在いるエリア、ゾーン、ゾーンカテゴリ
+    areaId = pos.exb.areaId
+    areaName = Util.getValue(pos, 'exb.location.area.areaName')
+    location = pos.exb.location
+    zoneIdList = pos.exb.zoneIdList
+    zoneCategoryIdList = pos.exb.zoneCategoryIdList
+  }
+  else {
+    location = sensor.btxId? (tx? tx.location: {}): exb? exb.location: {}
+    // location = store.state.app_service.locations.find(e => e.locationId == location.locationId)
+    areaId = location.areaId
+    areaName = Util.getValue(location, 'area.areaName')
+    zoneIdList = Util.hasValue(location.zoneIdList)? location.zoneIdList: []
+    zoneCategoryIdList = Util.hasValue(location.zoneCategoryIdList)? location.zoneCategoryIdList: []      
+  }
+  let potName = tx? Util.firstValue(tx.potName, ConfigHelper.includesBtxMinor('btxId')? tx.btxId: tx.minor): null
+  const updatetime = Util.firstValue(sensor.updatetime, sensor.timestamp)
+
+  return {
+    // id: sensor.sensorId,
+    ...sensor,
+    // sensorId: sensor? sensor.id: null,
+    label: Util.getValue(tx, 'displayName', sensor.btxId), 
+    ...tx,
+    ...exb,
+    bg: getStressBg(sensor.stress), 
+    down: Util.getValue(sensor, 'down', 0),
+    count: Util.getValue(sensor, 'count', 0),
+    pressVol: Util.getValue(sensor, 'press_vol', 0),
+    x: location.x,
+    y: location.y,
+    updatetime,
+    ambientLight: sensor.ambient_light,
+    soundNoise: sensor.sound_noise,
+    sensorDt: DateUtil.formatDate(updatetime),
+    potName,
+    state: getMagnetStateKey(sensor.magnet),
+    deviceId: exb && exb.deviceId? exb.deviceId: '',
+    areaId,
+    areaName,
+    zoneIdList,
+    zoneCategoryIdList,
+  }
+}
+
+
+/**
+ * EXB情報にセンサ情報を付加する。
+ * 
+ * @method
+ * @param {Number} selectedArea
+ * @param {Object} exCluodSensors
+ * @return {Object[]}
+ */
+export const mergeExbWithSensor = (selectedSensorId, exCluodSensors) => {
+  const exbs = store.state.app_service.exbs
+  return _(exbs)
+    .filter(exb => {
+      return exb.location && exb.location.x && exb.location.y > 0
+      && exb.sensorIds.includes(selectedSensorId)
+    })
+    .map(exb => {
+      const sensor = {id: selectedSensorId, ...exCluodSensors.find(sensor => sensor.deviceId == exb.deviceId && (sensor.timestamp || sensor.updatetime))}
+      return addSensorInfo(sensor)
+    })
+    .value()
+}
+
+/**
+ * TX情報にセンサ情報を付加する。
+ * @method
+ * @param {Number} selectedSensor
+ * @param {Boolean} exCluodSensors
+ * @param {Boolean} positionHistory
+ * @return {Object[]}
+ */
+export const mergeTxWithSensorAndPosition = (selectedSensor, exCluodSensors, positions) => {
+  const txs = store.state.app_service.txs
+  const allPosition = selectedSensor == SENSOR.MEDITAG
+  return _(txs)
+    .filter(tx => allPosition || tx.location && tx.location.x && tx.location.y > 0) // MEDiTAG以外は固定位置のTXのみ
+    .filter(tx => selectedSensor == null || tx.sensorId == selectedSensor)
+    .map(tx => {
+      const pos = positions.find(pos => pos.txId == tx.txId)
+      const sensor = exCluodSensors.find(sensor => sensor.btxId == tx.btxId && (sensor.timestamp || sensor.updatetime))
+      return addSensorInfo(sensor, pos)
+    })
+    .value()
+}
+
+/** 全てのTxが優先設定の表示情報に紐付いているか確認する
+ * @method
+ * @param {Object[]} txList
+ * @return {Boolean}
+ */
+export const hasAllTxDisplayInfo = txList =>{
+  var displayInfo = null
+  if (DISP.TX.DISPLAY_PRIORITY == 'category'){
+    displayInfo = txList.filter(val => (val.categoryId ))
+  }else {
+    displayInfo = txList.filter(val => (val.groupId ))
+  }
+  return txList.length == displayInfo.length
 }

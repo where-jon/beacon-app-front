@@ -6,6 +6,7 @@
 import { SETTING, PATTERN } from '../../constant/Constants'
 import * as ArrayUtil from '../../util/ArrayUtil'
 import * as Util from '../../util/Util'
+import * as DateUtil from '../../util/DateUtil'
 import * as LocalStorageHelper from '../base/LocalStorageHelper'
 
 let i18n
@@ -176,6 +177,10 @@ export const createSetting = (setting, isTenant, option) => {
     Object.keys(option).forEach(key => {
       ret[key] = option[key]
     })
+  }
+  // デフォルト値の日時（UNIX時間）を日付表記へ変換
+  if (valType == SETTING.DATETIME) {
+    ret.defaultVal = DateUtil.formatDate(Number(ret.defaultVal),SETTING.DATE_NOTATION)
   }
   return ret
 }

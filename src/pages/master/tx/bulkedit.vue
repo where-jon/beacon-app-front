@@ -14,6 +14,7 @@ import * as Util from '../../../sub/util/Util'
 import * as BulkHelper from '../../../sub/helper/dataproc/BulkHelper'
 import * as SensorHelper from '../../../sub/helper/domain/SensorHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
@@ -38,15 +39,13 @@ export default {
     ]),
   },
   async mounted() {
-    await StateHelper.load('tx')
   },
   methods: {
     createDefaultName(prefix){
       return prefix + '_' + (new Date().getTime() % 10000)
     },
     async onSaving() {
-      await Promise.all(['category', 'group', 'pot'].map(StateHelper.load))
-      await this.$refs.bulkEdit.bulkSave({numberList: ['btxId', 'major', 'minor', 'disp', 'x', 'y'], nullableList: ['locationName', 'x', 'y']})
+      await this.$refs.bulkEdit.bulkSave({numberList: ['btxId', 'major', 'minor', 'disp', 'x', 'y'], nullableList: ['locationName', 'x', 'y', 'sensorNames']})
     },
     restructTx(entity, dummyKey){
       if(APP.TX.BTX_MINOR == 'minor'){
@@ -135,8 +134,8 @@ export default {
     onRestruct(entity, dummyKey){
       dummyKey = this.restructTx(entity, dummyKey)
       dummyKey = this.restructPot(entity, dummyKey)
-      if(Util.hasValue(entity.sensor)){
-        const param = BulkHelper.createParamSensor('tx', entity.sensor, dummyKey)
+      if(Util.hasValue(entity.sensorNames)){
+        const param = BulkHelper.createParamSensor('tx', entity.sensorNames, dummyKey)
         if(param.sensorList.length != 0){
           entity.txSensorList = param.sensorList
         }
@@ -144,8 +143,7 @@ export default {
       }
       return dummyKey
     },
-    onSaved(){
-      StateHelper.setForceFetch('pot', true)
+    async onSaved(){
     },
   }
 }

@@ -49,7 +49,7 @@ export default {
     txSensors(){
       return this.sensorOptionsTx.map(val => val.value)
     },
-    mergeSensors(){
+    mergeSensors(){// TODO: あとでマージすればいいのでは
       return [SENSOR.MEDITAG, SENSOR.MAGNET]
     },
     showMeditagList(){

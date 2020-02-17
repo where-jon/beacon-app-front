@@ -13,6 +13,7 @@ import * as LocalStorageHelper from '../sub/helper/base/LocalStorageHelper'
 import * as MessageHelper from '../sub/helper/domain/MessageHelper'
 import * as MenuHelper from '../sub/helper/dataproc/MenuHelper'
 import * as OptionHelper from '../sub/helper/dataproc/OptionHelper'
+import * as MasterHelper from '../sub/helper/domain/MasterHelper'
 import * as ProhibitHelper from '../sub/helper/domain/ProhibitHelper'
 import * as PositionHelper from '../sub/helper/domain/PositionHelper'
 import * as SensorHelper from '../sub/helper/domain/SensorHelper'
@@ -30,12 +31,13 @@ export default function (context) {
 
   AnalysisHelper.setApp(context.app.i18n)
   AuthHelper.setApp(context.app.router, context.app.store)
+  MasterHelper.setApp(context.app.store, context.app.i18n)
   StateHelper.setApp(context.app.store, context.app.i18n)
+  SensorHelper.setApp(context.app.store, context.app.i18n)
   PositionHelper.setApp(context.app.store, context.app.i18n)
   ViewHelper.setApp(context.app.i18n)
   HttpHelper.setApp(context)
   IconHelper.setApp(context.app.i18n)
-  SensorHelper.setApp(context.app.i18n)
   SettingHelper.setApp(context.app.i18n)
   BulkHelper.setApp(context.app.i18n)
   MessageHelper.setApp(context.app.i18n)
@@ -43,7 +45,6 @@ export default function (context) {
   ProhibitHelper.setApp(context.app.i18n)
   TooltipHelper.setApp(context.app.i18n)
   ValidateHelper.setApp(context.app.i18n)
-  SensorHelper.setApp(context.app.i18n)
   VueSelectHelper.setApp(context.app.i18n)
   if (!process.browser) {
     return
@@ -107,4 +108,10 @@ export default function (context) {
       context.app.router.push(APP.MENU.LOGIN_PAGE)
     }
   }
+
+  // マスタのキャッシュ時間を過ぎた場合、再ロード
+  if (new Date().getTime() - context.store.state.app_service.lastMasterFetchTime > APP.SYS.STATE_EXPIRE_TIME) {
+    MasterHelper.loadMaster()
+  }
+
 }

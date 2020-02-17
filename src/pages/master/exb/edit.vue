@@ -87,6 +87,7 @@ import * as ConfigHelper from '../../../sub/helper/dataproc/ConfigHelper'
 import * as MenuHelper from '../../../sub/helper/dataproc/MenuHelper'
 import * as OptionHelper from '../../../sub/helper/dataproc/OptionHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import * as VueSelectHelper from '../../../sub/helper/ui/VueSelectHelper'
@@ -188,14 +189,12 @@ export default {
   async created() {
     this.initExbSensorList()
     this.changeSensors()
-    await StateHelper.load('sensor')
     this.$nextTick(() => {
       ValidateHelper.setCustomValidationMessage()
       VueSelectHelper.disabledAllSubmit()
     })
   },
   async mounted() {
-    await Promise.all(['area', 'location'].map(StateHelper.load))
     this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, this.form.areaId)
     this.$nextTick(() => this.vueSelected.location = VueSelectHelper.getVueSelectData(this.getLocationOptions(), this.form.locationId))
     this.deviceId = this.form.deviceId
@@ -208,7 +207,7 @@ export default {
       return ConfigHelper.includesDeviceType(name)
     },
     getLocationOptions(){
-      return StateHelper.getOptionsFromState('location', false, true, location => location.areaId == this.form.areaId)
+      return MasterHelper.getOptionsFromState('location', false, true, location => location.areaId == this.form.areaId)
     },
     showSensor(index){
       if(index == 0){

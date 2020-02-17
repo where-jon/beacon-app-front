@@ -87,6 +87,7 @@ import { getCharSet } from '../../sub/helper/base/CharSetHelper'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import commonmixin from '../../components/mixin/commonmixin.vue'
@@ -139,7 +140,7 @@ export default {
       'txs', 'exbs'
     ]),
     txOptions() {
-      return StateHelper.getOptionsFromState('tx',
+      return MasterHelper.getOptionsFromState('tx',
         tx => tx.minor ? '' + tx.minor : 'txid=' + tx.txId,
         true
       )
@@ -148,22 +149,19 @@ export default {
       return MenuHelper.isEnabledMenu('group') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'group')
     },
     groupOptions() {
-      return StateHelper.getOptionsFromState('group',
+      return MasterHelper.getOptionsFromState('group',
         group => group.groupName,
         true
       )
     },
   },
   created() {
-    StateHelper.load('group')
     const date = DateUtil.getDefaultDate()
     this.form.datetimeFrom = DateUtil.getDatetime(date, {hours: -1})
     this.form.datetimeTo = DateUtil.getDatetime(date)
   },
   mounted() {
     ViewHelper.importElementUI()
-    StateHelper.load('tx')
-    StateHelper.load('exb')
     this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`
   },
   methods: {
@@ -192,14 +190,13 @@ export default {
           const d = new Date(posHist.positionDt)
           posHist.positionDt = DateUtil.formatDate(d.getTime())
           const aTx = _.find(this.txs, (tx) => { return tx.txId == posHist.txId })
-          posHist.potName = Util.getValue(aTx, 'potName', '')
+          posHist.potName = Util.getValue(aTx, 'pot.potName', '')
           posHist.major = Util.getValue(aTx, 'major', '')
           posHist.minor = Util.getValue(aTx, 'minor', '')
           const aExb = _.find(this.exbs, (exb) => { return exb.exbId == posHist.exbId })
           posHist.deviceId = Util.getValue(aExb, 'deviceId', '')
           posHist.deviceIdX = Util.getValue(aExb, 'deviceIdX', 0)
           posHist.locationName = Util.getValue(aExb, 'locationName', '')
-          posHist.posId = Util.getValue(aExb, 'posId', '')
           posHist.areaName = Util.getValue(aExb, 'areaName', '')
           posHist.x = Util.getValue(aExb, 'x', '')
           posHist.y = Util.getValue(aExb, 'y', '')

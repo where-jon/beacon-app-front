@@ -61,7 +61,6 @@ export default {
     },
   },
   async created() {
-    await StateHelper.load('pots')
   },
   mounted() {
     this.fetchData()

@@ -83,9 +83,10 @@ export const sortByArray = (aAry, bAry) => {
  * @param {String} by ソート軸。list要素に含まれているプロパティ名
  */
 export const sortIgnoreCase = (list, by) => {
+  if (!list) return
   list.sort((a, b) => {
-    const byA = a[by].toUpperCase()
-    const byB = b[by].toUpperCase()
+    const byA = a[by]
+    const byB = b[by]
     if ((byA instanceof Date && byB instanceof Date) || (typeof byA === 'number' && typeof byB === 'number')) {
       if (byA < byB) {
         return -1
@@ -96,7 +97,7 @@ export const sortIgnoreCase = (list, by) => {
       }
     } else {
       // 文字列ソート時は b-table でのソート（数値優先）に合わせている
-      return byA.localeCompare(byB, undefined, { numeric: true })
+      return (byA?byA:'').toUpperCase().localeCompare((byB?byB:'').toUpperCase(), undefined, { numeric: true })
     }
   })
 }
@@ -182,5 +183,21 @@ export const getEntityFromIds = (list, entity, ids) => {
     }
   }
   return null
+}
+
+/**
+ * 配列をnumで指定された要素数で区切る
+ * @method
+ * @param {Object[]} array パーティショニング元配列
+ * @param {Number} num 1つのパーティションの要素数
+ * @return {Object[]}
+ */
+export const partitioningArray = (array, num) => {
+  const len = array.length
+  const c = []
+  for (let i = 0 ; i < len ; i += num) {
+    c.push(array.slice(i, (i + num)))
+  }
+  return c
 }
 

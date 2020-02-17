@@ -13,7 +13,7 @@ import * as BrowserUtil from '../../../sub/util/BrowserUtil'
 import * as StringUtil from '../../../sub/util/StringUtil'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
 import * as ImageHelper from '../../../sub/helper/base/ImageHelper'
-import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkupload from '../../../components/page/bulkupload.vue'
@@ -59,15 +59,11 @@ export default {
     },
   },
   async mounted() {
-    await StateHelper.load('pot')
   },
   async created() {
-    await StateHelper.load('pot')
   },
   methods: {
-    onSaved(){
-      StateHelper.setForceFetch('tx', true)
-      StateHelper.setForceFetch('user', true)
+    async onSaved(){
     },
     search(key) {
       const target = this.pots.find(val => val.potCd == key && this.pTypeList.includes(val.potType))

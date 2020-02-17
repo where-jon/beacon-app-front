@@ -17,7 +17,7 @@ import * as LocalStorageHelper from '../base/LocalStorageHelper'
  * @return {Boolean} リージョンを切り替えた
  */
 export const autoSwitchRegion = async (regions) => {
-  const currentRegionId = Util.getValue(LocalStorageHelper.getLogin(), 'currentRegion.regionId', null)
+  const currentRegionId = Util.getValue(LocalStorageHelper.getLogin(), 'currentRegion.regionId')
   if(regions.find(region => region.regionId == currentRegionId)){
     return false
   }
@@ -50,5 +50,5 @@ export const enableRegionOptions = regions => {
     Util.hasValue(login.userRegionIdList)?
       regions.filter(region => login.userRegionIdList.includes(region.regionId)):
       regions.filter(region => login.currentRegion? region.regionId == login.currentRegion.regionId: false)
-  return ret.sort((a, b) => StringUtil.sortByString(a.regionName, b.regionName, LocaleHelper.getSystemLocale()))
+  return ret.sort((a, b) => StringUtil.sortByString(a.regionCd, b.regionCd, LocaleHelper.getSystemLocale()))
 }

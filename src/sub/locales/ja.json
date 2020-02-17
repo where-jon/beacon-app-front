@@ -67,6 +67,7 @@
     "notReceive": "受信不良",
     "absent": "不在区域",
     "prohibit": "禁止区域",
+    "fixed_pos": "固定座席区域",
     "lost": "重要物品指定区域",
     "absent_display": "不在表示用区域",
     "charSet": "CSV文字コード",
@@ -162,7 +163,6 @@
     "settingNow": "設定中",
     "mapRatioSetting": "マップ比率設定方法",
 
-    "posId": "pos ID",
     "positionHistory": "位置情報",
     "positionHistoryExc": "位置情報(Exc)",
     "positionHistoryId": "Tx位置ID",
@@ -775,7 +775,6 @@
         "TRANSPARENT_TIME": "半透明状態判定時間::最終受信時刻から設定した時間以上経過したデバイスは半透明になります。ミリ秒単位で設定します。",
         "LOST_TIME":"未受信状態判定時間::最終受信時刻から設定した時間以上経過したTxは消失状態になります。ミリ秒単位で設定します。",
         "UNDETECT_TIME": "未検知状態判定時間::最終受信時刻から設定した時間以上経過したTxは未検知状態になります。ミリ秒単位で設定します。",
-        "USE_POSITION_HISTORY": "位置履歴情報を使用する::位置情報を取得する時、位置履歴情報を使用します。",
         "TX_POS_ONE_TO_ONE": "1つの場所に1つのTxのみ表示する::1つの場所に1つのTxのみ表示するようにします。",
         "RSSI_MIN": "RSSI下限値::RSSIの下限値を設定します。",
         "MOVING_AVERAGE": "測位時に集約する位置情報の数::測位する場合、設定した数の位置情報を平均して算出します。",
@@ -831,6 +830,13 @@
       "POS_LIST": {
         "WITH": "位置表示(一覧)に表示する項目::位置表示(一覧)に表示項目を設定します。設定可能な値は次の通りです。★{POS_LIST}"
       },
+      "POS_STACK": {
+        "USE_POPUP": "位置表示(全体)でポップアップへ切替える項目::位置表示(全体)でTxアイコンをクリックした場合にポップアップへ切替える設定になります。この設定をtrueでポップアップ表示が有効になります。",
+        "ADJUST_POPUP": {
+          "X": "ポップアップの横位置を調整する項目::位置表示(全体)のTxポップアップ横位置を調整します。プラスで右、マイナスで左へ位置を調整します。",
+          "Y": "ポップアップの縦位置を調整する項目::位置表示(全体)のTxポップアップ縦位置を調整します。プラスで下、マイナスで上へ位置を調整します。"
+        }
+      },
       "TX": {
         "WITH": "Tx画面で使用する項目::Tx画面で使用する項目を設定します。設定可能な値は次の通りです。★{TX}",
         "MAJOR_REQUIRED": "Tx画面でmajorを必須にする::Txを登録または更新する際、majorを必須にします。",
@@ -855,6 +861,7 @@
       "POT": {
         "WITH": "人＆物画面で使用する項目::人＆物画面で使用する項目を設定します。設定可能な値は次の通りです。★{POT}",
         "MULTI_TX": "人＆物に複数のTxを登録する::人＆物画面で複数のTxを登録可能にします。",
+        "CSV_USER": "CSVファイルにユーザー登録を含める::CSVファイルにユーザー登録を含めます。",
         "TX_MAX": "人＆物に登録するTxの最大数::人＆物画面で登録可能なTxの最大数を設定します。",
         "EXT_DEF": "人＆物拡張項目::人＆物に設定可能な拡張項目をJSON形式で定義します。"
       },
@@ -1164,6 +1171,10 @@
       },
       "POS": {
         "EXSERVER": "EXServerを使用する::EXServerを使用します。"
+      },
+      "POS_STACK": {
+        "TYPE": "位置情報（全体）の表示方法::位置情報（全体）の表示方法を指定します。(1:エリア 2:ゾーン)",
+        "ZONE_OTHER": "ゾーンその他表示::位置情報（全体）にてゾーンその他を表示する。"
       }
   },
     "DEV": {
@@ -1187,6 +1198,7 @@
         "MENU": "メニュー",
         "POS": "位置表示",
         "POS_LIST": "位置表示一覧",
+        "POS_STACK": "位置表示全体",
         "SENSOR": "センサ",
         "THERMOH": "温湿度",
         "PIR": "人感センサ",
@@ -1247,8 +1259,8 @@
       },
       "ZONE_TYPES": {
         "1": "1::通常",
-        "2": "2::警戒ゾーン",
-        "3": "3::ドア"
+        "2": "2::警戒区域",
+        "3": "3::施錠部屋"
       },
       "NOTIFY_MIDIUM": {
         "0": "0::メール",
@@ -1315,13 +1327,13 @@
         "deviceId": "deviceId::デバイスID",
         "deviceIdX": "deviceIdX::デバイスID(16進数)",
         "locationName": "locationName::場所名",
-        "posId": "posId::posId",
         "areaName": "areaName::エリア名",
         "x": "x::X座標",
         "y": "y::Y座標"
       },
       "POS_LIST": {
-        "tel": "tel::電話番号"
+        "tel": "tel::電話番号",
+        "mapDisplay": "mapDisplay::マップ表示"
       },
       "TX": {
         "major": "major::major",
@@ -1331,7 +1343,6 @@
         "dispAlways": "dispAlways::常時表示"
       },
       "LOCATION": {
-        "posId": "posId::posId",
         "zoneBlock": "zoneBlock::ゾーン(区画)",
         "zoneClass": "zoneClass::ゾーン(分類)"
       },
@@ -1363,7 +1374,6 @@
         "locationName": "locationName::最終取得場所"
       },
       "SENSOR_LIST": {
-        "posId": "posId::posId",
         "deviceId": "deviceId::デバイスID",
         "deviceIdX": "deviceIdX::デバイスID(16進数)"
       },

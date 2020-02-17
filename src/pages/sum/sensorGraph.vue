@@ -164,8 +164,8 @@ export default {
       },
       message: '',
       sumUnitOptions: [],
-      exbOptions: [],
-      txOptions: [],
+      exbOptions: [], // FIXME: commonmixinに定義されている
+      txOptions: [], // FIXME: commonmixinに定義されている
       exbType: [SENSOR.PIR, SENSOR.THERMOPILE, SENSOR.LED_TYPE2, SENSOR.LED_TYPE5],
       txType: [SENSOR.MEDITAG, SENSOR.MAGNET],
       deviceType: DEVICE.EXB,
@@ -264,7 +264,6 @@ export default {
     },
   },
   async created() {
-    await Promise.all(['sensor', 'tx', 'exb'].map(StateHelper.load))
     this.form.sensorId = SENSOR.TEMPERATURE
     this.form.sumUnit = SUM_UNIT.getOptions()[1].value
     this.form.sumTarget = SUM_TARGET.AVERAGE

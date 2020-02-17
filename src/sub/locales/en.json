@@ -67,6 +67,7 @@
     "notReceive": "Poor",
     "absent": "Absent",
     "prohibit": "Prohibit",
+    "fixed_pos": "Fixed position",
     "lost": "Lost",
     "absent_display": "Area for absence display",
     "charSet": "CSV character code",
@@ -160,7 +161,6 @@
     "settingNow": "Setting up",
     "mapRatioSetting": "How to set the map ratio",
 
-    "posId": "pos ID",
     "positionHistory": "Position history",
     "positionHistoryExc": "Position history (Exc)",
     "positionHistoryId": "Tx Position ID",
@@ -744,7 +744,6 @@
         "TRANSPARENT_TIME": "Semi-transparent status decision time::The device which has passed the set up time from the last reception time will become semi-transparent.Set up in milliseconds.",
         "LOST_TIME": "Not received time decision time::Tx which has passed the set time or more from the last reception time will be lost state. Set up in milliseconds.",
         "UNDETECT_TIME": "Undetected status decision time::Tx which has passed more than the time set from the last reception time will be undetected. Set up in milliseconds.",
-        "USE_POSITION_HISTORY": "Use location history::Use location history, when acquiring location information.",
         "TX_POS_ONE_TO_ONE": "Display only one Tx Tag in one place.::Only display one Tx in one place",
         "RSSI_MIN": "RSSI lower limit::Set up the lower limit of RSSI.",
         "MOVING_AVERAGE": "Number of position history to be aggregated at positioning:: When positioning, it will be calculated by averaging the set number of position history.",
@@ -1203,13 +1202,13 @@
         "deviceId": "deviceId::Device ID",
         "deviceIdX": "deviceIdX::Device ID(Hex)",
         "locationName": "LocationName::Location name",
-        "posId": "posId::posId",
         "areaName": "areaName::Area name",
         "x": "x::X",
         "y": "y::Y"
       },
       "POS_LIST": {
-        "tel": "tel::Tel"
+        "tel": "tel::Tel",
+        "mapDisplay": "mapDisplay::Map display"
       },
       "TX": {
         "major": "major::major",
@@ -1219,7 +1218,6 @@
         "dispAlways": "dispAlways::Show always"
       },
       "LOCATION": {
-        "posId": "posId::posId",
         "zoneBlock": "zoneBlock::Zone(Block)",
         "zoneClass": "zoneClass::Zone(Classification)"
       },
@@ -1250,7 +1248,6 @@
         "locationName": "locationName::Last position"
       },
       "SENSOR_LIST": {
-        "posId": "posId::posId",
         "deviceId": "deviceId::Device ID",
         "deviceIdX": "deviceIdX::Device ID(Hex)"
       },

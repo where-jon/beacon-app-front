@@ -127,7 +127,6 @@ export default {
     },
   },
   async created() {
-    await Promise.all(['groups','pots','categories'].map(StateHelper.load))
     this.form.date = DEV.DEFAULT_DATE != '' ? new Date(DEV.DEFAULT_DATE) : moment().add(-1, 'days').format('YYYYMMDD')
   },
   async mounted() {
@@ -153,7 +152,6 @@ export default {
     async displayImpl(){
       this.replace({showAlert: false})
       this.showProgress()
-      await Promise.all(['zones','pots','groups'].map(StateHelper.load))
       
       if (!this.form.date || this.form.date == '') {
         this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
@@ -269,8 +267,6 @@ export default {
     async downloadMonth(){
       this.replace({showAlert: false})
       this.showProgress()
-
-      await Promise.all(['zones','pots','groups'].map(StateHelper.load))
 
       if (!this.form.date || this.form.date == '') {
         this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')

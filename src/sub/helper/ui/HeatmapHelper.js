@@ -157,18 +157,18 @@ export const createGradient = (gradientArray = null) => {
  */
 export const creteAnalysisHeatmapData = (dataList, mapScale) =>{
   let positions = _.reduce(dataList, (ary, hist) => {
-      if (ary[hist.locationId]) {
-        ary[hist.locationId].value++
-      } else {
-        ary[hist.locationId] = {
-          locationId: hist.locationId,
-          x: Math.round(hist.x * mapScale),
-          y: Math.round(hist.y * mapScale),
-          value: 1,
-        }
+    if (ary[hist.locationId]) {
+      ary[hist.locationId].value++
+    } else {
+      ary[hist.locationId] = {
+        locationId: hist.locationId,
+        x: Math.round(hist.x * mapScale),
+        y: Math.round(hist.y * mapScale),
+        value: 1,
       }
-      return ary
-    }, [])
+    }
+    return ary
+  }, [])
   positions = _.compact(positions)
   const maxValue = _.maxBy(positions, 'value').value
   return { max: maxValue, data: positions }

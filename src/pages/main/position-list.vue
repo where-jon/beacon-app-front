@@ -41,7 +41,7 @@ export default {
         id: 'positionListId',
         fields: ViewHelper.addLabelByKey(this.$i18n, [
           APP.TX.BTX_MINOR == 'minor' ? {key: 'minor', label: 'minor', sortable: true, tdClass: 'action-rowdata' }: null,
-          APP.TX.BTX_MINOR != 'minor' ? {key: 'btx_id', label: 'btxId', sortable: true, tdClass: 'action-rowdata' }: null,
+          APP.TX.BTX_MINOR != 'minor' ? {key: 'btxId', label: 'btxId', sortable: true, tdClass: 'action-rowdata' }: null,
           APP.TX.BTX_MINOR == 'both' ? {key: 'minor', label:'minor', sortable: true, tdClass: 'action-rowdata' }: null,
           ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'potCd') ? {key: 'potCd', label: 'potCd', sortable: true, tdClass: 'action-rowdata'} : null,
           {key: 'potName', label: 'name', sortable: true, tdClass: 'action-rowdata'},
@@ -53,7 +53,7 @@ export default {
           {key: 'locationName', label: 'finalReceiveLocation', sortable: true, tdClass: 'action-rowdata'},
           {key: 'updatetime', label: 'finalReceiveTimestamp', sortable: true, filterable: false, tdClass: 'action-rowdata'},
           // {key: 'powerLevel', label: 'powerLevel', tdClass: 'action-rowdata', 'class': 'text-md-center'},
-          {key: 'mapDisplay', tdClass: 'action-rowdata'},
+          ArrayUtil.includesIgnoreCase(APP.POS_LIST.WITH, 'mapDisplay')? {key: 'mapDisplay', tdClass: 'action-rowdata'}: null,
         ]),
         extraFilter: _(['detectState',
           MenuHelper.useMaster('group') && APP.POS.WITH.GROUP? 'group' : null,
@@ -74,7 +74,8 @@ export default {
       prohibitDetectList : null,
       showDismissibleAlert: false,
       count: 0, // mockテスト用
-      loadStates: ['tx', 'exb', 'location', 'area'],
+      loadStates: [],
+      positionList: [],
     }
   },
   computed: {
@@ -82,7 +83,6 @@ export default {
       'txs',
       'areas',
       'locations',
-      'positionList',
       'prohibits',
       'lostZones',
     ]),
@@ -107,9 +107,9 @@ export default {
           this.loadStates.push('lostZones')
         }
         await Promise.all(this.loadStates.map(StateHelper.load))
-        await PositionHelper.storePositionHistory(0, true)
-        let positions = PositionHelper.getPositions(true, true)
-        Util.debug(positions)
+        await PositionHelper.loadPosition(0, true)
+        let positions = PositionHelper.filterPositions(undefined, true)
+        Util.debug('after filter', positions)
 
         let prohibitCheck = false
         const minorMap = {}
@@ -128,7 +128,7 @@ export default {
           }
         })
 
-        positions = positions.map(pos => {
+        positions = positions.filter(pos => pos.exb && pos.exb.location).map(pos => {
           prohibitCheck = minorMap[pos.minor] != null
 
           const location = pos.exb.location? locationMap[pos.exb.location.locationId]: {}
@@ -136,24 +136,23 @@ export default {
             ...pos,
             // powerLevel: this.getPowerLevel(pos),
             txId: Util.getValue(pos, 'tx.txId' , null),
-            potCd: Util.getValue(pos, 'tx.potCd', null),
-            potName: Util.getValue(pos, 'tx.potName', null),
-            tel: Util.getValue(pos, 'tx.extValue.tel', null),
-            categoryName: Util.getValue(pos, 'tx.categoryName', null),
-            groupName: Util.getValue(pos, 'tx.groupName', null),
-            areaName: Util.getValue(location, 'areaName', null),
-            locationName: Util.getValue(location, 'locationName', null),
+            potCd: Util.getValue(pos, 'tx.pot.potCd', null),
+            tel: Util.getValue(pos, 'tx.pot.extValue.tel', null),
+            locationName: Util.getValue(pos, 'location.locationName', null),
+            potName: Util.getValue(pos, 'tx.pot.potName', null),
+            areaName: Util.getValue(pos, 'location.area.areaName', null),
+            groupName: Util.getValue(pos, 'tx.pot.group.groupName', null),
+            categoryName: Util.getValue(pos, 'tx.pot.category.categoryName', null),
             // 追加フィルタ用
-            groupId: Util.getValue(pos, 'tx.groupId').val,
-            categoryId: Util.getValue(pos, 'tx.categoryId').val,
-            areaId: Util.getValue(location, 'areaId').val,
+            groupId: Util.getValue(pos, 'tx.pot.groupId'),
+            categoryId: Util.getValue(pos, 'tx.pot.category.categoryId'),
+            areaId: Util.getValue(pos, 'location.areaId'),
             blinking : prohibitCheck? 'blinking' : null,
             isDisableArea: Util.getValue(location, 'isAbsentZone', false),
           }
         })
         this.totalRows = positions.length
-        Util.debug(positions)
-        this.replaceAS({positionList: positions})
+        this.positionList = positions
         if (payload && payload.done) {
           payload.done()
         }

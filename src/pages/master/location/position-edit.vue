@@ -51,6 +51,7 @@ import * as Util from '../../../sub/util/Util'
 import * as ConfigHelper from '../../../sub/helper/dataproc/ConfigHelper'
 import * as HttpHelper from '../../../sub/helper/base/HttpHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as VueSelectHelper from '../../../sub/helper/ui/VueSelectHelper'
 import commonmixin from '../../../components/mixin/commonmixin.vue'
 import editmixin from '../../../components/mixin/editmixin.vue'
@@ -93,7 +94,7 @@ export default {
       return PATTERN.LOCATION_CD
     },
     iExbOptions() {
-      return StateHelper.getOptionsFromState(
+      return MasterHelper.getOptionsFromState(
         'exb',
         ConfigHelper.includesDeviceType('deviceId')? 'deviceId': 'deviceIdX',
         true,
@@ -101,9 +102,9 @@ export default {
       )
     },
     iTxOptions() {
-      return StateHelper.getOptionsFromState(
+      return MasterHelper.getOptionsFromState(
         'tx',
-        tx => StateHelper.getLocationTxName(tx),
+        tx => MasterHelper.getLocationTxName(tx),
         true,
         tx => this.validationParam.txList.some(val => val.txId == tx.txId)
       )

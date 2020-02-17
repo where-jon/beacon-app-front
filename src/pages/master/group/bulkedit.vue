@@ -11,6 +11,7 @@ import { APP } from '../../../sub/constant/config'
 import * as Util from '../../../sub/util/Util'
 import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
@@ -35,7 +36,6 @@ export default {
     ]),
   },
   async created() {
-    await StateHelper.load('group')
   },
   methods: {
     onRestruct(entity, dummyKey){
@@ -48,9 +48,7 @@ export default {
       entity.groupCd = entity.ID
       return dummyKey
     },
-    onSaved(){
-      StateHelper.setForceFetch('pot', true)
-      StateHelper.setForceFetch('tx', true)
+    async onSaved(){
     },
   }
 }

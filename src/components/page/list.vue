@@ -1,6 +1,6 @@
 <template>
   <b-form inline @submit.prevent>
-    <b-container :fluid="isFluid">
+    <b-container :fluid="isFluid" @click="resetDetail">
       <alert :message="showMessage? message: error" :force-hide="alertForceHide" />
 
       <!-- searchbox -->
@@ -204,11 +204,20 @@
         <template slot="icons" slot-scope="row">
           <div class="empty-icon d-inline-flex" /><!-- 横幅0の「支柱」 -->
           <div class="d-inline-flex flex-wrap">
-            <div v-for="position in row.item.positions" :key="position.areaId"
-                 :style="position.display" :class="'d-inline-flex m-1 '+ position.blinking" @click.stop="mapDisplay(position, true)"
-            >
-              {{ position.label }}
-            </div>
+            <span v-if="useTxPopup">
+              <div v-for="position in row.item.positions" :key="position.areaId"
+                  :style="position.display" :class="'d-inline-flex m-1 '+ position.blinking" @click="txOnClick($event,position.tx)"
+              >
+                {{ position.label }}
+              </div>
+            </span>
+            <span v-else>
+              <div v-for="position in row.item.positions" :key="position.areaId"
+                  :style="position.display" :class="'d-inline-flex m-1 '+ position.blinking" @click.stop="mapDisplay(position, true)"
+              >
+                {{ position.label }}
+              </div>
+            </span>
           </div>
         </template>
         <!-- 設定用 -->
@@ -247,6 +256,10 @@
         </b-col>
       </b-row>
 
+      <!-- Tx詳細表示（ポップアップ） -->
+      <div v-if="selectedTx.btxId && showReady">
+        <txdetail :selected-tx="selectedTx" :selected-sensor="selectedSensor" :is-show-modal="isShowModal()" @resetDetail="resetDetail" />
+      </div>
       <!-- modal -->
       <b-modal id="modalInfo" :title="modalInfo.title" @hide="resetModal" @ok="execDelete(modalInfo.id)">
         {{ modalInfo.content }}
@@ -258,13 +271,14 @@
 <script>
 
 import { mapState, mapMutations } from 'vuex'
-import { APP, APP_SERVICE } from '../../sub/constant/config'
-import { CATEGORY, SENSOR, EXB, KEY } from '../../sub/constant/Constants'
+import { APP, APP_SERVICE , EXCLOUD} from '../../sub/constant/config'
+import { CATEGORY, DISP, SENSOR, EXB, KEY } from '../../sub/constant/Constants'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as CsvUtil from '../../sub/util/CsvUtil'
 import * as StringUtil from '../../sub/util/StringUtil'
 import * as Util from '../../sub/util/Util'
+import * as DomUtil from '../../sub/util/DomUtil'
 import * as AppServiceHelper from '../../sub/helper/dataproc/AppServiceHelper'
 import * as AuthHelper from '../../sub/helper/base/AuthHelper'
 import { getCharSet } from '../../sub/helper/base/CharSetHelper'
@@ -273,17 +287,22 @@ import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
 import * as OptionHelper from '../../sub/helper/dataproc/OptionHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as VueSelectHelper from '../../sub/helper/ui/VueSelectHelper'
+import * as PositionHelper from '../../sub/helper/domain/PositionHelper'
+import * as SensorHelper from '../../sub/helper/domain/SensorHelper'
 import commonmixin from '../mixin/commonmixin.vue'
 import detailFilter from '../../components/parts/detailFilter.vue'
 import alert from '../parts/alert.vue'
 import settinginput from '../parts/settinginput.vue'
+import txdetail from '../../components/parts/txdetail.vue'
 
 export default {
   components: {
     detailFilter,
     alert,
     settinginput,
+    txdetail,
   },
   mixins: [commonmixin],
   props: {
@@ -327,12 +346,21 @@ export default {
       type: Boolean,
       default: false,
     },
-  },
+    // Txをクリックした場合、ポップアップを出す
+    pShowDetail: {
+      type: Boolean,
+      default: false,
+    },
+},
   data() {
     return {
       currentPage: 1,
       totalRows: 0,
       dataItemList: [],
+      showReady: false, //  pir, positio
+      preloadThumbnail: new Image(),
+      thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
+      useTxPopup: APP.POS_STACK.USE_POPUP,
       filter: {
         reg: '',
         extra: {
@@ -463,25 +491,25 @@ export default {
       'selectedarea',
     ]),
     categoryOptions() {
-      return StateHelper.getOptionsFromState('category', false, true, 
+      return MasterHelper.getOptionsFromState('category', false, true, 
         category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
       )
     },
     zoneOptions() {
-      return StateHelper.getOptionsFromState('zone', false, true)
+      return MasterHelper.getOptionsFromState('zone', false, true)
     },
     zoneCategoryOptions() {
-      return StateHelper.getOptionsFromState('category',
-        category => StateHelper.getDispCategoryName(category),
+      return MasterHelper.getOptionsFromState('category',
+        category => MasterHelper.getDispCategoryName(category),
         true, 
         category => CATEGORY.ZONE_AVAILABLE.includes(category.categoryType)
       )
     },
     groupOptions() {
-      return StateHelper.getOptionsFromState('group', false, true)
+      return MasterHelper.getOptionsFromState('group', false, true)
     },
     areaOptions() {
-      return StateHelper.getOptionsFromState('area', false, true)
+      return MasterHelper.getOptionsFromState('area', false, true)
     },
     detectStateOptions() {
       let options = DetectStateHelper.getTypes()
@@ -524,6 +552,14 @@ export default {
     anotherActionButtonStyle(){
       return BrowserUtil.getLangShort() == 'ja'? {width: '100px !important'}: {width: '110px !important'}
     },
+    selectedSensor() {
+      if (!Util.getValue(this.selectedTx, 'btxId', null)) {
+        return []
+      }
+      if (!this.positionedTxMap) return []
+      const ret = SensorHelper.getSensorFromBtxId('meditag', this.positionedTxMap.meditag, this.selectedTx.btxId)
+      return ret? [ret]: []
+    },
   },
   watch: {
     'vueSelected': {
@@ -551,7 +587,6 @@ export default {
     },
   },
   async created() {
-    await StateHelper.load('region')
   },
   async mounted() {
     const currentArea = LocalStorageHelper.getLocalStorage(KEY.CURRENT.AREA)
@@ -568,7 +603,7 @@ export default {
     }
     if (this.params.extraFilter) {
       const filterColumnList = this.params.extraFilter.filter(str => str != 'detectState')
-      await Promise.all(filterColumnList.map(state => StateHelper.load(state)))
+      // await Promise.all(filterColumnList.map(state => StateHelper.load(state)))
       filterColumnList.filter(state => ['category', 'group', 'area'].some(s => s == state)).forEach(state => {
         const selectedKey = StringUtil.concatCamel('selected', state)
         this.vueSelected[state] = VueSelectHelper.getVueSelectData(this[state + 'Options'], this[selectedKey])
@@ -584,6 +619,10 @@ export default {
       this.replaceAS({editPage: null, moveEditPage: false})
     })
   },
+  // beforeDestroy() {
+  //   document.removeEventListener('touchstart', this.touchEnd)
+  //   this.resetDetail()
+  // },
   methods: {
     ...mapMutations('app_service', [
       'replaceAS', 
@@ -708,9 +747,6 @@ export default {
       if(item != null) {
         const masterId = this.compactMode? this.$parent.$options.methods && this.$parent.$options.methods.getEditKey? this.$parent.$options.methods.getEditKey.call(this.$parent, item): item.updateKey: item[this.id]
         entity = await AppServiceHelper.fetch(this.appServicePath, masterId)
-      } else {
-        // masterCdの最大値を算出するために全件データが必要
-        await StateHelper.load(this.name)
       }
       if (this.$parent.$options.methods && this.$parent.$options.methods.convBeforeEdit) {
         entity = this.$parent.$options.methods.convBeforeEdit.call(this.$parent, entity)
@@ -882,11 +918,7 @@ export default {
       const pageName = this.params.dispName? this.params.dispName: this.params.name
       try {
         await AppServiceHelper.deleteEntity(this.appServicePath, id)
-        if(this.compactMode) {
-          StateHelper.setForceFetch(this.params.name, true)
-        } else {
-          await StateHelper.load(this.params.name, true)
-        }
+        await MasterHelper.loadMaster()
         this.message = this.$i18n.tnl('message.deleteCompleted', {target: this.$i18n.tnl('label.' + this.params.name)})
         if(this.$parent.$options.methods && this.$parent.$options.methods.onSaved){
           this.$parent.$options.methods.onSaved.call(this.$parent, {message: this.message})
@@ -953,6 +985,50 @@ export default {
     },
     onDetailFilter(list){
       this.filter.detail = list
+    },
+    // Txアイコンを選択した場合のポップアップ
+    setupSelectedTx (tx, x, y, isDispThumbnail) {
+      const menuGroup = DomUtil.getRect('.menu-groups')  //  ナビの情報取得：x位置調整
+      const navbar = DomUtil.getRect('.navbar')  // ナビの情報取得：y位置調整
+      const selectedTx = PositionHelper.createTxDetailInfoOnStack(x, y, tx,{x: menuGroup.width, y: navbar.height} , isDispThumbnail? this.preloadThumbnail: {})
+      this.replaceMain({ selectedTx })
+      this.$nextTick(() => this.showReady = true)
+      if (this.isShowModal()) {
+        this.$root.$emit('bv::show::modal', 'detailModal')
+      }
+    },
+    showDetail(tx, x, y) {
+      // アラート表示でずれるので遅延実行を行う
+      this.$nextTick(() => this.showDetailImp(tx, x, y))
+    },
+    showDetailImp(tx, x, y) { // (p,) position
+      if(!Util.hasValue(this.pShowDetail)){
+        return
+      }
+      // サムネイル非表示設定確認
+      const isNoThumbnail = APP.TXDETAIL.NO_UNREGIST_THUMB? !tx.existThumbnail: false
+      if (isNoThumbnail) {
+        this.setupSelectedTx(tx, x, y, false)
+      } else {
+        this.preloadThumbnail.onload = () => this.setupSelectedTx(tx, x, y, true)
+        this.preloadThumbnail.src = null // iOSでonloadが一度しか呼ばれないので対策
+
+        this.preloadThumbnail.src = tx.existThumbnail? this.thumbnailUrl.replace('{id}', tx.potId): '/default.png'
+      }
+    },
+    txOnClick(evt,tx){
+      evt.stopPropagation()
+      this.showReady = false
+      this.showDetail(tx, evt.pageX - evt.offsetX, evt.pageY - evt.offsetY)
+    },
+    isShowModal() { // pir, position
+      return BrowserUtil.isResponsiveMode()
+    },
+
+    // ポップアップの自動非表示
+    resetDetail() { // p, pir, position
+      const selectedTx = {}
+      this.replaceMain({ selectedTx })
     },
   }
 }
