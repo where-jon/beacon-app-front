@@ -1,94 +1,5 @@
 <template>
   <div>
-    <b-modal
-      v-model="showModal"
-      size="sm"
-      :title="$t('label.displaySpecified')"
-      no-close-on-backdrop
-      no-close-on-esc
-      hide-header-close
-    >
-      <b-alert variant="danger" :show="modalErrorMessage!=''">
-        {{ modalErrorMessage }}
-      </b-alert>
-      {{ $t('message.selectDisplayColumn') }}
-      <span class="text-danger">
-        {{ $i18n.tnl('message.selectLimitDescription', {max: checkboxLimit}) }}
-      </span>
-      <hr>
-      <b-form-group ref="form">
-        <b-form-checkbox-group id="checkbox-group-2" v-model="displayCheckList.filter" name="flavour-2">
-          <b-form-checkbox :value="'groupName'">
-            {{ $t('label.groupName') }}
-          </b-form-checkbox>
-        </b-form-checkbox-group>
-        <b-form-checkbox-group id="checkbox-group-2" v-model="displayCheckList.filter" name="flavour-2">
-          <b-form-checkbox :value="'categoryName'">
-            {{ $t('label.categoryName') }}
-          </b-form-checkbox>
-        </b-form-checkbox-group>
-        <hr>
-        <p class="itemTitle">
-          {{ $t('label.graph') }}
-        </p>
-        <b-form-radio-group v-model="historyType">
-          <b-form-radio :value="'category'" @change="setSelectedGraphCategory(true)">
-            {{ $t('label.zoneCategory') }}
-          </b-form-radio>
-          <br>
-          <b-form-radio :value="'area'" @change="setSelectedGraphCategory(false)">
-            {{ $t('label.area') }}
-          </b-form-radio>
-        </b-form-radio-group>
-        <hr>
-        <p class="itemTitle">
-          {{ $t('label.displayColumnCommon') }}
-        </p>
-        <b-form-checkbox-group id="checkbox-group-2" v-model="displayCheckList.stay" name="flavour-2">
-          <b-form-checkbox :value="'stay'">
-            {{ $t('label.stayTimeSumColumn') }}
-          </b-form-checkbox><br>
-          <b-form-checkbox :value="'lost'">
-            {{ $t('label.lostTimeSumColumn') }}
-          </b-form-checkbox><br>
-        </b-form-checkbox-group><br>
-        <p class="itemTitle">
-          {{ $t('label.displayColumnIndividual') }}
-        </p>
-        <b-form-checkbox-group v-if="isCategorySelected" id="checkbox-group-2" v-model="displayCheckList.category" name="flavour-2">
-          <div v-for="(category, index) in categoryDisplayList" :key="`category-${index}`">
-            <b-form-checkbox :value="category.categoryId">
-              {{ category.systemUse? $t('label.' + category.systemCategoryName): category.categoryName }} <span class="bgSquare" :style="`background-color: #${category.bgColor};`" />
-            </b-form-checkbox><br>
-          </div>
-          <b-form-checkbox :value="0">
-            {{ $t('label.other') }} <span class="bgSquare" :style="`background-color: ${otherColor};`" />
-          </b-form-checkbox><br>
-        </b-form-checkbox-group>
-        <b-form-checkbox-group v-if="!isCategorySelected" id="checkbox-group-2" v-model="displayCheckList.area" name="flavour-2">
-          <div v-for="(area, index) in getAreaArray()" :key="`area-${index}`">
-            <b-form-checkbox :value="area.areaId">
-              {{ area.areaName }} <span class="bgSquare" :style="`background-color: ${getStackColor(index)};`" />
-            </b-form-checkbox><br>
-            <div v-if="index == (areas.length - 1)">
-              <b-form-checkbox :value="0">
-                {{ $t('label.other') }} <span class="bgSquare" :style="`background-color: ${otherColor};`" />
-              </b-form-checkbox><br>
-            </div>
-          </div>
-        </b-form-checkbox-group>
-      </b-form-group>
-      <div slot="modal-footer" class="w-100">
-        <b-button
-          variant="primary"
-          size="sm"
-          class="float-right"
-          @click="handleSubmit"
-        >
-          {{ $t('label.ok') }}
-        </b-button>
-      </div>
-    </b-modal>
     <breadcrumb :items="items" :reload="false" />
     <div class="container">
       <alert :message="message" />
@@ -97,12 +8,12 @@
         <b-form-group>
           <b-form-row class="mr-3">
             <label v-t="'label.date'" class="mr-2 mb-2 d-flex align-items-center" />
-            <date-picker v-model="form.dateFrom" type="date" value-format="pattern.datetime" class="mr-2 mb-2 inputdatefrom" @change="pickerChanged" />
-            <date-picker v-model="form.dateTo" type="date" value-format="pattern.datetime" class="mr-2 mb-2 inputdatefrom" @change="pickerChanged" />
+            <date-picker v-model="form.dateFrom" type="date" value-format="datetime" class="mr-2 mb-2 inputdatefrom" />
+            <date-picker v-model="form.dateTo" type="date" value-format="datetime" class="mr-2 mb-2 inputdatefrom" />
           </b-form-row>
         </b-form-group>
         <b-form-group>
-          <b-form-row v-if="isGroupEnabled" class="mb-3 mr-5">
+          <b-form-row class="mb-3 mr-5">
             <label v-t="'label.group'" class="mr-2" />
             <span :title="vueSelectTitle(vueSelected.group)">
               <v-select v-model="vueSelected.group" :options="groupOptions" class="mr-2 inputSelect vue-options">
@@ -116,50 +27,20 @@
             </span>
           </b-form-row>
         </b-form-group>
-        <b-form-group>
-          <b-form-row v-if="isCategoryEnabled" class="mb-3 mr-2">
-            <label v-t="'label.category'" class="mr-2" />
-            <span :title="vueSelectTitle(vueSelected.category)">
-              <v-select v-model="vueSelected.category" :options="categoryOptions" class="inputSelect vue-options">
-                <template slot="selected-option" slot-scope="option">
-                  {{ vueSelectCutOn(option) }}
-                </template>
-                <template slot="no-options">
-                  {{ vueSelectNoMatchingOptions }}
-                </template>
-              </v-select>
-            </span>
-          </b-form-row>
-        </b-form-group>
       </b-form>
+
       <b-form inline @submit.prevent>
         <b-form-group>
           <b-form-row class="mb-3">
             <b-button v-t="'label.display'" type="submit" :variant="theme" @click="display" />
-            <b-dropdown v-if="!isIosOrAndroid && bulkReferenceable" :variant="theme" :text="$t('label.download')" class="ml-2">
-              <b-dropdown-item @click="downloadDay('sum')">
-                {{ $t('label.sum') + $t('label.download') }}
-              </b-dropdown-item>
-              <b-dropdown-item @click="downloadMonth('sum')">
-                {{ $t('label.sum') + $t('label.downloadMonth') }}
-              </b-dropdown-item>
-              <b-dropdown-item @click="downloadDay('detail')">
-                {{ $t('label.detail') + $t('label.download') }}
-              </b-dropdown-item>
-              <b-dropdown-item @click="downloadMonth('detail')">
-                {{ $t('label.detail') + $t('label.downloadMonth') }}
-              </b-dropdown-item>
-            </b-dropdown>
-            <b-button v-t="'label.displaySpecified'" :variant="theme" class="ml-2" @click="showModal=true" />
+            <b-button v-t="'label.download'" type="submit" :variant="theme" @click="display" class="ml-2" />
           </b-form-row>
         </b-form-group>
       </b-form>
+
       <slot />
       <b-row class="mt-3" />
       <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" :sort-compare="defaultSortCompare" stacked="md" striped hover outlined>
-        <template v-for="field in fields" slot-scope="data" :slot="`HEAD_${field.key}`">
-          <span v-html="data.label" :key="field.key"></span><span v-if="field.bgColor" :style="`color: ${field.bgColor};`" :key="field.key">■</span>
-        </template>
         <template slot="graph" slot-scope="row">
           <div style="position: relative;">
             <div v-for="(bar, index) in row.item.graph" :key="index" :class="bar.isStay || bar.isAbsentZone? 'stay-bar': 'lost-bar'" :style="`${bar.isStay || bar.isAbsentZone? `background: `+ (historyType == 'category'? bar.categoryBgColor: bar.areaBgColor)+`;`: `` } width:${bar.percent}% !important;`">
@@ -231,7 +112,13 @@ export default {
   data () {
     return {
       items: ViewHelper.createBreadCrumbItems('sumTitle', 'stayRatioStack'),
-      fields: this.getFields(true),
+      fields: [
+        {key: 'name', sortable: true, label: this.$i18n.tnl('label.potName')},
+        {key: 'groupName', sortable: true, label: this.$i18n.tnl('label.groupName') },
+        {key: 'graph', sortable: false, label: this.$i18n.tnl('label.graph'), thStyle: {height: '50px !important', width:'400px !important'} },
+        {key: 'stayTime', sortable: false, label: this.$i18n.tnl('label.stayTime') },
+        {key: 'lostTime', sortable: false, label: this.$i18n.tnl('label.lostTime') },
+      ],
       form: {
         dateFrom: '',
         dateTo: ''
@@ -250,7 +137,6 @@ export default {
       modalMessage: '',
       viewList: [],
       areaArray: [],
-      categoryDisplayList: [],
       name: '',
       currentPage: 1,
       perPage: 20,
@@ -270,15 +156,6 @@ export default {
       'zones',
       'areas',
     ]),
-    isIosOrAndroid() {
-      return BrowserUtil.isAndroidOrIOS()
-    },
-    isCategoryEnabled () {
-      return MenuHelper.isEnabledMenu('category') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'category')
-    },
-    isGroupEnabled () {
-      return MenuHelper.isEnabledMenu('group') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'group')
-    },
     modalErrorMessage() {
       return this.modalMessage
     },
@@ -309,152 +186,17 @@ export default {
   async mounted() {
     ViewHelper.importElementUI()
     window.addEventListener('resize', () => {
-      this.updateColumnName()
       this.$forceUpdate()
       this.setGraphTimeDisplay()
     })
-    this.updateColumnName()
     if (this.categories.length < 1) {
       return
     }
-
-    this.categoryDisplayList = this.categories.filter((c) => c.categoryType === CATEGORY.ZONE)
-      .sort((a, b) => a.categoryId < b.categoryId ? -1 : 1)
   },
   methods: {
-    getThClassName() {
-      return 'tableHeader'
-    },
-    getAreaArray() {
-      return this.areaArray
-    },
-    isScaleTime(scaleTime) {
-      return _.some(APP.STAY_SUM.SCALE_TIMES, (time) => { return time === scaleTime })
-    },
-    setSelectedGraphCategory(isSelected) {
-      // 表示を切り替える前に、前カテゴリ/エリアの選択データを初期化する
-      if (this.isCategorySelected) {
-        this.displayCheckList.category = []
-      } else {
-        this.displayCheckList.area = []
-      }
-      this.isCategorySelected = isSelected
-    },
-    getStackColor(index) {
-      // 設定が6色以上ある事が前提
-      return DISP.SUM_STACK_COLOR[index % DISP.SUM_STACK_COLOR.length]
-    },
-    updateColumn() {
-      Vue.set(this, 'fields', this.getFields(false))
-    },
-    handleSubmit() {
-      if (this.isTooManyCheck()) {
-        this.modalMessage = this.$i18n.tnl('message.tooManyCheck', {max: this.checkboxLimit})
-        return
-      }
-      this.modalMessage = ''
-      this.$nextTick(() => {
-        this.showModal = false
-        this.updateColumn()
-        this.updateColumnName()
-      })
-    },
-    isTooManyCheck() {
-      if (!Util.hasValue(this.displayCheckList)) {
-        return false
-      }
-      return _.sumBy(Object.keys(this.displayCheckList), (key) => this.displayCheckList[key].length) > this.checkboxLimit
-    },
-    getFields(isInit) {
-      const disableClassName = 'd-none'
-      const groupClassName = isInit || !this.isDisplayFilterColumn('groupName')? disableClassName: ''
-      const categoryClassName = isInit || !this.isDisplayFilterColumn('categoryName')? disableClassName: ''
-      let fields = [
-        {key: 'date', sortable: false, label: this.$i18n.tnl('label.date'), thClass: this.getThClassName() + ' ' + disableClassName, tdClass: disableClassName},
-        {key: 'name', sortable: true, label: this.$i18n.tnl('label.potName')},
-        {key: 'groupName', sortable: true, label: this.$i18n.tnl('label.groupName'), thClass: this.getThClassName() + ' ' + groupClassName, tdClass: groupClassName},
-        {key: 'categoryName', sortable: true, label: this.$i18n.tnl('label.categoryName'), thClass: this.getThClassName() + ' ' + categoryClassName, tdClass: categoryClassName},
-        {key: 'graph', sortable: false, label: this.$i18n.tnl('label.graph'), thStyle: {height: '50px !important', width:'400px !important'} },
-      ]
-
-      // カテゴリを追加する
-      let selectedCategories = _.filter(this.categories, (category) => {
-        return _.some(this.displayCheckList.category, (id) => { return id == category.categoryId })
-      })
-
-      const i18n = this.$i18n
-      _.filter(this.categories,(c) => { return c.categoryType === CATEGORY.ZONE })
-        .forEach((category) => {
-          const categoryClassName = _.some(selectedCategories, (data) => { return data.categoryId == category.categoryId})? '': disableClassName
-          let categoryName = (category.systemUse? i18n.tnl('label.' + category.systemCategoryName): category.categoryName)
-          fields.push({key: categoryName, sortable: true, label: categoryName, bgColor: '#' + category.bgColor
-            , thStyle: {width:'100px !important'}, thClass: this.getThClassName() + ' ' + categoryClassName, tdClass: categoryClassName})
-        })
-      
-      // カテゴリその他を追加する
-      let isSelectedCategoryOther = false
-      if (this.displayCheckList) {
-        isSelectedCategoryOther = _.find(this.displayCheckList.category, (id) => { return id == 0 }) == 0
-      }
-      const categoryOtherClassName = isSelectedCategoryOther? '': disableClassName
-      fields.push({key: 'categoryOther', sortable: true, label: i18n.tnl('label.other')+i18n.tnl('label.category'), bgColor: this.otherColor
-        , thStyle: {width:'100px !important'}, thClass: this.getThClassName() + ' ' + categoryOtherClassName, tdClass: categoryOtherClassName})
-
-      // エリアを追加する
-      let selectedAreas = _.filter(this.areaArray, (area) => {
-        return _.some(this.displayCheckList.area, (id) => { return id == area.areaId })
-      })
-      
-      _.filter(this.areaArray, (a) => { return true })
-        .forEach((area, index) => {
-          const areaClassName = _.some(selectedAreas, (data, index) => { return data.areaId == area.areaId})? '': disableClassName
-          let bgColor = DISP.SUM_STACK_COLOR[index % DISP.SUM_STACK_COLOR.length]
-          fields.push({key: area.areaName, sortable: true, label: area.areaName, bgColor: bgColor, thStyle: {width:'100px !important'}
-            , thClass: this.getThClassName() + ' ' + areaClassName, tdClass: areaClassName})
-        })
-
-      // エリアその他が選択されている場合は追加
-      let isSelectedAreaOther = false
-      if (this.displayCheckList) {
-        isSelectedAreaOther = _.find(this.displayCheckList.area, (id) => { return id == 0 }) == 0
-      }
-      const areaOtherClassName = isSelectedAreaOther? '': disableClassName
-      fields.push({key: 'areaOther', sortable: true, label: i18n.tnl('label.other')+i18n.tnl('label.area'), bgColor: this.otherColor
-        , thStyle: {width:'100px !important'}, thClass: this.getThClassName() + ' ' + areaOtherClassName, tdClass: areaOtherClassName})
-
-      // 選択されている総合時間を追加する
-      const stayClassName = isInit || this.isDisplayStayColumn('stay')? '': disableClassName
-      const lostClassName = isInit || this.isDisplayStayColumn('lost')? '': disableClassName
-      fields.push({key: 'stayTime', sortable: true, label: this.$i18n.tnl('label.stayTime'), thStyle: {width:'100px !important'}
-        , thClass: this.getThClassName() + ' ' + stayClassName, tdClass: stayClassName})
-      fields.push({key: 'lostTime', sortable: true, label: this.$i18n.tnl('label.lostTime'), thStyle: {width:'100px !important'}
-        , thClass: this.getThClassName() + ' ' + lostClassName, tdClass: lostClassName})
-
-      return fields.map(val => ({ ...val, originLabel: val.label}))
-    },
-    isDisplayStayColumn(key) {
-      if (!this.displayCheckList || !this.displayCheckList.stay) {
-        return false
-      }
-      return _.some(this.displayCheckList.stay, (stay) => { return stay === key })
-    },
-    isDisplayFilterColumn(key) {
-      if (!this.displayCheckList || !this.displayCheckList.filter) {
-        return false
-      }
-      return _.some(this.displayCheckList.filter, (specified) => { return specified === key })
-    },
-    async fetchData(payload) {
-      // 何もしない
-    },
+    // 以下表示処理
     async display() {
-      this.updateColumn()
-      this.updateColumnName()
       this.container ? this.container.removeAllChildren() : null
-      await this.displayImpl()
-      this.stage ? this.stage.update() : null
-    },
-    async displayImpl(){
       this.replace({showAlert: false})
       this.showProgress()
       try {
@@ -483,6 +225,13 @@ export default {
       finally {
         this.hideProgress()
       }
+    },
+    isScaleTime(scaleTime) {
+      return _.some(APP.STAY_SUM.SCALE_TIMES, (time) => { return time === scaleTime })
+    },
+    getStackColor(index) {
+      // 設定が6色以上ある事が前提
+      return DISP.SUM_STACK_COLOR[index % DISP.SUM_STACK_COLOR.length]
     },
     isAbsentZoneData(categoryId) {
       let category = !this.isLostData(categoryId)? this.categories.find((e) => e.categoryId == categoryId): null
@@ -668,7 +417,8 @@ export default {
       }
       return result
     },
-    async downloadDay(key){
+    // 以下ダウンロード処理
+    async download(key){
       this.replace({showAlert: false})
       this.updateColumn()
       let viewList
@@ -770,91 +520,6 @@ export default {
         this.$i18n.tnl('label.areaName'),
         this.$i18n.tnl('label.zoneCategory') + '\n'
       ]
-    },
-    updateColumnName(){
-      if(Util.hasValue(this.fields)){
-        this.fields.forEach(field => {
-          field.label = BrowserUtil.isResponsiveMode(true)? field.originLabel.replace(/<br>/g, ''): field.originLabel
-        })
-      }
-    },
-    async downloadMonth(key){
-      this.replace({showAlert: false})
-      this.showProgress()
-      try {
-        if (!this.form.date || this.form.date.length == 0) {
-          this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
-          this.replace({showAlert: true})
-          this.hideProgress()
-          return
-        }
-
-        this.form.date = moment(this.form.date).format('YYYYMMDD')
-        const diff = moment().startOf('months').diff(moment(this.form.date).startOf('months'), 'months')
-        let startDate, endDate
-
-        // 取得する日付開始、終了日を設定する
-        if (diff == 0) {
-          endDate = moment().subtract(1, 'd')
-        } else if (diff >= 0) {
-          endDate = moment(this.form.date).endOf('months')
-        } else {
-          // 未来月の場合はエラーとする
-          this.message = this.$i18n.terror('message.invalid', {target: this.$i18n.tnl('label.date')})
-          this.replace({showAlert: true})
-          this.hideProgress()
-          return
-        }
-        startDate = moment(this.form.date).startOf('months')
-
-        let csvList = []
-        const groupBy = this.form.groupId? '&groupId=' + this.form.groupId: ''
-        const categoryBy = this.form.categoryId? '&categoryId=' + this.form.categoryId: ''
-        while (startDate.diff(endDate) <= 0) {
-          const searchDate = startDate.format('YYYYMMDD')
-          const url = '/office/stayTime/sumByDay/' + searchDate + '/zoneCategory?from=' + APP.STAY_SUM.FROM + '&to=' + APP.STAY_SUM.TO + groupBy + categoryBy
-          const sumData = await HttpHelper.getAppService(url)
-          if (_.isEmpty(sumData)) {
-            Util.debug('searchDate: ' + searchDate)
-            this.message = this.$i18n.t('message.listEmpty')
-            this.replace({showAlert: true})
-            this.hideProgress()
-            return
-          }
-
-          let list = this.getStayDataList(moment(searchDate).format('YYYY-MM-DD'), sumData, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
-          ArrayUtil.sortIgnoreCase(list, 'name')
-          const dateList = this.getCsvList(key, list)
-          csvList = csvList.isEmpty? dateList: csvList.concat(dateList)
-          startDate.add(1, 'days')
-        }
-
-        const group = this.form.groupId? this.groups.find((val) => val.groupId == this.form.groupId): null
-        const groupName =  group? '_' + group.groupName: ''
-        const category = this.form.categoryId? this.categories.find((val) => val.categoryId == this.form.categoryId): null
-        const categoryName =  !category? '': category.systemUse == 1? category.systemCategoryName: '_' + category.categoryName
-
-        const convertedCsvData = this.convertCsvData(key, csvList)
-        BrowserUtil.fileDL(
-          moment(this.form.date).format('YYYY-MM') + groupName + categoryName + '_stayRatio.csv',
-          convertedCsvData,
-          getCharSet(this.$store.state.loginId)
-        )
-      }
-      catch(e) {
-        console.error(e)
-      }
-      finally {
-        this.hideProgress()
-      }
-    },
-    pickerChanged() {
-      if (!Util.hasValue(this.form.date) || DateUtil.isAfterNextMonth(this.form.date)) {
-        this.message = this.$i18n.terror('message.invalid', {target: this.$i18n.tnl('label.date')})
-        this.replace({showAlert: true})
-      } else {
-        this.replace({showAlert: false})
-      }
     },
     getCsvList(key, list) {
       switch(key) {
