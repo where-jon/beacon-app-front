@@ -1,32 +1,26 @@
-{
+﻿{
     "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.5/MicrosoftTeams.schema.json",
     "manifestVersion": "1.5",
-    "version": "1.3.0.4",
+    "version": "1.3.0.5",
     "id": "fcfc143f-c8c8-454e-ab72-fdf2e49f862f",
     "packageName": "msteams.exbeacon.com",
     "developer": {
         "name": "Kyowa Exeo Corporation",
         "websiteUrl": "https://www.exeo.co.jp",
-        "privacyUrl": "https://www.exeo.co.jp/company/ppolicy.html",
-        "termsOfUseUrl": "https://www.exeo.co.jp/jigyou/ng/exbeacon.html",
+        "privacyUrl": "https://www.exeo.co.jp/jigyou/ni-mcrsft/pdf/PP(EXOfficeアプリ)_HP用2.pdf",
+        "termsOfUseUrl": "https://www.exeo.co.jp/jigyou/ni-mcrsft/pdf/TOU(EXOfficeForMicrosoftTeams)_rel3.pdf",
         "mpnId": "4562888"
     },
     "localizationInfo": {
-      "defaultLanguageTag": "ja-jp",
-      "additionalLanguages": [
-        {
-          "languageTag": "ja-jp",
-          "file": "ja-jp.json"
-        }
-      ]
+      "defaultLanguageTag": "ja-jp"
     },
     "name": {
         "short": "EXOffice",
         "full": "EXBeacon Platform for EXOffice"
     },
     "description": {
-        "short": "Office application for worker/things locating service with beacon tags/platform",
-        "full": "The advanced locating solutions, for office workers, including \"Office Worker Locator\", \"Meeting Room Management\", \"Entry Management\", and \"Workers' Flow Analysis\", etc., are available on one platform with Bluetooth-LE beacon tags on workers(human), or on things/packages. 1. Locating Solutions: \"Office Worker Locator\" application is in service at Phase -1, and \"Meeting Room Management\" and other applications will follow at Phase-2 in the plan.1.1 \"Office Worker Locator\": EXOffice on MS-Teams users might see the activity and the location of other Team-members (whether they are at the desk/in the office, and to whom talk) with \"Office Workerssss Locator\" function. Knowing other members situation, a Team member would deside communication tools, either to call, to chat , or to visit their desks.1.2 \"Meeting Room Managment\": (Option to be added in Phase-2) Monitoring the meeting room reserved by a Team member, the member might monitor the usage of the rooms, and reserve a vacant room for a sudden meeting. 1.3 \"Entry Management for Security\": (Option to be added in Phase-2) Sensoring the tag on Workers' ID card, the system recognizes their entering and  leaving office. Adding other sensors, users might enjoy other functions, including \"Working Hours Management\", and \"Restroom Vacancy Monitoring\". 2. Analytics: Optional service to be provided by EXEO and WHERE Inc.:Monitoring and Using stored Multi-Sensor Data in IoT Database, WHERE Inc. would analyze data, and provide assessment and consulting services to the enterprise of EXOffice users. Remark: Prior to use EXOffice, it requires pre-configulations of the Infrastructure consists of EXBeacon Platform. In details, please ask support desk with EXEO, or WHERE Inc."
+        "short":"「在席管理」、「会議室管理」、「入退室管理」そしてオフィス診断などをカード1枚、ワンプラットフォームで提供する新しいオフィス・ソリューション。",
+        "full": "本アプリのご利用には協和エクシオとの契約、協和エクシオによるアカウント設定、IT管理者による初期設定が必要です。オフィスワーカー１人ひとりが場所と時間を自由に選択できるABW(Activity Based Working)時代が到来していますが、こうしたオフィスになくてはならない「在席管理」を、カード1枚、ワンプラットフォームで提供する新しいオフィス・ソリューションがEXOffice for Teamsです。例えば、Teamsでコミュニケーションをとる際に、EXOfficeの「在席管理」画面をみることで、先方参加者の居場所や、誰と会話しているのかなど周辺状況を確認することができるようになり、そうした情報をもとに、電話するか、チャットするか、あるいは直接訪問するかといったコミュニケーション手段の選択が可能になります。EXOfficeを導入するには、新たにインフラの構築が必要になります。まず、オフィスにIoT専用LAN｢EXBeaconプラットフォーム｣を導入します。Bluetooth mesh等を活用した端末EXBeaconをオフィスに適切に配置することでLANが形成されます。オフィスワーカーには例えば社員証としてBLEタグを保持してもらうことで、BLEタグの電波をIoTLANが受信しオフィスワーカーの位置を測ることができます。当EXOfficeアプリは、利用前に全ユーザや管理対象物品に添付するタグIDのDB登録を含む事前設定(EXEOまたはWHERE)が必要です。このEXOfficeアプリ群とそれに付帯するオプションサービスは、EXEOまたはWHEREによって、ユーザ(企業)とEXEOとの間の契約締結後に、登録ユーザに対して提供されます。未登録ユーザは当アプリを使えません。当アプリは企業(B2B)ユーザ向け提供が前提であり、利用に先駆けて利用者(企業)と提供者(EXEO)間の個別契約が必要となります。EXOfficeアプリユーザに向けたEXEOの個人情報保護方針(Privacy Policy)や利用規約(Terms of Usage)については、詳細をこの個別契約内で規定するため、その条文はWebサイト等での一般公開は困難です。詳細はEXEOのサポートデスクまで照会願います。"
     },
     "icons": {
         "outline": "outline.png",
