@@ -583,7 +583,7 @@ export const FONT = {
 
 export const SETTING = {
   SPLITTER: ':',
-  VALUES: ['string', 'stringList', 'number', 'numberList', 'boolean', 'date', 'datetime', 'time', 'json'],
+  VALUES: ['string', 'stringList', 'number', 'numberList', 'boolean', 'date', 'datetime', 'time', 'json','password'],
   STRING: 'string',
   STRING_LIST: 'stringList',
   NUMBER: 'number',
@@ -593,6 +593,7 @@ export const SETTING = {
   DATETIME: 'datetime',
   TIME: 'time',
   JSON: 'json',
+  PASSWORD: 'password',
   SELECT: 'select',
   OTHER_CATEGORY: 'OTHER_CATEGORY',
   DATE_NOTATION: 'YYYY-MM-DD HH:mm:ss',
@@ -607,6 +608,7 @@ export const SETTING = {
       {text: i18n.tnl('label.datetime'), value: 'datetime'},
       {text: i18n.tnl('label.time'), value: 'time'},
       {text: 'json', value: 'json'},
+      {text: 'password', value: 'password'},
     ]
   },
   getType() {

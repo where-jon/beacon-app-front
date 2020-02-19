@@ -63,7 +63,7 @@ export const adjustValType = valType => {
   if(['stringlist', 'strlist'].includes(type)){
     return SETTING.STRING_LIST
   }
-  if(['boolean', 'json', 'date', 'datetime', 'time'].includes(type)){
+  if(['boolean', 'json', 'date', 'datetime', 'time','password'].includes(type)){
     return type
   }
   return SETTING.STRING
