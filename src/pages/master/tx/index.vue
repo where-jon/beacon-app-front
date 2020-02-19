@@ -11,6 +11,7 @@ import { APP } from '../../../sub/constant/config'
 import { BULK } from '../../../sub/constant/Constants'
 import * as Util from '../../../sub/util/Util'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import commonmixin from '../../../components/mixin/commonmixin.vue'
@@ -77,8 +78,7 @@ export default {
         .filter(val => val)
       )
     },
-    onSaved(){
-      StateHelper.setForceFetch('pot', true)
+    async onSaved(){
     },
     convBeforeEdit(tx) {
       if (tx.disp != null) {

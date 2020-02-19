@@ -66,6 +66,7 @@ import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
 import * as AuthHelper from '../../../sub/helper/base/AuthHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import * as VueSelectHelper from '../../../sub/helper/ui/VueSelectHelper'
@@ -123,7 +124,7 @@ export default {
       'showAlert'
     ]),
     regionOptions() {
-      return StateHelper.getOptionsFromState('region', false, true)
+      return MasterHelper.getOptionsFromState('region', false, true)
     },
   },
   watch: {
@@ -141,8 +142,7 @@ export default {
     },
   },
   async created(){
-    await Promise.all(['region', 'role'].map(StateHelper.load))
-    this.roleOptions = StateHelper.getOptionsFromState('role', false, true)
+    this.roleOptions = MasterHelper.getOptionsFromState('role', false, true)
     this.vueSelected.role = VueSelectHelper.getVueSelectData(this.roleOptions, Util.getValue(this.form, 'roleId', this.roleOptions.reduce((prev, cur) => cur).value))
     if(Util.hasValue(this.form.userRegionList)){
       this.vueSelected.regions = this.form.userRegionList.map(userRegion => VueSelectHelper.getVueSelectData(this.regionOptions, userRegion.userRegionPK.regionId)).sort((a, b) => a.label < b.label? -1: 1)
@@ -196,7 +196,6 @@ export default {
           }
         )
       }
-      StateHelper.setForceFetch('pot', true)
     },
     onBeforeReload(){
       this.vueSelected.role = VueSelectHelper.getVueSelectData(this.roleOptions, this.roleOptions.reduce((prev, cur) => cur).value)

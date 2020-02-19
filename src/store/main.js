@@ -7,7 +7,7 @@ export const state = () => ({
   eachAreas: [],
   eachZones: [],
   sample: 'sample', // sample
-  positionHistores: [],
+  positions: [],
   timers: [],
 })
 

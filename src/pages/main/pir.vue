@@ -24,7 +24,7 @@ export default {
     exbSensors(){
       return [SENSOR.PIR, SENSOR.THERMOPILE, SENSOR.PRESSURE, SENSOR.MAGNET]
     },
-    mergeSensors(){
+    mergeSensors(){ // FIXME: あとでマージすればいいのでは
       return [...APP.EXB.SENSOR, ...APP.SENSOR.TX_SENSOR].filter(e => [SENSOR.PIR, SENSOR.THERMOPILE, SENSOR.PRESSURE, SENSOR.MAGNET].includes(e))
     },
   },

@@ -74,7 +74,6 @@ export default {
       autoPager: false,
       autoPagerPlay: false,
       modalInfo: { title: this.$i18n.tnl('label.confirm'), content: '', id:'' },
-      loadStates: ['category', 'zone', 'tx', 'exb', 'location', 'pot'],
     }
   },
   computed: {
@@ -84,7 +83,6 @@ export default {
       'txs',
       'pots',
       'locations',
-      'positionList',
     ]),
   },
   created() {
@@ -99,9 +97,8 @@ export default {
       try {
         this.replace({showAlert: false})
         this.showProgress()
-        await Promise.all(this.loadStates.map(StateHelper.load))
-        await PositionHelper.storePositionHistory(0, true)
-        let positions = PositionHelper.getPositions(true, true)
+        await PositionHelper.loadPosition(0, true)
+        let positions = PositionHelper.filterPositions(undefined, true)
         Util.debug(positions)
 
         this.populateTableData(positions)
@@ -142,7 +139,7 @@ export default {
       const absentCategory = this.categories.find(e => e.systemUse == 1 && e.categoryCd == 'ABSENT')
       const absentZoneList = this.zones.filter(e => absentCategory && e.categoryId == absentCategory.categoryId)
       _(this.pots).map(pot => {
-        let pos = positions.find(pos => pos.tx_id == pot.txId)
+        let pos = positions.find(pos => pos.txId == pot.txId)
         const location = pos && pos.location? locationMap[pos.location.locationId]: {}
         return {
           potId: pot.potId,
@@ -151,8 +148,8 @@ export default {
           isAbsentZone: !pos || _.some(absentZoneList, e => _.some(e.locationZoneList, loc => loc.locationZonePK.locationId == location.locationId)),
           groupCd: pot.group && pot.group.groupCd,
           groupName: pot.group && pot.group.groupName || this.$i18n.tnl('label.other'),
-          color: pot.group? '#' + Util.getValue(pot, 'group.display.color').val: DISP.TX.COLOR,
-          bgColor: pot.group? '#' + Util.getValue(pot, 'group.display.bgColor').val: DISP.TX.BGCOLOR,
+          color: pot.group? '#' + Util.getValue(pot, 'group.display.color'): DISP.TX.COLOR,
+          bgColor: pot.group? '#' + Util.getValue(pot, 'group.display.bgColor'): DISP.TX.BGCOLOR,
           isLost: !pos || pos.isLost,
           timestamp: pos && pos.timestamp
         }

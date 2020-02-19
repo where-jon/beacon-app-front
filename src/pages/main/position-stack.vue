@@ -7,14 +7,15 @@
     <b-row class="mt-2 ml-3">
       <b-form inline class="mt-2" @submit.prevent>
         <!--
+        -->
         <b-form-row class="my-1 ml-2 ml-sm-0">
           <label v-t="'label.positionStackType'" class="mr-2 mt-1" />
           <span>
             <b-form-select v-model="positionType" :options="positionTypeOptions" />
           </span>
         </b-form-row>
-        -->
         <!--
+        -->
         <b-form-row v-if="isShow('zone')" class="my-1 ml-2 ml-sm-0">
           <label v-t="'label.zoneCategory'" class="ml-sm-4 ml-2 mr-1 mt-1" />
           <span :title="vueSelectTitle(vueSelected.zoneCategory)">
@@ -28,11 +29,10 @@
             </v-select>
           </span>
         </b-form-row>
-        -->
       </b-form>
     </b-row>
-    <position-display v-if="isShow('area')" ref="areaPosition" master-name="area" :alert-data="alertData" />
-    <position-display v-if="isShow('zone')" ref="zonePosition" master-name="zone" :alert-data="alertData" :form="form" />
+    <position-display v-show="isShow('area')" ref="areaPosition" master-name="area" :alert-data="alertData" />
+    <position-display v-show="isShow('zone')" ref="zonePosition" master-name="zone" :alert-data="alertData" :form="form" />
   </div>
 </template>
 
@@ -40,6 +40,7 @@
 import { EXTRA_NAV, POSITION_STACK_TYPES, CATEGORY } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import reloadmixin from '../../components/mixin/reloadmixin.vue'
@@ -86,8 +87,8 @@ export default {
       return this.fix > 0
     },
     zoneCategoryOptions() {
-      return StateHelper.getOptionsFromState('category',
-        category => StateHelper.getDispCategoryName(category),
+      return MasterHelper.getOptionsFromState('category',
+        category => MasterHelper.getDispCategoryName(category),
         true, 
         category => CATEGORY.ZONE_AVAILABLE.includes(category.categoryType)
       )
@@ -102,15 +103,14 @@ export default {
     },
   },
   async mounted() {
-    await StateHelper.load('category')
   },
   methods: {
     isShow(type){
       return this.positionType == POSITION_STACK_TYPES[type.toUpperCase()]
     },
     fetchData(payload){
-      this.$refs.areaPosition.fetchData(payload)
-      this.$refs.zonePosition.fetchData(payload)
+      // this.$refs.areaPosition.fetchData(payload)
+      // this.$refs.zonePosition.fetchData(payload)
     },
   },
 }

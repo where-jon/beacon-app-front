@@ -205,7 +205,6 @@ export default {
       this.$forceUpdate()
     })
     if(LocalStorageHelper.existLocalStorage('login')){
-      await StateHelper.load('region', true)
       this.$forceUpdate()
     }
   },

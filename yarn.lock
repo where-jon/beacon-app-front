@@ -690,6 +690,7 @@
 "@microsoft/teams-js@^1.5.2":
   version "1.5.2"
   resolved "https://registry.yarnpkg.com/@microsoft/teams-js/-/teams-js-1.5.2.tgz#e1b7dca087ed207f11921dba58af268bf20db39a"
+  integrity sha512-/GcusTzG1R9xpSB6Vci2sJIEeUMZn/8mnykp9kqBZFV4NbZncwc1xSOHLIxo6g/chArFo/kVmXs3E6x8s3O89w==
 
 "@nodelib/fs.scandir@2.1.1":
   version "2.1.1"
@@ -5873,6 +5874,7 @@ ms@^2.1.1, ms@^2.1.2:
 msal@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/msal/-/msal-1.2.0.tgz#65b375eacf659d003b5444021024c175ac46d554"
+  integrity sha512-Z74fTT8G1s1YKcqup6PTQ4Y4z0zh5n7fdK+RXZ47+yLH4/z1Y5LualkRuHr6C7vi74l0daNZn2nj159AV5mhOQ==
   dependencies:
     tslib "^1.9.3"
 

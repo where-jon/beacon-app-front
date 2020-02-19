@@ -69,6 +69,7 @@ import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
 import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import * as VueSelectHelper from '../../../sub/helper/ui/VueSelectHelper'
@@ -190,11 +191,10 @@ export default {
     this.onBeforeReload(true)
   },
   async mounted() {
-    await Promise.all(['category', 'zone'].map(state => StateHelper.load(state)))
     Util.applyDef(this.form, this.defValue)
     if(!Util.hasValue(this.form.categoryCd)){
       const categoryList = this.categories.filter(category => category.systemUse == 0)
-      this.form.categoryCd = StateHelper.createMasterCd('category', categoryList, this.category)
+      this.form.categoryCd = MasterHelper.createMasterCd('category', categoryList, this.category)
     }
     if(Util.hasValue(this.form.zoneCategoryList)){
       this.vueSelected.zoneGuards = this.form.zoneCategoryList.filter(zoneCategory => 
@@ -234,13 +234,8 @@ export default {
         this.form.displayBgColor = ColorUtil.colorCd4display(this.oldBgColor? this.oldBgColor: null, this.defaultBgColor)
         const categoryList = this.categories.filter(category => category.systemUse == 0)
         // TODO:大容量のときはcategoryマスタを保持できないのでいったんコメントアウト
-        //this.form.categoryCd = StateHelper.createMasterCd('category', categoryList, this.category)
+        //this.form.categoryCd = MasterHelper.createMasterCd('category', categoryList, this.category)
       }
-    },
-    onSaved(){
-      StateHelper.setForceFetch('pot', true)
-      StateHelper.setForceFetch('tx', true)
-      StateHelper.setForceFetch('zone', true)
     },
     structZoneCategory(getDummyKeyFunc){
       return Util.getValue(this.form, 'zoneGuardList', []).concat(Util.getValue(this.form, 'zoneDoorList', [])).map(zoneCategory => {
@@ -272,9 +267,8 @@ export default {
       return await AppServiceHelper.bulkSave(this.pAppServicePath, [entity])
     },
     async onSaved(){
-      await StateHelper.load('categories', true)
       const categoryList = this.categories.filter(category => category.systemUse == 0)
-      this.$set(this.form, 'categoryCd', StateHelper.createMasterCd('category', categoryList, this.category))
+      this.$set(this.form, 'categoryCd', MasterHelper.createMasterCd('category', categoryList, this.category))
     }
   },
 }

@@ -96,6 +96,7 @@ import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
 import * as PositionHelper from '../../sub/helper/domain/PositionHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import commonmixin from '../mixin/commonmixin.vue'
@@ -183,12 +184,12 @@ export default {
       'reload',
     ]),
     categoryOptionsForPot() {
-      return StateHelper.getOptionsFromState('category', false, true,
+      return MasterHelper.getOptionsFromState('category', false, true,
         category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
       )
     },
     txRecords() {
-      const btxs = this.nearest.map(n => ({label: n.btx_id, value: n.btx_id}))
+      const btxs = this.nearest.map(n => ({label: n.btxId, value: n.btxId}))
       if (!this.selectedGroup && !this.selectedCategory) {
         return btxs
       }
@@ -241,7 +242,6 @@ export default {
   },
   async mounted() {
     this.reloadState.isLoad = false
-    await Promise.all(['category', 'group'].map(StateHelper.load))
   },
   methods: {
     initMap() {
@@ -266,20 +266,24 @@ export default {
 
           this.positionedExb = this.getExbPosition()
           this.exbCon = new Container()
-          this.exbBtns = this.positionedExb.map((exb) => {
-            const clone = Object.assign({}, exb)
-            if (!this.keepExbPosition) {
-              clone.x = exb.location.x
-              clone.y = exb.location.y
-            }
-            const exbBtn = this.createExbIcon(clone)
+          // TODO:以下のように書き換えたが動作している。なぜボタンを渡す必要がある？ もっと根本的に短くかけると思われる。
+          // this.exbBtns = this.positionedExb.map((exb) => {
+          this.positionedExb.forEach((exb) => {
+            // const clone = Object.assign({}, exb)
+            // if (!this.keepExbPosition) {
+            //   clone.x = exb.location.x
+            //   clone.y = exb.location.y
+            // }
+            // const exbBtn = this.createExbIcon(clone)
+            const exbBtn = this.createExbIcon(exb)
             this.exbCon.addChild(exbBtn)
-            return exbBtn
+            // return exbBtn
           })
 
-          let positions = PositionHelper.getPositions(false, false, true)
-          this.nearest = await this.getNearest(this.exbBtns)
-          this.nearest = this.nearest.filter((n) => positions.some((pos) => pos.btx_id === n.btx_id))
+          let positions = PositionHelper.filterPositions(undefined, false)
+          // this.nearest = await this.getNearest(this.exbBtns)
+          this.nearest = await this.getNearest(this.positionedExb)
+          this.nearest = this.nearest.filter((n) => positions.some((pos) => pos.btxId == n.btxId))
 
           this.stage.addChild(this.exbCon)
           this.stage.setChildIndex(this.exbCon, this.stage.numChildren-1)
@@ -287,8 +291,6 @@ export default {
           if (this.targetTx) {
             this.dispRssiIcons(this.targetTx)
           }
-
-          await StateHelper.load('tx')
 
           if (payload && payload.done) {
             payload.done()
@@ -306,7 +308,10 @@ export default {
         }
       }, disableErrorPopup)
     },
-    async fetchData(payload, disableErrorPopup) {
+    async fetchData(payload) {
+      this.onChangeAreaDone(payload)
+    },
+    async onChangeAreaDone(payload, disableErrorPopup) {
       this.showReady = false
       const disabledProgress = Util.getValue(payload, 'disabledProgress', false)
       try {
@@ -332,7 +337,7 @@ export default {
       const s = new Shape()
       const w = DISP.INSTALLATION.WIDTH / this.canvasScale
       const h = DISP.INSTALLATION.HEIGHT / this.canvasScale
-      s.graphics.beginFill(DISP.EXB_LOC.BGCOLOR).drawRect(0, 0, w, h)
+      s.graphics.beginFill(DISP.EXB_LOC.RSSI_BGCOLOR).drawRect(0, 0, w, h)
       s.x = -w * 0.5
       s.y = -h * 0.5
       exbBtn.addChild(s)
@@ -344,7 +349,7 @@ export default {
       exbBtn.addChild(label)
       exbBtn.deviceId = exb.deviceId
       exbBtn.exbId = exb.exbId
-      const posKey = exb.x+"-"+exb.y
+      const posKey = exb.x+'-'+exb.y
       if(this.posCache[posKey]){
         exbBtn.x = this.posCache[posKey].x
         exbBtn.y = this.posCache[posKey].y + h * 2
@@ -368,19 +373,19 @@ export default {
       return this.exbs.filter(exb => exb.location && exb.location.areaId === this.selectedArea && exb.location.x && exb.location.y > 0)
     },
     async getNearest(exbs) {
-      const positions = await HttpHelper.getExCloud(EXCloudHelper.url(EXCLOUD.POSITION_URL) + new Date().getTime())
+      const positions = await EXCloudHelper.fetchRawPosition()
       const xymap = {}
       exbs.forEach(e => xymap[e.deviceId] = {x: e.x, y: e.y})
-      return positions.filter(position => exbs.some(exb => exb.deviceId === position.device_id))
+      return positions.filter(position => exbs.some(exb => exb.deviceId == position.deviceId))
         .map(position => {
           position.nearest && position.nearest.forEach(n => {
-            const target = xymap[n.device_id]
+            const target = xymap[n.deviceId]
             if (target) {
               n.x = target.x
               n.y = target.y
             }
           })
-          return {btx_id: position.btx_id, nearest: position.nearest? position.nearest: []}
+          return {btxId: position.btxId, nearest: position.nearest? position.nearest: []}
         })
     },
     dispRssiIcons(btxId) {
@@ -400,7 +405,7 @@ export default {
         return
       }
 
-      const target = this.nearest.find((n) => n.btx_id === btxId)
+      const target = this.nearest.find((n) => n.btxId === btxId)
       if (!target) {
         return
       }

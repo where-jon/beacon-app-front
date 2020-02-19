@@ -52,6 +52,7 @@ import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
 import * as ImageHelper from '../../../sub/helper/base/ImageHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -109,7 +110,6 @@ export default {
     }
   },
   async created() {
-    Promise.all(['areas','area','exbs','txs','zones'].map(StateHelper.load))
   },
   mounted() {
     this.form.mapConfig = this.mapConfigTypes[0].value
@@ -118,7 +118,7 @@ export default {
     ValidateHelper.setCustomValidationMessage()
     this.oldMap = this.hasId && this.form.mapImage? {width: this.$refs.mapImage.naturalWidth, height: this.$refs.mapImage.naturalHeight}: null
     if(!Util.hasValue(this.form.areaCd)){
-      this.form.areaCd = StateHelper.createMasterCd('area', this.areas, this.area)
+      this.form.areaCd = MasterHelper.createMasterCd('area', this.areas, this.area)
     }
   },
   methods: {
@@ -171,11 +171,8 @@ export default {
     onBeforeReload(){
     },
     async onSaved(){
-      StateHelper.setForceFetch('tx', true)
-      StateHelper.setForceFetch('exb', true)
-      StateHelper.setForceFetch('zone', true)
-      await StateHelper.load('areas', true)
-      this.$set(this.form, 'areaCd', StateHelper.createMasterCd('area', this.areas, this.area))
+      this.$set(this.form, 'areaCd', MasterHelper.createMasterCd('area', this.areas, this.area))
+      this.$store.commit('main/replaceMain', {selectedArea: null})
     },
     beforeSubmit(again){
       if(this.mapUpdate){

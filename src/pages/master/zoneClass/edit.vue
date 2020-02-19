@@ -79,6 +79,7 @@ import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper
 import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
 import * as MenuHelper from '../../../sub/helper/dataproc/MenuHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import * as VueSelectHelper from '../../../sub/helper/ui/VueSelectHelper'
@@ -178,7 +179,6 @@ export default {
     },
   },
   async created() {
-    await Promise.all(['area', 'category'].map(state => StateHelper.load(state)))
     await this.initAreaNames()
     await this.initCategoryNames()
     this.initForm()
@@ -187,7 +187,7 @@ export default {
     ValidateHelper.setCustomValidationMessage()
     VueSelectHelper.disabledAllSubmit()
     if(!Util.hasValue(this.form.zoneCd)){
-      this.form.zoneCd = StateHelper.createMasterCd('zone', this.zones, this.zone)
+      this.form.zoneCd = MasterHelper.createMasterCd('zone', this.zones, this.zone)
     }
   },
   methods: {
@@ -209,7 +209,7 @@ export default {
       this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryNames, this.form.categoryId)
     },
     initAreaNames() {
-      this.areaNames = StateHelper.getOptionsFromState('area', false, true)
+      this.areaNames = MasterHelper.getOptionsFromState('area', false, true)
     },
     async initCategoryNames() {
       const arr = await AppServiceHelper.fetchList('/basic/category/type/3')
@@ -219,12 +219,7 @@ export default {
       })
     },
     async onSaved(){
-      StateHelper.setForceFetch('tx', true)
-      StateHelper.setForceFetch('exb', true)
-      StateHelper.setForceFetch('category', true)
-      StateHelper.setForceFetch('location', true)
-      await StateHelper.load('zone', true)
-      this.$set(this.form, 'zoneCd', StateHelper.createMasterCd('zone', this.zones, this.zone))
+      this.$set(this.form, 'zoneCd', MasterHelper.createMasterCd('zone', this.zones, this.zone))
     },
     async onBeforeReload(){
       this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaNames, null)

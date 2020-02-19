@@ -13,7 +13,7 @@ import * as AuthHelper from '../../../sub/helper/base/AuthHelper'
 import * as BulkHelper from '../../../sub/helper/dataproc/BulkHelper'
 import * as LocalStorageHelper from '../../../sub/helper/base/LocalStorageHelper'
 import * as RegionHelper from '../../../sub/helper/domain/RegionHelper'
-import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
@@ -49,7 +49,6 @@ export default {
       await this.$refs.bulkEdit.bulkSave({numberList: ['regionId', 'meshId']})
     },
     async onSaved(bulkSaveFunc, param){
-      StateHelper.setForceFetch('user', true)
       const result = await RegionHelper.autoSwitchRegion(this.regions)
       if(result){
         LocalStorageHelper.setLocalStorage('bulkMessage', param.message)

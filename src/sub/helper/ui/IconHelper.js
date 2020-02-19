@@ -279,7 +279,7 @@ export const createPositionRectInfo = (pos, bgColor) => {
  */
 export const createPositionTxIcon = (pos, shape, color, bgColor, mapScale) => {
   const rectInfo = createPositionRectInfo(pos, bgColor)
-  const txRadius = DISP.TX.R / mapScale
+  const txRadius = (pos.txR? pos.txR: DISP.TX.R) / mapScale
   return createIcon(
     pos.label, txRadius, txRadius, color, rectInfo.bgColor, {
       circle: shape == SHAPE.CIRCLE,
@@ -306,7 +306,7 @@ export const createLastSystemTx = (pos, mapScale) => {
       strokeColor: ColorUtil.getRGBA(DISP.TX.STROKE_COLOR, bgAlpha),
       strokeStyle: DISP.TX.STROKE_WIDTH,
     })
-  txBtn.txId = pos.btx_id
+  txBtn.txId = pos.btxId
   txBtn.x = pos.x
   txBtn.y = pos.y
   return txBtn
@@ -346,11 +346,11 @@ export const createAbsentTxIcon = (pos, shape, color, bgColor, mapScale) => {
  */
 export const createTxBtn = (pos, shape, color, bgColor, mapScale, isAbsent = false) => {
   let txBtn = createPositionTxIcon(pos, shape, color, bgColor, mapScale)
-  txBtn.btxId = pos.btx_id
+  txBtn.btxId = pos.btxId
 
   if (isAbsent) {
     txBtn = createAbsentTxIcon(pos, shape, color, bgColor, mapScale)
-    txBtn.btxId = PositionHelper.zoneBtxIdAddNumber + pos.btx_id
+    txBtn.btxId = PositionHelper.zoneBtxIdAddNumber + pos.btxId
   }
   txBtn.x = pos.x
   txBtn.y = pos.y
@@ -436,7 +436,6 @@ export const createUseStateIcon = (sensorId, count, mapScale) => {
  * @return {Object}
  */
 export const createExbIconForMagnet = (tx, magnetSensorList, mapScale) => {
-  Util.debug('showTx', tx)
   const magnet = SensorHelper.getSensorFromBtxId('magnet', magnetSensorList, tx.btxId)
   if(!magnet){
     return null
@@ -553,14 +552,11 @@ export const createThermohIcon = (device, mapScale, stage) => {
  * @return {Object}
  */
 export const createExbIcon = (exb, exbSensorIdList, mapScale, stage) => {
-  if (!SensorHelper.includesSensorId(exbSensorIdList, exb.sensorId)) {
-    return null
-  }
   let exbBtn = null
-  if(exb.sensorId == SENSOR.TEMPERATURE){
+  if (SensorHelper.match(exb.sensorIds, SENSOR.TEMPERATURE, exbSensorIdList)) {
     exbBtn = createThermohIcon(exb, mapScale, stage)
   }
-  else if (exb.sensorId == SENSOR.THERMOPILE && exb.count != null) {
+  else if (SensorHelper.match(exb.sensorIds, SENSOR.THERMOPILE, exbSensorIdList) && exb.count != null) {
     // not use?
     // if (exb.count > 10) {
     //   w = DISP.THERMOPILE_L_SIZE
@@ -576,13 +572,17 @@ export const createExbIcon = (exb, exbSensorIdList, mapScale, stage) => {
     exbBtn = createCountButton(exb.count, mapScale)
     exbBtn.cursor = ''
   }
-  else if (exb.sensorId == SENSOR.PRESSURE && exb.pressVol != null) {
+  else if (SensorHelper.match(exb.sensorIds, SENSOR.PRESSURE, exbSensorIdList) && exb.pressVol != null) {
     exbBtn = createUseStateIcon(exb.sensorId, exb.pressVol, mapScale)
     exbBtn.cursor = ''
   }
-  else {
+  else if (SensorHelper.match(exb.sensorIds, SENSOR.PIR, exbSensorIdList)) {
     exbBtn = createUseStateIcon(exb.sensorId, exb.count, mapScale)
     exbBtn.cursor = ''
+  }
+  else {
+    console.error('Sensor Not match', exb.sensorIds, exbSensorIdList)
+    return
   }
   exbBtn.deviceId = exb.deviceId
   exbBtn.exbId = exb.exbId

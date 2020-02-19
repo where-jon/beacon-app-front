@@ -88,7 +88,7 @@ export default {
     getEditKey(item) {
       return item.updateKey.split(BULK.SPLITTER).join('/')
     },
-    onSaved(){
+    async onSaved(){
       if(this.$refs.ref.message){
         this.messageParams.message = this.$refs.ref.message
       }

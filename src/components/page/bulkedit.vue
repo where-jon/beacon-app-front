@@ -27,6 +27,7 @@ import { CHAR_SET, UPDATE_ONLY_NN, IGNORE } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
 import * as AppServiceHelper from '../../sub/helper/dataproc/AppServiceHelper'
 import * as BulkHelper from '../../sub/helper/dataproc/BulkHelper'
+import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as CharSetHelper from '../../sub/helper/base/CharSetHelper'
 import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
@@ -95,7 +96,6 @@ export default {
       this.message = message
       this.replace({showInfo: true})
     }
-    StateHelper.load('sensor')
   },
   methods: {
     backToList(event, path) {
@@ -124,7 +124,6 @@ export default {
           else{
             await this.bulkSave()
           }
-          await StateHelper.load(this.name, true)
           this.message = this.$i18n.tnl('message.bulkRegisterCompleted', {target: this.$i18n.tnl('label.' + dispName)})
           this.replace({showInfo: true})
           if(this.$parent.$options.methods && this.$parent.$options.methods.onSaved) {

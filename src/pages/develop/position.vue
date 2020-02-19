@@ -41,9 +41,6 @@ export default {
     }
   },
   computed: {
-    ...mapState('app_service', [
-      'txs', 'exbs'
-    ]),
     allCount() {
       return this.positions.length
     },
@@ -55,7 +52,7 @@ export default {
   methods: {
     convertColumnName(name){
       if(name == 'btxId'){
-        return 'btx_id'
+        return 'btxId'
       }
       if(name == 'locationName'){
         return 'finalReceiveLocation'
@@ -64,13 +61,13 @@ export default {
     },
     getHeaders(){
       return ViewHelper.addLabelByKey(null, [
-        { key: 'btx_id' }, { key: 'device_id' }, { key: 'pos_id' }, { key: 'phase' }, { key: 'power_level' }, { key: 'updatetime' }, { key: 'nearest1' }, { key: 'nearest2' }, { key: 'nearest3' },
+        { key: 'btxId' }, { key: 'deviceId' }, { key: 'pos_id' }, { key: 'phase' }, { key: 'power_level' }, { key: 'updatetime' }, { key: 'nearest1' }, { key: 'nearest2' }, { key: 'nearest3' },
       ])
     },
     getCsvHeaders(){
       return {
-        'btx_id': 'btx_id',
-        'device_id': 'device_id',
+        'btxId': 'btxId',
+        'deviceId': 'deviceId',
         'pos_id': 'pos_id',
         'phase': 'phase',
         'power_level': 'power_level',
@@ -147,8 +144,8 @@ export default {
     },
     getCsvHeaderList() {
       return [
-        'btx_id',
-        'device_id',
+        'btxId',
+        'deviceId',
         'pos_id',
         'phase',
         'power_level',
