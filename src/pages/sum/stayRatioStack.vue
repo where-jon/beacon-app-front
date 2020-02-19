@@ -7,16 +7,14 @@
       <b-form inline @submit.prevent>
         <b-form-group>
           <b-form-row class="mr-3">
-            <label v-t="'label.date'" class="mr-2 mb-2 d-flex align-items-center" />
-            <date-picker v-model="form.dateFrom" type="date" value-format="datetime" class="mr-2 mb-2 inputdatefrom" />
-            <date-picker v-model="form.dateTo" type="date" value-format="datetime" class="mr-2 mb-2 inputdatefrom" />
-          </b-form-row>
-        </b-form-group>
-        <b-form-group>
-          <b-form-row class="mb-3 mr-5">
-            <label v-t="'label.group'" class="mr-2" />
+            <span v-t="'label.historyDateFrom'" class="d-flex align-items-center" />
+            <date-picker v-model="form.datetimeFrom" :clearable="false" type="datetime" class="ml-2 inputdatefrom" required />
+            <span v-t="'label.historyDateTo'" class="d-flex align-items-center ml-2" />
+            <date-picker v-model="form.datetimeTo" :clearable="false" type="datetime" class="ml-2 inputdateto" required />
+
+            <label v-t="'label.group'" class="ml-2" />
             <span :title="vueSelectTitle(vueSelected.group)">
-              <v-select v-model="vueSelected.group" :options="groupOptions" class="mr-2 inputSelect vue-options">
+              <v-select v-model="vueSelected.group" :options="groupOptions" class="ml-2 inputSelect vue-options">
                 <template slot="selected-option" slot-scope="option">
                   {{ vueSelectCutOn(option) }}
                 </template>
@@ -26,12 +24,8 @@
               </v-select>
             </span>
           </b-form-row>
-        </b-form-group>
-      </b-form>
 
-      <b-form inline @submit.prevent>
-        <b-form-group>
-          <b-form-row class="mb-3">
+          <b-form-row class="mt-3 mb-3">
             <b-button v-t="'label.display'" type="submit" :variant="theme" @click="display" />
             <b-button v-t="'label.download'" type="submit" :variant="theme" @click="display" class="ml-2" />
           </b-form-row>
@@ -43,29 +37,14 @@
       <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" :sort-compare="defaultSortCompare" stacked="md" striped hover outlined>
         <template slot="graph" slot-scope="row">
           <div style="position: relative;">
-            <div v-for="(bar, index) in row.item.graph" :key="index" :class="bar.isStay || bar.isAbsentZone? 'stay-bar': 'lost-bar'" :style="`${bar.isStay || bar.isAbsentZone? `background: `+ (historyType == 'category'? bar.categoryBgColor: bar.areaBgColor)+`;`: `` } width:${bar.percent}% !important;`">
+            <div v-for="(bar, index) in row.item.graph" :key="index" :class="bar.isStay? 'stay-bar': 'lost-bar'" :style="bar.style">
               <span class="graph-arrow-box">
-                {{ bar.isStay || bar.isAbsentZone? (historyType == 'category'? bar.categoryName: bar.areaName): $i18n.tnl('label.absence') }} <br>
+                {{ bar.isStay ? (historyType == 'category'? bar.categoryName: bar.areaName): $i18n.tnl('label.absence') }} <br>
                 {{ bar.time }} <br>
                 {{ bar.startTime }} ～ {{ bar.endTime }}
               </span>&nbsp;
             </div>
             <br>
-            <div class="timeDisplay" style="width: 100%">
-              <div v-for="(timeData, index) in row.item.graphTimeRatio" :key="`graph-${index}`" class="time-area" :style="`width: ${timeData.ratio}% !important;`">
-                <span v-if="index == 0" style="float: left;">
-                  {{ row.item.baseTimeFrom }}
-                </span>
-                <span v-if="index == row.item.graphTimeRatio.length - 1" style="float: right;">
-                  {{ row.item.baseTimeTo }}
-                </span>
-                <span v-if="isScaleTime(timeData.time)" style="float: left;">
-                  <span style="position: relative; left: -50%;">
-                    {{ timeData.time + ':00' }}
-                  </span>
-                </span>
-              </div>
-            </div>
           </div>
         </template>
       </b-table>
@@ -120,8 +99,8 @@ export default {
         {key: 'lostTime', sortable: false, label: this.$i18n.tnl('label.lostTime') },
       ],
       form: {
-        dateFrom: '',
-        dateTo: ''
+        datetimeFrom: '',
+        datetimeTo: ''
       },
       vueSelected: {
         group: null,
@@ -143,9 +122,6 @@ export default {
       sortBy: 'name',
       totalRows: 0,
       historyType: 'area',
-      isCategorySelected: false,
-      checkboxLimit: 6,
-      showModal: false,
     }
   },
   computed: {
@@ -178,7 +154,10 @@ export default {
     },
   },
   async created() {
-    this.form.date = DEV.DEFAULT_DATE != '' ? new Date(DEV.DEFAULT_DATE) : moment().add(-1, 'days').format('YYYYMMDD')
+    const date = DateUtil.getDefaultDate()
+    this.form.datetimeFrom = DateUtil.getDatetime(date, {date: -1})
+    this.form.datetimeTo = DateUtil.getDatetime(date)
+
     let sortedArea = _.cloneDeep(this.areas)
     ArrayUtil.sortIgnoreCase(sortedArea, 'areaName')
     this.areaArray = sortedArea
@@ -187,7 +166,6 @@ export default {
     ViewHelper.importElementUI()
     window.addEventListener('resize', () => {
       this.$forceUpdate()
-      this.setGraphTimeDisplay()
     })
     if (this.categories.length < 1) {
       return
@@ -200,22 +178,67 @@ export default {
       this.replace({showAlert: false})
       this.showProgress()
       try {
-        if (!this.form.date || this.form.date.length == 0) {
+        if ( !Util.hasValue(this.form.datetimeFrom) || !Util.hasValue(this.form.datetimeTo) ) {
           this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
           this.replace({showAlert: true})
           this.hideProgress()
           return
         }
 
-        const sumData = await HttpHelper.getAppService(this.getApiUrl(this.form))
-        if (_.isEmpty(sumData)) {
+        // データ取得
+        const data = await this.getData(this.form)
+        if (_.isEmpty(data)) {
           this.message = this.$i18n.t('message.listEmpty')
           this.replace({showAlert: true})
           this.hideProgress()
           return
         }
 
-        this.viewList = this.getStayDataList(moment(this.form.date).format('YYYY-MM-DD'), sumData, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
+        // 人ごとにまとめる
+        const sum = data.reduce( (sum, obj) => {
+          if(!sum[obj.axisId]){
+            sum[obj.axisId] = []
+          }
+          sum[obj.axisId].push(obj)
+          return sum
+        }, [])
+        console.log('sum', sum)
+
+        console.log('pots', this.pots)
+
+      const from = new Date(this.form.datetimeFrom).getTime()
+      const to = new Date(this.form.datetimeTo).getTime()
+      const total = to - from
+
+        // リスト作成
+        this.viewList = sum.map( stayTimes => {
+          const stayTime = _.sumBy(stayTimes, s => s.period )
+          console.log(stayTime)
+          const graph = stayTimes.map(s => {
+            const ratio = Math.floor(s.period / total * 100)
+            const color = this.getStackColor(s.stackId)
+            return {
+              isStay: true,
+              style: `width: ${ratio}% !important; background: ${color};`
+            }
+          })
+          // 不在追加
+          if(total - stayTime > 0){
+            const ratio = (total-stayTime)/total*100
+            const color = ColorUtil.colorCd4display(this.otherColor)
+            graph.push({
+              isStay: false,
+              style: `width: ${ratio}% !important;`
+            })
+          }
+          return {
+            name: stayTimes[0].axis,
+            groupName: this.getGroupName(stayTimes[0].axisId),
+            graph,
+            stayTime: DateUtil.convertToTime(stayTime / 1000, true),
+            lostTime: DateUtil.convertToTime((total - stayTime) / 1000, true)
+          }
+        })
 
         this.totalRows = this.viewList.length
       }
@@ -225,6 +248,10 @@ export default {
       finally {
         this.hideProgress()
       }
+    },
+    getGroupName(potId) {
+      const pot = this.pots.find(p => p.potId == potId)
+      return pot && pot.group ? pot.group.groupName : null
     },
     isScaleTime(scaleTime) {
       return _.some(APP.STAY_SUM.SCALE_TIMES, (time) => { return time === scaleTime })
@@ -240,7 +267,7 @@ export default {
     isLostData(byId) {
       return byId == -1
     },
-    getStayDataList(date, stayData, absentLimit = 0, lostLimit = APP.LOST_TIME) {
+    getStayDataList(stayData, date) {
       const fromSecond = (Math.floor(APP.STAY_SUM.FROM / 100) * 60 + APP.STAY_SUM.FROM % 100) * 60
       const toSecond = (Math.floor(APP.STAY_SUM.TO / 100) * 60 + APP.STAY_SUM.TO % 100) * 60
       const graphTimeRatio = this.getTimeRatioData()
@@ -249,7 +276,6 @@ export default {
       return stayData.map((data) => {
         let stayTime = 0, lostTime = 0
         let categoryData = []
-        let areaData = []
         let stayPercentSum = 0
         let graphListId = 0
 
@@ -258,12 +284,6 @@ export default {
         this.categories.forEach((category) => {
           let categoryName = (category.systemUse? this.$i18n.tnl('label.' + category.systemCategoryName): category.categoryName)
           if (category.categoryType == CATEGORY.ZONE) categoryData[category.categoryId] = {name: categoryName, value: 0}
-        })
-
-        // エリア用データ保持変数を初期化
-        areaData[0] = {name: 'areaOther', value: 0}
-        this.areaArray.forEach((area) => {
-          areaData[area.areaId] = {name: area.areaName, value: 0}
         })
 
         // 各時間の集計
@@ -292,22 +312,7 @@ export default {
             categoryData[0].value += stay.period
           }
 
-          // エリア毎の滞在時間を加算
-          let zone = findCategory? _.find(this.zones, (zone) => { return zone.categoryId == findCategory.categoryId}): null
-          findArea = _.find(this.areaArray, (area, index) => {
-            if (zone) {
-              if (area.areaId == zone.areaId) {
-                areaIndex = index
-                return true
-              }
-            } else {
-              if (area.areaId == stay.areaId) {
-                areaIndex = index
-                return true
-              }
-            }
-            return false
-          })
+
           if (findArea) {
             areaData[findArea.areaId].value += stay.period
           } else {
@@ -429,7 +434,7 @@ export default {
         return
       }
 
-      const dataList = await HttpHelper.getAppService(this.getApiUrl(this.form))
+      const dataList = await this.getData(this.form)
       if (_.isEmpty(dataList)) {
         this.message = this.$i18n.t('message.listEmpty')
         this.replace({showAlert: true})
@@ -454,11 +459,17 @@ export default {
         getCharSet(this.$store.state.loginId)
       )
     },
-    getApiUrl(param) {
-      const targetDate = moment(param.date).format('YYYYMMDD')
-      const groupBy = param.groupId? '&groupId=' + param.groupId: ''
-      const categoryBy = param.categoryId? '&categoryId=' + param.categoryId: ''
-      return '/office/stayTime/sumByDay/' + targetDate + '/zoneCategory?from=' + APP.STAY_SUM.FROM + '&to=' + APP.STAY_SUM.TO + groupBy + categoryBy
+    async getData(form) {
+      const param = {}
+      param.axis = 'pot'
+      param.stack = 'location'
+      param.datetimeFrom = new Date(form.datetimeFrom).getTime()
+      param.datetimeTo = new Date(form.datetimeTo).getTime()
+      param.fillGap = APP.STAY_SUM.AXIS_FILL_GAP
+      const url = '/office/stayTime/sum?_=' + new Date().getTime() + '&' +  HttpHelper.toParam(param, true)
+      const sumData = await HttpHelper.getAppService(url)
+      console.log(sumData)
+      return sumData
     },
     getCsvSumList(viewList) {
       const keys = []
@@ -541,16 +552,6 @@ export default {
         // 何もしない
       }
     },
-    setGraphTimeDisplay() {
-      const timeDisplay = document.getElementsByClassName('timeDisplay')
-      _.forEach(timeDisplay, (td) => {
-        if (td.offsetWidth <= 100) {
-          td.style.visibility = 'hidden'
-        } else {
-          td.style.visibility = ''
-        }
-      })
-    }
   }
 }
 </script>

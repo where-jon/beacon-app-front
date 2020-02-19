@@ -189,7 +189,7 @@ export const getSubDatetime = (datetimeFrom, datetimeTo) => {
  * @param {Number} secTime 秒
  * @return {String}
  */
-export const convertToTime = secTime => {
+export const convertToTime = (secTime, noSec=false) => {
   if (secTime < 0) {
     return 'hh:mm'
   }
@@ -198,8 +198,11 @@ export const convertToTime = secTime => {
   let hour = Math.floor(secTime / 3600)
   let h = hour < 10? '0' + hour: hour
   let m = min < 10? '0' + min: min
+  if(noSec){
+    return h + ':' + m
+  }
   let s = sec < 10? '0' + sec: sec
-  return h + ':' + m + ':' + s
+  return h + ':' + m + ':' + s  
 }
 
 /**
