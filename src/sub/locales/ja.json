@@ -744,13 +744,13 @@
         "WITH_POWER_LEVEL": "EXB状態監視画面で電池レベルを使用する::EXB状態監視画面で電池レベルを表示します。★"
       },
       "MAIL": {
-        "TYPE": "メール設定用TYPE",
-        "ID": "メール設定用ID",
-        "PASSWORD": "メール設定用PASSWORD",
-        "SMTP_HOST": "メール設定用HOST",
-        "SMTP_PORT": "メール設定用ポート",
-        "SMTP_AUTH": "メール設定用認証",
-        "SMTP_STARTTLS": "メール設定用TLS"
+        "TYPE": "メール設定用TYPE::メール送信プロトコルのTYPEを設定してください。SMTP以外を設定する場合は設定してください。",
+        "ID": "メール設定用ID::メール送信用のIDを設定してください。",
+        "PASSWORD": "メール設定用PASSWORD::メール送信用のPASSWORDを設定してください。",
+        "SMTP_HOST": "メール設定用HOST::メール送信用のHOST名を設定してください。",
+        "SMTP_PORT": "メール設定用ポート::メール送信用のポート番号を設定してください。",
+        "SMTP_AUTH": "メール設定用認証::メール送信時のユーザ認証有無を設定してください。{SMTP_AUTH}",
+        "SMTP_STARTTLS": "メール設定用TLS::メール送信時の暗号化有無を設定してください。{SMTP_STARTTLS}"
       },
       "POS": {
         "AUTO_RELOAD": "位置情報自動リロード間隔::位置表示(地図)画面で位置情報の自動リロードを行う間隔をミリ秒単位で設定します。★",
@@ -1406,6 +1406,14 @@
       "TOILET_DISPLAY": {
         "0": "0::数値で表示する",
         "1": "1::アイコンで表示する"
+      },
+      "SMTP_AUTH": {
+        "true": "true::ユーザ認証を行う",
+        "false": "false::ユーザ認証を行わない"
+      },
+      "SMTP_STARTTLS": {
+        "true": "true::暗号化する",
+        "false": "false::暗号化しない"
       }
     }
   },
