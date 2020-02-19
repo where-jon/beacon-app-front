@@ -696,8 +696,8 @@ export default {
         this.$parent.$options.methods.clearAction.call(this.$parent, key)
       }
     },
-    async createListParam() {
-      return this.$parent.$options.methods && this.$parent.$options.methods.createListParams? await this.$parent.$options.methods.createListParams.call(this.$parent): {}
+    createListParam(word) {
+      return this.$parent.$options.methods && this.$parent.$options.methods.createListParams? this.$parent.$options.methods.createListParams.call(this.$parent): {}
     },
     async showList() {
       if(!Util.hasValue(this.sortBy)) {
@@ -707,7 +707,7 @@ export default {
       }
       this.showProgress()
       try {
-        const params = await this.createListParam()
+        const params = {...this.createListParam()}
         params.word = this.filter.reg
         params.category = this.selectedCategory
         params.group = this.selectedGroup
@@ -726,7 +726,7 @@ export default {
       this.hideProgress()
     },
     async exportCsv() {
-      const params = await this.createListParam()
+      const params = this.createListParam()
       BrowserUtil.executeFileDL(
         APP_SERVICE.BASE_URL
         + this.params.appServicePath
