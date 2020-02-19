@@ -37,9 +37,9 @@
       <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" :sort-compare="defaultSortCompare" stacked="md" striped hover outlined>
         <template slot="graph" slot-scope="row">
           <div style="position: relative;">
-            <div v-for="(bar, index) in row.item.graph" :key="index" :class="bar.isStay? 'stay-bar': 'lost-bar'" :style="bar.style">
+            <div v-for="(bar, index) in row.item.graph" :key="index" :class="bar.name? 'stay-bar': 'lost-bar'" :style="bar.style">
               <span class="graph-arrow-box">
-                {{ bar.isStay ? (historyType == 'category'? bar.categoryName: bar.areaName): $i18n.tnl('label.absence') }} <br>
+                {{ bar.name ? bar.name : $i18n.tnl('label.absence') }} <br>
                 {{ bar.time }} <br>
                 {{ bar.startTime }} ～ {{ bar.endTime }}
               </span>&nbsp;
@@ -208,7 +208,7 @@ export default {
 
       const from = new Date(this.form.datetimeFrom).getTime()
       const to = new Date(this.form.datetimeTo).getTime()
-      const total = to - from
+      const total = (to - from)/1000
 
         // リスト作成
         this.viewList = sum.map( stayTimes => {
@@ -218,7 +218,7 @@ export default {
             const ratio = Math.floor(s.period / total * 100)
             const color = this.getStackColor(s.stackId)
             return {
-              isStay: true,
+              name: s.stack,
               style: `width: ${ratio}% !important; background: ${color};`
             }
           })
@@ -227,7 +227,6 @@ export default {
             const ratio = (total-stayTime)/total*100
             const color = ColorUtil.colorCd4display(this.otherColor)
             graph.push({
-              isStay: false,
               style: `width: ${ratio}% !important;`
             })
           }
@@ -235,8 +234,8 @@ export default {
             name: stayTimes[0].axis,
             groupName: this.getGroupName(stayTimes[0].axisId),
             graph,
-            stayTime: DateUtil.convertToTime(stayTime / 1000, true),
-            lostTime: DateUtil.convertToTime((total - stayTime) / 1000, true)
+            stayTime: DateUtil.convertToTime(stayTime, true),
+            lostTime: DateUtil.convertToTime(total - stayTime, true)
           }
         })
 
@@ -260,167 +259,17 @@ export default {
       // 設定が6色以上ある事が前提
       return DISP.SUM_STACK_COLOR[index % DISP.SUM_STACK_COLOR.length]
     },
-    isAbsentZoneData(categoryId) {
-      let category = !this.isLostData(categoryId)? this.categories.find((e) => e.categoryId == categoryId): null
-      return category? category.categoryName == SYSTEM_ZONE_CATEGORY_NAME.ABSENT: false
-    },
-    isLostData(byId) {
-      return byId == -1
-    },
-    getStayDataList(stayData, date) {
-      const fromSecond = (Math.floor(APP.STAY_SUM.FROM / 100) * 60 + APP.STAY_SUM.FROM % 100) * 60
-      const toSecond = (Math.floor(APP.STAY_SUM.TO / 100) * 60 + APP.STAY_SUM.TO % 100) * 60
-      const graphTimeRatio = this.getTimeRatioData()
-      const fromToSettingDiff = toSecond - fromSecond
-
-      return stayData.map((data) => {
-        let stayTime = 0, lostTime = 0
-        let categoryData = []
-        let stayPercentSum = 0
-        let graphListId = 0
-
-        // カテゴリ用データ保持変数を初期化
-        categoryData[0] = {name: 'categoryOther', value: 0}
-        this.categories.forEach((category) => {
-          let categoryName = (category.systemUse? this.$i18n.tnl('label.' + category.systemCategoryName): category.categoryName)
-          if (category.categoryType == CATEGORY.ZONE) categoryData[category.categoryId] = {name: categoryName, value: 0}
-        })
-
-        // 各時間の集計
-        let graphList = data.stayList.map((stay, index) => {
-          let isExistStayData = false
-          let time = ''
-          let findCategory
-          let findArea
-          let areaIndex = 0
-          const isAbsentZone = this.isAbsentZoneData(stay.byId)
-          if (this.isLostData(stay.byId) || isAbsentZone) {
-            lostTime += stay.period
-            time = DateUtil.convertToTime(stay.period)
-          } else {
-            stayTime += stay.period
-            time = DateUtil.convertToTime(stay.period)
-            isExistStayData = true
-          }
-          // カテゴリ毎の滞在時間を加算
-          findCategory = _.find(this.categories, (category) => {
-            return category.categoryType == CATEGORY.ZONE && category.categoryId == stay.byId
-          })
-          if (findCategory) {
-            categoryData[findCategory.categoryId].value += stay.period
-          } else if (stay.byId == 0) {
-            categoryData[0].value += stay.period
-          }
-
-
-          if (findArea) {
-            areaData[findArea.areaId].value += stay.period
-          } else {
-            if (isExistStayData) areaData[0].value += stay.period
-          }
-          //グラフ表示欠け対応のため、小数点1桁まで固定
-          const parcentDigit = 10
-          let percent = Math.round((stay.period / fromToSettingDiff) * 100 * parcentDigit) / parcentDigit
-          if (APP.STAY_SUM.GRAPH_LIMIT > percent) {
-            percent = 0
-          }
-          stayPercentSum += percent
-
-          return {
-            index: graphListId++,
-            isStay: isExistStayData,
-            isAbsentZone: isAbsentZone,
-            period: stay.period,
-            start: stay.start,
-            startTime: percent == 100? DateUtil.convertToTime(fromSecond): moment(stay.start).format('HH:mm:ss'),
-            end: stay.end,
-            endTime: percent == 100? DateUtil.convertToTime(toSecond): moment(stay.end).format('HH:mm:ss'),
-            time: time,
-            percent: percent,
-            categoryName: findCategory? findCategory.categoryName: this.$i18n.tnl('label.other'),
-            categoryBgColor: findCategory? ColorUtil.colorCd4display(findCategory.bgColor): ColorUtil.colorCd4display(this.otherColor),
-            areaBgColor: findArea? this.getStackColor(areaIndex): this.otherColor,
-            areaName: findArea? findArea.areaName: this.$i18n.tnl('label.other'),
-            zoneCategory: stay.byName,
-          }
-
-        }).filter(data => { return data.percent != 0})
-
-        const pot = this.pots.find((val) => val.potId == data.potId)
-        const result = {
-          date: date,
-          name: data.potName, 
-          groupName: pot? pot.groupName: '',
-          categoryName: pot? pot.categoryName: '',
-          graph: graphList,
-          stayTime: DateUtil.convertToTime(stayTime) + ' (' + StayTimeHelper.getRatio(stayTime) + '%)', 
-          lostTime: DateUtil.convertToTime(lostTime) + ' (' + StayTimeHelper.getRatio(lostTime) + '%)', 
-          baseTimeFrom: this.getDateStrFromSetting(APP.STAY_SUM.FROM),
-          baseTimeTo: this.getDateStrFromSetting(APP.STAY_SUM.TO),
-          graphTimeRatio: graphTimeRatio,
-        }
-
-        categoryData.forEach((cData) => {
-          result[cData.name] = DateUtil.convertToTime(cData.value) + ' (' + StayTimeHelper.getRatio(cData.value) + '%)'
-        })
-        areaData.forEach((aData) => {
-          result[aData.name] = DateUtil.convertToTime(aData.value) + ' (' + StayTimeHelper.getRatio(aData.value) + '%)'
-        })
-
-        // グラフのズレ対応。100%と実際のpercentとの差分を全体に分配する
-        const perDiff = 100 - stayPercentSum
-        var graphTemp = result.graph.slice();
-        graphTemp.sort((a, b) => {
-          if (a.percent < b.percent) {
-            return 1;
-          } else {
-            return -1;
-          }
-        })
-        const baseCount = 10 //配分するグラフデータ数制限
-        if (result.graph.length > baseCount) {
-          const diffs = perDiff / baseCount
-          graphTemp.slice(0, baseCount).forEach((val, num) => {
-            const addGraph = _.find(result.graph, (graphVal) => {
-              return val.index == graphVal.index
-            })
-            if (addGraph) {
-              addGraph.percent = addGraph.percent + diffs
-            }
-          })
-        } else {
-          const diffs = perDiff / result.graph.length
-          result.graph.forEach((val) => {
-            val.percent = val.percent + diffs
-          })
-        }
-        return result
-      })
-    },
-    getDateStrFromSetting(timeNum) {
-      return DateUtil.convertToTime((Math.floor(timeNum / 100) * 60 + timeNum % 100) * 60).slice(0, -3)
-    },
-    getTimeRatioData() {
-      // 開始から終了までの配列を作る
-      const fromHour = Math.floor(APP.STAY_SUM.FROM / 100) // 分は切る
-      const toHour = Math.floor(APP.STAY_SUM.TO / 100)
-      const toHourMinute = toHour * 60 + APP.STAY_SUM.TO % 100
-      const total = toHourMinute - fromHour * 60
-      let times = []
-      let timesMinute = []
-      for (let i = fromHour; i <= toHour; i++) {
-        times.push(i)
-        timesMinute.push(i * 60)
-      }
-      toHourMinute > 0? timesMinute.push(toHourMinute): null
-
-      // トータル時間から導き出す
-      let result = []
-      for (let i = 0; i < timesMinute.length - 1; i++){
-        var ratio = (timesMinute[i+1] - timesMinute[i])/total
-        result.push({time: times[i], ratio: Math.floor(ratio * 10000)/100})
-      }
-      return result
+    async getData(form) {
+      const param = {}
+      param.axis = 'pot'
+      param.stack = 'location'
+      param.datetimeFrom = new Date(form.datetimeFrom).getTime()
+      param.datetimeTo = new Date(form.datetimeTo).getTime()
+      param.fillGap = APP.STAY_SUM.AXIS_FILL_GAP
+      const url = '/office/stayTime/sum?_=' + new Date().getTime() + '&' +  HttpHelper.toParam(param, true)
+      const sumData = await HttpHelper.getAppService(url)
+      console.log(sumData)
+      return sumData
     },
     // 以下ダウンロード処理
     async download(key){
@@ -441,7 +290,7 @@ export default {
         this.hideProgress()
         return
       }
-      viewList = this.getStayDataList(moment(this.form.date).format('YYYY-MM-DD'), dataList, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
+      viewList = []
 
       ArrayUtil.sortIgnoreCase(viewList, 'name')
       const csvList = this.getCsvList(key, viewList)
@@ -458,18 +307,6 @@ export default {
         convertedCsvData,
         getCharSet(this.$store.state.loginId)
       )
-    },
-    async getData(form) {
-      const param = {}
-      param.axis = 'pot'
-      param.stack = 'location'
-      param.datetimeFrom = new Date(form.datetimeFrom).getTime()
-      param.datetimeTo = new Date(form.datetimeTo).getTime()
-      param.fillGap = APP.STAY_SUM.AXIS_FILL_GAP
-      const url = '/office/stayTime/sum?_=' + new Date().getTime() + '&' +  HttpHelper.toParam(param, true)
-      const sumData = await HttpHelper.getAppService(url)
-      console.log(sumData)
-      return sumData
     },
     getCsvSumList(viewList) {
       const keys = []
