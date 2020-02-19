@@ -59,7 +59,7 @@ export default {
     getFields(){
       return ViewHelper.addLabelByKey(this.$i18n, [ 
         {key: 'ID', label: 'id', sortable: true },
-        {key: 'zoneTypeName', label: 'zoneType', sortable: true },
+        {key: 'zoneType', label: 'zoneType', sortable: true },
         {key: 'zoneName', sortable: true }
       ].concat(this.createCustomColumn())
         .concat([
@@ -78,11 +78,6 @@ export default {
         ret.push({key: val, label: val, sortable: true})
       })
       return ret
-    },
-    createListParams(){
-      const retMap = { type: {} }
-      ZONE.getOptions().forEach(option => retMap.type[option.value? option.value.toString(): '0'] = option.text)
-      return retMap
     },
     onSaved(){
       StateHelper.setForceFetch('tx', true)

@@ -80,11 +80,6 @@ export default {
       })
       return ret
     },
-    createListParams(){
-      const retMap = { locationType: {} }
-      OptionHelper.getLocationTypeOptions().forEach(option => retMap.locationType[option.value.toString()] = option.text)
-      return retMap
-    },
     editResponse(data) {
       data.forEach(val => {
         if (val.toilet) {

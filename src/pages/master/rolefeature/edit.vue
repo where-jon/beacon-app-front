@@ -47,6 +47,7 @@ import * as AuthHelper from '../../../sub/helper/base/AuthHelper'
 import * as FeatureHelper from '../../../sub/helper/domain/FeatureHelper'
 import * as LocalStorageHelper from '../../../sub/helper/base/LocalStorageHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
+import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import * as VueSelectHelper from '../../../sub/helper/ui/VueSelectHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -134,6 +135,7 @@ export default {
   },
   methods: {
     async resetFeatureNames(){
+      await StateHelper.load('feature')
       let roleFeatures = await AppServiceHelper.fetchList(`/meta/roleFeature/${this.role.roleId}`)
       if(!ArrayUtil.isArray(roleFeatures)){
         roleFeatures = []

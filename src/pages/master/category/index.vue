@@ -72,7 +72,7 @@ export default {
       return ViewHelper.addLabelByKey(this.$i18n, [ 
         { key: 'ID', label: 'id', sortable: true },
         { key: 'categoryName', label: StringUtil.concatCamel(this.pName, 'categoryName'), sortable: true },
-        !this.pName? { key: 'categoryTypeName', label: 'categoryType', sortable: true }: null
+        !this.pName? { key: 'categoryType', label: 'categoryType', sortable: true }: null
       ].concat(this.createCustomColumn())
         .concat([
           this.pShowIcon? { key: 'style', label: 'display' }: null,
@@ -95,7 +95,7 @@ export default {
     },
     getCustumCsvColumns(){
       return [
-          'ID', 'categoryName', 'categoryTypeName'
+          'ID', 'categoryName', 'categoryType'
       ].concat(this.createCustomColumn(true).map(val => val.key))
         .concat(['color', 'bgColor', 'display.shape', 'description',
           this.pShowAuth? 'guardNames': null,
@@ -107,11 +107,6 @@ export default {
       StateHelper.setForceFetch('pot', true)
       StateHelper.setForceFetch('tx', true)
       StateHelper.setForceFetch('zone', true)
-    },
-    createListParams(){
-      const retMap = { categoryType: {} }
-      CATEGORY.getTypes(true).forEach(option => retMap.categoryType[option.value? option.value.toString(): '0'] = option.text)
-      return retMap
     },
     style(row) {
       return StyleHelper.getStyleDisplay1(row)

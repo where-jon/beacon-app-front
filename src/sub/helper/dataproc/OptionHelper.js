@@ -4,7 +4,7 @@
  */
 
 import { APP } from '../../constant/config'
-import { SENSOR, LOCATION } from '../../constant/Constants'
+import { SENSOR, FEATURE, CATEGORY, ZONE, ROLE_FEATURE } from '../../constant/Constants'
 import * as Util from '../../util/Util'
 import * as ConfigHelper from './ConfigHelper'
 import * as SensorHelper from '../domain/SensorHelper'
@@ -22,6 +22,46 @@ export const setApp = pi18n => {
 }
 
 /**
+ * サーバ側で所有しない、マジックナンバー（あるいはID相当キー）と名前（ロケール依存、ja/en.jsonから取得）のマップリストを返す
+ * 
+ * @param {*} features 
+ */
+export const getMagicNumberList = (features) => {
+  const retMap = {}
+
+  retMap.categoryType = setOptionMap(CATEGORY.getTypes(true))
+  retMap.sensor = setOptionMap(getSensorAllOptions())
+  retMap.locationType = setOptionMap(getLocationTypeOptions())
+  retMap.zoneType = setOptionMap(ZONE.getOptions())
+  retMap.roleFeatureMode = setOptionMap(ROLE_FEATURE.getModeOptions())
+  retMap.featureType = setOptionMap(FEATURE.getTypeOptions())
+
+  const modeAll = ROLE_FEATURE.getAllAuthorizationOption()
+  retMap.roleFeatureModeMatch = {
+    '0': i18n.tnl('label.allRejection'),
+    [modeAll.value.toString()]: modeAll.text,
+  }
+
+  retMap.featureName = {}
+  features.forEach(feature => retMap.featureName[feature.featureName.toLowerCase()] = i18n.tnl(`label.${feature.featureName}`))
+
+  return retMap
+}
+
+/**
+ * options配列から、所定のオブジェクトにvalue:textのマップをセットして返す。
+ * valueがnullのとき'0'にセット
+ * 
+ * @param {*} options 
+ * @param {*} obj 
+ */
+const setOptionMap = (options) => {
+  const obj = {}
+  options.forEach(option => obj[option.value? option.value.toString(): '0'] = option.text)
+  return obj
+}
+
+/**
  * EXBの選択肢を取得する。
  * @method
  * @param {Boolean} isBlank true:未選択状態の文言を空欄にする/false:「通常」表記にする
@@ -32,6 +72,18 @@ export const getExbOptions = (isBlank = false) => {
     sensor => i18n.tnl('label.' + sensor.sensorName),
     {value: null, text: isBlank? i18n.tnl('label.null'): i18n.tnl('label.normal')},
     sensor => APP.EXB.SENSOR.includes(sensor.sensorId)
+  )
+}
+
+/**
+ * センサーの全選択肢を返す
+ * 
+ * @param {*} isBlank 
+ */
+export const getSensorAllOptions = (isBlank = false) => {
+  return StateHelper.getOptionsFromState('sensor',
+    sensor => i18n.tnl('label.' + sensor.sensorName),
+    {value: null, text: isBlank? i18n.tnl('label.null'): i18n.tnl('label.normal')},
   )
 }
 

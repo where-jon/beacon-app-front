@@ -12,6 +12,7 @@ import * as BrowserUtil from '../../util/BrowserUtil'
 import * as Util from '../../util/Util'
 import * as AppServiceHelper from '../dataproc/AppServiceHelper'
 import * as ConfigHelper from '../dataproc/ConfigHelper'
+import * as OptionHelper from '../dataproc/OptionHelper'
 import * as HttpHelper from './HttpHelper'
 import * as LocaleHelper from './LocaleHelper'
 import * as LocalStorageHelper from './LocalStorageHelper'
@@ -123,6 +124,13 @@ export const getUserInfo = async (tenantAdmin) => {
   return {tenant, tenantFeatureList, user, featureList, menu, currentRegion, setting}
 }
 
+export const storeMagicNumberList = async () => {
+  await StateHelper.load('features')
+  const retMap = OptionHelper.getMagicNumberList(store.state.app_service.features)
+  Util.debug(retMap)
+  await HttpHelper.putAppService('/core/region/storeMagicNumberList', retMap)
+}
+
 /**
  * 設定情報をリセットする。
  * @method
@@ -186,6 +194,9 @@ export const authByAppService = async (loginId, password, success, err) => {
     success()
     LocaleHelper.setLocale(LocaleHelper.getLocale())
     store.commit('setLang', LocaleHelper.getLocale(BrowserUtil.getLangShort()))
+
+    // send magic number list (id and locale name)
+    await storeMagicNumberList()
 
   } catch (e) {
     console.error(e)
