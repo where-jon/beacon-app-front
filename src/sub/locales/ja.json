@@ -1479,6 +1479,8 @@
     "bulkCoordinatesOnlyFailed": "{col}（{value}）はゾーン（区画）でのみ登録できます。",
     "bulkSystemUniqueFailed": "{col}（{value}）で設定されているシステムカテゴリは、同一エリアでの重複使用はできません。",
     "bulkNotExistFailed": "{col}（{value}）は使用できません。",
+    "bulkHeaderFailed": "ヘッダに{col}は必須です。",
+    "bulkHeaderDisallowFailed": "ヘッダに{col}は使用できません。",
 
     "monthDayTemperature": "{month}月{day}日の温湿度 ({name}{description})",
     "invalidLoginId": "ログインIDは英数記号を指定してください。",
