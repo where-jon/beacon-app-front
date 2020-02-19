@@ -29,12 +29,12 @@ export const setApp = pi18n => {
 export const getMagicNumberList = (features) => {
   const retMap = {}
 
-  retMap.categoryType = setOptionMap(CATEGORY.getTypes(true))
-  retMap.sensor = setOptionMap(getSensorAllOptions())
-  retMap.locationType = setOptionMap(getLocationTypeOptions())
-  retMap.zoneType = setOptionMap(ZONE.getOptions())
-  retMap.roleFeatureMode = setOptionMap(ROLE_FEATURE.getModeOptions())
-  retMap.featureType = setOptionMap(FEATURE.getTypeOptions())
+  retMap.categoryType = createOptionMap(CATEGORY.getTypes(true))
+  retMap.sensor = createOptionMap(getSensorAllOptions())
+  retMap.locationType = createOptionMap(getLocationTypeOptions())
+  retMap.zoneType = createOptionMap(ZONE.getOptions())
+  retMap.roleFeatureMode = createOptionMap(ROLE_FEATURE.getModeOptions())
+  retMap.featureType = createOptionMap(FEATURE.getTypeOptions())
 
   const modeAll = ROLE_FEATURE.getAllAuthorizationOption()
   retMap.roleFeatureModeMatch = {
@@ -55,7 +55,7 @@ export const getMagicNumberList = (features) => {
  * @param {*} options 
  * @param {*} obj 
  */
-const setOptionMap = (options) => {
+const createOptionMap = (options) => {
   const obj = {}
   options.forEach(option => obj[option.value? option.value.toString(): '0'] = option.text)
   return obj
