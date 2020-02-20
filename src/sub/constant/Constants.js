@@ -87,12 +87,12 @@ export const BULK = {
     TX: { ALLOW: ['updateKey'], DISALLOW: ['threshold1'] },
     LOCATION: { ALLOW: ['updateKey', 'ID', 'locationName', 'txViewType'] },
     POT: { ALLOW: ['updateKey', 'ID', 'potName', 'potType'] },
-    CATEGORY: { ALLOW: ['updateKey', 'ID', 'categoryName', 'categoryTypeName', 'color', 'bgColor', 'shape' ] },
-    AUTH_CATEGORY: { ALLOW: ['updateKey', 'ID', 'categoryName', 'categoryTypeName', 'color', 'bgColor', 'shape' ] },
+    CATEGORY: { ALLOW: ['updateKey', 'ID', 'categoryName', 'categoryType', 'color', 'bgColor', 'shape' ] },
+    AUTH_CATEGORY: { ALLOW: ['updateKey', 'ID', 'categoryName', 'categoryType', 'color', 'bgColor', 'shape' ] },
     GROUP: { ALLOW: ['updateKey', 'ID', 'groupName', 'color', 'bgColor', 'shape'] },
     USER: { ALLOW: ['updateKey', 'loginId', 'roleName'], DISALLOW: ['potName'] },
     ROLE: { ALLOW: ['updateKey', 'roleName'], DISALLOW: ['loginId'] },
-    ROLE_FEATURE: { ALLOW: ['updateKey', 'modeText'] },
+    ROLE_FEATURE: { ALLOW: ['updateKey', 'mode'] },
     ZONE: { ALLOW: ['updateKey', 'ID', 'zoneName'] },
   }
 }

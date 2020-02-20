@@ -57,7 +57,7 @@ export default {
     getFields(){
       return ViewHelper.addLabelByKey(this.$i18n, this.createIdColumn()
         .concat([
-          this.getUseExbType()? {key: 'exbTypeName', label:'exbType', sortable: true,}: null,
+          this.getUseExbType()? {key: 'exbType', label:'exbType', sortable: true,}: null,
           {key: 'sensorNames', label:'type', sortable: true,},
           {key: 'locationName', label:'locationName', sortable: true,},
           {key: 'areaName', label:'area', sortable: true,},

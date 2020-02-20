@@ -60,11 +60,10 @@ export default {
   },
   methods: {
     onRestruct(entity, dummyKey){
-      const zoneType = ZONE.getOptions().filter(option => APP.ZONE.TYPES.includes(option.value)).find(option => option.text == entity.zoneTypeName)
+      const zoneType = ZONE.getOptions().filter(option => APP.ZONE.TYPES.includes(option.value)).find(option => option.text == entity.zoneType)
       if(!zoneType) {
-        BulkHelper.addInvalid(entity, 'zoneType', entity.zoneTypeName)
+        entity.zoneType = 0
       } else {
-        entity.zoneTypeName = null
         entity.zoneType = zoneType.value
       }
       if(Util.hasValue(entity.areaName)) {

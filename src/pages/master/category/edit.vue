@@ -10,7 +10,7 @@
           <input v-model="form.categoryCd" :readonly="!isEditable" type="text" maxlength="20" class="form-control">
         </b-form-group>
         <b-form-group>
-          <label v-t="'label.' + categoryTypeName" />
+          <label v-t="'label.' + categoryNameByType" />
           <input v-model="form.categoryName" :readonly="!isEditable" type="text" maxlength="40" class="form-control" required>
         </b-form-group>
         <b-form-group v-if="!pName && pTypeList.length > 1">
@@ -165,7 +165,7 @@ export default {
     dispName() {
       return StringUtil.concatCamel('category', this.pName)
     },
-    categoryTypeName() {
+    categoryNameByType() {
       return StringUtil.concatCamel(this.pName, 'categoryName')
     },
     extValue() {
