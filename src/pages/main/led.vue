@@ -208,7 +208,8 @@ export default {
       const timerKey = 'led-' + entity[0].deviceid
       if(APP.SENSOR.LED.AUTO_OFF_TIME > 0) {
         if(this.lightOnCandidate) {
-          this.pushTimer(timerKey, APP.SENSOR.LED.AUTO_OFF_TIME * 1000, () => EXCloudHelper.postLed(this.createEntity(false)))
+          const req = this.createEntity(false)
+          this.pushTimer(timerKey, APP.SENSOR.LED.AUTO_OFF_TIME * 1000, () => EXCloudHelper.postLed(req))
         } else {
           this.popTimer(timerKey)
         }
