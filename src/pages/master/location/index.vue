@@ -49,7 +49,7 @@ export default {
       return ViewHelper.addLabelByKey(this.$i18n, [ 
         {key: 'ID', label: 'id', sortable: true },
         {key: 'locationName', sortable: true },
-        this.isShowLocationType()? {key: 'locationTypeName', label: 'locationType', sortable: true }: null,
+        this.isShowLocationType()? {key: 'locationType', label: 'locationType', sortable: true }: null,
         {key: 'areaName', label:'area', sortable: true },
         {key: 'x', label:'locationX', sortable: true },
         {key: 'y', label:'locationY', sortable: true }

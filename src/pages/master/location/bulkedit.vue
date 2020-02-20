@@ -111,10 +111,9 @@ export default {
       }
       entity.locXName = entity.xName
       entity.locYName = entity.yName
-      const locationTypeTarget = OptionHelper.getLocationTypeOptions().find(val => val.text == entity.locationTypeName)
+      const locationTypeTarget = OptionHelper.getLocationTypeOptions().find(val => val.text == entity.locationType)
       if(locationTypeTarget){
         entity.locationType = locationTypeTarget.value
-        delete entity.locationTypeName
       }
       try{
         entity.txViewType = Util.hasValue(entity.txViewType)? JSON.parse(entity.txViewType): null
