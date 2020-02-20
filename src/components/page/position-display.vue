@@ -143,7 +143,8 @@ export default {
         await Promise.all(this.loadStates.map(StateHelper.load))
         // positionデータ取得
         await PositionHelper.storePositionHistory(null, true, true)
-        this.replaceAS({positions: PositionHelper.getPositions(false, false, true, null, null, null, null)})
+        const positions = PositionHelper.getPositions(false, false, true, null, null, null, null).filter(p => p.tx && p.tx.disp==1)
+        this.replaceAS({positions: positions})
 
         if (Util.hasValue(APP.POS.PROHIBIT_ALERT)
           && (Util.hasValue(APP.POS.PROHIBIT_GROUP_ZONE)||Util.hasValue(APP.POS.LOST_GROUP_ZONE))) {
