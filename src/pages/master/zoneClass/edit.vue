@@ -244,6 +244,9 @@ export default {
       }
       ExtValueHelper.getExtValueKeys(APP.ZONE).forEach(key => entity.extValue[key] = this.form[key])
       if(this.form.categoryId) {
+        if (!entity.zoneCategoryList) {
+          entity.zoneCategoryList = []
+        }
         entity.zoneCategoryList.push({ zoneCategoryPK: {zoneId: zoneId, categoryId: this.form.categoryId} })
       }
       return await AppServiceHelper.bulkSave(this.pAppServicePath, [entity])
