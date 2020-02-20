@@ -1456,6 +1456,7 @@
     "csvDataRequired": "CSVファイルにデータがありません。",
     "csvSameKey": "CSVファイルに重複する更新データがあります。",
     "csvInvalidLine": "CSVファイルに不正なデータがあります。",
+    "csvNotEnoughColumnsLine": "CSVファイルに列数が不足しているデータがあります。",
     "csvNotFound": "選択したCSVファイルが存在しません。",
     "csvNotMatchCharset": "CSVファイルの文字コードが異なります。",
     "csvForMatchCharset": "「{charset}」を指定してください。",
