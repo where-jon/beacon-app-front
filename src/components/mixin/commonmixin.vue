@@ -148,7 +148,7 @@ export default {
     defaultSortCompare(a, b, key) {
       return StringUtil.sortByString(a[key], b[key], LocaleHelper.getSystemLocale())
     },
-    refreshTimer(key, time, func) {
+    refreshTimer(key, time, func) { // TODO: ロジックが冗長、命名も不適切。要リファクタリング
       const now = (new Date()).getTime()
       return this.$store.state.main.timers.filter(timer => {
         if(key && timer.key == key) {
