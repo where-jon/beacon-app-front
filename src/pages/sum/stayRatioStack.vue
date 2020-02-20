@@ -41,7 +41,7 @@
               <span class="graph-arrow-box">
                 {{ bar.name ? bar.name : $i18n.tnl('label.absence') }} <br>
                 {{ bar.time }} <br>
-                {{ bar.startTime }} ～ {{ bar.endTime }}
+                {{ bar.ratio }}%
               </span>&nbsp;
             </div>
             <br>
@@ -219,23 +219,27 @@ export default {
             const color = this.getStackColor(s.stackId)
             return {
               name: s.stack,
-              style: `width: ${ratio}% !important; background: ${color};`
+              style: `width: ${ratio}% !important; background: ${color};`,
+              time: DateUtil.toHHmm(s.period),
+              ratio
             }
           })
           // 不在追加
           if(total - stayTime > 0){
-            const ratio = (total-stayTime)/total*100
+            const ratio = Math.floor((total-stayTime)/total*100)
             const color = ColorUtil.colorCd4display(this.otherColor)
             graph.push({
-              style: `width: ${ratio}% !important;`
+              style: `width: ${ratio}% !important;`,
+              time: DateUtil.toHHmm(total-stayTime),
+              ratio
             })
           }
           return {
             name: stayTimes[0].axis,
             groupName: this.getGroupName(stayTimes[0].axisId),
             graph,
-            stayTime: DateUtil.convertToTime(stayTime, true),
-            lostTime: DateUtil.convertToTime(total - stayTime, true)
+            stayTime: DateUtil.toHHmm(stayTime),
+            lostTime: DateUtil.toHHmm(total - stayTime)
           }
         })
 
