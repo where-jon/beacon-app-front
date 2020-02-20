@@ -110,7 +110,6 @@ export default {
     }
   },
   async created() {
-    // Promise.all(['areas','area','exbs','txs','zones'].map(StateHelper.load))
   },
   mounted() {
     this.form.mapConfig = this.mapConfigTypes[0].value
@@ -172,11 +171,8 @@ export default {
     onBeforeReload(){
     },
     async onSaved(){
-      // StateHelper.setForceFetch('tx', true)
-      // StateHelper.setForceFetch('exb', true)
-      // StateHelper.setForceFetch('zone', true)
-      // await StateHelper.load('areas', true)
       this.$set(this.form, 'areaCd', MasterHelper.createMasterCd('area', this.areas, this.area))
+      this.$store.commit('main/replaceMain', {selectedArea: null})
     },
     beforeSubmit(again){
       if(this.mapUpdate){

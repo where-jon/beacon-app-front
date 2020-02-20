@@ -60,12 +60,6 @@ export default {
         return ret
       }).filter(val => val)
     },
-    async createListParams(){
-      // await Promise.all(['sensor'].map(state => StateHelper.load(state)))
-      const retMap = { sensor: {} }
-      this.sensorOptionsTx.forEach(option => retMap.sensor[option.value? option.value.toString(): '0'] = option.text)
-      return retMap
-    },
     editResponse(data) {
       data.forEach(val => {
         val.sensorNames = Util.getValue(val, 'sensorNames', '').split(BULK.SPLITTER)
@@ -85,7 +79,6 @@ export default {
       )
     },
     async onSaved(){
-      // StateHelper.setForceFetch('pot', true)
     },
     convBeforeEdit(tx) {
       if (tx.disp != null) {

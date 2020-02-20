@@ -45,11 +45,10 @@ export default {
     }
   },
   async created() {
-    // await StateHelper.load('zone')
   },
   methods: {
     async onSaving() {
-      await this.$refs.bulkEdit.bulkSave({numberList: ['posId', 'x', 'y'], nullableList: ['posId', 'x', 'y']})
+      await this.$refs.bulkEdit.bulkSave({numberList: ['x', 'y'], nullableList: ['x', 'y']})
     },
     restructExb(entity, dummyKey){
       ['deviceId', 'deviceIdX'].forEach(key => {
@@ -112,10 +111,9 @@ export default {
       }
       entity.locXName = entity.xName
       entity.locYName = entity.yName
-      const locationTypeTarget = OptionHelper.getLocationTypeOptions().find(val => val.text == entity.locationTypeName)
+      const locationTypeTarget = OptionHelper.getLocationTypeOptions().find(val => val.text == entity.locationType)
       if(locationTypeTarget){
         entity.locationType = locationTypeTarget.value
-        delete entity.locationTypeName
       }
       try{
         entity.txViewType = Util.hasValue(entity.txViewType)? JSON.parse(entity.txViewType): null

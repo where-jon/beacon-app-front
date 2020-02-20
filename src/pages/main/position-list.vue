@@ -74,7 +74,6 @@ export default {
       prohibitDetectList : null,
       showDismissibleAlert: false,
       count: 0, // mockテスト用
-      // loadStates: ['tx', 'exb', 'location', 'area'],
       loadStates: [],
       positionList: [],
     }

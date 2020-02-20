@@ -51,8 +51,6 @@ export default {
     ]),
   },
   async created() {
-    // await Promise.all(['category', 'sensor', 'location', 'area', 'tx', 'exb'].map(StateHelper.load))
-    // await Promise.all([].map(StateHelper.load))
   },
   mounted() {
     this.sensorChange(this.selectedSensor)

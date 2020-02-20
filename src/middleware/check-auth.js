@@ -108,4 +108,10 @@ export default function (context) {
       context.app.router.push(APP.MENU.LOGIN_PAGE)
     }
   }
+
+  // マスタのキャッシュ時間を過ぎた場合、再ロード
+  if (new Date().getTime() - context.store.state.app_service.lastMasterFetchTime > APP.SYS.STATE_EXPIRE_TIME) {
+    MasterHelper.loadMaster()
+  }
+
 }

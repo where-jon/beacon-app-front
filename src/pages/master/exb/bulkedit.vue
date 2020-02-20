@@ -58,14 +58,10 @@ export default {
         }
       }
 
-      if(Util.hasValue(entity.exbType)) {
+      if(Util.hasValue(entity.exbType)) { // TODO: 要動作確認
         const target = EXB.getTypes().find(val => val.text == entity.exbType)
         if(target){
           entity.exbType = target.value
-        }
-        else{
-          entity.exbTypeName = entity.exbType
-          entity.exbType = null
         }
       }
       if(Util.hasValue(entity.sensorNames)) {

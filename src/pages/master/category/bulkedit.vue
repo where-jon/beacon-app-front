@@ -65,7 +65,6 @@ export default {
     }
   },
   async created() {
-    // await StateHelper.load('category')
   },
   methods: {
     restructZone(entity, dummyKey){
@@ -95,8 +94,8 @@ export default {
         Util.setValue(entity, 'display.color', entity.color)
         Util.setValue(entity, 'display.bgColor', entity.bgColor)
       }
-      if(Util.hasValue(entity.categoryTypeName)){
-        const categoryType = this.categoryTypes.find(type => type.text == entity.categoryTypeName)
+      if(Util.hasValue(entity.categoryType)){
+        const categoryType = this.categoryTypes.find(type => type.text == entity.categoryType)
         entity.categoryType = categoryType? categoryType.value: 0
       }
       ExtValueHelper.copyToChild(entity, APP.CATEGORY)
@@ -105,9 +104,6 @@ export default {
       return dummyKey
     },
     async onSaved(){
-      // StateHelper.setForceFetch('pot', true)
-      // StateHelper.setForceFetch('tx', true)
-      // StateHelper.setForceFetch('zone', true)
     },
   }
 }

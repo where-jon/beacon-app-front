@@ -21,7 +21,7 @@ export const APP = { // 機能面に関する設定
   },
   SYS: {
     TIMEOUT: 60 * 60 * 1000, // session timeout(using local storage)
-    STATE_EXPIRE_TIME: 10 * 60 * 1000, // マスタキャッシュ有効時間(ミリ秒)
+    STATE_EXPIRE_TIME: 3 * 60 * 1000, // マスタキャッシュ有効時間(ミリ秒)
   },
   MENU: {
     SHOW_MENU_LINK: '',
@@ -150,6 +150,7 @@ export const APP = { // 機能面に関する設定
   POT: {
     WITH: ['thumbnail', 'category', 'user', 'ruby', 'description'],
     MULTI_TX: false,         // 複数Tx使用
+    CSV_USER: false,
     TX_MAX: 2,   // 所持Tx最大数
     TYPES: [1, 2, 3],   // 選択可能な種別（1人,2物,3物(その他)）
     // 拡張項目定義（サンプル）
@@ -278,7 +279,7 @@ export const APP = { // 機能面に関する設定
     POWER_LEVEL_WARN: 30,  // 電池レベルで減少とみなす下限値
   },
   SENSOR_LIST: {
-    WITH: ['posId', 'deviceId', 'deviceIdX'],
+    WITH: ['deviceId', 'deviceIdX'],
   },
   SENSORGRAPH: {
     SENSOR: [1,2,3,4,5,6,7,8,9],        // グラフで利用するセンサー一覧
@@ -582,7 +583,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   TXMEDITAG_POPUP_SIZE: 230, // TXMEDITAG表示ポップアップの高さ
 
   POSITION_HISTORY: {
-    HEADERS: ['potName', 'major', 'minor', 'deviceId', 'locationName', 'posId', 'areaName'], // 位置表示履歴の表示カラム
+    HEADERS: ['potName', 'major', 'minor', 'deviceId', 'locationName', 'areaName'], // 位置表示履歴の表示カラム
   },
 
   GATEWAY: { // ゲートウエイ
@@ -618,7 +619,8 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
 
   // 位置表示（全体）
   POS_STACK: {
-    TYPE: 1// 表示方法
+    TYPE: 1, // 表示方法
+    ZONE_OTHER: true // ゾーンその他を表示する
   },
 }
 
@@ -675,11 +677,10 @@ export const Tx = [
 ]
 
 export const MSTEAMS_APP = {
-  IS_COOPERATION: false,
+  IS_COOPERATION: true,
   // APP_ID: 'fcfc143f-c8c8-454e-ab72-fdf2e49f862f',
   // REDIRECT_URL: 'https://xxx.saas.msteams.exbeacon.com/azlogin/adminend/',
-  // REDIRECT_URL: 'https://msteams.dev.exbeacon.com/azlogin/end/',
-  REDIRECT_URL: 'https://msteams.dev.exbeacon.com/azlogin/end/',
+  REDIRECT_URL: 'http://localhost:3000/azlogin/end/',
   APP_ID: 'dd3ea682-9b02-49ec-9d15-c63cee38c792',
   ADMINCONSENT_URL_BASE: 'https://login.microsoftonline.com/common/adminconsent',
   AES_KEY: '93361405B57C62DF33873146A7215790256978125098DF0A197CF2'

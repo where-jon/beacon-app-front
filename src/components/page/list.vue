@@ -556,6 +556,7 @@ export default {
       if (!Util.getValue(this.selectedTx, 'btxId', null)) {
         return []
       }
+      if (!this.positionedTxMap) return []
       const ret = SensorHelper.getSensorFromBtxId('meditag', this.positionedTxMap.meditag, this.selectedTx.btxId)
       return ret? [ret]: []
     },
@@ -586,7 +587,6 @@ export default {
     },
   },
   async created() {
-    // await StateHelper.load('region')
   },
   async mounted() {
     const currentArea = LocalStorageHelper.getLocalStorage(KEY.CURRENT.AREA)
@@ -696,8 +696,8 @@ export default {
         this.$parent.$options.methods.clearAction.call(this.$parent, key)
       }
     },
-    async createListParam() {
-      return this.$parent.$options.methods && this.$parent.$options.methods.createListParams? await this.$parent.$options.methods.createListParams.call(this.$parent): {}
+    createListParam(word) {
+      return this.$parent.$options.methods && this.$parent.$options.methods.createListParams? this.$parent.$options.methods.createListParams.call(this.$parent): {}
     },
     async showList() {
       if(!Util.hasValue(this.sortBy)) {
@@ -707,7 +707,7 @@ export default {
       }
       this.showProgress()
       try {
-        const params = await this.createListParam()
+        const params = {...this.createListParam()}
         params.word = this.filter.reg
         params.category = this.selectedCategory
         params.group = this.selectedGroup
@@ -726,7 +726,7 @@ export default {
       this.hideProgress()
     },
     async exportCsv() {
-      const params = await this.createListParam()
+      const params = this.createListParam()
       BrowserUtil.executeFileDL(
         APP_SERVICE.BASE_URL
         + this.params.appServicePath
@@ -747,9 +747,6 @@ export default {
       if(item != null) {
         const masterId = this.compactMode? this.$parent.$options.methods && this.$parent.$options.methods.getEditKey? this.$parent.$options.methods.getEditKey.call(this.$parent, item): item.updateKey: item[this.id]
         entity = await AppServiceHelper.fetch(this.appServicePath, masterId)
-      } else {
-        // masterCdの最大値を算出するために全件データが必要
-        // await StateHelper.load(this.name)
       }
       if (this.$parent.$options.methods && this.$parent.$options.methods.convBeforeEdit) {
         entity = this.$parent.$options.methods.convBeforeEdit.call(this.$parent, entity)
@@ -921,11 +918,6 @@ export default {
       const pageName = this.params.dispName? this.params.dispName: this.params.name
       try {
         await AppServiceHelper.deleteEntity(this.appServicePath, id)
-        // if(this.compactMode) {
-        //   // StateHelper.setForceFetch(this.params.name, true)
-        // } else {
-        //   // await StateHelper.load(this.params.name, true)
-        // }
         await MasterHelper.loadMaster()
         this.message = this.$i18n.tnl('message.deleteCompleted', {target: this.$i18n.tnl('label.' + this.params.name)})
         if(this.$parent.$options.methods && this.$parent.$options.methods.onSaved){

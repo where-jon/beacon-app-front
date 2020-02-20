@@ -40,7 +40,7 @@ export const loadMaster = async () => {
   const masterAll = await HttpHelper.getAppService('/core/region/masterall')
 
   console.log('parse', new Date())
-  const res = Papa.parse(masterAll)
+  const res = Papa.parse(masterAll, {delimiter: ','})
   if (res.errors.length > 0) {
     res.errors.forEach(e => {
       console.error(e)
@@ -63,6 +63,7 @@ export const loadMaster = async () => {
 
   console.log('end', new Date())
   Util.debug({masters})
+  console.warn({masters})
 }
 
 /**
@@ -73,9 +74,12 @@ export const loadMaster = async () => {
 const buildMasters = (data) => {
   let masters = {}
   let idmaps = {}
+  idmaps['btx'] ={}
+  idmaps['device'] ={}
   let currentMaster
   let currentColumn
   let isData
+
   data.forEach(row => {
     if (row.length == 0) return
 
@@ -192,15 +196,9 @@ const buildMasters = (data) => {
       }
       else {
         if (currentMaster == 'tx') {
-          if (!idmaps['btx']) {
-            idmaps['btx'] ={}
-          }
           idmaps['btx'][row[1]] = obj
         }
         if (currentMaster == 'exb') {
-          if (!idmaps['device']) {
-            idmaps['device'] ={}
-          }
           idmaps['device'][row[1]] = obj
         }
         idmaps[currentMaster][row[0]] = obj
@@ -227,7 +225,7 @@ const convert = (row, colNames) => {
       ret[col] = val
     }
     else if (col.endsWith('Id')) { // loginId以外のIdはNumber
-      ret[col] = Util.hasValue(val)? Number(val): val
+      ret[col] = Util.hasValue(val)? Number(val): null
     }
     else if (col == 'extValue' || col == 'txViewType' || col == 'display') {
       ret[col] = val? jsonParse(col, val): {}
@@ -239,7 +237,7 @@ const convert = (row, colNames) => {
     else if (col.endsWith('Type') || col.endsWith('Ratio') || col.endsWith('Width') || col.endsWith('Height')
       || col.startsWith('threshold') || col.startsWith('adjust')
       || ArrayUtil.equalsAny(col, ['major','minor','x','y','z','w','h','disp','systemUse'])) {
-      ret[col] = Util.hasValue(val)? Number(val): val     
+      ret[col] = Util.hasValue(val)? Number(val): null     
     }
     else {
       ret[col] = val
@@ -409,8 +407,8 @@ const addInfo = (masters) => {
         Util.merge(tx, {
           sensorId: Util.v(tx, 'sensorList.0.sensorId'),
           sensor: i18n.tnl('label.' + Util.v(tx, 'sensorList.0.sensorName', 'normal')),
-          potName: Util.getValue(tx, 'potList.0.potName', ''),
-          locationId: tx.location? tx.location.locationId: null,
+          potName: Util.v(tx, 'potList.0.potName'),
+          locationId: Util.v(tx, 'location.locationId'),
           dispPos: tx.disp & 1,
           dispPir: tx.disp & 2,
           dispAlways: tx.disp & 4,
@@ -430,6 +428,7 @@ const addInfo = (masters) => {
           x: location? Math.round(location.x * 10)/10: null,
           y: location? Math.round(location.y * 10)/10: null,
           areaId: location? location.areaId: null,
+          areaName: location? location.area.areaName: null,
           locationName: location? location.locationName: null,
           sensor: i18n.tnl('label.' + Util.v(exb, 'sensorName', 'normal')),
           isAbsentZone: locationZoneList.some(e => e.categoryName == SYSTEM_ZONE_CATEGORY_NAME.ABSENT),
@@ -557,6 +556,7 @@ const storeCommit = (masters, idmaps) => {
     }
   })
 
+  StateHelper.storeCommit('lastMasterFetchTime', new Date().getTime())
 }
 
 

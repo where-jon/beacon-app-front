@@ -40,8 +40,8 @@ export default {
         fields: ViewHelper.addLabelByKey(this.$i18n, [ 
           {key: 'featureName', sortable: true },
           {key: 'path', sortable: true },
-          {key: 'modeText', label: 'mode', sortable: true },
-          {key: 'featureTypeName', label: 'featureType', sortable: true },
+          {key: 'mode', label: 'mode', sortable: true },
+          {key: 'featureType', label: 'featureType', sortable: true },
           {key: 'version', sortable: true },
           {key: 'actions', thStyle: {width:'130x !important'} }
         ]),
@@ -80,24 +80,10 @@ export default {
     },
   },
   methods: {
-    async createListParams(){
-      await StateHelper.load('feature')
-      const modeAll = ROLE_FEATURE.getAllAuthorizationOption()
-      const retMap = {
+    createListParams() {
+      return {
         roleId: this.role.roleId,
-        modeMatch: {
-          '0': this.$i18n.tnl('label.allRejection'),
-          [modeAll.value.toString()]: modeAll.text,
-        },
-        mode: {},
-        name: {},
-        type: {},
       }
-      ROLE_FEATURE.getModeOptions().forEach(option => retMap.mode[option.value? option.value.toString(): '0'] = option.text)
-
-      this.features.forEach(feature => retMap.name[feature.featureName.toLowerCase()] = this.$i18n.tnl(`label.${feature.featureName}`))
-      FEATURE.getTypeOptions().forEach(option => retMap.type[option.value.toString()] = option.text)
-      return retMap
     },
     getEditKey(item) {
       return item.updateKey.split(BULK.SPLITTER).join('/')

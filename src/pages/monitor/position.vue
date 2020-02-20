@@ -113,7 +113,6 @@ export default {
       this.isLoad = false
     },
     async makePositionRecords(positions) {
-      // await Promise.all(['exb','tx'].map(StateHelper.load))
       return positions.map(e => {
         const tx = this.btxIdMap[e.btxId]
         const exb = this.deviceIdMap[e.deviceId]

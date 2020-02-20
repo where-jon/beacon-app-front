@@ -12,6 +12,7 @@ import * as BrowserUtil from '../../util/BrowserUtil'
 import * as Util from '../../util/Util'
 import * as AppServiceHelper from '../dataproc/AppServiceHelper'
 import * as ConfigHelper from '../dataproc/ConfigHelper'
+import * as OptionHelper from '../dataproc/OptionHelper'
 import * as HttpHelper from './HttpHelper'
 import * as LocaleHelper from './LocaleHelper'
 import * as LocalStorageHelper from './LocalStorageHelper'
@@ -116,7 +117,6 @@ export const getUserInfo = async (tenantAdmin) => {
   // get region
   const currentRegion = await HttpHelper.getAppService('/core/region/current')
   LocalStorageHelper.setLocalStorage(KEY.CURRENT.REGION, currentRegion.regionId)
-  // await StateHelper.load('region', true)
 
   // get setting (again in case failed on init or reload)
   const setting = await HttpHelper.getAppService('/meta/setting/wsByTenant/' + getTenantCd('default') + '/' + getRegionId(currentRegion.regionId))
@@ -125,6 +125,14 @@ export const getUserInfo = async (tenantAdmin) => {
   await MasterHelper.loadMaster()
 
   return {tenant, tenantFeatureList, user, featureList, menu, currentRegion, setting}
+}
+
+export const storeMagicNumberList = async () => {
+  await StateHelper.load('features')
+  await StateHelper.load('sensor')
+  const retMap = OptionHelper.getMagicNumberList(store.state.app_service.features)
+  Util.debug(retMap)
+  await HttpHelper.putAppService('/core/region/storeMagicNumberList', retMap)
 }
 
 /**
@@ -190,6 +198,9 @@ export const authByAppService = async (loginId, password, success, err) => {
     success()
     LocaleHelper.setLocale(LocaleHelper.getLocale())
     store.commit('setLang', LocaleHelper.getLocale(BrowserUtil.getLangShort()))
+
+    // send magic number list (id and locale name)
+    await storeMagicNumberList()
 
   } catch (e) {
     console.error(e)

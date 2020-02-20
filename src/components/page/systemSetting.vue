@@ -262,6 +262,7 @@ export default {
     },
     async onSaved() {
       await this.applyConfig()
+      await AuthHelper.storeMagicNumberList()
       this.showNewForm(false)
     },
     async onBeforeReload(){

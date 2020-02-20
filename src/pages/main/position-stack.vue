@@ -31,8 +31,8 @@
         </b-form-row>
       </b-form>
     </b-row>
-    <position-display v-if="isShow('area')" ref="areaPosition" master-name="area" :alert-data="alertData" />
-    <position-display v-if="isShow('zone')" ref="zonePosition" master-name="zone" :alert-data="alertData" :form="form" />
+    <position-display v-show="isShow('area')" ref="areaPosition" master-name="area" :alert-data="alertData" />
+    <position-display v-show="isShow('zone')" ref="zonePosition" master-name="zone" :alert-data="alertData" :form="form" />
   </div>
 </template>
 
@@ -103,7 +103,6 @@ export default {
     },
   },
   async mounted() {
-    // await StateHelper.load('category')
   },
   methods: {
     isShow(type){

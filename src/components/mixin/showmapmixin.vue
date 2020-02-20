@@ -43,7 +43,6 @@ export default {
   computed: {
   },
   async created() {
-    // await StateHelper.load('area')
     const currentArea = LocalStorageHelper.getLocalStorage(KEY.CURRENT.AREA)
     if(Util.hasValue(currentArea)) {
       this.selectedArea = currentArea

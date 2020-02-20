@@ -28,10 +28,6 @@
                 </template>
               </v-select>
             </b-form-group>
-            <b-form-group v-if="isShown('LOCATION.WITH', 'posId')">
-              <label v-t="'label.posId'" />
-              <input v-model="form.posId" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control" >
-            </b-form-group>
             <b-form-group>
               <label v-t="'label.locationX'" />
               <input v-model="form.x" :readonly="!isEditable" type="number" min="0" max="99999" class="form-control">
@@ -137,7 +133,7 @@ export default {
       useZoneBlock: MenuHelper.isMenuEntry('/master/zoneBlock') && this.isShown('LOCATION.WITH', 'zoneBlock'),
       form: Util.extract(this.$store.state.app_service.location, [
         'locationId', 'locationCd', 'locationType', 'locationName',
-        'areaId', 'posId', 'x', 'y',
+        'areaId', 'x', 'y',
         'txViewType', 'locationZoneList',
         'exbIds', 'txIds', 
         ...ExtValueHelper.getExtValueKeys(APP.LOCATION, true)
@@ -244,7 +240,6 @@ export default {
   },
   async mounted() {
     this.checkWarnOn()
-    // await Promise.all(['area', 'zone', 'exb', 'tx', 'locations'].map(StateHelper.load))
     this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, this.form.areaId)
     if(!Util.hasValue(this.form.locationType)){
       this.form.locationType = Util.getValue(this.locationTypeOptions, '0.value', null)
@@ -321,7 +316,6 @@ export default {
           vertical: this.txIconsVertical
         },
         extValue: {},
-        posId: this.form.posId,
         x: this.form.x,
         y: this.form.y,
         exbIdList: this.form.exbIds,
@@ -338,7 +332,6 @@ export default {
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
     },
     async onSaved(){
-      // await StateHelper.load('locations', true)
       this.$set(this.form, 'locationCd', MasterHelper.createMasterCd('location', this.locations, this.location))
     }
   }

@@ -179,7 +179,7 @@ export default {
       form: {
         ...Util.extract(this.$store.state.app_service.pot,
           ['potId', 'potCd', 'potName', 'potType', 'extValue.ruby',
-            'displayName', 'potGroupList.0.group.groupId', 'potCategoryList',
+            'displayName', 'potGroupList.0.group.groupId', 'potCategoryList.0.category.categoryId',
             'existThumbnail', 'description', ...PotHelper.getPotExtKeys(this.pName, true)])
       },
       userForm: {
@@ -294,7 +294,6 @@ export default {
     },
   },
   async created(){
-    // await StateHelper.load('role')
     this.initForm()
     this.roleOptions = MasterHelper.getOptionsFromState('role', false, true)
 
@@ -326,9 +325,6 @@ export default {
     if(!Util.hasValue(this.form.potCd)){
       this.form.potCd = MasterHelper.createMasterCd('pot', this.pots, this.pot)
     }
-    // StateHelper.load('group')
-    // StateHelper.load('category')
-    // await StateHelper.load('tx')
     this.initPotTxList()
     this.form.potTxList.forEach((potTx, idx) => {
       this.changeTx(this.form.potTxList[idx].txId, idx)
@@ -468,7 +464,6 @@ export default {
       return `d${ids.join('_')}`
     },
     async createDummyUser(dummyLoginId, roles, noEncrypt = USER.ENCRYPT.ON){
-      // await StateHelper.load('role')
       return {
         userId: -1,
         loginId: dummyLoginId,
@@ -498,9 +493,6 @@ export default {
       this.initPotTxList()
     },
     async onSaved(){
-      // StateHelper.setForceFetch('tx', true)
-      // StateHelper.setForceFetch('user', true)
-      // await StateHelper.load('pots', true)
       this.$set(this.form, 'potCd', MasterHelper.createMasterCd('pot', this.pots, this.pot))
     },
     setDummyParam(dummyUser, paramName, showForm){
