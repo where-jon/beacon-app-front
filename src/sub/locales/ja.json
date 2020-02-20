@@ -210,6 +210,20 @@
     "led_device_id": "LED点灯デバイスID",
     "led_no": "LED番号",
 
+    "today": "今日",
+    "week": "週",
+    "schedule": "予定表",
+    "duplicateSchedule": "重複",
+    "planName": "タイトル",
+    "select": "選択",
+    "remove": "削除",
+    "participant": "参加者",
+    "registeredPerson": "登録者",
+    "indicator": "指標",
+    "planNormalMode": "通常モード",
+    "planMeetingRoomMode": "会議室モード",
+    "syncWithOutlook": "outlook同期",
+
     "---------------- App news ---------------":"",
     "news": "お知らせメンテナンス",
     "newsDt":"日付",
@@ -337,6 +351,7 @@
     "sensorName": "センサ名",
     "detectCount": "検知回数",
     "detectedCount": "検知数",
+    "planActualHistory": "予実履歴",
     
     "proximity": "交流",
     "proximityId": "交流ID",
@@ -716,7 +731,10 @@
     "hitoMono": "人・物レコード",
     "sample": "サンプル",
     "adminConsent": "管理者承認",
-    "dummy": ""
+    "dummy": "",
+    "plan": "予定",
+    "planActual": "予実比較",
+    "actual": "実績"
   },
   "config": {
     "APP": {
@@ -1543,6 +1561,9 @@
       "INVALID_TENANT_CONTACT": "連絡先：https://where123.jp/contact/",
       "IF_NOT_SHOWN": "EXOfficeを表示するには以下のサインイン・ボタンをクリックしてください。もしそれでも表示されない場合は、リロードを行ってから実行してください。"
     },
+
+    "alreadyReserved": "既に予約済です。",
+
     "dummy": "" 
   },
   "helpDescription": {
@@ -1571,6 +1592,7 @@
     "stayRatioBaseDownload": "ダウンロードには二種類あり「集計」と「滞在」で異なるデータをダウンロードできます。「集計」では、グラフを除いた全ての滞在列情報がダウンロードできます。「滞在」では、基本データと各時間ごとの滞在詳細情報がダウンロードできます。",
     "regionName": "対象ユーザーがサインイン可能なリージョン名",
 
+    
     "dummy": "" 
   }
 }

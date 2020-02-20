@@ -613,6 +613,17 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     }
   },
 
+  PLAN: {
+    PLAN_COLOR: '#ffffff',
+    PLAN_BG_COLOR: '#0079d6',
+    PLAN_BG_COLOR_DUP: '#ff4040',
+    ACTUAL_IN_PLAN_BG_COLOR: '#1aff1a', // 予定有・利用有 green
+    NO_ACTUAL_IN_PLAN_BG_COLOR: '#ffff80', // 予定有・利用無 yellow
+    ACTUAL_OUT_OF_PLAN_BG_COLOR: '#ff9999', // 予定無・利用有 red
+    NO_ACTUAL_NO_PLAN_BG_COLOR: '#595959', // 予定無・利用無 gray
+    EDIT_PLAN_HEADER_BG_COLOR: '#0078d4',
+  },
+
   POS: {
     EXSERVER: false, // EXServerを使う
   },
