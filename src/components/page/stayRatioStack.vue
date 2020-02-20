@@ -88,9 +88,10 @@ export default {
     alert,
   },
   mixins: [commonmixin],
+  props: ['page'],
   data () {
     return {
-      items: ViewHelper.createBreadCrumbItems('sumTitle', 'stayRatioStack'),
+      items: ViewHelper.createBreadCrumbItems('sumTitle', this.page),
       fields: [
         {key: 'name', sortable: true, label: this.$i18n.tnl('label.potName')},
         {key: 'groupName', sortable: true, label: this.$i18n.tnl('label.groupName') },
