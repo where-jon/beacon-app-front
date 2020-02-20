@@ -129,6 +129,7 @@ export const getUserInfo = async (tenantAdmin) => {
 
 export const storeMagicNumberList = async () => {
   await StateHelper.load('features')
+  await StateHelper.load('sensor')
   const retMap = OptionHelper.getMagicNumberList(store.state.app_service.features)
   Util.debug(retMap)
   await HttpHelper.putAppService('/core/region/storeMagicNumberList', retMap)
