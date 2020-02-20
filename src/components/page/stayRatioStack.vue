@@ -88,7 +88,7 @@ export default {
     alert,
   },
   mixins: [commonmixin],
-  props: ['page'],
+  props: ['page', 'axis', 'stack'],
   data () {
     return {
       items: ViewHelper.createBreadCrumbItems('sumTitle', this.page),
@@ -107,22 +107,13 @@ export default {
         group: null,
         category: null,
       },
-      displayCheckList: {
-        stay: ['stay', 'lost'],
-        category: [],
-        area: [],
-        filter: ['groupName'],
-      },
       message: '',
-      modalMessage: '',
       viewList: [],
-      areaArray: [],
       name: '',
       currentPage: 1,
       perPage: 20,
       sortBy: 'name',
       totalRows: 0,
-      historyType: 'area',
     }
   },
   computed: {
@@ -131,11 +122,7 @@ export default {
       'pots',
       'categories',
       'zones',
-      'areas',
     ]),
-    modalErrorMessage() {
-      return this.modalMessage
-    },
     otherColor() {
       return APP.STAY_SUM.OTHER_COLOR
     },
@@ -158,10 +145,6 @@ export default {
     const date = DateUtil.getDefaultDate()
     this.form.datetimeFrom = DateUtil.getDatetime(date, {date: -1})
     this.form.datetimeTo = DateUtil.getDatetime(date)
-
-    let sortedArea = _.cloneDeep(this.areas)
-    ArrayUtil.sortIgnoreCase(sortedArea, 'areaName')
-    this.areaArray = sortedArea
   },
   async mounted() {
     ViewHelper.importElementUI()
@@ -195,7 +178,7 @@ export default {
           return
         }
 
-        // 人ごとにまとめる
+        // 人・場所ごとにまとめる
         const sum = data.reduce( (sum, obj) => {
           if(!sum[obj.axisId]){
             sum[obj.axisId] = []
@@ -212,37 +195,72 @@ export default {
       const total = (to - from)/1000
 
         // リスト作成
-        this.viewList = sum.map( stayTimes => {
-          const stayTime = _.sumBy(stayTimes, s => s.period )
-          console.log(stayTime)
-          const graph = stayTimes.map(s => {
-            const ratio = Math.floor(s.period / total * 100)
-            const color = this.getStackColor(s.stackId)
+        if(this.stack == "location" || this.stack == "zone" || this.stack == "zoneCategory"){
+          this.viewList = sum.map( stayTimes => {
+            const stayTime = _.sumBy(stayTimes, s => s.period )
+            console.log(stayTime)
+            const graph = stayTimes.map(s => {
+              const ratio = Math.floor(s.period / total * 100)
+              const color = this.getStackColor(s.stackId)
+              return {
+                name: s.stack,
+                style: `width: ${ratio}% !important; background: ${color};`,
+                time: DateUtil.toHHmm(s.period),
+                ratio
+              }
+            })
+            // 不在追加
+            if(total - stayTime > 0){
+              const ratio = Math.floor((total-stayTime)/total*100)
+              const color = ColorUtil.colorCd4display(this.otherColor)
+              graph.push({
+                style: `width: ${ratio}% !important;`,
+                time: DateUtil.toHHmm(total-stayTime),
+                ratio
+              })
+            }
             return {
-              name: s.stack,
-              style: `width: ${ratio}% !important; background: ${color};`,
-              time: DateUtil.toHHmm(s.period),
-              ratio
+              name: stayTimes[0].axis,
+              groupName: this.getGroupName(stayTimes[0].axisId),
+              graph,
+              stayTime: DateUtil.toHHmm(stayTime),
+              lostTime: DateUtil.toHHmm(total - stayTime)
             }
           })
-          // 不在追加
-          if(total - stayTime > 0){
-            const ratio = Math.floor((total-stayTime)/total*100)
-            const color = ColorUtil.colorCd4display(this.otherColor)
-            graph.push({
-              style: `width: ${ratio}% !important;`,
-              time: DateUtil.toHHmm(total-stayTime),
-              ratio
+        }
+        else if(this.stack == "pot"){
+          this.viewList = sum.map( stayTimes => {
+            const stayTime = _.sumBy(stayTimes, s => s.period )
+            console.log(stayTime)
+            const graph = stayTimes.map(s => {
+              const ratio = Math.floor(s.period / total * 100)
+              const color = this.getStackColor(s.stackId)
+              return {
+                name: s.stack,
+                style: `width: ${ratio}% !important; background: ${color};`,
+                time: DateUtil.toHHmm(s.period),
+                ratio
+              }
             })
-          }
-          return {
-            name: stayTimes[0].axis,
-            groupName: this.getGroupName(stayTimes[0].axisId),
-            graph,
-            stayTime: DateUtil.toHHmm(stayTime),
-            lostTime: DateUtil.toHHmm(total - stayTime)
-          }
-        })
+            // 不在追加
+            if(total - stayTime > 0){
+              const ratio = Math.floor((total-stayTime)/total*100)
+              const color = ColorUtil.colorCd4display(this.otherColor)
+              graph.push({
+                style: `width: ${ratio}% !important;`,
+                time: DateUtil.toHHmm(total-stayTime),
+                ratio
+              })
+            }
+            return {
+              name: stayTimes[0].axis,
+              groupName: this.getGroupName(stayTimes[0].axisId),
+              graph,
+              stayTime: DateUtil.toHHmm(stayTime),
+              lostTime: DateUtil.toHHmm(total - stayTime)
+            }
+          })
+        }
 
         this.totalRows = this.viewList.length
       }
@@ -264,10 +282,19 @@ export default {
       // 設定が6色以上ある事が前提
       return DISP.SUM_STACK_COLOR[index % DISP.SUM_STACK_COLOR.length]
     },
-    async getData(form) {
+    async getData(form){
       const param = {}
-      param.axis = 'pot'
-      param.stack = 'location'
+      const from = new Date(form.datetimeFrom).getTime()
+      const to = new Date(form.datetimeTo).getTime()
+      const url = `/core/positionHistory/summary/${from}/${to}/${APP.POSITION_SUMMARY_INTERVAL}/${APP.POSITION_SUMMARY_RECEIVE_COUNT}`
+      const sumData = await HttpHelper.getAppService(url)
+      console.log(sumData)
+      return sumData
+    },
+    async getDataOld(form) {
+      const param = {}
+      param.axis = this.axis
+      param.stack = this.stack
       param.datetimeFrom = new Date(form.datetimeFrom).getTime()
       param.datetimeTo = new Date(form.datetimeTo).getTime()
       param.fillGap = APP.STAY_SUM.AXIS_FILL_GAP

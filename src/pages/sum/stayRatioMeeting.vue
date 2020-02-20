@@ -1,9 +1,9 @@
 <template>
-  <div id="mapContainer" class="container-fluid">
-    <stay-ratio-stack
-      page="stayRatioMeeting"
-    />
-  </div>
+  <stay-ratio-stack
+    page="stayRatioMeeting"
+    axis="zone"
+    stack="pot"
+  />
 </template>
 
 <script>
