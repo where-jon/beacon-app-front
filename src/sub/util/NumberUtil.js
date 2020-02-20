@@ -75,7 +75,7 @@ export const bitON = (target, bit) => {
  * @param {Number} aaa
  * @return {String}
  */
-export const formatTemperature = (temperature, decimalDigits = DISP.THERMOH.TEMPERATURE_DECIMAL_DIGITS) => typeof temperature == 'number'? floorVal(temperature, 1).toFixed(decimalDigits): ''
+export const formatTemperature = (temperature, decimalDigits = DISP.THERMOH.TEMPERATURE_DECIMAL_DIGITS) => typeof temperature == 'number'? floorVal(temperature, 1).toFixed(decimalDigits): temperature
 
 /**
  * 湿度情報をフォーマットする
@@ -83,7 +83,7 @@ export const formatTemperature = (temperature, decimalDigits = DISP.THERMOH.TEMP
  * @param {Number} humidity
  * @return {String}
  */
-export const formatHumidity = humidity => typeof humidity == 'number'? floorVal(humidity, 0): ''
+export const formatHumidity = humidity => typeof humidity == 'number'? floorVal(humidity, 0): humidity
 
 /**
  * 指定した座標が範囲内に存在するか確認する。

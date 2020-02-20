@@ -43,7 +43,7 @@ export const extract = (obj, fields) => {
 
   let ret = {}
   _.forEach(fields, field => {
-    let {val, lastKey} = getValue(obj, field)
+    let {val, lastKey} = getValueWithKey(obj, field)
     ret[lastKey] = val
   })
 
@@ -91,9 +91,9 @@ export const table = (label, log) => {
  * @method
  * @param {...Any} log
  */
-export const debug = function(log) {
+export const debug = (...log) => {
   if (DEV.DEBUG) {
-    console.debug(...arguments)
+    console.log(...log)
   }
 }
 
@@ -114,13 +114,31 @@ export const hasValue = obj => obj != null && obj.length !== 0
 export const hasValueAny = (...obj) => obj.some(val => hasValue(val))
 
 /**
+ * 値が存在する最初の値を返す。
+ * 
+ * @param  {...any} obj 
+ */
+export const firstValue = (...obj) => obj.find(val => hasValue(val))
+
+
+/**
+ * オプジェクトから階層を辿って値を取得する。
+ * 
+ * @param {*} obj 
+ * @param {*} path 
+ * @param {*} def 
+ */
+export const getValue = (obj, path, def = null) =>  getValueWithKey(obj, path, def)
+export const v = (obj, path, def = null) =>  getValueWithKey(obj, path, def)
+
+/**
  * オプジェクトから階層を辿って値を取得する。
  * @method
  * @param {Object} obj
  * @param {String} path オブジェクトのメンバー以下を.でつなげる。配列は添字を使う。
  * @param {*} def 省略すると、値と最後のキー値のペアを返す。省略しないとnullのときdefを返す
  */
-export const getValue = (obj, path, def) => {
+export const getValueWithKey = (obj, path, def) => {
   let pathSpl = path.split('.')
   let val = obj
   let lastKey

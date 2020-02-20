@@ -739,7 +739,6 @@ export default {
         { isActive: true, displayName: this.getLabel('deviceId'), keyName: 'deviceId' },
         { isActive: true, displayName: this.getLabel('deviceIdX'), keyName: 'deviceIdX' },
         { isActive: true, displayName: this.getLabel('locationName'), keyName: 'locationName' },
-        { isActive: true, displayName: this.getLabel('posId'), keyName: 'posId' },
         { isActive: true, displayName: this.getLabel('areaName'), keyName: 'areaName' },
         { isActive: true, displayName: this.getLabel('locationX'), keyName: 'x' },
         { isActive: true, displayName: this.getLabel('locationY'), keyName: 'y' },
@@ -847,7 +846,7 @@ export default {
     },
     positionCsvItems() {
       return [
-        { isActive: true, displayName: this.getLabel('btx_id'), keyName: 'btx_id' },
+        { isActive: true, displayName: this.getLabel('btxId'), keyName: 'btxId' },
         { isActive: true, displayName: this.getLabel('major'), keyName: 'major' },
         { isActive: true, displayName: this.getLabel('minor'), keyName: 'minor' },
         { isActive: true, displayName: this.getLabel('name'), keyName: 'name' },
@@ -941,7 +940,6 @@ export default {
         { isActive: true, displayName: this.getConfig('OPTIONS.POSITION_HISTORY.minor'), keyName: 'minor' },
         { isActive: true, displayName: this.getLabel('deviceId'), keyName: 'exbId' },
         { isActive: true, displayName: this.getConfig('OPTIONS.POSITION_HISTORY.locationName'), keyName: 'locationName' },
-        { isActive: true, displayName: this.getLabel('posId'), keyName: 'posId' },
         { isActive: true, displayName: this.getLabel('area'), keyName: 'areaName' },
         { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'x' },
         { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'y' },
@@ -955,7 +953,6 @@ export default {
         { isActive: true, displayName: this.getLabel('deviceId'), keyName: 'deviceId' },
         { isActive: true, displayName: this.getLabel('deviceIdX'), keyName: 'deviceIdX' },
         { isActive: true, displayName: this.getLabel('locationZoneName'), keyName: 'locationName' },
-        { isActive: true, displayName: this.getLabel('posId'), keyName: 'posId' },
         { isActive: true, displayName: this.getLabel('areaName'), keyName: 'areaName' },
         { isActive: true, displayName: this.getLabel('temperature'), keyName: 'temperature' },
         { isActive: true, displayName: this.getLabel('humidity'), keyName: 'humidity' },

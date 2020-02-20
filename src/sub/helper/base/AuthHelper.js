@@ -17,7 +17,7 @@ import * as HttpHelper from './HttpHelper'
 import * as LocaleHelper from './LocaleHelper'
 import * as LocalStorageHelper from './LocalStorageHelper'
 import * as MenuHelper from '../dataproc/MenuHelper'
-import * as StateHelper from '../dataproc/StateHelper'
+import * as MasterHelper from '../domain/MasterHelper'
 
 let router
 let store
@@ -34,7 +34,7 @@ export const setApp = (pRouter, pStore) => {
 }
 
 /**
- * ログイン認証を行う。
+ * ログイン認証を行う。 TODO: もはやローカルログインは使わないので削除
  * @method
  * @async
  * @param {String} loginId 
@@ -117,10 +117,13 @@ export const getUserInfo = async (tenantAdmin) => {
   // get region
   const currentRegion = await HttpHelper.getAppService('/core/region/current')
   LocalStorageHelper.setLocalStorage(KEY.CURRENT.REGION, currentRegion.regionId)
-  await StateHelper.load('region', true)
 
   // get setting (again in case failed on init or reload)
   const setting = await HttpHelper.getAppService('/meta/setting/wsByTenant/' + getTenantCd('default') + '/' + getRegionId(currentRegion.regionId))
+
+  // get all master
+  await MasterHelper.loadMaster()
+
   return {tenant, tenantFeatureList, user, featureList, menu, currentRegion, setting}
 }
 

@@ -10,6 +10,7 @@ import { APP } from '../../../sub/constant/config'
 import { ZONE, CATEGORY } from '../../../sub/constant/Constants'
 import * as Util from '../../../sub/util/Util'
 import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
+import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -79,10 +80,7 @@ export default {
       })
       return ret
     },
-    onSaved(){
-      StateHelper.setForceFetch('tx', true)
-      StateHelper.setForceFetch('exb', true)
-      StateHelper.setForceFetch('category', true)
+    async onSaved(){
     },
     editResponse(data) {
       data.forEach(val => {

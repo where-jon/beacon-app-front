@@ -34,6 +34,7 @@ import * as Util from '../../sub/util/Util'
 import * as EXCloudHelper from '../../sub/helper/dataproc/EXCloudHelper'
 import * as IconHelper from '../../sub/helper/ui/IconHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import reloadmixin from '../../components/mixin/reloadmixin.vue'
@@ -66,9 +67,6 @@ export default {
     },
     items() {
       return ViewHelper.createBreadCrumbItems('main', 'toiletStatus')
-    },
-    loadStates() {
-      return ['area', 'zone', 'location', 'tx', 'exb']
     },
     imgInfo() {
       return { w: 32, h: 96 }
@@ -142,13 +140,13 @@ export default {
     },
     async fetchSensorData(sensorId, deviceType) {
       const key = deviceType == 'exb'? {
-        pKey: 'exbId', list: this.exbs, front: 'deviceId', server: 'deviceid', detect: 'count' 
+        pKey: 'exbId', list: this.exbs, front: 'deviceId', server: 'deviceId', detect: 'count' 
       }: {
-        pKey: 'txId', list: this.txs, front: 'btxId', server: 'btx_id', detect: 'magnet'
+        pKey: 'txId', list: this.txs, front: 'btxId', server: 'btxId', detect: 'magnet'
       }
 
       const exCloudSensors = await EXCloudHelper.fetchSensor(sensorId)
-      const deviceMap = StateHelper.convertMasterMap(key.front, key.list)
+      const deviceMap = MasterHelper.convertMasterMap(key.front, key.list)
       return exCloudSensors.map(sensor => {
         const device = deviceMap[sensor[key.server]]
         const toiletZone = Util.getValue(device, 'toiletZone', null)
@@ -169,7 +167,6 @@ export default {
     async fetchData(payload){
       try {
         this.showProgress()
-        await Promise.all(this.loadStates.map(state => StateHelper.load(state)))
         const pirDataList = await this.fetchSensorData(SENSOR.PIR, 'exb')
         const magnetDataList = await this.fetchSensorData(SENSOR.MAGNET, 'tx')
         this.dataList = this.mergeToiletData(pirDataList, magnetDataList)

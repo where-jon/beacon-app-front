@@ -34,7 +34,7 @@ export default {
     exbSensors(){
       return [SENSOR.TEMPERATURE]
     },
-    mergeSensors(){
+    mergeSensors(){// FIXME: あとでマージすればいいのでは
       return [SENSOR.TEMPERATURE]
     },
     showHeatmap(){

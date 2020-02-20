@@ -88,6 +88,7 @@ import * as DateUtil from '../../sub/util/DateUtil'
 import * as Util from '../../sub/util/Util'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as ValidateHelper from '../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import * as StayTimeHelper from '../../sub/helper/domain/StayTimeHelper'
@@ -138,9 +139,6 @@ export default {
     },
   },
   async created() {
-    const loadStates = ['pot','area','zone','category','group']
-    await Promise.all(loadStates.map(StateHelper.load))
-
     const date = DateUtil.getDefaultDate()
     this.form.datetimeFrom = DateUtil.getDatetime(date, {date: -3})
     this.form.datetimeTo = DateUtil.getDatetime(date)
@@ -172,7 +170,7 @@ export default {
         this.filterIdOptions = this.zones.map(e => ({value: e.zoneId,label: e.zoneName}))
         break
       case 'zoneCategory':
-        this.filterIdOptions = this.categories.filter(e => e.categoryType == 3).map(e => ({value: e.categoryId, label: StateHelper.getDispCategoryName(e)}))
+        this.filterIdOptions = this.categories.filter(e => e.categoryType == 3).map(e => ({value: e.categoryId, label: MasterHelper.getDispCategoryName(e)}))
         break
       default:
         this.filterIdOptions = []
@@ -226,7 +224,7 @@ export default {
       }
 
       const categoryMap = {}
-      this.categories.forEach(c => categoryMap[c.categoryName] = StateHelper.getDispCategoryName(c))
+      this.categories.forEach(c => categoryMap[c.categoryName] = MasterHelper.getDispCategoryName(c))
       sumData.forEach(data => {
         ['axis', 'stack'].forEach(column => {
           const catName = data[column]

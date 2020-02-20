@@ -45,7 +45,7 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'txs', 'exbs'
+      'txs', 'exbs', 'btxIdMap', 'deviceIdMap'
     ]),
     allCount() {
       return this.positions.length
@@ -57,7 +57,7 @@ export default {
   methods: {
     convertColumnName(name){
       if(name == 'btxId'){
-        return 'btx_id'
+        return 'btxId'
       }
       if(name == 'locationName'){
         return 'finalReceiveLocation'
@@ -76,7 +76,7 @@ export default {
     getCsvHeaders(){
       const ret = {}
       APP.TX_MON.WITH.forEach(val => {
-        ret[this.convertColumnName(val)] = val == 'btxId'? 'btx_id': val
+        ret[this.convertColumnName(val)] = val == 'btxId'? 'btxId': val
       })
       ret['finalReceiveTimestamp'] = 'timestamp'
       ret['state'] = 'state'
@@ -113,10 +113,9 @@ export default {
       this.isLoad = false
     },
     async makePositionRecords(positions) {
-      await Promise.all(['exb','tx'].map(StateHelper.load))
       return positions.map(e => {
-        const tx = this.txs.find(tx => tx.btxId == e.btx_id)
-        const exb = this.exbs.find(exb => exb.deviceId == e.device_id)
+        const tx = this.btxIdMap[e.btxId]
+        const exb = this.deviceIdMap[e.deviceId]
         return {
           ...e,
           name: tx != null ? tx.potName : '—',
@@ -137,7 +136,7 @@ export default {
         }
         const sensorDataList = []
         position.sensorIds.forEach(sensorId => {
-          const mergeData = sensorHistories[`${sensorId}`]? sensorHistories[`${sensorId}`].find(sensorHistory => sensorHistory.btxid == position.btx_id): null
+          const mergeData = sensorHistories[`${sensorId}`]? sensorHistories[`${sensorId}`].find(sensorHistory => sensorHistory.btxId == position.btxId): null
           if(mergeData){
             sensorDataList.push(mergeData)
           }
@@ -155,10 +154,10 @@ export default {
         const sRet = []
         Object.keys(sensorHistories).forEach(key => {
           sensorHistories[key].forEach(sensorHistory => {
-            const tx = this.txs.find(tx => tx.btxId == sensorHistory.btxid)
+            const tx = this.btxIdMap[sensorHistory.btxId]
             sRet.push({
               ...sensorHistory,
-              btx_id: sensorHistory.btxid,
+              btxId: sensorHistory.btxId,
               name: Util.getValue(tx, 'potName', ''),
               powerLevel: this.$refs.monitorTable.getPositionPowerLevelLabel(sensorHistory.power_level),
               finalReceiveTimestamp: this.getTimestamp(EXCloudHelper.getDispTime(sensorHistory)),

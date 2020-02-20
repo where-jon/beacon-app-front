@@ -91,13 +91,14 @@ import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import { APP, DEV } from '../../sub/constant/config'
-import { CATEGORY } from '../../sub/constant/Constants'
+import { POT_TYPE } from '../../sub/constant/Constants'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
 import * as Util from '../../sub/util/Util'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as ValidateHelper from '../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import * as VueSelectHelper from '../../sub/helper/ui/VueSelectHelper'
@@ -184,7 +185,6 @@ export default {
     },
   },
   async created() {
-    await Promise.all(['area', 'category', 'group', 'pot'].map(StateHelper.load))
     this.changeCategory()
     this.changeGroup()
     this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, null, true)
@@ -199,7 +199,7 @@ export default {
   },
   methods: {
     updatePotOption(categoryId, groupId) {
-      this.potOptions = StateHelper.getOptionsFromState('pot', false, true, 
+      this.potOptions = MasterHelper.getOptionsFromState('pot', false, true, 
         pot => pot.potType == POT_TYPE.PERSON && (!categoryId || pot.categoryId == categoryId) && (!groupId || pot.groupId == groupId)
       )
     },

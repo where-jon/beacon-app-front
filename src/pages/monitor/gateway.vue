@@ -30,23 +30,23 @@ export default {
     return {
       items: ViewHelper.createBreadCrumbItems('monitor', 'gateway'),
       fields: ViewHelper.addLabelByKey(this.$i18n, DISP.POS.EXSERVER?[
-        { key: 'deviceid', label: 'deviceId', sortable: true, tdClass: 'action-rowdata'},
+        { key: 'deviceId', label: 'deviceId', sortable: true, tdClass: 'action-rowdata'},
         { key: 'updated', label: 'finalReceiveTimestamp', sortable: true, tdClass: 'action-rowdata'},
         { key: 'state', sortable: true, tdClass: 'action-rowdata'},
       ]:[
         { key: 'num' , label: 'no', sortable: true, tdClass: 'action-rowdata'},
-        { key: 'deviceid', label: 'deviceId', sortable: true, tdClass: 'action-rowdata'},
+        { key: 'deviceId', label: 'deviceId', sortable: true, tdClass: 'action-rowdata'},
         { key: 'updated', label: 'finalReceiveTimestamp', sortable: true, tdClass: 'action-rowdata'},
         { key: 'state'},
       ]),
       gateways: [],
       csvHeaders: DISP.POS.EXSERVER ? {
-        'deviceid': 'deviceid',
+        'deviceId': 'deviceId',
         'updated': 'timestamp',
         'state': 'state',
       } : {
         'num': 'num',
-        'deviceid': 'deviceid',
+        'deviceId': 'deviceId',
         'updated': 'timestamp',
         'state': 'state',
       },

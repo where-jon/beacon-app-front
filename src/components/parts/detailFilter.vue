@@ -123,8 +123,8 @@ export default {
     vueSelected() {
       return ['area', 'category', 'group', 'tx', 'exb', 'pot', 'location', 'zone']
     },
-    loadStates() {
-      return ['area', 'category', 'group', 'tx', 'exb', 'pot', 'location', 'zone', 'sensor']
+    loadStates() { // TODO: 未使用なら削除
+      return []
     },
     numberRangeOption() {
       return [
@@ -150,7 +150,6 @@ export default {
     if(this.popInit()) {
       this.condition = null
     }
-    await Promise.all(this.loadStates.map(state => StateHelper.load(state)))
     ViewHelper.importElementUI()
     this.fetchPlugin()
   },

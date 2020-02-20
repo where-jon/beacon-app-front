@@ -43,7 +43,6 @@ export default {
   computed: {
   },
   async created() {
-    await StateHelper.load('area')
     const currentArea = LocalStorageHelper.getLocalStorage(KEY.CURRENT.AREA)
     if(Util.hasValue(currentArea)) {
       this.selectedArea = currentArea
@@ -99,7 +98,7 @@ export default {
           if (this.stage) {
             this.stage.removeAllChildren()
             this.stage.update()
-            this.$nextTick(async () => await this.fetchData(null, true))
+            this.$nextTick(async () => await this.onChangeAreaDone(null, true))
           }
         }, 200)
       }
@@ -243,7 +242,7 @@ export default {
             this.reset()
           }
           this.selectedArea = val
-          this.fetchData && await this.fetchData()
+          this.onChangeAreaDone && await this.onChangeAreaDone()
         }
         else {
           Util.debug('No mapImage in changeArea.')

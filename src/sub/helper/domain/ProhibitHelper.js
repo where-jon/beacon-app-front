@@ -40,7 +40,7 @@ export const getLostUnDetectList = (position, lostZones) => {
         if( pos.detectState != DETECT_STATE.DETECTED || pos.exb.zoneCd != lostZone.zoneCd) {
           lostUnDetectList.push({
             isLost: true,
-            btxId: pos.btx_id,
+            btxId: pos.btxId,
             minor: pos.minor,
             potName: pos.tx.potName,
             areaName: pos.exb.areaName,
@@ -103,7 +103,7 @@ export const getProhibitDetectList = (position, prohibitZones) => {
       if (group && group.zoneCd.includes(prohibitZone.zoneCd)) {
         if (pos.exb.zoneCd == prohibitZone.zoneCd) {
           detectList.push({
-            btxId: pos.btx_id,
+            btxId: pos.btxId,
             minor: pos.minor,
             potName: pos.tx.potName,
             areaName: pos.exb.areaName,
@@ -125,10 +125,10 @@ export const getProhibitDetectList = (position, prohibitZones) => {
  */
 export const setProhibitDetect = (viewName, vueComponent, positions = []) => {
   const prohibitDetectList = getProhibitDetectList(
-    positions.length > 0 ? positions : PositionHelper.getPositions(), vueComponent.prohibits
+    positions.length > 0 ? positions : PositionHelper.filterPositions(), vueComponent.prohibits
   )
   vueComponent.prohibitDetectList = prohibitDetectList ? prohibitDetectList : null
-  const lostUnDetectList = getLostUnDetectList(PositionHelper.getPositions(),vueComponent.lostZones)
+  const lostUnDetectList = getLostUnDetectList(PositionHelper.filterPositions(),vueComponent.lostZones)
   if(vueComponent.prohibitDetectList){
     vueComponent.prohibitDetectList = lostUnDetectList? prohibitDetectList.concat(lostUnDetectList): vueComponent.prohibitDetectList
   }else{

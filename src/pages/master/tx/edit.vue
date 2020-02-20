@@ -109,6 +109,7 @@ import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
 import * as SensorHelper from '../../../sub/helper/domain/SensorHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import * as VueSelectHelper from '../../../sub/helper/ui/VueSelectHelper'
@@ -154,7 +155,7 @@ export default {
       return APP.TX.MAJOR_REQUIRED
     },
     categoryOptions() {
-      return StateHelper.getOptionsFromState('category', false, true, 
+      return MasterHelper.getOptionsFromState('category', false, true, 
         category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
       )
     },
@@ -205,8 +206,6 @@ export default {
   },
   async mounted() {
     Util.applyDef(this.form, this.defValue)
-    StateHelper.load('sensor')
-    await Promise.all(['category', 'group', 'area', 'location'].map(StateHelper.load))
     this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryOptions, this.form.categoryId)
     this.vueSelected.group = VueSelectHelper.getVueSelectData(this.groupOptions, this.form.groupId)
     this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, this.form.areaId)
@@ -216,7 +215,7 @@ export default {
   },
   methods: {
     getLocationOptions(){
-      return StateHelper.getOptionsFromState('location', false, true, location => location.areaId == this.form.areaId)
+      return MasterHelper.getOptionsFromState('location', false, true, location => location.areaId == this.form.areaId)
     },
     showTx(col) {
       switch(APP.TX.BTX_MINOR) {
@@ -236,8 +235,7 @@ export default {
       this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, null)
       this.vueSelected.location = null
     },
-    onSaved(){
-      StateHelper.setForceFetch('pot', true)
+    async onSaved(){
     },
     async onSaving() {
       const txId = Util.hasValue(this.form.txId)? this.form.txId: -1
@@ -267,8 +265,6 @@ export default {
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
     },
     async getRelatedPot(txId) {
-      StateHelper.setForceFetch('pot', true)
-      await StateHelper.load('pot')
       const randName = () =>  txId + '_' + (new Date().getTime() % 10000)
       const relatedPot = _.find(this.pots, (pot) => pot.potId == this.form.potId)
       const isPotForm = this.form.potId || this.form.categoryId || this.form.groupId

@@ -46,6 +46,7 @@ import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
 import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -98,7 +99,7 @@ export default {
   },
   mounted(){
     if(!Util.hasValue(this.form.groupCd)){
-      this.form.groupCd = StateHelper.createMasterCd('group', this.groups, this.group)
+      this.form.groupCd = MasterHelper.createMasterCd('group', this.groups, this.group)
     }
     ValidateHelper.setCustomValidationMessage()
   },
@@ -111,10 +112,7 @@ export default {
       }
     },
     async onSaved(){
-      StateHelper.setForceFetch('pot', true)
-      StateHelper.setForceFetch('tx', true)
-      await StateHelper.load('groups', true)
-      const groupId = StateHelper.createMasterCd('group', this.groups, this.group)
+      const groupId = MasterHelper.createMasterCd('group', this.groups, this.group)
       this.$set(this.form, 'groupCd', groupId)
     },
     async onSaving() {

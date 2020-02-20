@@ -69,6 +69,7 @@ import { CATEGORY, PATTERN } from '../../../sub/constant/Constants'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
 import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import * as VueSelectHelper from '../../../sub/helper/ui/VueSelectHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
@@ -147,23 +148,25 @@ export default {
     this.initCategoryNames()
   },
   methods: {
-    async initAreaNames() {
-      await StateHelper.load('area')
-      this.areaNames = StateHelper.getOptionsFromState('area', false, true)
+    initAreaNames() {
+      this.areaNames = MasterHelper.getOptionsFromState('area', false, true)
+      let areaId
       if(this.pageSendParam){
-        this.areaId = this.pageSendParam.areaId
+        areaId = this.pageSendParam.areaId
         this.vueSelected.category = VueSelectHelper.getVueSelectData(this.areaNames, this.pageSendParam.areaId)
         this.replaceAS({pageSendParam: null})
       }
       else{
-        this.areaId = this.areaNames[0].value
+        areaId = Util.getValue(this, 'areaNames.0.value')
         this.vueSelected.category = VueSelectHelper.getVueSelectData(this.areaNames, this.areaId)
       }
+      this.$nextTick(() => {
+        this.areaId = areaId
+      })
     },
     async initCategoryNames() {
-      await StateHelper.load('category')
-      this.categoryNames = StateHelper.getOptionsFromState('category',
-        category => StateHelper.getDispCategoryName(category),
+      this.categoryNames = MasterHelper.getOptionsFromState('category',
+        category => MasterHelper.getDispCategoryName(category),
         true, 
         category => !CATEGORY.POT_AVAILABLE.includes(category.categoryType)
       )
@@ -224,11 +227,7 @@ export default {
         this.switchMessageType('showInfo')
         this.isCompleteRegist = true
         // ストア内のゾーンレコードを最新に更新する
-        await StateHelper.load('zone', true)
-        StateHelper.setForceFetch('tx', true)
-        StateHelper.setForceFetch('exb', true)
-        StateHelper.setForceFetch('category', true)
-        StateHelper.setForceFetch('location', true)
+        await MasterHelper.loadMaster()
       } catch (e) {
         e.bulkError = e.response.data
         this.message = ViewHelper.getSubmitErrorMessage(e, this.showLine, this.crud, this.name)
