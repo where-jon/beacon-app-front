@@ -105,7 +105,6 @@ export default {
       },
       vueSelected: {
         group: null,
-        category: null,
       },
       message: '',
       viewList: [],
@@ -131,12 +130,6 @@ export default {
     'vueSelected.group': {
       handler: function(newVal, oldVal){
         this.form.groupId = Util.getValue(newVal, 'value', null)
-      },
-      deep: true,
-    },
-    'vueSelected.category': {
-      handler: function(newVal, oldVal){
-        this.form.categoryId = Util.getValue(newVal, 'value', null)
       },
       deep: true,
     },
@@ -220,18 +213,25 @@ export default {
         const stayTime = posList.length * APP.POSITION_SUMMARY_INTERVAL * 60
         const posGroup = this.sumData(posList, 'exbId')
         console.log('posGroup', posGroup)
-        const graph = posGroup.map(group => {
+        const graph = posGroup.map( group => {
+          const exb = exbMap[group[0].exbId]
+          const zoneName = exb && exb.location && exb.location.zoneList && exb.location.zoneList.length >= 1 ? exb.location.zoneList[0].zoneName : null
+          const time = group.length * APP.POSITION_SUMMARY_INTERVAL * 60
           const ratio = Math.floor(group.length * APP.POSITION_SUMMARY_INTERVAL * 60 / total * 100)
-          const color = this.getStackColor(group[0].exbId)
           return {
-            name: 'exbName',
-            style: `width: ${ratio}% !important; background: ${color};`,
-            time: DateUtil.toHHmm(0),
+            name: zoneName,
+            time: DateUtil.toHHmm(time),
             ratio
           }
         })
+        graph.sort( (a,b) => {
+          return b.ratio - a.ratio
+        })
+        graph.forEach( (g, i) => {
+          const color = this.getStackColor(i)
+          g.style = `width: ${g.ratio}% !important; background: ${color};`
+        })
         // 不在追加
-        /*
         if(total - stayTime > 0){
           const ratio = Math.floor((total-stayTime)/total*100)
           const color = ColorUtil.colorCd4display(this.otherColor)
@@ -240,16 +240,20 @@ export default {
             time: DateUtil.toHHmm(total-stayTime),
             ratio
           })
-        }*/
-        const potName = potMap[posList[0].txId] ? potMap[posList[0].txId].potName : null
+        }
+        const pot = potMap[posList[0].txId]
+        const potName = pot ? pot.potName : null
+        const groupName = pot && pot.group ? pot.group.groupName : null
+        const groupId = pot && pot.group ? pot.group.groupId : null
         return {
           name: potName,
-          groupName: 'group', //this.getGroupName(stayTimes[0].axisId),
+          groupName,
+          groupId,
           graph,
           stayTime: DateUtil.toHHmm(stayTime),
           lostTime: DateUtil.toHHmm(total - stayTime)
         }
-      }).filter(view => view.name != null)
+      }).filter(view => view.name != null && (view.groupId == this.form.groupId || !this.form.groupId))
     },
     createZoneGraph(baseData) {
       const potMap = this.getPotMap()
