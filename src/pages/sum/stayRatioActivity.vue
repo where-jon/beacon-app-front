@@ -1,8 +1,7 @@
 <template>
   <stay-ratio-stack
     page="stayRatioActivity"
-    axis="pot"
-    stack="zone"
+    type="pot"
   />
 </template>
 

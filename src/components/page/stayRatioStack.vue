@@ -88,7 +88,7 @@ export default {
     alert,
   },
   mixins: [commonmixin],
-  props: ['page', 'axis', 'stack'],
+  props: ['page', 'type'],
   data () {
     return {
       items: ViewHelper.createBreadCrumbItems('sumTitle', this.page),
@@ -178,88 +178,12 @@ export default {
           return
         }
 
-        // 人・場所ごとにまとめる
-        const sum = data.reduce( (sum, obj) => {
-          if(!sum[obj.axisId]){
-            sum[obj.axisId] = []
-          }
-          sum[obj.axisId].push(obj)
-          return sum
-        }, [])
-        console.log('sum', sum)
-
-        console.log('pots', this.pots)
-
-      const from = new Date(this.form.datetimeFrom).getTime()
-      const to = new Date(this.form.datetimeTo).getTime()
-      const total = (to - from)/1000
-
-        // リスト作成
-        if(this.stack == "location" || this.stack == "zone" || this.stack == "zoneCategory"){
-          this.viewList = sum.map( stayTimes => {
-            const stayTime = _.sumBy(stayTimes, s => s.period )
-            console.log(stayTime)
-            const graph = stayTimes.map(s => {
-              const ratio = Math.floor(s.period / total * 100)
-              const color = this.getStackColor(s.stackId)
-              return {
-                name: s.stack,
-                style: `width: ${ratio}% !important; background: ${color};`,
-                time: DateUtil.toHHmm(s.period),
-                ratio
-              }
-            })
-            // 不在追加
-            if(total - stayTime > 0){
-              const ratio = Math.floor((total-stayTime)/total*100)
-              const color = ColorUtil.colorCd4display(this.otherColor)
-              graph.push({
-                style: `width: ${ratio}% !important;`,
-                time: DateUtil.toHHmm(total-stayTime),
-                ratio
-              })
-            }
-            return {
-              name: stayTimes[0].axis,
-              groupName: this.getGroupName(stayTimes[0].axisId),
-              graph,
-              stayTime: DateUtil.toHHmm(stayTime),
-              lostTime: DateUtil.toHHmm(total - stayTime)
-            }
-          })
+        // 人ごとにまとめる
+        if(this.type=='pot'){
+          this.viewList = this.createPotGraph(data)
         }
-        else if(this.stack == "pot"){
-          this.viewList = sum.map( stayTimes => {
-            const stayTime = _.sumBy(stayTimes, s => s.period )
-            console.log(stayTime)
-            const graph = stayTimes.map(s => {
-              const ratio = Math.floor(s.period / total * 100)
-              const color = this.getStackColor(s.stackId)
-              return {
-                name: s.stack,
-                style: `width: ${ratio}% !important; background: ${color};`,
-                time: DateUtil.toHHmm(s.period),
-                ratio
-              }
-            })
-            // 不在追加
-            if(total - stayTime > 0){
-              const ratio = Math.floor((total-stayTime)/total*100)
-              const color = ColorUtil.colorCd4display(this.otherColor)
-              graph.push({
-                style: `width: ${ratio}% !important;`,
-                time: DateUtil.toHHmm(total-stayTime),
-                ratio
-              })
-            }
-            return {
-              name: stayTimes[0].axis,
-              groupName: this.getGroupName(stayTimes[0].axisId),
-              graph,
-              stayTime: DateUtil.toHHmm(stayTime),
-              lostTime: DateUtil.toHHmm(total - stayTime)
-            }
-          })
+        if(this.type=='zone'){
+          this.viewList = this.createZoneGraph(data)
         }
 
         this.totalRows = this.viewList.length
@@ -271,12 +195,151 @@ export default {
         this.hideProgress()
       }
     },
+    sumData(data, type){
+      return data.reduce( (sum, obj) => {
+        const key = obj[type]
+        if(!sum[key]){
+          sum[key] = []
+        }
+        sum[key].push(obj)
+        return sum
+      }, []).filter(d => d[type] == null)
+    },
+    createPotGraph(data) {
+      const sum = this.sumData(data, 'txId')
+      console.log('sum', sum)
+
+      const potMap = this.getPotMap()
+      const exbMap = this.getExbMap()
+
+      const from = new Date(this.form.datetimeFrom).getTime()
+      const to = new Date(this.form.datetimeTo).getTime()
+      const total = (to - from)/1000
+      
+      return sum.map( posList => {
+        const stayTime = posList.length * APP.POSITION_SUMMARY_INTERVAL * 60
+        const posGroup = this.sumData(posList, 'exbId')
+        console.log('posGroup', posGroup)
+        const graph = posGroup.map(group => {
+          const ratio = Math.floor(group.length * APP.POSITION_SUMMARY_INTERVAL * 60 / total * 100)
+          const color = this.getStackColor(group[0].exbId)
+          return {
+            name: 'exbName',
+            style: `width: ${ratio}% !important; background: ${color};`,
+            time: DateUtil.toHHmm(0),
+            ratio
+          }
+        })
+        // 不在追加
+        /*
+        if(total - stayTime > 0){
+          const ratio = Math.floor((total-stayTime)/total*100)
+          const color = ColorUtil.colorCd4display(this.otherColor)
+          graph.push({
+            style: `width: ${ratio}% !important;`,
+            time: DateUtil.toHHmm(total-stayTime),
+            ratio
+          })
+        }*/
+        const potName = potMap[posList[0].txId] ? potMap[posList[0].txId].potName : null
+        return {
+          name: potName,
+          groupName: 'group', //this.getGroupName(stayTimes[0].axisId),
+          graph,
+          stayTime: DateUtil.toHHmm(stayTime),
+          lostTime: DateUtil.toHHmm(total - stayTime)
+        }
+      }).filter(view => view.name != null)
+    },
+    createZoneGraph(baseData) {
+      const potMap = this.getPotMap()
+      const exbMap = this.getExbMap()
+
+      // zone情報を付与
+      const data = baseData.filter( d => {
+        const exb = exbMap[d.exbId]
+        if(!exb){
+          return false
+        }
+        return exb.location && exb.location.zoneList && exb.location.zoneList.length>=1
+      }).map( d => {
+        const exb = exbMap[d.exbId]
+        const zone = exb.location.zoneList[0]
+        return {...d, zoneId:zone.zoneId, zone}
+      })
+      console.log('data', data)
+
+      const sum = this.sumData(data, 'zoneId')
+      console.log('sum', sum)
+
+      const from = new Date(this.form.datetimeFrom).getTime()
+      const to = new Date(this.form.datetimeTo).getTime()
+      const total = (to - from)/1000
+      
+      return sum.map( posList => {
+        const stayTime = posList.length * APP.POSITION_SUMMARY_INTERVAL * 60
+        const posGroup = this.sumData(posList, 'txId')
+        console.log('posGroup', posGroup)
+
+        // 同一時刻の集計
+        const countMap = {}
+        posList.forEach(pos => {
+          const timestamp = pos.date + Math.floor(pos.timestamp / 100) * 60 * 60 * 1000 + pos.timestamp % 100 * 60 * 1000
+          if(!countMap[timestamp]){
+            countMap[timestamp] = 0
+          }
+          countMap[timestamp]++
+          countMap[timestamp] = Math.min(countMap[timestamp], 6)
+        })
+        console.log(countMap)
+
+
+        const graph = []
+        let i=6
+        while(i-- > 0){
+          const countList = Object.keys(countMap).map(key => { return {key, value:countMap[key]} })
+          const times = countList.filter(c => c.value == i)
+          console.log('times', times)
+          const time = times.length * APP.POSITION_SUMMARY_INTERVAL * 60
+          const ratio = Math.floor(times.length * APP.POSITION_SUMMARY_INTERVAL * 60 / total * 100)
+          const color = this.getStackColor(i)
+          graph.push({
+            name: i,
+            style: `width: ${ratio}% !important; background: ${color};`,
+            time: DateUtil.toHHmm(time),
+            ratio
+          })
+        }
+        const zoneName = posList[0].zone.zoneName
+        const categoryName = posList[0].zone.categoryName
+        return {
+          name: zoneName,
+          groupName: categoryName,
+          graph,
+          stayTime: DateUtil.toHHmm(stayTime),
+          lostTime: DateUtil.toHHmm(total - stayTime)
+        }
+      }).filter(view => view.name != null)
+    },
+    getPotMap() {
+      const potMap = {}
+      this.pots.forEach(pot => {
+        potMap[pot.txIds[0]] = pot
+      })
+      console.log('potMap', potMap)
+      return potMap
+    },
+    getExbMap() {
+      const exbMap = {}
+      this.exbs.forEach(exb => {
+        exbMap[exb.exbId] = exb
+      })
+      console.log('exbMap', exbMap)
+      return exbMap
+    },
     getGroupName(potId) {
       const pot = this.pots.find(p => p.potId == potId)
       return pot && pot.group ? pot.group.groupName : null
-    },
-    isScaleTime(scaleTime) {
-      return _.some(APP.STAY_SUM.SCALE_TIMES, (time) => { return time === scaleTime })
     },
     getStackColor(index) {
       // 設定が6色以上ある事が前提
@@ -287,18 +350,6 @@ export default {
       const from = new Date(form.datetimeFrom).getTime()
       const to = new Date(form.datetimeTo).getTime()
       const url = `/core/positionHistory/summary/${from}/${to}/${APP.POSITION_SUMMARY_INTERVAL}/${APP.POSITION_SUMMARY_RECEIVE_COUNT}`
-      const sumData = await HttpHelper.getAppService(url)
-      console.log(sumData)
-      return sumData
-    },
-    async getDataOld(form) {
-      const param = {}
-      param.axis = this.axis
-      param.stack = this.stack
-      param.datetimeFrom = new Date(form.datetimeFrom).getTime()
-      param.datetimeTo = new Date(form.datetimeTo).getTime()
-      param.fillGap = APP.STAY_SUM.AXIS_FILL_GAP
-      const url = '/office/stayTime/sum?_=' + new Date().getTime() + '&' +  HttpHelper.toParam(param, true)
       const sumData = await HttpHelper.getAppService(url)
       console.log(sumData)
       return sumData
