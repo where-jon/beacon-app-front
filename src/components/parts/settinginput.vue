@@ -3,6 +3,7 @@
     <b-form-select v-if="inputSelect" v-model="inputModel[inputKey]" :options="selectOptions" :form="formId" :required="inputSelect && req" @change="callChangeEvent($event)" />
     <input v-else-if="inputNumber" v-model="inputModel[inputKey]" :pattern="numberPattern" type="text" :maxlength="inputLength" class="form-control form-control-sm" :form="formId" :required="inputNumber && req">
     <input v-else-if="inputNumberList" v-model="inputModel[inputKey]" :pattern="numberListPattern" type="text" :maxlength="inputLength" class="form-control form-control-sm" :form="formId" :required="inputNumberList && req">
+    <input v-else-if="inputPassword" v-model="inputModel[inputKey]" type="password" :maxlength="inputLength" class="form-control form-control-sm" :form="formId" :required="inputNumberList && req">
     <date-picker v-else-if="inputDate" v-model="inputModel[inputKey]" :clearable="false" type="date" :value-format="pattern.date" class="inputform-sm" :required="inputDate && req" />
     <date-picker v-else-if="inputDatetime" v-model="inputModel[inputKey]" :clearable="false" type="datetime" :value-format="pattern.datetime" class="inputform-sm" :required="inputDatetime && req" />
     <time-picker v-else-if="inputTime" v-model="inputModel[inputKey]" :clearable="false" :picker-options="timeOptionInfo" :value-format="pattern.time" class="inputform-sm" :required="inputTime && req" />
@@ -95,6 +96,9 @@ export default {
     },
     inputTime() {
       return SETTING.TIME == this.inputTypeLowerCase
+    },
+    inputPassword() {
+      return SETTING.PASSWORD == this.inputTypeLowerCase
     },
     pattern() {
       return {
