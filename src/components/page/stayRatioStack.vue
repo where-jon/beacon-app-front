@@ -26,8 +26,8 @@
           </b-form-row>
 
           <b-form-row class="mt-3 mb-3">
-            <b-button v-t="'label.display'" type="submit" :variant="theme" @click="display" />
-            <b-button v-t="'label.download'" type="submit" :variant="theme" @click="display" class="ml-2" />
+            <b-button v-t="'label.display'" type="submit" :variant="theme" @click="display(false)" />
+            <b-button v-t="'label.download'" type="submit" :variant="theme" @click="display(true)" class="ml-2" />
           </b-form-row>
         </b-form-group>
       </b-form>
@@ -100,8 +100,8 @@ export default {
         {key: 'lostTime', sortable: false, label: this.$i18n.tnl('label.lostTime') },
       ],
       form: {
-        datetimeFrom: '',
-        datetimeTo: ''
+        datetimeFrom: '2020-02-20 00:00:00',
+        datetimeTo: '2020-02-21 00:00:00'
       },
       vueSelected: {
         group: null,
@@ -113,6 +113,8 @@ export default {
       perPage: 20,
       sortBy: 'name',
       totalRows: 0,
+      potMap: null,
+      exbMap: null
     }
   },
   computed: {
@@ -136,8 +138,11 @@ export default {
   },
   async created() {
     const date = DateUtil.getDefaultDate()
-    this.form.datetimeFrom = DateUtil.getDatetime(date, {date: -1})
-    this.form.datetimeTo = DateUtil.getDatetime(date)
+    // this.form.datetimeFrom = DateUtil.getDatetime(date, {date: -1})
+    // this.form.datetimeTo = DateUtil.getDatetime(date)
+    
+    this.potMap = this.getPotMap()
+    this.exbMap = this.getExbMap()
   },
   async mounted() {
     ViewHelper.importElementUI()
@@ -149,8 +154,7 @@ export default {
     }
   },
   methods: {
-    // 以下表示処理
-    async display() {
+    async display(isDownload) {
       this.container ? this.container.removeAllChildren() : null
       this.replace({showAlert: false})
       this.showProgress()
@@ -179,6 +183,10 @@ export default {
           this.viewList = this.createZoneGraph(data)
         }
 
+        if(isDownload){
+          this.download(data)
+        }
+
         this.totalRows = this.viewList.length
       }
       catch(e) {
@@ -187,6 +195,59 @@ export default {
       finally {
         this.hideProgress()
       }
+    },
+    formatTime(time){
+      const date = new Date(time)
+      const h = date.getHours()
+      const m = date.getMinutes()
+      return (h >= 10 ? h : "0" + h) + ":" + (m >= 10 ? m : "0" + m)
+    },
+    async download(data) {
+      let csv = ""
+      if(this.type=='pot'){
+        const sum = this.sumData(data, 'txId')
+
+        const from = new Date(this.form.datetimeFrom).getTime()
+        const to = new Date(this.form.datetimeTo).getTime()
+        const interval = APP.POSITION_SUMMARY_INTERVAL * 60 * 1000
+
+        csv += ","
+        for(var time=from; time<to; time += interval){
+          csv += "," + this.formatTime(time)
+        }
+        csv += "\n"
+
+        sum.forEach(posList => {
+          const pot = this.potMap[posList[0].txId]          
+          const groupName = pot && pot.group ? pot.group.groupName : null
+          const txCd = pot && pot.txIdNames[0]
+          csv += groupName + "," + txCd + ","
+          for(var time=from; time<to; time += interval){
+            const pos = posList.find(pos => {
+              // 線形探索をしているので重いかもしれない
+              const timestamp = pos.date + (Math.floor(pos.timestamp / 100) * 60 + pos.timestamp) * 60 * 1000
+              return time == timestamp
+            })
+            csv += ","
+            if(pos){
+              const exb = this.exbMap[pos.exbId]
+              csv += exb.deviceId
+            }
+          }
+          csv += "\n"
+        })        
+      }
+
+      const searchDate = moment(this.form.date).format('YYYY-MM-DD')
+      const group = this.form.groupId? this.groups.find((val) => val.groupId == this.form.groupId): null
+      const groupName =  group? '_' + group.groupName: ''
+
+      BrowserUtil.fileDL(
+        searchDate + groupName + '_activity.csv',
+        csv,
+        getCharSet(this.$store.state.loginId)
+      )
+
     },
     sumData(data, type){
       return data.reduce( (sum, obj) => {
@@ -202,9 +263,6 @@ export default {
       const sum = this.sumData(data, 'txId')
       console.log('sum', sum)
 
-      const potMap = this.getPotMap()
-      const exbMap = this.getExbMap()
-
       const from = new Date(this.form.datetimeFrom).getTime()
       const to = new Date(this.form.datetimeTo).getTime()
       const total = (to - from)/1000
@@ -214,7 +272,7 @@ export default {
         const posGroup = this.sumData(posList, 'exbId')
         console.log('posGroup', posGroup)
         const graph = posGroup.map( group => {
-          const exb = exbMap[group[0].exbId]
+          const exb = this.exbMap[group[0].exbId]
           const zoneName = exb && exb.location && exb.location.zoneList && exb.location.zoneList.length >= 1 ? exb.location.zoneList[0].zoneName : null
           const time = group.length * APP.POSITION_SUMMARY_INTERVAL * 60
           const ratio = Math.floor(group.length * APP.POSITION_SUMMARY_INTERVAL * 60 / total * 100)
@@ -241,7 +299,7 @@ export default {
             ratio
           })
         }
-        const pot = potMap[posList[0].txId]
+        const pot = this.potMap[posList[0].txId]
         const potName = pot ? pot.potName : null
         const groupName = pot && pot.group ? pot.group.groupName : null
         const groupId = pot && pot.group ? pot.group.groupId : null
@@ -256,18 +314,16 @@ export default {
       }).filter(view => view.name != null && (view.groupId == this.form.groupId || !this.form.groupId))
     },
     createZoneGraph(baseData) {
-      const potMap = this.getPotMap()
-      const exbMap = this.getExbMap()
 
       // zone情報を付与
       const data = baseData.filter( d => {
-        const exb = exbMap[d.exbId]
+        const exb = this.exbMap[d.exbId]
         if(!exb){
           return false
         }
         return exb.location && exb.location.zoneList && exb.location.zoneList.length>=1
       }).map( d => {
-        const exb = exbMap[d.exbId]
+        const exb = this.exbMap[d.exbId]
         const zone = exb.location.zoneList[0]
         return {...d, zoneId:zone.zoneId, zone}
       })
@@ -357,124 +413,6 @@ export default {
       const sumData = await HttpHelper.getAppService(url)
       console.log(sumData)
       return sumData
-    },
-    // 以下ダウンロード処理
-    async download(key){
-      this.replace({showAlert: false})
-      this.updateColumn()
-      let viewList
-      if (!this.form.date || this.form.date.length == 0) {
-        this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
-        this.replace({showAlert: true})
-        this.hideProgress()
-        return
-      }
-
-      const dataList = await this.getData(this.form)
-      if (_.isEmpty(dataList)) {
-        this.message = this.$i18n.t('message.listEmpty')
-        this.replace({showAlert: true})
-        this.hideProgress()
-        return
-      }
-      viewList = []
-
-      ArrayUtil.sortIgnoreCase(viewList, 'name')
-      const csvList = this.getCsvList(key, viewList)
-
-      const searchDate = moment(this.form.date).format('YYYY-MM-DD')
-      const group = this.form.groupId? this.groups.find((val) => val.groupId == this.form.groupId): null
-      const groupName =  group? '_' + group.groupName: ''
-      const category = this.form.categoryId? this.categories.find((val) => val.categoryId == this.form.categoryId): null
-      const categoryName =  !category? '': category.systemUse == 1? category.systemCategoryName: '_' + category.categoryName
-
-      const convertedCsvData = this.convertCsvData(key, csvList)
-      BrowserUtil.fileDL(
-        searchDate + groupName + categoryName + '_stayRatio.csv',
-        convertedCsvData,
-        getCharSet(this.$store.state.loginId)
-      )
-    },
-    getCsvSumList(viewList) {
-      const keys = []
-
-      // フィールド設定に合わせ、出力するデータのキーリストを生成する
-      _.filter(this.fields, (field) => {
-        return _.some(Object.keys(viewList[0]), (key) => { 
-          return key!= 'graph' && key === field.key
-        })
-      }).forEach((field) => { keys.push(field) })
-
-      // キーの一致するデータのみのリストを作成。その際、％データがある場合は分ける
-      return viewList.map((viewData) => {
-        let objectData = {}
-        const ratio = this.$i18n.tnl('label.bracketStayRate')
-        keys.forEach((data) => {
-          const hasRatio = viewData[data.key] && viewData[data.key].search('%') > 0
-          if (hasRatio) {
-            let splitData = viewData[data.key].split(' ')
-            objectData[data.label] = splitData[0]
-            objectData[data.label + ratio] = splitData[1].slice(1,-1)
-          } else {
-            objectData[data.label] = viewData[data.key]
-          }
-        })
-        return objectData
-      })
-    },
-    getCsvDetailList(detailList) {
-      // キーの一致するデータのみのリストを作成。その際、％データがある場合は分ける
-      const result = detailList.map((viewData) => {
-        return viewData.graph.map((graph) => {
-          return {
-            date: viewData.date,
-            name: viewData.name,
-            groupName: viewData.groupName,
-            categoryName: viewData.categoryName,
-            start: graph.startTime,
-            end: graph.endTime,
-            stayTime: graph.period,
-            state: graph.isStay? this.$i18n.tnl('label.detected'): this.$i18n.tnl('label.undetect'),
-            areaName: graph.areaName,
-            zoneCategory: graph.zoneCategory,
-          }
-        })
-      })
-      return result.flatMap((data) => data)
-    },
-    getCsvDetailHeaderList() {
-      return [
-        this.$i18n.tnl('label.date'),
-        this.$i18n.tnl('label.name'),
-        this.$i18n.tnl('label.groupName'),
-        this.$i18n.tnl('label.categoryName'),
-        this.$i18n.tnl('label.start'),
-        this.$i18n.tnl('label.end'),
-        this.$i18n.tnl('label.stayTime'),
-        this.$i18n.tnl('label.state'),
-        this.$i18n.tnl('label.areaName'),
-        this.$i18n.tnl('label.zoneCategory') + '\n'
-      ]
-    },
-    getCsvList(key, list) {
-      switch(key) {
-      case 'sum':
-        return this.getCsvSumList(list)
-      case 'detail':
-        return this.getCsvDetailList(list)
-      default:
-        // 何もしない
-      }
-    },
-    convertCsvData(key, list) {
-      switch(key) {
-      case 'sum':
-        return CsvUtil.converToCsv(list)
-      case 'detail':
-        return CsvUtil.converToCsv(list, null, this.getCsvDetailHeaderList())
-      default:
-        // 何もしない
-      }
     },
   }
 }
