@@ -82,7 +82,7 @@ export const getExbOptions = (isBlank = false) => {
  * @param {*} isBlank 
  */
 export const getSensorAllOptions = (isBlank = false) => {
-  return StateHelper.getOptionsFromState('sensor',
+  return MasterHelper.getOptionsFromState('sensor',
     sensor => i18n.tnl('label.' + sensor.sensorName),
     {value: null, text: isBlank? i18n.tnl('label.null'): i18n.tnl('label.normal')},
   )

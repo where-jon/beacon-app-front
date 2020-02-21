@@ -18,6 +18,7 @@ import * as LocaleHelper from './LocaleHelper'
 import * as LocalStorageHelper from './LocalStorageHelper'
 import * as MenuHelper from '../dataproc/MenuHelper'
 import * as MasterHelper from '../domain/MasterHelper'
+import * as StateHelper from '../dataproc/StateHelper'
 
 let router
 let store
