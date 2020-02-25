@@ -223,17 +223,19 @@ export default {
           const pot = this.potMap[posList[0].txId]          
           const groupName = pot && pot.group ? pot.group.groupName : null
           const txCd = pot && pot.txIdNames[0]
-          csv += groupName + "," + txCd + ","
-          for(var time=from; time<to; time += interval){
-            const pos = posList.find(pos => {
-              // 線形探索をしているので重いかもしれない
-              const timestamp = pos.date + (Math.floor(pos.timestamp / 100) * 60 + pos.timestamp) * 60 * 1000
-              return time == timestamp
-            })
-            csv += ","
-            if(pos){
-              const exb = this.exbMap[pos.exbId]
-              csv += exb.deviceId
+          if(groupName && txCd){
+          csv += groupName + "," + txCd
+            for(var time=from; time<to; time += interval){
+              const pos = posList.find(pos => {
+                // 線形探索をしているので重いかもしれない
+                const timestamp = pos.date + (Math.floor(pos.timestamp / 100) * 60 + pos.timestamp%60) * 60 * 1000
+                return time == timestamp
+              })
+              csv += ","
+              if(pos){
+                const exb = this.exbMap[pos.exbId]
+                csv += exb.deviceId
+              }
             }
           }
           csv += "\n"
