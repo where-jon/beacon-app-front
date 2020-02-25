@@ -190,11 +190,11 @@ export default {
     },
     txRecords() {
       const btxs = this.nearest.map(n => ({label: n.btxId, value: n.btxId}))
-      if (!this.selectedGroup && !this.selectedCategory) {
+      if (!this.selectedGroupId && !this.selectedCategoryId) {
         return btxs
       }
-      const target = this.txs.filter(tx => isMatchId(this.selectedGroup, tx.group, 'groupId') &&
-      isMatchId(this.selectedCategory, tx.category, 'categoryId'))
+      const target = this.txs.filter(tx => isMatchId(this.selectedGroupId, tx.group, 'groupId') &&
+      isMatchId(this.selectedCategoryId, tx.category, 'categoryId'))
       return target.length > 0 ? btxs.filter(btx => target.some(t => btx.value === t.btxId)) : []
     },
   },
@@ -213,21 +213,21 @@ export default {
     },
     'vueSelected.area': {
       handler: function(newVal, oldVal){
-        this.selectedArea = Util.getValue(newVal, 'value', null)
-        this.changeArea(this.selectedArea)
+        this.selectedAreaId = Util.getValue(newVal, 'value', null)
+        this.changeArea(this.selectedAreaId)
       },
       deep: true,
     },
     'vueSelected.category': {
       handler: function(newVal, oldVal){
-        this.selectedCategory = Util.getValue(newVal, 'value', null)
+        this.selectedCategoryId = Util.getValue(newVal, 'value', null)
         this.vueSelected.tx = null
       },
       deep: true,
     },
     'vueSelected.group': {
       handler: function(newVal, oldVal){
-        this.selectedGroup = Util.getValue(newVal, 'value', null)
+        this.selectedGroupId = Util.getValue(newVal, 'value', null)
         this.vueSelected.tx = null
       },
       deep: true,
@@ -370,7 +370,7 @@ export default {
       }
     },
     getExbPosition() {
-      return this.exbs.filter(exb => exb.location && exb.location.areaId === this.selectedArea && exb.location.x && exb.location.y > 0)
+      return this.exbs.filter(exb => exb.location && exb.location.areaId === this.selectedAreaId && exb.location.x && exb.location.y > 0)
     },
     async getNearest(exbs) {
       const positions = await EXCloudHelper.fetchRawPosition()

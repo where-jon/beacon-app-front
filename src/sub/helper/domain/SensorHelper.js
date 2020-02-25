@@ -1215,7 +1215,7 @@ const addSensorInfo = (sensor, pos) => {
  * EXB情報にセンサ情報を付加する。
  * 
  * @method
- * @param {Number} selectedArea
+ * @param {Number} selectedSensorId
  * @param {Object} exCluodSensors
  * @return {Object[]}
  */

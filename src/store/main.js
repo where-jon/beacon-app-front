@@ -2,7 +2,7 @@ import Vue from 'vue'
 import axios from 'axios'
 
 export const state = () => ({
-  selectedArea: null,
+  selectedAreaId: null,
   selectedTx: {},
   eachAreas: [],
   eachZones: [],

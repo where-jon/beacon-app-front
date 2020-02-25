@@ -172,7 +172,7 @@ export default {
     },
     async onSaved(){
       this.$set(this.form, 'areaCd', MasterHelper.createMasterCd('area', this.areas, this.area))
-      this.$store.commit('main/replaceMain', {selectedArea: null})
+      this.$store.commit('main/replaceMain', {selectedAreaId: null})
     },
     beforeSubmit(again){
       if(this.mapUpdate){

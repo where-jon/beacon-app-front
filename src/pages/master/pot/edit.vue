@@ -247,7 +247,7 @@ export default {
   watch: {
     'form.potType': function(newVal, oldVal){
       if(newVal != oldVal){
-        this.form.selectedCategory = null
+        this.form.selectedCategoryId = null
         this.vueSelected.category = null
       }
     },

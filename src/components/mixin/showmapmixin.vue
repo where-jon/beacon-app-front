@@ -26,7 +26,7 @@ export default {
         tx: null,
       },
       positionedExb: [], // p, rssimap, pir, position, thermohumidity, loc
-      oldSelectedArea: null, // p, loc, tx
+      oldSelectedAreaId: null, // p, loc, tx
       isShownMapImage: false, // p, loc, tx
       tempMapFitMobile: DISP.MAP_FIT_MOBILE, // p, loc, tx, heatmap-position
       canvasScale: 1, // p, rssimap, position, thermohumidity, heatmap-position
@@ -43,17 +43,17 @@ export default {
   computed: {
   },
   async created() {
-    const currentArea = LocalStorageHelper.getLocalStorage(KEY.CURRENT.AREA)
-    if(Util.hasValue(currentArea)) {
-      this.selectedArea = currentArea
+    const currentAreaId = LocalStorageHelper.getLocalStorage(KEY.CURRENT.AREA)
+    if(Util.hasValue(currentAreaId)) {
+      this.selectedAreaId = currentAreaId
     }
-    this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, this.selectedArea, !Util.hasValue(this.selectedArea))
-    this.selectedArea = Util.getValue(this, 'vueSelected.area.value', this.getInitAreaOption())
+    this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, this.selectedAreaId, !Util.hasValue(this.selectedAreaId))
+    this.selectedAreaId = Util.getValue(this, 'vueSelected.area.value', this.getInitAreaOption())
     this.loadComplete = true
     this.defineResizeEvent(this.$route.path)
   },
   mounted() {
-    this.oldSelectedArea = this.getInitAreaOption()
+    this.oldSelectedAreaId = this.getInitAreaOption()
     Util.debug('In showmapmixin mounted.')
     AreaMapHelper.addDblTapListener(this.$refs.map, () => {
       Util.debug('in Listener')
@@ -105,7 +105,7 @@ export default {
       window.addEventListener('resize', this.onResize)
     },
     getInitAreaOption(){ // p
-      return this.selectedArea? this.selectedArea : Util.hasValue(this.areaOptions)? this.areaOptions[0].value: null
+      return this.selectedAreaId? this.selectedAreaId : Util.hasValue(this.areaOptions)? this.areaOptions[0].value: null
     },
     getMapScale(){ // p, pir
       return DISP.TX.R_ABSOLUTE ? this.canvasScale : 1
@@ -218,7 +218,7 @@ export default {
 
       this.stage.update()
       this.bitmap = bitmap
-      this.oldSelectedArea = this.selectedArea
+      this.oldSelectedAreaId = this.selectedAreaId
 
       if(this.onMapLoaded){
         setTimeout(() => {
@@ -229,25 +229,25 @@ export default {
         }, 500)
       }
     },
-    async changeArea(val) { // analysissearch, rssimap, pir, position, thermohumiidty, loc, tx
-      if (!val) {
+    async changeArea(areaId) { // analysissearch, rssimap, pir, position, thermohumiidty, loc, tx
+      if (!areaId) {
         return
       }
       this.icons = {} // キャッシュをクリア
       try {
-        await StateHelper.loadAreaImage(val, true)
-        const area = _.find(this.areas, area => area.areaId == val)
+        await StateHelper.loadAreaImage(areaId, true)
+        const area = this.areaIdMap[areaId]
         if (StateHelper.getMapImage(area.areaId)) {
           if(!Util.getValue(this, 'selectedTx.btxId', null)){
             this.reset()
           }
-          this.selectedArea = val
+          this.selectedAreaId = areaId
           this.onChangeAreaDone && await this.onChangeAreaDone()
         }
         else {
           Util.debug('No mapImage in changeArea.')
           this.noImageErrorKey && this.showErrorModal({key: this.noImageErrorKey})
-          this.$nextTick(() => this.selectedArea = this.oldSelectedArea)
+          this.$nextTick(() => this.selectedAreaId = this.oldSelectedAreaId)
         }
       } catch (e) {
         // マップ画像が見つからなかった(status 404)

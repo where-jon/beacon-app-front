@@ -106,17 +106,17 @@ export const loadPosition = async (count, allShow = false, fixSize = false) => {
  * @method
  * @param {Boolean} [showAllTime = false] 検知されていないデバイスの情報も取得する
  * @param {Number} [showTxNoOwner]
- * @param {Number} [selectedCategory]
- * @param {Number} [selectedGroup]
- * @param {Number} [selectedDetail]
+ * @param {Number} [selectedCategoryId]
+ * @param {Number} [selectedGroupId]
+ * @param {Number} [selectedTxIdList]
  * @param {Number} [selectedFreWord]
  * @return {Object[]}
  */
 export const filterPositions = (positions = store.state.main.positions,
   showAllTime = false, 
   showTxNoOwner = APP.POS.SHOW_TX_NO_OWNER,
-  selectedCategory = store.state.main.selectedCategory, selectedGroup = store.state.main.selectedGroup,
-  selectedDetail = store.state.main.selectedDetail,
+  selectedCategoryId = store.state.main.selectedCategoryId, selectedGroupId = store.state.main.selectedGroupId,
+  selectedTxIdList = store.state.main.selectedTxIdList,
   selectedFreeWord = store.state.main.selectedFreeWord) => { // p, position-display, rssimap, position-list, position, ProhibitHelper
 
   const txIdMap = store.state.app_service.btxIdMap
@@ -127,7 +127,7 @@ export const filterPositions = (positions = store.state.main.positions,
       return tx && tx.potId
     })
   }
-  return showAllTime ? positions : positionFilter(positions, selectedGroup, selectedCategory, selectedDetail, selectedFreeWord)
+  return showAllTime ? positions : positionFilter(positions, selectedGroupId, selectedCategoryId, selectedTxIdList, selectedFreeWord)
 }
 
 
@@ -648,8 +648,8 @@ const calcCoordinatesZone = (absentDisplayZone, ratio, samePos) => {
  * @param {Number} ratio
  * @return {Object[]}
  */
-export const calcCoordinatesForMultiPosition = (positions, selectedArea) => {
-  return positions.filter(pos => pos.location && pos.location.areaId == selectedArea).map(pos => ({...pos, x: pos.x, y: pos.y}))
+export const calcCoordinatesForMultiPosition = (positions, selectedAreaId) => {
+  return positions.filter(pos => pos.location && pos.location.areaId == selectedAreaId).map(pos => ({...pos, x: pos.x, y: pos.y}))
 }
 
 

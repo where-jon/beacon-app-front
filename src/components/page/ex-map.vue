@@ -484,18 +484,18 @@ export default {
     },
     'vueSelected.area': {
       handler: function(newVal, oldVal){
-        this.selectedArea = Util.getValue(newVal, 'value', null)
-        LocalStorageHelper.setLocalStorage(KEY.CURRENT.AREA, this.selectedArea)
-        if(this.isMounted && this.selectedArea != null){
-          this.changeArea(this.selectedArea)
+        this.selectedAreaId = Util.getValue(newVal, 'value', null)
+        LocalStorageHelper.setLocalStorage(KEY.CURRENT.AREA, this.selectedAreaId)
+        if(this.isMounted && this.selectedAreaId != null){
+          this.changeArea(this.selectedAreaId)
         }
       },
       deep: true,
     },
     'vueSelected.category': {
       handler: function(newVal, oldVal){
-        this.selectedCategory = Util.getValue(newVal, 'value', null)
-        if(Util.hasValue(this.form.potId) && Util.getValue(this.potIdMap[this.form.potId], 'categoryId', null) != this.selectedCategory){
+        this.selectedCategoryId = Util.getValue(newVal, 'value', null)
+        if(Util.hasValue(this.form.potId) && Util.getValue(this.potIdMap[this.form.potId], 'categoryId', null) != this.selectedCategoryId){
           this.vueSelected.individual = null
         }
       },
@@ -503,8 +503,8 @@ export default {
     },
     'vueSelected.group': {
       handler: function(newVal, oldVal){
-        this.selectedGroup = Util.getValue(newVal, 'value', null)
-        if(Util.hasValue(this.form.potId) && Util.getValue(this.potIdMap[this.form.potId], 'groupId', null) != this.selectedGroup){
+        this.selectedGroupId = Util.getValue(newVal, 'value', null)
+        if(Util.hasValue(this.form.potId) && Util.getValue(this.potIdMap[this.form.potId], 'groupId', null) != this.selectedGroupId){
           this.vueSelected.individual = null
         }
       },
@@ -536,13 +536,13 @@ export default {
     await Promise.all(this.loadStates.map(state => StateHelper.load(state)))
     // ゾーン表示時「・・・」用TXを追加しておく
     this.btxIdMap[PositionHelper.zoneLastTxId()] = { txId: PositionHelper.zoneLastTxId(), disp: 1, tx: {disp: 1} }
-    this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryOptions, this.selectedCategory, false)
-    this.vueSelected.group = VueSelectHelper.getVueSelectData(this.groupOptions, this.selectedGroup, false)
+    this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryOptions, this.selectedCategoryId, false)
+    this.vueSelected.group = VueSelectHelper.getVueSelectData(this.groupOptions, this.selectedGroupId, false)
     if(this.pSplitAutoReload){
       this.startPositionAutoReload()
       this.startOtherAutoReload()
     }
-    this.changeArea(this.selectedArea) // ここが処理の起点。this.onChangeAreaDone()が呼ばれ、showMapImage()が呼ばれる
+    this.changeArea(this.selectedAreaId) // ここが処理の起点。this.onChangeAreaDone()が呼ばれ、showMapImage()が呼ばれる
     document.addEventListener('touchstart', this.touchEnd)
     // Canvas内クリックからの伝搬を止める
     document.getElementById('map').addEventListener('click', function(e) {
@@ -579,7 +579,7 @@ export default {
     getExtraFilterOptions(masterName){
       const getFunc = this[StringUtil.concatCamel('get', masterName, 'options')]
       if(masterName == 'individual'){
-        return getFunc(this.selectedCategory, this.selectedGroup)
+        return getFunc(this.selectedCategoryId, this.selectedGroupId)
       }
       return getFunc()
     },
@@ -809,7 +809,7 @@ export default {
         txBtn.x = pos.x
         txBtn.y = pos.y
       }
-      // if (PositionHelper.isFixedPosOnArea(tx, this.selectedArea)) {
+      // if (PositionHelper.isFixedPosOnArea(tx, this.selectedAreaId)) {
       //   Util.debug('fixed location', tx)
       //   txBtn.x = tx.location.x
       //   txBtn.y = tx.location.y
@@ -850,10 +850,10 @@ export default {
       // 表示Txの画面上の座標位置の決定
       if(APP.POS.USE_MULTI_POSITIONING){
         // ３点測位はUSE_POSITION_HISTORYには非対応 TODO:要対応
-        positions = PositionHelper.calcCoordinatesForMultiPosition(positions, this.selectedArea)
+        positions = PositionHelper.calcCoordinatesForMultiPosition(positions, this.selectedAreaId)
       }
       else {
-        positions = PositionHelper.calcScreenCoordinates(positions, 1 / this.canvasScale, this.locations, this.selectedArea, true)
+        positions = PositionHelper.calcScreenCoordinates(positions, 1 / this.canvasScale, this.locations, this.selectedAreaId, true)
       }
 
       if (APP.SENSOR.USE_MEDITAG && this.sensorMap.meditag) { // FIXME: 実装場所移す
@@ -871,7 +871,7 @@ export default {
       if (!this.pShowAbsent) {
         return
       }
-      const absentDisplayZone = _.find(this.absentDisplayZones, zone => zone.areaId == this.selectedArea)
+      const absentDisplayZone = _.find(this.absentDisplayZones, zone => zone.areaId == this.selectedAreaId)
       if (!Util.hasValue(absentDisplayZone)) {
         // 不在表示用ゾーンが存在しない場合は何もしない
         return
@@ -898,7 +898,7 @@ export default {
         if (!selectedTxPosition || !selectedTxPosition.tx) {
           return
         }
-        const location = PositionHelper.isFixedPosOnArea(selectedTxPosition.tx, this.selectedArea)? selectedTxPosition.tx.location: null
+        const location = PositionHelper.isFixedPosOnArea(selectedTxPosition.tx, this.selectedAreaId)? selectedTxPosition.tx.location: null
         const x = location? location.x: selectedTxPosition.x
         const y = location? location.y: selectedTxPosition.y
         this.showDetail(tx.btxId, x, y)
@@ -909,7 +909,7 @@ export default {
       if(!SensorHelper.match(this.pShowTxSensorIds, tx.sensorId) || !this.pShowAbsent){
         return
       }
-      if(!PositionHelper.checkTxAllow(pos, tx, this.selectedArea, true)){
+      if(!PositionHelper.checkTxAllow(pos, tx, this.selectedAreaId, true)){
         return
       }
       const magnet = tx.sensorId === SENSOR.MAGNET? SensorHelper.getSensorFromBtxId('magnet', this.sensorMap.magnet, tx.btxId): null
@@ -928,7 +928,7 @@ export default {
       if (!SensorHelper.match(this.pShowTxSensorIds, tx.sensorId)) {
         return {res:false}
       }
-      if(!PositionHelper.checkTxAllow(pos, tx, this.selectedArea, false, this.pOnlyFixTx)){
+      if(!PositionHelper.checkTxAllow(pos, tx, this.selectedAreaId, false, this.pOnlyFixTx)){
         return {res:false}
       }
       let temperature
@@ -964,7 +964,7 @@ export default {
       }
 
       // フリーアドレスTXが不在エリア検知の場合は以降処理を行わない
-      const isFixedPosOnArea = PositionHelper.isFixedPosOnArea(pos.tx, this.selectedArea)
+      const isFixedPosOnArea = PositionHelper.isFixedPosOnArea(pos.tx, this.selectedAreaId)
       const isAbsentZone = Util.getValue(pos, 'location.isAbsentZone', false)
       if (isAbsentZone && !isFixedPosOnArea) {
         return
@@ -979,10 +979,10 @@ export default {
       this.txCont.addChild(txBtn)
     },
     showQuantityTx(positions) { // 数量アイコン表示
-      positions = PositionHelper.calcScreenCoordinates(positions, 1 / this.canvasScale, this.locations, this.selectedArea)
+      positions = PositionHelper.calcScreenCoordinates(positions, 1 / this.canvasScale, this.locations, this.selectedAreaId)
       positions.forEach((pos) => {
         if (pos.hasAnother) return // 固定座席でフリー位置で検知されている場合はスキップ
-        if (!PositionHelper.checkTxAllow(pos, pos.tx, this.selectedArea, false, this.pOnlyFixTx)){
+        if (!PositionHelper.checkTxAllow(pos, pos.tx, this.selectedAreaId, false, this.pOnlyFixTx)){
           console.error('notallow')
           return
         }
@@ -991,7 +991,7 @@ export default {
         this.incDetectCount(pos.location.locationId, pos.tx.potType)
       })
 
-      _.filter(this.locations, location => location.areaId == this.selectedArea && location.x != null && location.y != null)
+      _.filter(this.locations, location => location.areaId == this.selectedAreaId && location.x != null && location.y != null)
         .forEach(location => {
           let txBtn = this.icons['loc_' + location.locationId]
           txBtn = this.createQuantityTxBtn(location, SHAPE.SQUARE, DISP.TX_NUM.COLOR, DISP.TX_NUM.BGCOLOR)
@@ -1094,11 +1094,11 @@ export default {
 
       let positions = this.$store.state.main.positions
       if (!this.pInstallation) {
-        positions = PositionHelper.addFixedPosition(positions, this.locations, this.selectedArea) // 固定位置追加
+        positions = PositionHelper.addFixedPosition(positions, this.locations, this.selectedAreaId) // 固定位置追加
       }
       // 表示Txのフィルタリング
       positions = this.pDisabledFilter? PositionHelper.filterPositions(positions, false, undefined, null, null, null): PositionHelper.filterPositions(positions)
-      this.detectedCount = PositionHelper.getDetectCount(positions, this.selectedArea)  // 検知数カウント増加
+      this.detectedCount = PositionHelper.getDetectCount(positions, this.selectedAreaId)  // 検知数カウント増加
 
       if (this.isQuantity) { // 数量ボタン押下時
         this.showQuantityTx(positions)
@@ -1142,12 +1142,12 @@ export default {
         this.exbCon = ViewHelper.addContainerOnStage(this.stage, this.bitmap.width, this.bitmap.height)
       }
       this.exbCon.removeAllChildren()
-      _.forEach(this.sensorMap, exbList => exbList.forEach(exb => exb.exbId && exb.areaId == this.selectedArea? this.showExb(exb): null))
+      _.forEach(this.sensorMap, exbList => exbList.forEach(exb => exb.exbId && exb.areaId == this.selectedAreaId? this.showExb(exb): null))
       this.keepExbPosition = false
       //　表示条件：マグネットセンサ、固定位置登録＆同一エリア、PIR画面表示設定
       if(SensorHelper.match(this.pShowExbSensorIds, SENSOR.MAGNET) && APP.SENSOR.SHOW_MAGNET_ON_PIR){
         _(this.txs).filter(tx => tx.sensorId == SENSOR.MAGNET && tx.location && tx.location.x * tx.location.y > 0
-          && tx.location.areaId == this.selectedArea && NumberUtil.bitON(tx.disp, TX.DISP.PIR))
+          && tx.location.areaId == this.selectedAreaId && NumberUtil.bitON(tx.disp, TX.DISP.PIR))
           .forEach(tx => this.showExbTx(tx))
       }
     },
@@ -1162,10 +1162,10 @@ export default {
       const enableGroup = this.isUseFilter('group')
       const limitMs = APP.ANALYSIS.DATETIME_LIMIT * 24 * 60 * 60 * 1000
       const errors = ValidateHelper.validateCheck([
-        {type: 'require', names: ['area'], values: [this.selectedArea]},
+        {type: 'require', names: ['area'], values: [this.selectedAreaId]},
         {type: 'require',
           names: [enableCategory? 'category': null, enableGroup? 'group': null, this.pAnalysisIndividual? 'individual': null].filter(val => val),
-          values: [enableCategory? this.selectedCategory: null, enableGroup? this.selectedGroup: null, this.pAnalysisIndividual? this.form.potId: null].filter(val => val)},
+          values: [enableCategory? this.selectedCategoryId: null, enableGroup? this.selectedGroupId: null, this.pAnalysisIndividual? this.form.potId: null].filter(val => val)},
         {type: 'require', names: ['historyDateFrom'], values: [this.form.datetimeFrom]},
         {type: 'require', names: ['historyDateFrom'], values: [this.form.datetimeTo]},
         this.form.datetimeFrom && this.form.datetimeTo? {type: 'asc', names: ['historyDateFrom'], values: [this.form.datetimeFrom.getTime(), this.form.datetimeTo.getTime()], equal: false}: null,
@@ -1205,9 +1205,9 @@ export default {
         try {
           const result = await AnalysisHelper.sendRequest(this.pCaptionList[this.pCaptionList.length - 1], {
             ...this.form,
-            areaId: this.selectedArea,
-            categoryId: this.selectedCategory,
-            groupId: this.selectedGroup,
+            areaId: this.selectedAreaId,
+            categoryId: this.selectedCategoryId,
+            groupId: this.selectedGroupId,
           })
           if(Util.hasValue(result.errorMessage)){
             this.message = result.errorMessage
@@ -1249,7 +1249,7 @@ export default {
       this.sensorMap = await SensorHelper.fetchSensorInfo(this.pMergeSensorIds)
 
       if (Util.hasValue(this.pShowTxSensorIds) && !payload.disabledPosition){
-        const alwaysTxs = this.txs.some(tx => tx.areaId == this.selectedArea && NumberUtil.bitON(tx.disp, TX.DISP.ALWAYS))
+        const alwaysTxs = this.txs.some(tx => tx.areaId == this.selectedAreaId && NumberUtil.bitON(tx.disp, TX.DISP.ALWAYS))
         await PositionHelper.loadPosition(this.count, alwaysTxs)
       }
 
@@ -1261,7 +1261,7 @@ export default {
       if(this.pShowHeatmap){
         this.isLoading = true
         SensorHelper.createHeatmap(this,
-          { areaId: this.selectedArea, element: this.$refs.map, src: StateHelper.getMapImage(this.getInitAreaOption()), scale: this.canvasScale },
+          { areaId: this.selectedAreaId, element: this.$refs.map, src: StateHelper.getMapImage(this.getInitAreaOption()), scale: this.canvasScale },
           Util.getValue(this.sensorMap, 'temperature', []),
           null,
           () => {
@@ -1342,7 +1342,7 @@ export default {
       this.keepExbPosition = true
     },
     onDetailFilter(list){
-      this.selectedDetail = list
+      this.selectedTxIdList = list
     },
   }
 }

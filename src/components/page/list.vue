@@ -582,7 +582,7 @@ export default {
       },
       deep: true,
     },
-    selectedArea: function(newVal, oldVal) {
+    selectedAreaId: function(newVal, oldVal) {
       LocalStorageHelper.setLocalStorage(KEY.CURRENT.AREA, newVal)
     },
   },
@@ -591,7 +591,7 @@ export default {
   async mounted() {
     const currentArea = LocalStorageHelper.getLocalStorage(KEY.CURRENT.AREA)
     if(Util.hasValue(currentArea)) {
-      this.selectedArea = currentArea
+      this.selectedAreaId = currentArea
     }
     const strageMessage = LocalStorageHelper.popLocalStorage('listMessage')
     this.message = Util.hasValue(strageMessage)? strageMessage: this.listMessage
@@ -709,8 +709,8 @@ export default {
       try {
         const params = {...this.createListParam()}
         params.word = this.filter.reg
-        params.category = this.selectedCategory
-        params.group = this.selectedGroup
+        params.category = this.selectedCategoryId
+        params.group = this.selectedGroupId
         const response = await AppServiceHelper.fetchCompactList(`${this.appServicePath}/listdownload/${this.perPage}/${this.currentPage}/${this.sortBy}/${this.sortDesc? 'desc': 'asc'}` , params)
         if( this.$parent.$options.methods && this.$parent.$options.methods.editResponse && response.data) {
           await this.$parent.$options.methods.editResponse.call(this.$parent, response.data)
@@ -971,7 +971,7 @@ export default {
         btxId: tx.btxId,
         thumbnail: tx.thumbnail,
       }
-      const selectedArea = Util.getValue(item, 'exb.location.areaId', null)
+      const selectedAreaId = Util.getValue(item, 'exb.location.areaId', null)
       const txOk = await this.$parent.$options.methods.checkDetectedTx.call(this.$parent, tx)
       if (txOk) {
         this.replaceMain({selectedTx})
@@ -980,7 +980,7 @@ export default {
         this.filterSelectedList.forEach(selected => this[StringUtil.concatCamel('selected', selected)] = null)
         this.replaceMain({ initDetailFilter: true })
       }
-      this.replaceMain({selectedArea})
+      this.replaceMain({selectedAreaId})
       this.$router.push('/main/position')
     },
     onDetailFilter(list){

@@ -16,14 +16,25 @@ export default {
   computed: {
     ...mapState('app_service', [
       'exbs',
+      'exbIdMap',
+      'deviceIdMap',
       'txs',
+      'txIdMap',
+      'btxIdMap',
       'pots',
+      'potIdMap',
       'areas',
+      'areaIdMap',
       'zones',
+      'zoneIdMap',
       'categories',
+      'categoryIdMap',
       'groups',
+      'groupIdMap',
       'locations',
+      'locationIdMap',
       'sensors',
+      'sensorIdMap',
     ]),
     ...mapState([
       'showAlert',
@@ -89,21 +100,21 @@ export default {
     filterSelectedList() {
       return ['area', 'group', 'category', 'detail', 'freeWord']
     },
-    selectedArea: {
-      get() { return this.$store.state.main.selectedArea},
-      set(val) { this.replaceMain({'selectedArea': val})},
+    selectedAreaId: {
+      get() { return this.$store.state.main.selectedAreaId},
+      set(val) { this.replaceMain({'selectedAreaId': val})},
     },
-    selectedGroup: {
-      get() { return this.$store.state.main.selectedGroup},
-      set(val) { this.replaceMain({'selectedGroup': val})},
+    selectedGroupId: {
+      get() { return this.$store.state.main.selectedGroupId},
+      set(val) { this.replaceMain({'selectedGroupId': val})},
     },
-    selectedCategory: {
-      get() { return this.$store.state.main.selectedCategory},
-      set(val) { this.replaceMain({'selectedCategory': val})},
+    selectedCategoryId: {
+      get() { return this.$store.state.main.selectedCategoryId},
+      set(val) { this.replaceMain({'selectedCategoryId': val})},
     },
-    selectedDetail: {
-      get() { return this.$store.state.main.selectedDetail},
-      set(val) { this.replaceMain({'selectedDetail': val})},
+    selectedTxIdList: {
+      get() { return this.$store.state.main.selectedTxIdList},
+      set(val) { this.replaceMain({'selectedTxIdList': val})},
     },
     selectedFreeWord: {
       get() { return this.$store.state.main.selectedFreeWord},
