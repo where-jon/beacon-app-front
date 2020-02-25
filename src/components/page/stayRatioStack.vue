@@ -183,6 +183,8 @@ export default {
           this.viewList = this.createZoneGraph(data)
         }
 
+        console.log("viewList", this.viewList)
+
         if(isDownload){
           this.download(data)
         }
@@ -268,6 +270,7 @@ export default {
       const total = (to - from)/1000
       
       return sum.map( posList => {
+        console.log('len', posList.length)
         const stayTime = posList.length * APP.POSITION_SUMMARY_INTERVAL * 60
         const posGroup = this.sumData(posList, 'exbId')
         console.log('posGroup', posGroup)
@@ -411,8 +414,16 @@ export default {
       const to = new Date(form.datetimeTo).getTime()
       const url = `/core/positionHistory/summary/${from}/${to}/${APP.POSITION_SUMMARY_INTERVAL}/${APP.POSITION_SUMMARY_RECEIVE_COUNT}`
       const sumData = await HttpHelper.getAppService(url)
-      console.log(sumData)
-      return sumData
+      console.log('sumData', sumData)
+      // 重複データを排除
+      let pre = null
+      const ret = sumData.filter(s => {
+        const dupe = pre && s.date==pre.date && s.timestamp==pre.timestamp && s.txId==pre.txId
+        pre = s       
+        return !dupe
+      })
+      console.log('filter', ret)
+      return ret
     },
   }
 }
