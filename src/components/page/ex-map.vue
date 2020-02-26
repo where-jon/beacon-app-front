@@ -436,19 +436,19 @@ export default {
       'selectedTx',
     ]),
     ...mapState('app_service', [
-      'categories',
-      'groups',
+      // 'categories',
+      // 'groups',
       'prohibits',
       'lostZones',
       'absentDisplayZones',
-      'txs',
-      'btxIdMap',
-      'txIdMap',
-      'deviceIdMap',
-      'potIdMap',
-      'locationIdMap',
-      'locations',
-      'pots',
+      // 'txs',
+      // 'btxIdMap',
+      // 'txIdMap',
+      // 'deviceIdMap',
+      // 'potIdMap',
+      // 'locationIdMap',
+      // 'locations',
+      // 'pots',
     ]),
     ...mapState([
       'reload',
@@ -457,7 +457,7 @@ export default {
       return { 'font-weight': DISP.THERMOH.ALERT_WEIGHT }
     },
     selectedSensor() {
-      if (!Util.getValue(this.selectedTx, 'btxId', null)) {
+      if (!Util.getValue(this.selectedTx, 'btxId')) {
         return []
       }
       const ret = SensorHelper.getSensorFromBtxId('meditag', this.sensorMap.meditag, this.selectedTx.btxId)
@@ -471,7 +471,10 @@ export default {
         .concat(this.isUseDetailFilter()? 'detail': null)
         .concat(this.pExtraFilterList)
         .filter(val => val)
-        .map(pFilter => this[StringUtil.concatCamel('selected', pFilter)])
+        .map(pFilter => {
+          const filterName = ArrayUtil.equalsAny(pFilter, ['area', 'group', 'category'])? pFilter + 'Id': pFilter
+          return this[StringUtil.concatCamel('selected', filterName)]
+        })
     },
   },
   watch: {
@@ -484,7 +487,7 @@ export default {
     },
     'vueSelected.area': {
       handler: function(newVal, oldVal){
-        this.selectedAreaId = Util.getValue(newVal, 'value', null)
+        this.selectedAreaId = Util.getValue(newVal, 'value')
         LocalStorageHelper.setLocalStorage(KEY.CURRENT.AREA, this.selectedAreaId)
         if(this.isMounted && this.selectedAreaId != null){
           this.changeArea(this.selectedAreaId)
@@ -494,8 +497,8 @@ export default {
     },
     'vueSelected.category': {
       handler: function(newVal, oldVal){
-        this.selectedCategoryId = Util.getValue(newVal, 'value', null)
-        if(Util.hasValue(this.form.potId) && Util.getValue(this.potIdMap[this.form.potId], 'categoryId', null) != this.selectedCategoryId){
+        this.selectedCategoryId = Util.getValue(newVal, 'value')
+        if(Util.hasValue(this.form.potId) && Util.getValue(this.potIdMap[this.form.potId], 'categoryId') != this.selectedCategoryId){
           this.vueSelected.individual = null
         }
       },
@@ -503,8 +506,8 @@ export default {
     },
     'vueSelected.group': {
       handler: function(newVal, oldVal){
-        this.selectedGroupId = Util.getValue(newVal, 'value', null)
-        if(Util.hasValue(this.form.potId) && Util.getValue(this.potIdMap[this.form.potId], 'groupId', null) != this.selectedGroupId){
+        this.selectedGroupId = Util.getValue(newVal, 'value')
+        if(Util.hasValue(this.form.potId) && Util.getValue(this.potIdMap[this.form.potId], 'groupId') != this.selectedGroupId){
           this.vueSelected.individual = null
         }
       },
@@ -512,7 +515,7 @@ export default {
     },
     'vueSelected.individual': {
       handler: function(newVal, oldVal){
-        this.form.potId = Util.getValue(newVal, 'value', null)
+        this.form.potId = Util.getValue(newVal, 'value')
       },
       deep: true,
     },
@@ -702,7 +705,7 @@ export default {
       const allIcons = [this.exbIcons, this.txIcons]
       allIcons.forEach(icons => {
         icons.forEach(icon => {
-          if(!Util.hasValue(Util.getValue(icon, 'config.flash', null))){
+          if(!Util.hasValue(Util.getValue(icon, 'config.flash'))){
             return
           }
           const per = this.iconInterval * 2 / icon.config.flash
@@ -1130,7 +1133,7 @@ export default {
         return
       }
       const locationMRoomMap = this.$store.state.main.locationMRoomPlanMap
-      const positions = this.$store.state.main.positionHistores
+      const positions = this.$store.state.main.positions
       const positionMap = positions.reduce((accum, pos) => {
         if (!accum[pos.location.locationId]) {
           accum[pos.location.locationId] = []

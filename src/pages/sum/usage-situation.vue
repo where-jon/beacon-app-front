@@ -169,10 +169,10 @@ export default {
     }
   },
   computed: {
-    ...mapState('app_service', [
-      'categories',
-      'zones',
-    ]),
+    // ...mapState('app_service', [
+    //   'categories',
+    //   'zones',
+    // ]),
     modeOptions() {
       const modeOp = []
       modeOp.push({text: this.$i18n.tnl('label.utilizationRatio'), value: 1})
@@ -206,14 +206,14 @@ export default {
   watch: {
     'vueSelected.category': {
       handler: function(newVal, oldVal){
-        this.vModelCategory = Util.getValue(newVal, 'value', null)
+        this.vModelCategory = Util.getValue(newVal, 'value')
         this.categoryChange(this.vModelCategory)
       },
       deep: true,
     },
     'vueSelected.zone': {
       handler: function(newVal, oldVal){
-        this.vModelZone = Util.getValue(newVal, 'value', null)
+        this.vModelZone = Util.getValue(newVal, 'value')
         this.zoneChange(this.vModelZone)
       },
       deep: true,

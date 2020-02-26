@@ -32,7 +32,7 @@
             </b-form-row>
             <b-form-row>
               <span :title="vueSelectTitle(vueSelected.exb)">
-                <v-select v-model="vueSelected.exb" :options="exbOptions" :clearable="false" class="ml-2 inputSelect vue-options" :style="vueSelectStyle">
+                <v-select v-model="vueSelected.exb" :options="sensorExbOptions" :clearable="false" class="ml-2 inputSelect vue-options" :style="vueSelectStyle">
                   <template slot="selected-option" slot-scope="option">
                     {{ vueSelectCutOn(option, true) }}
                   </template>
@@ -49,7 +49,7 @@
             </b-form-row>
             <b-form-row>
               <span :title="vueSelectTitle(vueSelected.tx)">
-                <v-select v-model="vueSelected.tx" :options="txOptions" :clearable="false" class="ml-2 inputSelect vue-options" :style="vueSelectStyle">
+                <v-select v-model="vueSelected.tx" :options="sensorTxOptions" :clearable="false" class="ml-2 inputSelect vue-options" :style="vueSelectStyle">
                   <template slot="selected-option" slot-scope="option">
                     {{ vueSelectCutOn(option, true) }}
                   </template>
@@ -164,8 +164,8 @@ export default {
       },
       message: '',
       sumUnitOptions: [],
-      exbOptions: [], // FIXME: commonmixinに定義されている
-      txOptions: [], // FIXME: commonmixinに定義されている
+      sensorExbOptions: [],
+      sensorTxOptions: [],
       exbType: [SENSOR.PIR, SENSOR.THERMOPILE, SENSOR.LED_TYPE2, SENSOR.LED_TYPE5],
       txType: [SENSOR.MEDITAG, SENSOR.MAGNET],
       deviceType: DEVICE.EXB,
@@ -214,11 +214,11 @@ export default {
     }
   },
   computed: {
-    ...mapState('app_service', [
-      'exbs',
-      'txs',
-      'sensors',
-    ]),
+    // ...mapState('app_service', [
+    //   'exbs',
+    //   'txs',
+    //   'sensors',
+    // ]),
     ...mapState([
       'showAlert',
     ]),
@@ -228,10 +228,10 @@ export default {
     deviceOptions() {
       return DEVICE.getOptions().filter((val) => {
         if(val.value == DEVICE.EXB){
-          return Util.hasValue(this.exbOptions)
+          return Util.hasValue(this.sensorExbOptions)
         }
         if(val.value == DEVICE.TX){
-          return Util.hasValue(this.txOptions)
+          return Util.hasValue(this.sensorTxOptions)
         }
         return false
       })
@@ -252,13 +252,13 @@ export default {
   watch: {
     'vueSelected.exb': {
       handler: function(newVal, oldVal){
-        this.form.exbId = Util.getValue(newVal, 'value', null)
+        this.form.exbId = Util.getValue(newVal, 'value')
       },
       deep: true,
     },
     'vueSelected.tx': {
       handler: function(newVal, oldVal){
-        this.form.txId = Util.getValue(newVal, 'value', null)
+        this.form.txId = Util.getValue(newVal, 'value')
       },
       deep: true,
     },
@@ -300,22 +300,22 @@ export default {
       options.unshift(sumUnitOptions[0])
       this.sumUnitOptions = options
     },
-    getExbOptions(newVal = this.form.sensorId){
-      const exbs = this.exbs.filter(exb => exb.sensorIds.includes(newVal))
-      this.exbOptions = exbs? exbs.map(val => ({value: val.exbId, label: val.locationName})): []
-      this.vueSelected.exb = VueSelectHelper.getVueSelectData(this.exbOptions, null, true)
+    getSensorExbOptions(newVal = this.form.sensorId){
+      const exbs = this.exbs.filter(exb => exb.sensorIdList.includes(newVal))
+      this.sensorExbOptions = exbs? exbs.map(val => ({value: val.exbId, label: val.locationName})): []
+      this.vueSelected.exb = VueSelectHelper.getVueSelectData(this.sensorExbOptions, null, true)
     },
-    getTxOptions(newVal = this.form.sensorId){
+    getSensorTxOptions(newVal = this.form.sensorId){
       const txs = this.txs.filter(val => val.sensorId == newVal)
-      this.txOptions = txs? txs.map(val => ({value: val.txId, label: Util.getValue(val, 'potName', APP.TX.BTX_MINOR == 'minor'? val.minor: val.btxId)})): []
-      this.vueSelected.tx = VueSelectHelper.getVueSelectData(this.txOptions, null, true)
+      this.sensorTxOptions = txs? txs.map(val => ({value: val.txId, label: Util.getValue(val, 'potName', APP.TX.BTX_MINOR == 'minor'? val.minor: val.btxId)})): []
+      this.vueSelected.tx = VueSelectHelper.getVueSelectData(this.sensorTxOptions, null, true)
     },
     setDeviceTypeFromSensorId(sensorId){
       this.deviceType = Util.hasValue(this.deviceOptions)? this.deviceOptions[0].value: this.txType.includes(sensorId)? DEVICE.TX: DEVICE.EXB
     },
     changeSensorId(newVal = this.form.sensorId) {
-      this.getExbOptions(newVal)
-      this.getTxOptions(newVal)
+      this.getSensorExbOptions(newVal)
+      this.getSensorTxOptions(newVal)
       this.form.sensorId = newVal
       this.showSumTarget = this.isShowSumTarget()
       this.setDeviceTypeFromSensorId(newVal)

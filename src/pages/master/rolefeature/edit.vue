@@ -106,7 +106,7 @@ export default {
   watch: {
     'vueSelected.feature': {
       handler: function(newVal, oldVal){
-        this.featureId = Util.getValue(newVal, 'value', null)
+        this.featureId = Util.getValue(newVal, 'value')
       },
       deep: true,
     },
@@ -172,7 +172,7 @@ export default {
     },
     async onSaved(){
       const login = LocalStorageHelper.getLogin()
-      if(Util.getValue(login, 'role.roleId', null) == this.role.roleId){
+      if(Util.getValue(login, 'role.roleId') == this.role.roleId){
         await AuthHelper.switchAppService()
       }
     }

@@ -389,7 +389,7 @@ export default {
     },
     // マスタ
     async loadMaster() {
-      await this.loadStates.map(state => StateHelper.load(state))
+      // await this.loadStates.map(state => StateHelper.load(state))
       this.potPersonOpts = this.pots.filter(pot => pot.potType == CATEGORY.PERSON).map(pot => {
         return {value: pot.potId, label: pot.potName}
       })

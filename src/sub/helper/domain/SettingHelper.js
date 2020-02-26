@@ -108,7 +108,7 @@ export const getDefaultValue = (key, isTenant = false) => {
   if(!Util.hasValue(defaultConfig)){
     return null
   }
-  const langDefValue = Util.getValue(SETTING.getDefault(), key, null)
+  const langDefValue = Util.getValue(SETTING.getDefault(), key)
   if(langDefValue != null){
     return langDefValue
   }
@@ -126,7 +126,7 @@ export const getDefaultValue = (key, isTenant = false) => {
  * @return {String}
  */
 export const getDefaultValType = (key, forceType) => {
-  const type = Util.getValue(SETTING.getType(), key, null)
+  const type = Util.getValue(SETTING.getType(), key)
   if(type != null && SETTING.VALUES.includes(type)){
     return type
   }

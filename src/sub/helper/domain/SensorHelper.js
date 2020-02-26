@@ -863,7 +863,7 @@ export const getSensors = exbSensorList => {
 export const getSensorIds = exb => {
   const exbSensorList = Util.getValue(exb, 'exbSensorList', []) // TODO: 冗長
   if(Util.hasValue(exbSensorList)){
-    return exbSensorList.map(exbSensor => Util.getValue(exbSensor, 'sensor.sensorId', null)).filter(val => val)
+    return exbSensorList.map(exbSensor => Util.getValue(exbSensor, 'sensor.sensorId')).filter(val => val)
   }
   return [null]
 }
@@ -920,7 +920,7 @@ export const getMagnetGroupTypes = txList => txList.filter(val => val.groupId &&
  * @param {Object[]} categoryList
  * @return {Object[]}
  */
-export const getCategoryLegendElements = categoryList => categoryList.filter(category => !category.systemUse).map(val => ({ id: val.categoryId, name: MasterHelper.getDispCategoryName(val), ...val,}))
+export const getCategoryLegendElements = categoryList => categoryList.filter(category => !category.systemUse).map(val => ({ id: val.categoryId, name: val.categoryName, ...val,}))
 
 /**
  * グループの汎用を表示するための情報を取得する。
@@ -999,10 +999,10 @@ export const fetchSensor = async (sensorInfo) => {
  * 指定したセンサ情報をサーバから取得する。
  * @async
  * @method
- * @param {Number[]} sensorIds
+ * @param {Number[]} sensorIdList
  * @return {Object[]}
  */
-export const fetchAllSensor = async (sensorIds) => {
+export const fetchAllSensor = async (sensorIdList) => {
   const sensorInfos = [
     { id: SENSOR.TEMPERATURE},
     { id: SENSOR.PIR },
@@ -1010,7 +1010,7 @@ export const fetchAllSensor = async (sensorIds) => {
     { id: SENSOR.MEDITAG, enable: APP.SENSOR.USE_MEDITAG},
     { id: SENSOR.MAGNET, enable: APP.SENSOR.USE_MAGNET },
     { id: SENSOR.PRESSURE, enable: APP.SENSOR.USE_PRESSURE }
-  ].filter(e => sensorIds.includes(e.id)).map(e => ({...e, name: SENSOR.STRING[e.id]})) // TODO: NAMEとSTRING紛らわしい
+  ].filter(e => sensorIdList.includes(e.id)).map(e => ({...e, name: SENSOR.STRING[e.id]})) // TODO: NAMEとSTRING紛らわしい
   await Promise.all(sensorInfos.map(fetchSensor))
   return sensorInfos
 }
@@ -1169,18 +1169,19 @@ const addSensorInfo = (sensor, pos) => {
     areaId = pos.exb.areaId
     areaName = Util.getValue(pos, 'exb.location.area.areaName')
     location = pos.exb.location
-    zoneIdList = pos.exb.zoneIdList
-    zoneCategoryIdList = pos.exb.zoneCategoryIdList
+    zoneIdList = pos.exb.location.zoneIdList
+    zoneCategoryIdList = pos.exb.location.zoneCategoryIdList
   }
   else {
     location = sensor.btxId? (tx? tx.location: {}): exb? exb.location: {}
+    if (!location) location = {}
     // location = store.state.app_service.locations.find(e => e.locationId == location.locationId)
     areaId = location.areaId
     areaName = Util.getValue(location, 'area.areaName')
     zoneIdList = Util.hasValue(location.zoneIdList)? location.zoneIdList: []
     zoneCategoryIdList = Util.hasValue(location.zoneCategoryIdList)? location.zoneCategoryIdList: []      
   }
-  let potName = tx? Util.firstValue(tx.potName, ConfigHelper.includesBtxMinor('btxId')? tx.btxId: tx.minor): null
+  let potName = tx? Util.firstValue(tx.pot.potName, ConfigHelper.includesBtxMinor('btxId')? tx.btxId: tx.minor): null
   const updatetime = Util.firstValue(sensor.updatetime, sensor.timestamp)
 
   return {
@@ -1224,7 +1225,7 @@ export const mergeExbWithSensor = (selectedSensorId, exCluodSensors) => {
   return _(exbs)
     .filter(exb => {
       return exb.location && exb.location.x && exb.location.y > 0
-      && exb.sensorIds.includes(selectedSensorId)
+      && exb.sensorIdList.includes(selectedSensorId)
     })
     .map(exb => {
       const sensor = {id: selectedSensorId, ...exCluodSensors.find(sensor => sensor.deviceId == exb.deviceId && (sensor.timestamp || sensor.updatetime))}

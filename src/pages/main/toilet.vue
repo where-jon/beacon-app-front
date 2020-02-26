@@ -29,7 +29,7 @@ import { mapState } from 'vuex'
 import _ from 'lodash'
 import { Stage } from 'createjs-module'
 import { APP, DISP } from '../../sub/constant/config'
-import { SENSOR, LOCATION } from '../../sub/constant/Constants'
+import { SENSOR, LOCATION, SYSTEM_ZONE_CATEGORY_NAME } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
 import * as EXCloudHelper from '../../sub/helper/dataproc/EXCloudHelper'
 import * as IconHelper from '../../sub/helper/ui/IconHelper'
@@ -55,11 +55,11 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'areas',
-      'zones',
-      'locations',
-      'txs',
-      'exbs',
+      // 'areas',
+      // 'zones',
+      // 'locations',
+      // 'txs',
+      // 'exbs',
       'positions',
     ]),
     autoReload() {
@@ -140,17 +140,16 @@ export default {
     },
     async fetchSensorData(sensorId, deviceType) {
       const key = deviceType == 'exb'? {
-        pKey: 'exbId', list: this.exbs, front: 'deviceId', server: 'deviceId', detect: 'count' 
+        pKey: 'exbId', list: this.deviceIdMap, server: 'deviceId', detect: 'count' 
       }: {
-        pKey: 'txId', list: this.txs, front: 'btxId', server: 'btxId', detect: 'magnet'
+        pKey: 'txId', list: this.btxIdMap, server: 'btxId', detect: 'magnet'
       }
 
       const exCloudSensors = await EXCloudHelper.fetchSensor(sensorId)
-      const deviceMap = MasterHelper.convertMasterMap(key.front, key.list)
       return exCloudSensors.map(sensor => {
-        const device = deviceMap[sensor[key.server]]
-        const toiletZone = Util.getValue(device, 'toiletZone', null)
-        const toiletType = Util.getValue(device, deviceType == 'exb'? 'extValue.toilet': 'locExtValue.toilet', null)
+        const device = key.list[sensor[key.server]]
+        const toiletZone = device.location && device.location.getZone(SYSTEM_ZONE_CATEGORY_NAME.TOILET)
+        const toiletType = Util.getValue(device, deviceType == 'exb'? 'extValue.toilet': 'locExtValue.toilet')
         return toiletZone? {
           [key.pKey]: device[key.pKey],
           isDetect: sensor[key.detect] > 0,

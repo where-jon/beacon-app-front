@@ -78,14 +78,15 @@ export default {
       ]),
       defaultColor: '#000000',
       defaultBgColor: '#ffffff',
-      oldShape: Util.getValue(group, 'display.shape', null),
-      oldColor: Util.getValue(group, 'display.color', null),
-      oldBgColor: Util.getValue(group, 'display.bgColor', null),
+      oldShape: Util.getValue(group, 'display.shape'),
+      oldColor: Util.getValue(group, 'display.color'),
+      oldBgColor: Util.getValue(group, 'display.bgColor'),
     }
   },
   computed: {
     ...mapState('app_service', [
-      'group', 'groups',
+      'group'
+      // , 'groups',
     ]),
     shapes(){
       return SHAPE.getShapes()

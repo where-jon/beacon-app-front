@@ -131,10 +131,10 @@ export default {
       ]),
       defaultColor: '#000000',
       defaultBgColor: '#ffffff',
-      oldType: Util.getValue(category, 'categoryType', null),
-      oldShape: Util.getValue(category, 'display.shape', null),
-      oldColor: Util.getValue(category, 'display.color', null),
-      oldBgColor: Util.getValue(category, 'display.bgColor', null),
+      oldType: Util.getValue(category, 'categoryType'),
+      oldShape: Util.getValue(category, 'display.shape'),
+      oldColor: Util.getValue(category, 'display.color'),
+      oldBgColor: Util.getValue(category, 'display.bgColor'),
       vueSelected: {
         zoneGuards: [],
         zoneDoors: [],
@@ -143,7 +143,8 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'category', 'categories', 'zones',
+      'category',
+      // 'categories', 'zones',
     ]),
     backPath() {
       return this.pPath
@@ -201,13 +202,13 @@ export default {
         zoneCategory.zoneType == ZONE.GUARD
       ).map(zoneCategory =>
         VueSelectHelper.getVueSelectData(this.getZoneGuardOptions(), zoneCategory.zoneCategoryPK.zoneId)
-      ).sort((a, b) => Util.getValue(a, 'label', null) < Util.getValue(b, 'label', null)? -1: 1)
+      ).sort((a, b) => Util.getValue(a, 'label') < Util.getValue(b, 'label')? -1: 1)
 
       this.vueSelected.zoneDoors = this.form.zoneCategoryList.filter(zoneCategory => 
         zoneCategory.zoneType == ZONE.DOOR
       ).map(zoneCategory =>
         VueSelectHelper.getVueSelectData(this.getZoneDoorOptions(), zoneCategory.zoneCategoryPK.zoneId)
-      ).sort((a, b) => Util.getValue(a, 'label', null) < Util.getValue(b, 'label', null)? -1: 1)
+      ).sort((a, b) => Util.getValue(a, 'label') < Util.getValue(b, 'label')? -1: 1)
     }
     ValidateHelper.setCustomValidationMessage()
     VueSelectHelper.disabledAllSubmit()

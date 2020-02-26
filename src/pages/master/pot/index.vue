@@ -66,15 +66,15 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'categories',
+      // 'categories',
       'updatedPotThumbnailList',
       'thumbnailUrls',
     ]),
   },
   async created() {
-      this.replaceAS({updatedPotThumbnailList: []})
-      this.thumbnailUrlMap = {}
-      this.replaceAS({thumbnailUrls: this.thumbnailUrlMap})
+    this.replaceAS({updatedPotThumbnailList: []})
+    this.thumbnailUrlMap = {}
+    this.replaceAS({thumbnailUrls: this.thumbnailUrlMap})
   },
   methods: {
     getFullName(){

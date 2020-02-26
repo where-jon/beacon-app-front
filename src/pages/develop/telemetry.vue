@@ -42,9 +42,9 @@ export default {
     }
   },
   computed: {
-    ...mapState('app_service', [
-      'exbs',
-    ]),
+    // ...mapState('app_service', [
+    //   'exbs',
+    // ]),
     allCount() {
       return this.telemetrys.length
     },

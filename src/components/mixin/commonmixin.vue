@@ -35,6 +35,8 @@ export default {
       'locationIdMap',
       'sensors',
       'sensorIdMap',
+      'roles',
+      'regions',
     ]),
     ...mapState([
       'showAlert',

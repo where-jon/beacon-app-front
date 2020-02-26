@@ -141,22 +141,22 @@ export default {
     },
     ...mapState('app_service', [
       'exb',
-      'areas',
-      'locaitons',
-      'sensors',
+      // 'areas',
+      // 'locaitons',
+      // 'sensors',
     ]),
   },
   watch: {
     'vueSelected.area': {
       handler: function(newVal, oldVal){
-        this.form.areaId = Util.getValue(newVal, 'value', null)
+        this.form.areaId = Util.getValue(newVal, 'value')
         this.vueSelected.location = null
       },
       deep: true,
     },
     'vueSelected.location': {
       handler: function(newVal, oldVal){
-        this.form.locationId = Util.getValue(newVal, 'value', null)
+        this.form.locationId = Util.getValue(newVal, 'value')
       },
       deep: true,
     },
@@ -201,7 +201,7 @@ export default {
   },
   methods: {
     isNormalSensor(index){
-      return Util.getValue(this.form, `exbSensorList.${index && 0 <= index? index: 0}.sensorId`, null)? false: true
+      return Util.getValue(this.form, `exbSensorList.${index && 0 <= index? index: 0}.sensorId`)? false: true
     },
     includesDeviceType(name){
       return ConfigHelper.includesDeviceType(name)
@@ -265,7 +265,7 @@ export default {
       this.initExbSensorList()
       this.changeSensors()
       this.form.sensorId = null
-      this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, null)
+      this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions)
       this.vueSelected.location = null
     },
     async onSaving() {

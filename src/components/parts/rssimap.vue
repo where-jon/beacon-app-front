@@ -18,7 +18,7 @@
             </v-select>
           </span>
         </b-form-row>
-        <b-form-row v-if="useGroup" class="my-1 ml-2 ml-sm-0">
+        <!-- <b-form-row v-if="useGroup" class="my-1 ml-2 ml-sm-0">
           <label class="ml-sm-4 ml-2 mr-1">
             {{ $t('label.group') }}
           </label>
@@ -47,7 +47,7 @@
               </template>
             </v-select>
           </span>
-        </b-form-row>
+        </b-form-row> -->
         <b-form-row>
           <b-form-checkbox v-model="modeRssi" class="ml-sm-4 ml-2 mr-1">
             {{ $t('label.dispRssi') }}
@@ -164,8 +164,8 @@ export default {
   data () {
     return {
       items: ViewHelper.createBreadCrumbItems('monitor', 'installation'),
-      useGroup: MenuHelper.useMaster('group') && ArrayUtil.includesIgnoreCase(APP.TX.WITH, 'group'),
-      useCategory: MenuHelper.useMaster('category') && ArrayUtil.includesIgnoreCase(APP.TX.WITH, 'category'),
+      // useGroup: MenuHelper.useMaster('group') && ArrayUtil.includesIgnoreCase(APP.TX.WITH, 'group'),
+      // useCategory: MenuHelper.useMaster('category') && ArrayUtil.includesIgnoreCase(APP.TX.WITH, 'category'),
       modeRssi: true,
       exbDisp: 'deviceId',
       nearest: [],
@@ -183,18 +183,18 @@ export default {
     ...mapState([
       'reload',
     ]),
-    categoryOptionsForPot() {
-      return MasterHelper.getOptionsFromState('category', false, true,
-        category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
-      )
-    },
+    // categoryOptionsForPot() {
+    //   return MasterHelper.getOptionsFromState('category', false, true,
+    //     category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
+    //   )
+    // },
     txRecords() {
       const btxs = this.nearest.map(n => ({label: n.btxId, value: n.btxId}))
       if (!this.selectedGroupId && !this.selectedCategoryId) {
         return btxs
       }
-      const target = this.txs.filter(tx => isMatchId(this.selectedGroupId, tx.group, 'groupId') &&
-      isMatchId(this.selectedCategoryId, tx.category, 'categoryId'))
+      const target = this.txs.filter(tx => isMatchId(this.selectedGroupId, tx.pot.group, 'groupId') &&
+      isMatchId(this.selectedCategoryId, tx.pot.category, 'categoryId'))
       return target.length > 0 ? btxs.filter(btx => target.some(t => btx.value === t.btxId)) : []
     },
   },
@@ -213,28 +213,28 @@ export default {
     },
     'vueSelected.area': {
       handler: function(newVal, oldVal){
-        this.selectedAreaId = Util.getValue(newVal, 'value', null)
+        this.selectedAreaId = Util.getValue(newVal, 'value')
         this.changeArea(this.selectedAreaId)
       },
       deep: true,
     },
-    'vueSelected.category': {
-      handler: function(newVal, oldVal){
-        this.selectedCategoryId = Util.getValue(newVal, 'value', null)
-        this.vueSelected.tx = null
-      },
-      deep: true,
-    },
-    'vueSelected.group': {
-      handler: function(newVal, oldVal){
-        this.selectedGroupId = Util.getValue(newVal, 'value', null)
-        this.vueSelected.tx = null
-      },
-      deep: true,
-    },
+    // 'vueSelected.category': {
+    //   handler: function(newVal, oldVal){
+    //     this.selectedCategoryId = Util.getValue(newVal, 'value')
+    //     this.vueSelected.tx = null
+    //   },
+    //   deep: true,
+    // },
+    // 'vueSelected.group': {
+    //   handler: function(newVal, oldVal){
+    //     this.selectedGroupId = Util.getValue(newVal, 'value')
+    //     this.vueSelected.tx = null
+    //   },
+    //   deep: true,
+    // },
     'vueSelected.tx': {
       handler: function(newVal, oldVal){
-        this.targetTx = Util.getValue(newVal, 'value', null)
+        this.targetTx = Util.getValue(newVal, 'value')
         this.dispRssiIcons(this.targetTx)
       },
       deep: true,

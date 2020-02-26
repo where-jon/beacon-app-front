@@ -196,7 +196,7 @@ export default {
       return setting
     },
     mergeInputData(setting){
-      setting.value = Util.getValue(setting, 'inputData.value', null)
+      setting.value = Util.getValue(setting, 'inputData.value')
       return setting
     },
     getDuplicationMessage(){

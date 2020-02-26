@@ -1268,7 +1268,7 @@ export const MENU = [
   },
 ]
 
-export const SYSTEM_ZONE_CATEGORY_NAME = {
+export const SYSTEM_ZONE_CATEGORY_NAME = { // TODO: CDに変更
   ABSENT: 'ABSENT',
   PROHIBIT: 'PROHIBIT',
   ABSENT_DISPLAY: 'ABSENT_DISPLAY',

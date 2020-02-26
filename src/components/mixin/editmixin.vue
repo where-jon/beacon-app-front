@@ -55,7 +55,7 @@ export default {
       return loginInfo.isProvider
     },
     ...mapState('app_service', [
-      'roles',
+      // 'roles',
       'listMessage',
       'showLine',
     ]),

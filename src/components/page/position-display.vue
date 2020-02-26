@@ -66,11 +66,11 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'txs',
-      'areas',
-      'zones',
-      'locations',
-      'locationIdMap',
+      // 'txs',
+      // 'areas',
+      // 'zones',
+      // 'locations',
+      // 'locationIdMap',
       'prohibits',
       'lostZones',
     ]),
@@ -114,7 +114,7 @@ export default {
           }
         }): false
         pos.isDisableArea = Util.getValue(location, 'isAbsentZone', false)
-        const posMasterIds = this.displayZone? Util.getValue(pos, 'location.zoneIdList', [null]): [Util.getValue(pos, 'location.areaId', null)]
+        const posMasterIds = this.displayZone? Util.getValue(pos, 'location.zoneIdList', [null]): [Util.getValue(pos, 'location.areaId')]
         posMasterIds.forEach(posMasterId => {
           const hasMasterId = Util.hasValue(posMasterId)
           const obj = hasMasterId ? tempMasterMap[posMasterId]: tempMasterExt
@@ -122,7 +122,13 @@ export default {
             obj.positions.push(pos)
           }else if(absentZone){
             // 不在ゾーンへの登録
-            tempMasterMap[absentZone.zoneId].positions.push(pos)
+            const map = tempMasterMap[absentZone.zoneId]
+            if (map) {
+              if (!map.positions) {
+                map.positions = []
+              }
+              map.positions.push(pos)
+            }
           }
         })
       })

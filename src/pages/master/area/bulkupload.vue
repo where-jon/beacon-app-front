@@ -34,7 +34,8 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'area', 'areas'
+      'area'
+      // , 'areas'
     ]),
   },
   methods: {

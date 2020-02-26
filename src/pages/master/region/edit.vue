@@ -69,14 +69,14 @@ export default {
       return Util.hasValue(this.form.regionId)
     },
     ...mapState('app_service', [
-      'region', 'regions',
+      'region',
+      //  'regions',
     ]),
     cdPattern(){
       return PATTERN.MASTER_CD
     },
   },
   mounted(){
-    console.error(this.$store.state.app_service.region)
     ValidateHelper.setCustomValidationMessage()
     if(!Util.hasValue(this.form.regionCd)){
       this.form.regionCd = MasterHelper.createMasterCd('region', this.regions, this.region)

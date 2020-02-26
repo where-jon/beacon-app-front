@@ -80,9 +80,9 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'txs',
-      'areas',
-      'locations',
+      // 'txs',
+      // 'areas',
+      // 'locations',
       'prohibits',
       'lostZones',
     ]),
@@ -114,41 +114,33 @@ export default {
         let prohibitCheck = false
         const minorMap = {}
 
-        if (Util.hasValue(APP.POS.PROHIBIT_ALERT)
-          && (Util.hasValue(APP.POS.PROHIBIT_GROUP_ZONE)||Util.hasValue(APP.POS.LOST_GROUP_ZONE))) {
+        if (Util.hasValue(APP.POS.PROHIBIT_ALERT) && Util.hasValueAny(APP.POS.PROHIBIT_GROUP_ZONE, APP.POS.LOST_GROUP_ZONE)) {
           ProhibitHelper.setProhibitDetect('list', this)
           this.replace({showAlert: this.showDismissibleAlert})
           this.prohibitDetectList? this.prohibitDetectList.forEach((p) => minorMap[p.minor] = p) : null
         }
 
-        const locationMap = {}
-        this.locations.forEach(l => {
-          if(Util.hasValue(l.locationId)){
-            locationMap[l.locationId] = l
-          }
-        })
-
         positions = positions.filter(pos => pos.exb && pos.exb.location).map(pos => {
           prohibitCheck = minorMap[pos.minor] != null
 
-          const location = pos.exb.location? locationMap[pos.exb.location.locationId]: {}
+          const location = pos.exb.location? this.locationIdMap[pos.exb.location.locationId]: {}
           return {
             ...pos,
             // powerLevel: this.getPowerLevel(pos),
-            txId: Util.getValue(pos, 'tx.txId' , null),
-            potCd: Util.getValue(pos, 'tx.pot.potCd', null),
-            tel: Util.getValue(pos, 'tx.pot.extValue.tel', null),
-            locationName: Util.getValue(pos, 'location.locationName', null),
-            potName: Util.getValue(pos, 'tx.pot.potName', null),
-            areaName: Util.getValue(pos, 'location.area.areaName', null),
-            groupName: Util.getValue(pos, 'tx.pot.group.groupName', null),
-            categoryName: Util.getValue(pos, 'tx.pot.category.categoryName', null),
+            txId: Util.v(pos, 'tx.txId'),
+            potCd: Util.v(pos, 'tx.pot.potCd'),
+            tel: Util.v(pos, 'tx.pot.extValue.tel'),
+            locationName: Util.v(pos, 'location.locationName'),
+            potName: Util.v(pos, 'tx.pot.potName'),
+            areaName: Util.v(pos, 'location.area.areaName'),
+            groupName: Util.v(pos, 'tx.pot.group.groupName'),
+            categoryName: Util.v(pos, 'tx.pot.category.categoryName'),
             // 追加フィルタ用
-            groupId: Util.getValue(pos, 'tx.pot.groupId'),
-            categoryId: Util.getValue(pos, 'tx.pot.category.categoryId'),
-            areaId: Util.getValue(pos, 'location.areaId'),
+            groupId: Util.v(pos, 'tx.pot.groupId'),
+            categoryId: Util.v(pos, 'tx.pot.category.categoryId'),
+            areaId: Util.v(pos, 'location.areaId'),
             blinking : prohibitCheck? 'blinking' : null,
-            isDisableArea: Util.getValue(location, 'isAbsentZone', false),
+            isDisableArea: Util.v(location, 'isAbsentZone', false),
           }
         })
         this.totalRows = positions.length

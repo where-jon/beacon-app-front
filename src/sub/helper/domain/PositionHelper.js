@@ -248,7 +248,7 @@ const getTxViewType = txViewType => {
  */
 export const getDetectCount = (positions, areaId) => {
   return positions.filter(pos => (pos.detectState == DETECT_STATE.LOST || pos.detectState == DETECT_STATE.DETECTED)
-    && pos.exb.location.areaId == areaId
+    && Util.getValue(pos, 'exb.location.areaId') == areaId
   ).length
 }
 
@@ -347,7 +347,7 @@ export const addFixedPosition = (orgPositions, locations = [], selectedMapId = n
     pos.isFixedPosition = isFixedPosOnArea(pos.tx, selectedMapId)
 
     if (pos.isFixedPosition) { // txが場所固定されており、現在位置が場所固定ゾーンにいる場合（txの固定場所のゾーンでなくても同じエリアの固定ゾーンであれば）
-      pos.inFixedZone = pos.exb.isFixedPosZone // 今いる場所が固定場所ゾーンに入っているか
+      pos.inFixedZone = pos.exb.location.isFixedPosZone // 今いる場所が固定場所ゾーンに入っているか
       // 固定場所ゾーンにいず、かつ同じエリアにいて、検知状態の場合、フリーアドレスとしても表示
       if (!pos.inFixedZone && isInTheArea(pos, locations, selectedMapId) && pos.detectState == DETECT_STATE.DETECTED) {
         const addPos = _.cloneDeep(pos)
@@ -587,7 +587,7 @@ const calcCoordinates = (ratio, orgX, orgY, positions, viewType, txR) => {
  * @param {*} absentDisplayZone 
  */
 export const calcCoordinatesForZone = (positions, ratio, locations = [], absentDisplayZone) => {
-  return _(locations).map(location => {
+  return _(locations).map(location => { // TODO: location使っていない？ 過去のソース要比較・確認
     // 不在表示用ゾーンへ表示するTXを抽出する
     const samePos = _.sortBy(positions, position => position.label)
       .filter(position => {

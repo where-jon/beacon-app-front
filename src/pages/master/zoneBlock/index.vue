@@ -126,19 +126,20 @@ export default {
       return Util.hasValue(this.form.zoneId)
     },
     ...mapState('app_service', [
-      'zone', 'locations', 'areas', 'pageSendParam'
+      'zone', 'pageSendParam',
+      // 'locations', 'areas', 
     ]),
   },
   watch: {
     'vueSelected.area': {
       handler: function(newVal, oldVal){
-        this.areaId = Util.getValue(newVal, 'value', null)
+        this.areaId = Util.getValue(newVal, 'value')
       },
       deep: true,
     },
     'vueSelected.category': {
       handler: function(newVal, oldVal){
-        this.categoryId = Util.getValue(newVal, 'value', null)
+        this.categoryId = Util.getValue(newVal, 'value')
       },
       deep: true,
     },

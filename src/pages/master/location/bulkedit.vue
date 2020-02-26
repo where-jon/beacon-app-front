@@ -36,7 +36,8 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'location', 'locations', 'zones'
+      'location'
+      // , 'locations', 'zones'
     ]),
     zoneMap(){
       const ret = {}

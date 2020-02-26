@@ -44,9 +44,9 @@ export default {
     }
   },
   computed: {
-    ...mapState('app_service', [
-      'txs', 'exbs', 'btxIdMap', 'deviceIdMap'
-    ]),
+    // ...mapState('app_service', [
+    //   'txs', 'exbs', 'btxIdMap', 'deviceIdMap'
+    // ]),
     allCount() {
       return this.positions.length
     },
@@ -118,12 +118,12 @@ export default {
         const exb = this.deviceIdMap[e.deviceId]
         return {
           ...e,
-          name: tx != null ? tx.potName : '—',
+          name: tx != null ? tx.pot.potName : '—',
           finalReceiveLocation: Util.getValue(exb, 'location.locationName', ''),
           finalReceiveTimestamp: this.getTimestamp(e.updatetime),
           powerLevel: this.$refs.monitorTable.getPositionPowerLevelLabel ? this.$refs.monitorTable.getPositionPowerLevelLabel(e.power_level) : null,
           state: this.$refs.monitorTable.getStateLabel('tx', e.updatetime),
-          sensorIds: Util.getValue(tx, 'txSensorList', []).map(txSensor => txSensor.sensor.sensorId),
+          sensorIdList: Util.getValue(tx, 'sensorList', []).map(sensor => sensor.sensorId), // TODO: 用途は？
           powerLevelTimestamp: this.getTimestamp(e.power_level_timestamp),
         }
       })
@@ -131,11 +131,11 @@ export default {
     async margeSensorRecords(positions){
       const sensorHistories = await this.fetchSensorHistory()
       const ret = positions.map(position => {
-        if(!Util.hasValue(position.sensorIds)){
+        if(!Util.hasValue(position.sensorIdList)){
           return position
         }
         const sensorDataList = []
-        position.sensorIds.forEach(sensorId => {
+        position.sensorIdList.forEach(sensorId => {
           const mergeData = sensorHistories[`${sensorId}`]? sensorHistories[`${sensorId}`].find(sensorHistory => sensorHistory.btxId == position.btxId): null
           if(mergeData){
             sensorDataList.push(mergeData)

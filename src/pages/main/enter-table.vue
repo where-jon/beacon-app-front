@@ -77,13 +77,13 @@ export default {
     }
   },
   computed: {
-    ...mapState('app_service', [
-      'categories',
-      'zones',
-      'txs',
-      'pots',
-      'locations',
-    ]),
+    // ...mapState('app_service', [
+    //   'categories',
+    //   'zones',
+    //   'txs',
+    //   'pots',
+    //   'locations',
+    // ]),
   },
   created() {
     this.autoPagerPlay = APP.ENTER.AUTO_PAGE == 2
@@ -124,28 +124,21 @@ export default {
       }
       this.hideProgress()
     },
-    populateTableData(positions) {
-      const locationMap = {}
-      this.locations.forEach(l => {
-        if(Util.hasValue(l.locationId)){
-          locationMap[l.locationId] = l
-        }
-      })
-
+    populateTableData(positions) { // TODO: コメント追加
       const groupPotList = []
-      var curGroupId = ""
+      var curGroupId = ''
       this.currentEnterCount = 0
 
       const absentCategory = this.categories.find(e => e.systemUse == 1 && e.categoryCd == 'ABSENT')
       const absentZoneList = this.zones.filter(e => absentCategory && e.categoryId == absentCategory.categoryId)
       _(this.pots).map(pot => {
         let pos = positions.find(pos => pos.txId == pot.txId)
-        const location = pos && pos.location? locationMap[pos.location.locationId]: {}
+        const location = pos && pos.location? this.locationIdMap[pos.location.locationId]: {}
         return {
           potId: pot.potId,
           potName: pot.potName,
           locationId: location.locationId,
-          isAbsentZone: !pos || _.some(absentZoneList, e => _.some(e.locationZoneList, loc => loc.locationZonePK.locationId == location.locationId)),
+          isAbsentZone: !pos || _.some(absentZoneList, e => _.some(e.locationList, loc => loc.locationId == location.locationId)), // TODO: 要動作確認
           groupCd: pot.group && pot.group.groupCd,
           groupName: pot.group && pot.group.groupName || this.$i18n.tnl('label.other'),
           color: pot.group? '#' + Util.getValue(pot, 'group.display.color'): DISP.TX.COLOR,
@@ -163,7 +156,7 @@ export default {
           this.currentEnterCount++
         }
         groupPotList.push({isGroup:false, label: StringUtil.cutOnLong(pot.potName, 10), textAlign: 'center',
-          groupName:pot.groupName, color: pot.isLost? DISP.ENTER.LOST_COLOR: 'black', 
+          groupName: pot.groupName, color: pot.isLost? DISP.ENTER.LOST_COLOR: 'black', 
           potId: pot.potId, isAbsentZone: pot.isAbsentZone,
           bgColor: pot.isAbsentZone? DISP.ENTER.ABSENT_BGCOLOR: DISP.ENTER.ENTER_BGCOLOR})
       })

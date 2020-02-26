@@ -97,7 +97,7 @@ export default {
   watch: {
     'vueSelected.zoneCategory': {
       handler: function(newVal, oldVal){
-        this.form.zoneCategory = Util.getValue(newVal, 'value', null)
+        this.form.zoneCategory = Util.getValue(newVal, 'value')
       },
       deep: true,
     },

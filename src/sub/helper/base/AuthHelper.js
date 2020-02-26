@@ -174,7 +174,7 @@ export const authByAppService = async (loginId, password, success, err) => {
     const regionId = LocalStorageHelper.getLocalStorage(KEY.CURRENT.REGION)
     if(Util.hasValue(regionId)){
       const regionRes = await HttpHelper.putAppService(`/core/region/current/${regionId}`)
-      if(Util.getValue(regionRes, 'status', null)) {
+      if(Util.getValue(regionRes, 'status')) {
         LocalStorageHelper.removeLocalStorage(KEY.CURRENT.REGION)
         LocalStorageHelper.removeLocalStorage(KEY.CURRENT.AREA)
       }
@@ -337,7 +337,7 @@ export const getTenantCd = (def, providerOk) => { // xxx.saas.ドメインの場
   }
   if (!providerOk && tenantCd == 'provider') {
     const login = LocalStorageHelper.getLogin()
-    tenantCd = Util.getValue(login, 'currentTenant.tenantCd', null)
+    tenantCd = Util.getValue(login, 'currentTenant.tenantCd')
   }
   return tenantCd || def
 }

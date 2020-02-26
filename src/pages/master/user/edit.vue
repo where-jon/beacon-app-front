@@ -118,7 +118,8 @@ export default {
       return ArrayUtil.includesIgnoreCase(APP.USER.WITH, 'region')
     },
     ...mapState('app_service', [
-      'user', 'roles', 'regions'
+      'user', 'roles',
+      //  'regions'
     ]),
     ...mapState([
       'showAlert'
@@ -136,7 +137,7 @@ export default {
     },
     'vueSelected.role': {
       handler: function(newVal, oldVal){
-        this.role = Util.getValue(newVal, 'value', null)
+        this.role = Util.getValue(newVal, 'value')
       },
       deep: true,
     },

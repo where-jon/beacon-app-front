@@ -43,12 +43,12 @@ export default {
     }
   },
   computed: {
-    ...mapState('app_service', [
-      'sensors',
-      'txs',
-      'areas',
-      'exbs',
-    ]),
+    // ...mapState('app_service', [
+    //   'sensors',
+    //   'txs',
+    //   'areas',
+    //   'exbs',
+    // ]),
   },
   async created() {
   },

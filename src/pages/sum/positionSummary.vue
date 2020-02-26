@@ -58,10 +58,10 @@ export default {
     }
   },
   computed: {
-    ...mapState('app_service', [
-      'txs',
-      'exbs',
-    ]),
+    // ...mapState('app_service', [
+    //   'txs',
+    //   'exbs',
+    // ]),
     iosOrAndroid() {
       return BrowserUtil.isAndroidOrIOS()
     },
@@ -110,9 +110,6 @@ export default {
       const txsFiltered = this.txs.filter(tx => tx.minor != null)
       txsFiltered.forEach((t) => txsMap[parseInt(t.minor)] = t)
 
-      let exbsMap = {}
-      this.exbs.forEach((e) => exbsMap[e.exbId] = e)
-
       const minorList = txsFiltered.map(tx => parseInt(tx.minor)).sort(tx => tx)
       const header = this.$i18n.tnl('label.time') + ',' + minorList.join(',')
       const searchDate = moment(param.date).format('YYYY-MM-DD')
@@ -127,7 +124,7 @@ export default {
             const tx = txsMap[minor]
             const pos = posMap[tx.txId + ':' + timestamp]
             if(pos){
-              const exb = exbsMap[pos.exb_id]
+              const exb = this.exbIdMap[pos.exb_id]
               csv.push(exb ? exb.locationName : '')
             }else{
               csv.push('')

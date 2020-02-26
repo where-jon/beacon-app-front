@@ -121,18 +121,18 @@ export default {
     }
   },
   computed: {
-    ...mapState('app_service', [
-      'exbs',
-    ]),
+    // ...mapState('app_service', [
+    //   'exbs',
+    // ]),
     deviceType() {
       if (!this.form.deviceId) return null
-      return this.exbs.find(exb => exb.deviceId == this.form.deviceId).sensorIds.includes(SENSOR.LED_TYPE2)? 2: 5
+      return this.deviceIdMap[this.form.deviceId].sensorIdList.includes(SENSOR.LED_TYPE2)? 2: 5
     },
   },
   watch: {
     'vueSelected.deviceId': {
       handler: function(newVal, oldVal){
-        this.form.deviceId = Util.getValue(newVal, 'value', null)
+        this.form.deviceId = Util.getValue(newVal, 'value')
         this.form.colors = [2]
         this.form.blink = this.deviceType == 2? 1: 0
       },
@@ -159,7 +159,7 @@ export default {
     async fetchData(payload) {
       try {
         this.showProgress()
-        const deviceIds = _.filter(this.exbs, exb => exb.sensorIds.includes(SENSOR.LED_TYPE2) || exb.sensorIds.includes(SENSOR.LED_TYPE5))
+        const deviceIds = _.filter(this.exbs, exb => exb.sensorIdList.includes(SENSOR.LED_TYPE2) || exb.sensorIdList.includes(SENSOR.LED_TYPE5))
           .map(exb => {
             const locationName = Util.hasValue(exb.locationName)? (exb.locationName) + ' : ': ''
             const label = locationName + (exb.deviceId) + ' (0x' + exb.deviceId.toString(16) + ')'

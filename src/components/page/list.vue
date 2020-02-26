@@ -134,8 +134,8 @@
         </template>
         <!-- リージョン名 -->
         <template slot="regionNames" slot-scope="row">
-          <div v-for="(regionName, index) in row.item.regionNames" :key="index">
-            {{ regionName }}
+          <div>
+            {{ row.item.regionNames }}
           </div>
         </template>
         <!-- tx名 -->
@@ -174,7 +174,7 @@
         <!-- EXBタイプ名 -->
         <template slot="exbTypeName" slot-scope="row">
           <div>
-            {{ getDispExbType(row.item) }}
+            {{ row.item.exbTypeName }}
           </div>
         </template>
         <!-- センサ名 -->
@@ -478,10 +478,10 @@ export default {
       'featureList',
     ]),
     ...mapState('app_service', [
-      'categories',
-      'groups',
-      'areas',
-      'regions',
+      // 'categories',
+      // 'groups',
+      // 'areas',
+      // 'regions',
       'listMessage',
       'editPage',
       'moveEditPage',
@@ -553,7 +553,7 @@ export default {
       return BrowserUtil.getLangShort() == 'ja'? {width: '100px !important'}: {width: '110px !important'}
     },
     selectedSensor() {
-      if (!Util.getValue(this.selectedTx, 'btxId', null)) {
+      if (!Util.getValue(this.selectedTx, 'btxId')) {
         return []
       }
       if (!this.positionedTxMap) return []
@@ -565,8 +565,8 @@ export default {
     'vueSelected': {
       handler: function(newVal, oldVal){
         Object.keys(this.vueSelected).forEach(key => {
-          const oVal = Util.getValue(oldVal[key], 'value', null)
-          const nVal = Util.getValue(newVal[key], 'value', null)
+          const oVal = Util.getValue(oldVal[key], 'value')
+          const nVal = Util.getValue(newVal[key], 'value')
           this.filter.extra[key] = nVal
           if(this.useCommonFilter(key)){
             this[this.getCommonFilterKey(key)] = nVal
@@ -971,7 +971,7 @@ export default {
         btxId: tx.btxId,
         thumbnail: tx.thumbnail,
       }
-      const selectedAreaId = Util.getValue(item, 'exb.location.areaId', null)
+      const selectedAreaId = Util.getValue(item, 'exb.location.areaId')
       const txOk = await this.$parent.$options.methods.checkDetectedTx.call(this.$parent, tx)
       if (txOk) {
         this.replaceMain({selectedTx})

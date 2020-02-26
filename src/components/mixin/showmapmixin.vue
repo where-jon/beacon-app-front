@@ -238,7 +238,7 @@ export default {
         await StateHelper.loadAreaImage(areaId, true)
         const area = this.areaIdMap[areaId]
         if (StateHelper.getMapImage(area.areaId)) {
-          if(!Util.getValue(this, 'selectedTx.btxId', null)){
+          if(!Util.v(this, 'selectedTx.btxId')){
             this.reset()
           }
           this.selectedAreaId = areaId

@@ -47,9 +47,9 @@ export default {
           return null
         }
         const ret = {key: val, label: val, sortable: true, tdClass: 'action-rowdata'}
-        if(['category', 'group'].includes(val)){
-          ret.key = val + 'Name'
-        }
+        // if(['category', 'group'].includes(val)){
+        //   ret.key = val + 'Name'
+        // }
         if(['description'].includes(val)){
           ret.thStyle = {width: '200px !important'}
         }
