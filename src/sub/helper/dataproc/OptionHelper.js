@@ -4,7 +4,7 @@
  */
 
 import { APP } from '../../constant/config'
-import { SENSOR, FEATURE, CATEGORY, ZONE, ROLE_FEATURE } from '../../constant/Constants'
+import { SENSOR, FEATURE, CATEGORY, ZONE, ROLE_FEATURE, POT_TYPE } from '../../constant/Constants'
 import * as Util from '../../util/Util'
 import * as ConfigHelper from './ConfigHelper'
 import * as SensorHelper from '../domain/SensorHelper'
@@ -36,6 +36,7 @@ export const getMagicNumberList = (features) => {
   retMap.zoneType = createOptionMap(ZONE.getOptions())
   retMap.roleFeatureMode = createOptionMap(ROLE_FEATURE.getModeOptions())
   retMap.featureType = createOptionMap(FEATURE.getTypeOptions())
+  retMap.potType = createOptionMap(POT_TYPE.getTypes())
 
   const modeAll = ROLE_FEATURE.getAllAuthorizationOption()
   retMap.roleFeatureModeMatch = {

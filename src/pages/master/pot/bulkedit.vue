@@ -135,11 +135,6 @@ export default {
     },
     async onSaved(){
     },
-    getConf() {
-      return {
-        with: APP.POT.WITH ? APP.POT.WITH : [],
-      }
-    }
   }
 }
 </script>
