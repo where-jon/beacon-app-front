@@ -425,6 +425,7 @@
     "utilizationRatioP": "利用率[%]",
     "utilizationTime": "利用時間[H]",
     "numUsers": "利用人数",
+    "numUsersGraph": "利用人数グラフ",
     "numOfUsers": "利用人数(平均)",
     "zoneCategoryName": "ゾーンカテゴリ名",
     "sumYearMonth": "年月",

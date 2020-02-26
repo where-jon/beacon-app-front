@@ -34,7 +34,7 @@
 
       <slot />
       <b-row class="mt-3" />
-      <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" :sort-compare="defaultSortCompare" stacked="md" striped hover outlined>
+      <b-table :items="viewList" :fields="getField()" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" :sort-compare="defaultSortCompare" stacked="md" striped hover outlined>
         <template slot="graph" slot-scope="row">
           <div style="position: relative;">
             <div v-for="(bar, index) in row.item.graph" :key="index" :class="bar.name? 'stay-bar': 'lost-bar'" :style="bar.style">
@@ -92,13 +92,6 @@ export default {
   data () {
     return {
       items: ViewHelper.createBreadCrumbItems('sumTitle', this.page),
-      fields: [
-        {key: 'name', sortable: true, label: this.$i18n.tnl('label.potName')},
-        {key: 'groupName', sortable: true, label: this.$i18n.tnl('label.groupName') },
-        {key: 'graph', sortable: false, label: this.$i18n.tnl('label.graph'), thStyle: {height: '50px !important', width:'400px !important'} },
-        {key: 'stayTime', sortable: false, label: this.$i18n.tnl('label.stayTime') },
-        {key: 'lostTime', sortable: false, label: this.$i18n.tnl('label.lostTime') },
-      ],
       form: {
         datetimeFrom: '2020-02-20 00:00:00',
         datetimeTo: '2020-02-21 00:00:00'
@@ -154,6 +147,26 @@ export default {
     }
   },
   methods: {
+    getField(){
+      if(this.type=="pot"){
+        return [
+          {key: 'name', sortable: true, label: this.$i18n.tnl('label.potName')},
+          {key: 'groupName', sortable: true, label: this.$i18n.tnl('label.groupName') },
+          {key: 'graph', sortable: false, label: this.$i18n.tnl('label.graph'), thStyle: {height: '50px !important', width:'400px !important'} },
+          {key: 'stayTime', sortable: false, label: this.$i18n.tnl('label.stayTime') },
+          {key: 'lostTime', sortable: false, label: this.$i18n.tnl('label.lostTime') },
+        ]
+      }
+      if(this.type=="zone"){
+        return [
+          {key: 'name', sortable: true, label: this.$i18n.tnl('label.potName')},
+          {key: 'groupName', sortable: true, label: this.$i18n.tnl('label.groupName') },
+          {key: 'graph', sortable: false, label: this.$i18n.tnl('label.numUsersGraph'), thStyle: {height: '50px !important', width:'400px !important'} },
+          {key: 'ratio', sortable: false, label: this.$i18n.tnl('label.utilizationRatio') },
+        ]
+      }
+      return []
+    },
     async display(isDownload) {
       this.container ? this.container.removeAllChildren() : null
       this.replace({showAlert: false})
@@ -345,6 +358,8 @@ export default {
         const stayTime = posList.length * APP.POSITION_SUMMARY_INTERVAL * 60
         const posGroup = this.sumData(posList, 'txId')
         console.log('posGroup', posGroup)
+        console.log('stayTime', stayTime)
+        console.log('total', total)
 
         // 同一時刻の集計
         const countMap = {}
@@ -381,8 +396,7 @@ export default {
           name: zoneName,
           groupName: categoryName,
           graph,
-          stayTime: DateUtil.toHHmm(stayTime),
-          lostTime: DateUtil.toHHmm(total - stayTime)
+          ratio: Math.floor(stayTime / total * 100) + "%"
         }
       }).filter(view => view.name != null)
     },
