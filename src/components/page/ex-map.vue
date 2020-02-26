@@ -210,6 +210,7 @@ import detailFilter from '../../components/parts/detailFilter.vue'
 import meditag from '../../components/parts/meditag.vue'
 import ToolTip from '../../components/parts/toolTip.vue'
 import txdetail from '../../components/parts/txdetail.vue'
+import moment from 'moment'
 
 export default {
   components: {
@@ -223,6 +224,10 @@ export default {
   },
   mixins: [commonmixin, reloadmixin, showmapmixin],
   props: {
+    pShowMRoomStatus: {
+      type: Boolean,
+      default: false,
+    },
     // common : ブレッドクラム情報
     pCaptionList: {
       type: Array,
@@ -1101,8 +1106,8 @@ export default {
         this.showNomalTx(positions)
       }
     },
-    showExb(exb) {
-      const icon = IconHelper.createExbIcon(exb, this.pShowExbSensorIds, this.getMapScale(), this.stage)
+    showExb(exb, bgColor = null) {
+      const icon = IconHelper.createExbIcon(exb, this.pShowExbSensorIds, this.getMapScale(), this.stage, bgColor, this.pShowMRoomStatus)
       if(!icon){
         return
       }
@@ -1124,6 +1129,15 @@ export default {
       if(!Util.hasValue(this.pShowExbSensorIds)){
         return
       }
+      const locationMRoomMap = this.$store.state.main.locationMRoomPlanMap
+      const positions = this.$store.state.main.positionHistores
+      const positionMap = positions.reduce((accum, pos) => {
+        if (!accum[pos.location.locationId]) {
+          accum[pos.location.locationId] = []
+        }
+        accum[pos.location.locationId].push(pos)
+        return accum
+      }, {})
       if (!this.exbCon) {
         this.exbCon = ViewHelper.addContainerOnStage(this.stage, this.bitmap.width, this.bitmap.height)
       }

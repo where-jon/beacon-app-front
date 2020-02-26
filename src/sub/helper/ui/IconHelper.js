@@ -427,6 +427,13 @@ export const createUseStateIcon = (sensorId, count, mapScale) => {
   return createCircleIcon(labelInfo.label, shapeInfo.width / mapScale, labelInfo.color, shapeInfo.bgColor, {bold: false})
 }
 
+export const createMRoomUseStateIcon = (sensorId, count, mapScale, bgColor) => {
+  const shapeInfo = createExbShapeInfo(sensorId, count)
+  const labelInfo = createExbLabelInfo(sensorId, count)
+  const size = shapeInfo.width / mapScale
+  return createRectIcon(labelInfo.label, size, size, labelInfo.color, bgColor, {bold: false})
+}
+
 /**
  * 使用状態を表示するマグネットアイコンを作成する。
  * @method
@@ -567,7 +574,6 @@ export const createExbIcon = (exb, exbSensorIdList, mapScale, stage) => {
     // else {
     //   w = DISP.THERMOPILE_S_SIZE
     // }
-
     // only for Exhibition（delete immediately）
     exbBtn = createCountButton(exb.count, mapScale)
     exbBtn.cursor = ''
@@ -579,10 +585,18 @@ export const createExbIcon = (exb, exbSensorIdList, mapScale, stage) => {
   else if (SensorHelper.match(exb.sensorIds, SENSOR.PIR, exbSensorIdList)) {
     exbBtn = createUseStateIcon(exb.sensorId, exb.count, mapScale)
     exbBtn.cursor = ''
-  }
-  else {
-    console.error('Sensor Not match', exb.sensorIds, exbSensorIdList)
-    return
+  } else {
+    if (exb.sensorId == SENSOR.PRESSURE && exb.pressVol != null) {
+      exbBtn = showMRoomStatus
+        ? createMRoomUseStateIcon(exb.sensorId, exb.pressVol, mapScale, bgColor)
+        : createUseStateIcon(exb.sensorId, exb.pressVol, mapScale)
+      exbBtn.cursor = ''
+    } else {
+      exbBtn = showMRoomStatus
+        ? createMRoomUseStateIcon(exb.sensorId, exb.count, mapScale, bgColor)
+        : createUseStateIcon(exb.sensorId, exb.count, mapScale)
+      exbBtn.cursor = ''
+    }
   }
   exbBtn.deviceId = exb.deviceId
   exbBtn.exbId = exb.exbId
