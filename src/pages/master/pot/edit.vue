@@ -489,7 +489,7 @@ export default {
       this.userForm.roleId = maxRole? maxRole.value: null
       this.vueSelected.role = VueSelectHelper.getVueSelectData(this.roleOptions, maxRole? maxRole.value: null)
 
-      //this.form.potCd = MasterHelper.createMasterCd('pot', this.pots, this.pot)
+      this.form.potCd = MasterHelper.createMasterCd('pot', this.pots, this.pot)
       this.initPotTxList()
     },
     async onSaved(){
