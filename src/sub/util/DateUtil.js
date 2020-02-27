@@ -112,7 +112,7 @@ export const isExpired = time => time != null? time < (new Date()).getTime(): fa
 export const dateform = time => time? moment(time).format('YYYY/MM/DD HH:mm:ss'): ''
 
 /**
- * タイムゾーン対応のmomentオブジェクトを取得する。
+ * タイムゾーンに対応した日付表記を取得する。
  * @method
  * @param {String} [tz = APP.COMMON.TIME_ZONE]
  * @return {String}
