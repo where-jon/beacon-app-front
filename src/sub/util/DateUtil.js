@@ -115,9 +115,9 @@ export const dateform = time => time? moment(time).format('YYYY/MM/DD HH:mm:ss')
  * タイムゾーン対応のmomentオブジェクトを取得する。
  * @method
  * @param {String} [tz = APP.COMMON.TIME_ZONE]
- * @return {Object}
+ * @return {String}
  */
-export const getDateWithTimeZone = (tz = APP.COMMON.TIME_ZONE) => momentTz.tz(TIME_ZONE.getData(tz))
+export const getDateWithTimeZone = (tz = APP.COMMON.TIME_ZONE) => momentTz.tz(TIME_ZONE.getData(tz)).format('YYYY/MM/DD HH:mm:ss')
 
 /**
  * 現在日付の午前0時を示すエポック秒を返す。
@@ -210,4 +210,9 @@ export const convertToTime = secTime => {
  */
 export const isAfterNextMonth = date => hasValue(date) && moment(date).isAfter(moment().endOf('months'))
 
-export const getDefaultDate = () => DEV.DEFAULT_DATE == '' ? new Date() : new Date(DEV.DEFAULT_DATE)
+/**
+ * タイムゾーンに合わせた日付を取得する。開発用のDEFAULT_DATEが設定されていれば、その日付を取得する。
+ * @method
+ * @return {Date}
+ */
+export const getDefaultDate = () => DEV.DEFAULT_DATE == '' ? new Date(getDateWithTimeZone()) : new Date(DEV.DEFAULT_DATE)
