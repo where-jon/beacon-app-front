@@ -6,7 +6,7 @@
 import moment from 'moment'
 import momentTz from 'moment-timezone'
 import { APP, DEV } from '../constant/config'
-import { TIME_ZONE } from '../constant/Constants'
+import { TIME_ZONE, SETTING } from '../constant/Constants'
 import { hasValue } from './Util'
 
 /**
@@ -117,7 +117,7 @@ export const dateform = time => time? moment(time).format('YYYY/MM/DD HH:mm:ss')
  * @param {String} [tz = APP.COMMON.TIME_ZONE]
  * @return {String}
  */
-export const getDateWithTimeZone = (tz = APP.COMMON.TIME_ZONE) => momentTz.tz(TIME_ZONE.getData(tz)).format('YYYY/MM/DD HH:mm:ss')
+export const getDateWithTimeZone = (tz = APP.COMMON.TIME_ZONE) => momentTz.tz(TIME_ZONE.getData(tz)).format(SETTING.DATE_NOTATION)
 
 /**
  * 現在日付の午前0時を示すエポック秒を返す。
