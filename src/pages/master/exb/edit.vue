@@ -95,15 +95,11 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import commonmixin from '../../../components/mixin/commonmixin.vue'
 import editmixin from '../../../components/mixin/editmixin.vue'
 import alert from '../../../components/parts/alert.vue'
-import autoAlert from '../../../components/parts/autoAlert.vue'
-import settingtxview from '../../../components/parts/settingtxview.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
-    autoAlert,
-    settingtxview,
   },
   mixins: [commonmixin, editmixin],
   data() {

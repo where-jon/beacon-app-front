@@ -199,13 +199,13 @@ export default {
     }
     if(Util.hasValue(this.form.zoneCategoryList)){
       this.vueSelected.zoneGuards = this.form.zoneCategoryList.filter(zoneCategory => 
-        zoneCategory.zoneType == ZONE.GUARD
+        zoneCategory.zone.zoneType == ZONE.GUARD
       ).map(zoneCategory =>
         VueSelectHelper.getVueSelectData(this.getZoneGuardOptions(), zoneCategory.zoneCategoryPK.zoneId)
       ).sort((a, b) => Util.getValue(a, 'label') < Util.getValue(b, 'label')? -1: 1)
 
       this.vueSelected.zoneDoors = this.form.zoneCategoryList.filter(zoneCategory => 
-        zoneCategory.zoneType == ZONE.DOOR
+        zoneCategory.zone.zoneType == ZONE.DOOR
       ).map(zoneCategory =>
         VueSelectHelper.getVueSelectData(this.getZoneDoorOptions(), zoneCategory.zoneCategoryPK.zoneId)
       ).sort((a, b) => Util.getValue(a, 'label') < Util.getValue(b, 'label')? -1: 1)

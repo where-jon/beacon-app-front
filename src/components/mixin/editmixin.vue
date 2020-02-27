@@ -82,7 +82,7 @@ export default {
       }
       return setting
     },
-    async onSaving() {
+    async onSaving() { // デフォルトの保存メソッド（各edit.vueでオーバーライド。通常マスタ更新はbulkSaveを使用）
       return await AppServiceHelper.save(this.appServicePath, this.form, this.updateOnlyNN)
     },
     async save(evt) {
