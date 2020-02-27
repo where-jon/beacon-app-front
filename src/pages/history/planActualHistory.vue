@@ -63,7 +63,7 @@ import commonmixin from '../../components/mixin/commonmixin.vue'
 import 'element-ui/lib/theme-chalk/index.css'
 import moment from 'moment'
 import { APP, DISP, APP_SERVICE } from '../../sub/constant/config'
-import { getDefaultDate } from '../../sub/util/DateUtil'
+import * as DateUtil from '../../sub/util/DateUtil'
 
 export default {
   mixins: [commonmixin],
@@ -107,7 +107,7 @@ export default {
   mounted() {
     ViewHelper.importElementUI()
     this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.tItems.length, maxRows: this.rowlimit})}`
-    const now = moment(getDefaultDate(),SETTING.DATE_NOTATION)
+    const now = moment(DateUtil.getDefaultDate(),SETTING.DATE_NOTATION)
     this.form.datetimeFrom = now.set({hour:0,minute:0,second:0,millisecond:0}).toDate()
     this.form.datetimeTo = now.set({hour:23,minute:59,second:59,millisecond:999}).toDate()
   },
