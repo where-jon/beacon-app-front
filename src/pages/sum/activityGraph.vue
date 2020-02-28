@@ -2,6 +2,7 @@
   <activity-base
     page="activityGraph"
     type="pot"
+    filter="group"
   />
 </template>
 

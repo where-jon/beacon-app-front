@@ -2,6 +2,7 @@
   <activity-base
     page="meetingGraph"
     type="zone"
+    filter="category"
   />
 </template>
 

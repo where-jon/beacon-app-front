@@ -12,9 +12,21 @@
             <span v-t="'label.historyDateTo'" class="d-flex align-items-center ml-2" />
             <date-picker v-model="form.datetimeTo" :clearable="false" type="datetime" class="ml-2 inputdateto" required />
 
-            <label v-t="'label.group'" class="ml-2" />
-            <span :title="vueSelectTitle(vueSelected.group)">
+            <label v-if="filter=='group'" v-t="'label.group'" class="ml-2" />
+            <span v-if="filter=='group'" :title="vueSelectTitle(vueSelected.group)">
               <v-select v-model="vueSelected.group" :options="groupOptions" class="ml-2 inputSelect vue-options">
+                <template slot="selected-option" slot-scope="option">
+                  {{ vueSelectCutOn(option) }}
+                </template>
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
+              </v-select>
+            </span>
+
+            <label v-if="filter=='category'" v-t="'label.group'" class="ml-2" />
+            <span v-if="filter=='category'" :title="vueSelectTitle(vueSelected.category)">
+              <v-select v-model="vueSelected.category" :options="zoneCategoryOptions" class="ml-2 inputSelect vue-options">
                 <template slot="selected-option" slot-scope="option">
                   {{ vueSelectCutOn(option) }}
                 </template>
@@ -77,6 +89,8 @@ import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as StayTimeHelper from '../../sub/helper/domain/StayTimeHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
+import * as OptionHelper from '../../sub/helper/dataproc/OptionHelper'
+import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import commonmixin from '../../components/mixin/commonmixin.vue'
 import alert from '../../components/parts/alert.vue'
@@ -88,7 +102,7 @@ export default {
     alert,
   },
   mixins: [commonmixin],
-  props: ['page', 'type'],
+  props: ['page', 'type', 'filter'],
   data () {
     return {
       items: ViewHelper.createBreadCrumbItems('sumTitle', this.page),
@@ -98,6 +112,7 @@ export default {
       },
       vueSelected: {
         group: null,
+        category: null,
       },
       message: '',
       viewList: [],
@@ -120,11 +135,24 @@ export default {
     otherColor() {
       return APP.STAY_SUM.OTHER_COLOR
     },
+    zoneCategoryOptions() {
+      return MasterHelper.getOptionsFromState('category',
+        category => MasterHelper.getDispCategoryName(category),
+        true, 
+        category => CATEGORY.ZONE_AVAILABLE.includes(category.categoryType) && !category.systemUse
+      )
+    },
   },
   watch: {
     'vueSelected.group': {
       handler: function(newVal, oldVal){
         this.form.groupId = Util.getValue(newVal, 'value', null)
+      },
+      deep: true,
+    },
+    'vueSelected.category': {
+      handler: function(newVal, oldVal){
+        this.form.categoryId = Util.getValue(newVal, 'value', null)
       },
       deep: true,
     },
@@ -329,7 +357,7 @@ export default {
           stayTime: DateUtil.toHHmm(stayTime),
           lostTime: DateUtil.toHHmm(total - stayTime)
         }
-      }).filter(view => view.name != null && (view.groupId == this.form.groupId || !this.form.groupId))
+      }).filter(view => view.name != null && !this.form.groupId || (view.groupId == this.form.groupId))
     },
     createZoneGraph(baseData) {
 
@@ -355,10 +383,8 @@ export default {
       const total = (to - from)/1000
       
       return sum.map( posList => {
-        const stayTime = posList.length * APP.POSITION_SUMMARY_INTERVAL * 60
         const posGroup = this.sumData(posList, 'txId')
         console.log('posGroup', posGroup)
-        console.log('stayTime', stayTime)
         console.log('total', total)
 
         // 同一時刻の集計
@@ -375,6 +401,7 @@ export default {
 
 
         const graph = []
+        let stayRatio = 0
         let i=6
         while(i-- > 0){
           const countList = Object.keys(countMap).map(key => { return {key, value:countMap[key]} })
@@ -382,6 +409,7 @@ export default {
           console.log('times', times)
           const time = times.length * APP.POSITION_SUMMARY_INTERVAL * 60
           const ratio = Math.floor(times.length * APP.POSITION_SUMMARY_INTERVAL * 60 / total * 100)
+          stayRatio += ratio
           const color = this.getStackColor(i)
           graph.push({
             name: i,
@@ -392,13 +420,15 @@ export default {
         }
         const zoneName = posList[0].zone.zoneName
         const categoryName = posList[0].zone.categoryName
+        const categoryId = posList[0].zone.categoryId
         return {
           name: zoneName,
           groupName: categoryName,
+          categoryId,
           graph,
-          ratio: Math.floor(stayTime / total * 100) + "%"
+          ratio: stayRatio + "%"
         }
-      }).filter(view => view.name != null)
+      }).filter(view => view.name != null && (!this.form.categoryId || this.form.categoryId==view.categoryId))
     },
     getPotMap() {
       const potMap = {}
