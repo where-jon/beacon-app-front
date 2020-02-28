@@ -4,9 +4,10 @@
  */
 
 import { APP, DISP } from '../../constant/config'
-import { ALERT_STATE, DETECT_STATE } from '../../constant/Constants'
+import { ALERT_STATE, DETECT_STATE, SYSTEM_ZONE_CATEGORY_NAME } from '../../constant/Constants'
 import * as ViewHelper from '../ui/ViewHelper'
 import * as PositionHelper from './PositionHelper'
+import * as Util from '../../util/Util'
 
 let i18n
 
@@ -27,15 +28,15 @@ export const setApp = pi18n => {
  * @return {Object[]}
  */
 export const getLostUnDetectList = (position, lostZones) => {
-  const isScreen = APP.POS.LOST_ALERT? APP.POS.LOST_ALERT.some(val => val == ALERT_STATE.SCREEN): false
+  const isScreen = APP.POS.LOST_ALERT && APP.POS.LOST_ALERT.some(val => val == ALERT_STATE.SCREEN)
   if (!isScreen || !APP.POS.LOST_GROUP_ZONE || lostZones[0] == null) {
-    return null
+    return []
   }
   const groupZoneList = APP.POS.LOST_GROUP_ZONE
   let lostUnDetectList = []
   lostZones.forEach((lostZone) => {
     position.forEach((pos) => {
-      const group = groupZoneList.find(e => e.groupCd && pos.tx.group && pos.tx.group.groupCd == e.groupCd)
+      const group = groupZoneList.find(e => e.groupCd && e.groupCd == Util.v(pos, 'tx.pot.group.groupCd'))
       if (group && group.zoneCd.includes(lostZone.zoneCd)) {
         if( pos.detectState != DETECT_STATE.DETECTED || pos.exb.zoneCd != lostZone.zoneCd) {
           lostUnDetectList.push({
@@ -52,7 +53,7 @@ export const getLostUnDetectList = (position, lostZones) => {
       }
     })
   })
-  return lostUnDetectList.length > 0 ? lostUnDetectList : null
+  return lostUnDetectList
 }
 
 /**
@@ -91,22 +92,22 @@ export const getProhibitMessage = prohibitDetectList => {
 export const getProhibitDetectList = (position, prohibitZones) => {
   const isScreen = APP.POS.PROHIBIT_ALERT? APP.POS.PROHIBIT_ALERT.some(val => val == ALERT_STATE.SCREEN): false
   if (!isScreen || !APP.POS.PROHIBIT_GROUP_ZONE || prohibitZones[0] == null) {
-    return null
+    return []
   }
 
   const groupZoneList = APP.POS.PROHIBIT_GROUP_ZONE
   let detectList = []
-  const detectPosition  = position.filter(pos => pos.tx && pos.tx.group && pos.exb && pos.detectState == DETECT_STATE.DETECTED)
+  const detectPosition  = position.filter(pos => pos.exb && pos.detectState == DETECT_STATE.DETECTED)
   prohibitZones.forEach(prohibitZone => {
     detectPosition.forEach(pos => {
-      const group = groupZoneList.find(e => e.groupCd && pos.tx.group.groupCd == e.groupCd)
+      const group = groupZoneList.find(e => e.groupCd && e.groupCd == Util.v(pos, 'tx.pot.group.groupCd'))
       if (group && group.zoneCd.includes(prohibitZone.zoneCd)) {
-        if (pos.exb.zoneCd == prohibitZone.zoneCd) {
+        if (Util.v(pos, 'exb.location.zoneList', []).some(zone => zone.zoneCd == prohibitZone.zoneCd)) {
           detectList.push({
             btxId: pos.btxId,
             minor: pos.minor,
-            potName: pos.tx.pot.potName,
-            areaName: pos.exb.areaName,
+            potName: Util.v(pos, 'tx.pot.potName'),
+            areaName: Util.v(pos, 'exb.areaName'),
             zoneName: prohibitZone.zoneName,
             lastDetectedTime: pos.timestamp
           })
@@ -114,31 +115,36 @@ export const getProhibitDetectList = (position, prohibitZones) => {
       }
     })
   })
-  return detectList.length > 0 ? detectList : null
+  return detectList
 }
 
 /**
  * 禁止区域の検知情報を作成し、コンポーネントに設定する。
  * @method
  * @param {String} viewName
- * @param {VueComponent} vueComponent
+ * @param {zones} zones
+ * @param {positions} positions
  */
-export const setProhibitDetect = (viewName, vueComponent, positions = []) => {
-  const prohibitDetectList = getProhibitDetectList(
-    positions.length > 0 ? positions : PositionHelper.filterPositions(), vueComponent.prohibits
-  )
-  vueComponent.prohibitDetectList = prohibitDetectList ? prohibitDetectList : null
-  const lostUnDetectList = getLostUnDetectList(PositionHelper.filterPositions(),vueComponent.lostZones)
-  if(vueComponent.prohibitDetectList){
-    vueComponent.prohibitDetectList = lostUnDetectList? prohibitDetectList.concat(lostUnDetectList): vueComponent.prohibitDetectList
-  }else{
-    vueComponent.prohibitDetectList = lostUnDetectList? lostUnDetectList: null
+export const setProhibitDetect = (viewName, stage, icons, zones, positions = []) => {
+  if (positions.length == 0) {
+    positions = PositionHelper.filterPositions()
   }
-  vueComponent.message = getProhibitMessage(vueComponent.prohibitDetectList)
-  vueComponent.showDismissibleAlert = vueComponent.message? true: false
-  if(viewName == 'pos'){
-    clearInterval(vueComponent.prohibitInterval)  // 点滅クリア
+  const prohibitZones = zones.filter(zone => zone.categoryList.some(category => category.categoryCd == SYSTEM_ZONE_CATEGORY_NAME.PROHIBIT))
+  const lostZones = zones.filter(zone => zone.categoryList.some(category => category.categoryCd == SYSTEM_ZONE_CATEGORY_NAME.LOST))
+  const prohibitDetectList = getProhibitDetectList(positions, prohibitZones)
+  const lostUnDetectList = getLostUnDetectList(PositionHelper.filterPositions(), lostZones)
+
+  const ret = {}
+  ret.prohibitDetectList = prohibitDetectList.concat(lostUnDetectList)
+  ret.message = getProhibitMessage(ret.prohibitDetectList)
+  ret.showDismissibleAlert = !!ret.message
+
+  if (viewName == 'pos') {
+    clearInterval(ret.prohibitInterval)  // 点滅クリア
     // 禁止区域に検知されたら点滅させる
-    vueComponent.showDismissibleAlert? vueComponent.prohibitInterval = setInterval(() => ViewHelper.twinkleProhibit(vueComponent.stage, vueComponent.icons, vueComponent.prohibitDetectList), DISP.PROHIBIT_TWINKLE_TIME): false
+    if (ret.showDismissibleAlert) {
+      ret.prohibitInterval = setInterval(() => ViewHelper.twinkleProhibit(stage, icons, ret.prohibitDetectList), DISP.PROHIBIT_TWINKLE_TIME)
+    }
   }
+  return ret
 }

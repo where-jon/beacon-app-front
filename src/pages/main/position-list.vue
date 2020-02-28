@@ -74,7 +74,6 @@ export default {
       prohibitDetectList : null,
       showDismissibleAlert: false,
       count: 0, // mockテスト用
-      loadStates: [],
       positionList: [],
     }
   },
@@ -83,8 +82,8 @@ export default {
       // 'txs',
       // 'areas',
       // 'locations',
-      'prohibits',
-      'lostZones',
+      // 'prohibits',
+      // 'lostZones',
     ]),
     alertStyle(){
       return {
@@ -100,13 +99,6 @@ export default {
       try {
         this.replace({showAlert: false})
         this.showProgress()
-        if (APP.POS.PROHIBIT_ALERT) {
-          this.loadStates.push('prohibit')
-        }
-        if (APP.POS.LOST_ALERT) {
-          this.loadStates.push('lostZones')
-        }
-        await Promise.all(this.loadStates.map(StateHelper.load))
         await PositionHelper.loadPosition(0, true)
         let positions = PositionHelper.filterPositions(undefined, true)
         Util.debug('after filter', positions)
@@ -115,7 +107,7 @@ export default {
         const minorMap = {}
 
         if (Util.hasValue(APP.POS.PROHIBIT_ALERT) && Util.hasValueAny(APP.POS.PROHIBIT_GROUP_ZONE, APP.POS.LOST_GROUP_ZONE)) {
-          ProhibitHelper.setProhibitDetect('list', this)
+          Util.merge(this, ProhibitHelper.setProhibitDetect('list', this.stage, this.icons, this.zones))
           this.replace({showAlert: this.showDismissibleAlert})
           this.prohibitDetectList? this.prohibitDetectList.forEach((p) => minorMap[p.minor] = p) : null
         }

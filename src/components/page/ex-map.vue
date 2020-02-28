@@ -174,7 +174,7 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import { SENSOR, TX, POT_TYPE, SHAPE, KEY } from '../../sub/constant/Constants'
+import { SENSOR, TX, POT_TYPE, SHAPE, KEY, SYSTEM_ZONE_CATEGORY_NAME } from '../../sub/constant/Constants'
 import { APP, DISP, DEV, APP_SERVICE, EXCLOUD, MSTEAMS_APP } from '../../sub/constant/config'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
@@ -377,7 +377,6 @@ export default {
       isLoading: false,
       isMsTeams: MSTEAMS_APP.IS_COOPERATION,
       noImageErrorKey: 'noMapImage',
-      loadStates: ['absentDisplayZones'],
       detectedCount: 0,
       thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
       keepExbPosition: false,
@@ -438,9 +437,9 @@ export default {
     ...mapState('app_service', [
       // 'categories',
       // 'groups',
-      'prohibits',
-      'lostZones',
-      'absentDisplayZones',
+      // 'prohibits',
+      // 'lostZones',
+      // 'absentDisplayZones',
       // 'txs',
       // 'btxIdMap',
       // 'txIdMap',
@@ -530,13 +529,6 @@ export default {
     },
   },
   async mounted() {
-    if (this.pShowProhibit) {
-      this.loadStates.push('prohibit')
-    }
-    if (this.pShowLost) {
-      this.loadStates.push('lostZones')
-    }
-    await Promise.all(this.loadStates.map(state => StateHelper.load(state)))
     // ゾーン表示時「・・・」用TXを追加しておく
     this.btxIdMap[PositionHelper.zoneLastTxId()] = { txId: PositionHelper.zoneLastTxId(), disp: 1, tx: {disp: 1} }
     this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryOptions, this.selectedCategoryId, false)
@@ -874,7 +866,8 @@ export default {
       if (!this.pShowAbsent) {
         return
       }
-      const absentDisplayZone = _.find(this.absentDisplayZones, zone => zone.areaId == this.selectedAreaId)
+      const absentDisplayZones = this.zones.filter(zone => zone.categoryList.some(category => category.categoryCd == SYSTEM_ZONE_CATEGORY_NAME.ABSENT_DISPLAY))
+      const absentDisplayZone = _.find(absentDisplayZones, zone => zone.areaId == this.selectedAreaId)
       if (!Util.hasValue(absentDisplayZone)) {
         // 不在表示用ゾーンが存在しない場合は何もしない
         return
@@ -1277,7 +1270,7 @@ export default {
       }
 
       if (this.pShowProhibit && Util.hasValue(APP.POS.PROHIBIT_GROUP_ZONE)) {
-        ProhibitHelper.setProhibitDetect('pos', this, this.positions)
+        Util.merge(this, ProhibitHelper.setProhibitDetect('pos', this.stage, this.icons, this.zones, this.positions))
         this.replace({ showAlert: this.showDismissibleAlert })
       }
 

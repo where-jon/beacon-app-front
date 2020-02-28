@@ -59,7 +59,6 @@ export default {
       listName: StringUtil.single2multi(this.masterName),
       eachListName: StringUtil.concatCamel('each', StringUtil.single2multi(this.masterName)),
       prohibitDetectList : null,
-      loadStates: [],
       showDismissibleAlert: false,
       positions: [],
     }
@@ -71,8 +70,8 @@ export default {
       // 'zones',
       // 'locations',
       // 'locationIdMap',
-      'prohibits',
-      'lostZones',
+      // 'prohibits',
+      // 'lostZones',
     ]),
     ...mapState('main', [
       'eachAreas',
@@ -143,20 +142,13 @@ export default {
       try {
         this.replace({showAlert:false})
         this.showProgress()
-        if (APP.POS.PROHIBIT_ALERT) {
-          this.loadStates.push('prohibit')
-        }
-        if (APP.POS.LOST_ALERT) {
-          this.loadStates.push('lostZones')
-        }
-        await Promise.all(this.loadStates.map(StateHelper.load))
         // positionデータ取得
         await PositionHelper.loadPosition(null, true, true)
         this.positions = PositionHelper.filterPositions(undefined, false, true, null, null, null, null)
 
         if (Util.hasValue(APP.POS.PROHIBIT_ALERT)
           && (Util.hasValue(APP.POS.PROHIBIT_GROUP_ZONE)||Util.hasValue(APP.POS.LOST_GROUP_ZONE))) {
-          ProhibitHelper.setProhibitDetect('display', this)
+          Util.merge(this, ProhibitHelper.setProhibitDetect('display', this.stage, this.icons, this.zones))
         }
 
         this.alertData.message = this.message

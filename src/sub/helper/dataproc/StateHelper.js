@@ -91,28 +91,28 @@ const appStateConf = {
       }))
     }
   },
-  absentDisplayZones: {
-    path: '/core/zone/absentDisplayZones'
-  },
-  lostZones: {
-    path: '/core/zone/lostZones',
-  },
-  prohibits: {
-    path: '/core/zone/prohibit',
-    beforeCommit: arr => {
-      let result = arr.map(val => (val? { // TODO: valがundefinedになる
-        ...val,
-        zoneId: val.zoneId,
-        zoneName:val.zoneName,
-        x: val.x,
-        y: val.y,
-        w: val.w,
-        h: val.h,
-        areaId: val.areaId,
-      }: null))
-      return result
-    }
-  },
+  // absentDisplayZones: {
+  //   path: '/core/zone/absentDisplayZones'
+  // },
+  // lostZones: {
+  //   path: '/core/zone/lostZones',
+  // },
+  // prohibits: {
+  //   path: '/core/zone/prohibit',
+  //   beforeCommit: arr => {
+  //     let result = arr.map(val => (val? { // TODO: valがundefinedになる
+  //       ...val,
+  //       zoneId: val.zoneId,
+  //       zoneName:val.zoneName,
+  //       x: val.x,
+  //       y: val.y,
+  //       w: val.w,
+  //       h: val.h,
+  //       areaId: val.areaId,
+  //     }: null))
+  //     return result
+  //   }
+  // },
 }
 
 /**
