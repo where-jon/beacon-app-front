@@ -85,7 +85,7 @@
         </b-col>
       </b-row>
       <!-- MS Teams版では常にキャンセル・変更ボタンを非表示 -->
-      <b-row v-if="!isMsTeams" v-show="isChange" :style="{ marginTop: '30px' }">
+      <b-row v-if="!isMsTeams" :style="{ marginTop: '30px' }">
         <b-form-group class="col text-center">
           <b-button v-t="'label.cancel'" type="button" class="mr-4 mb-2 input-btn" variant="outline-danger" @click="handleCancelButton" />
           <b-button v-t="'label.modify'" :variant="theme" type="button" class="ml-4 mb-2 input-btn" @click="onSubmit" />
@@ -309,7 +309,7 @@ export default {
         this.$i18n.tnl('message.invalidLoginId')
       )
 
-      if(!Util.hasValue(this.loginUser.password)){
+      if(this.isChange && !Util.hasValue(this.loginUser.password)){
         errorMessages.password = [this.$i18n.tnl('message.invalidPassword')]
         return
       }
