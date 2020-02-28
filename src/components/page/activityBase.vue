@@ -219,16 +219,19 @@ export default {
         // 人ごとにまとめる
         if(this.type=='pot'){
           this.viewList = this.createPotGraph(data)
+          if(isDownload){
+            this.downloadActivity(data)
+          }
         }
         if(this.type=='zone'){
           this.viewList = this.createZoneGraph(data)
+          if(isDownload){
+            this.downloadMeeting(data)
+          }
         }
 
         console.log("viewList", this.viewList)
 
-        if(isDownload){
-          this.download(data)
-        }
 
         this.totalRows = this.viewList.length
       }
@@ -245,43 +248,41 @@ export default {
       const m = date.getMinutes()
       return (h >= 10 ? h : "0" + h) + ":" + (m >= 10 ? m : "0" + m)
     },
-    async download(data) {
+    downloadActivity(data) {
       let csv = ""
-      if(this.type=='pot'){
-        const sum = this.sumData(data, 'txId')
+      const sum = this.sumData(data, 'txId')
 
-        const from = new Date(this.form.datetimeFrom).getTime()
-        const to = new Date(this.form.datetimeTo).getTime()
-        const interval = APP.POSITION_SUMMARY_INTERVAL * 60 * 1000
+      const from = new Date(this.form.datetimeFrom).getTime()
+      const to = new Date(this.form.datetimeTo).getTime()
+      const interval = APP.POSITION_SUMMARY_INTERVAL * 60 * 1000
 
-        csv += ","
-        for(var time=from; time<to; time += interval){
-          csv += "," + this.formatTime(time)
-        }
-        csv += "\n"
+      csv += ","
+      for(var time=from; time<to; time += interval){
+        csv += "," + this.formatTime(time)
+      }
+      csv += "\n"
 
-        sum.forEach(posList => {
-          const pot = this.potMap[posList[0].txId]          
-          const groupName = pot && pot.group ? pot.group.groupName : null
-          const txCd = pot && pot.txIdNames[0]
-          if(groupName && txCd){
-          csv += groupName + "," + txCd
-            for(var time=from; time<to; time += interval){
-              const pos = posList.find(pos => {
-                // 線形探索をしているので重いかもしれない
-                const timestamp = pos.date + (Math.floor(pos.timestamp / 100) * 60 + pos.timestamp%60) * 60 * 1000
-                return time == timestamp
-              })
-              csv += ","
-              if(pos){
-                const exb = this.exbMap[pos.exbId]
-                csv += exb.deviceId
-              }
+      sum.forEach(posList => {
+        const pot = this.potMap[posList[0].txId]          
+        const groupName = pot && pot.group ? pot.group.groupName : null
+        const txCd = pot && pot.txIdNames[0]
+        if(groupName && txCd){
+        csv += groupName + "," + txCd
+          for(var time=from; time<to; time += interval){
+            const pos = posList.find(pos => {
+              // 線形探索をしているので重いかもしれない
+              const timestamp = pos.date + (Math.floor(pos.timestamp / 100) * 60 + pos.timestamp%60) * 60 * 1000
+              return time == timestamp
+            })
+            csv += ","
+            if(pos){
+              const exb = this.exbMap[pos.exbId]
+              csv += exb.deviceId
             }
           }
-          csv += "\n"
-        })        
-      }
+        }
+        csv += "\n"
+      })        
 
       const searchDate = moment(this.form.date).format('YYYY-MM-DD')
       const group = this.form.groupId? this.groups.find((val) => val.groupId == this.form.groupId): null
@@ -294,6 +295,52 @@ export default {
       )
 
     },
+    downloadMeeting(baseData) {
+      const from = new Date(this.form.datetimeFrom).getTime()
+      const to = new Date(this.form.datetimeTo).getTime()
+      const interval = APP.POSITION_SUMMARY_INTERVAL * 60 * 1000
+
+      // zone情報を付与
+      const data = baseData.filter( d => {
+        const exb = this.exbMap[d.exbId]
+        if(!exb){
+          return false
+        }
+        return exb.location && exb.location.zoneList && exb.location.zoneList.length>=1
+      }).map( d => {
+        const exb = this.exbMap[d.exbId]
+        const zone = exb.location.zoneList[0]
+        return {...d, zoneId:zone.zoneId, zone}
+      })
+
+      const sum = this.sumData(data, 'zoneId')
+      console.log('sum', sum)
+
+      let csv = "basetime,device_id,count\n"
+      for(var time=from; time<to; time += interval){
+        sum.forEach(list => {
+          let count = 0
+          list.forEach(pos => {
+            const timestamp = pos.date + (Math.floor(pos.timestamp / 100) * 60 + pos.timestamp%60) * 60 * 1000
+            if(time == timestamp){
+              count++
+            }
+          })
+          csv += this.formatTime(time) + "," + list[0].zone.zoneName + "," + count + "\n"
+        })
+      }
+
+      const searchDate = moment(this.form.date).format('YYYY-MM-DD')
+      const group = this.form.groupId? this.groups.find((val) => val.groupId == this.form.groupId): null
+      const groupName =  group? '_' + group.groupName: ''
+
+      BrowserUtil.fileDL(
+        searchDate + groupName + '_meeting.csv',
+        csv,
+        getCharSet(this.$store.state.loginId)
+      )
+
+    }, 
     sumData(data, type){
       return data.reduce( (sum, obj) => {
         const key = obj[type]
@@ -400,6 +447,7 @@ export default {
         console.log(countMap)
 
 
+        // グラフ作成
         const graph = []
         let stayRatio = 0
         let i=6
@@ -418,6 +466,8 @@ export default {
             ratio
           })
         }
+
+        // リスト作成
         const zoneName = posList[0].zone.zoneName
         const categoryName = posList[0].zone.categoryName
         const categoryId = posList[0].zone.categoryId
