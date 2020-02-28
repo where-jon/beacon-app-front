@@ -1,16 +1,16 @@
 <template>
-  <stay-ratio-stack
-    page="stayRatioActivity"
+  <activity-base
+    page="activityGraph"
     type="pot"
   />
 </template>
 
 <script>
-import stayRatioStack from '../../components/page/stayRatioStack.vue'
+import activityBase from '../../components/page/activityBase.vue'
 
 export default {
   components: {
-    stayRatioStack,
+    activityBase,
   },
   computed: {
   },

@@ -1148,13 +1148,13 @@ export const MENU = [
         icon: 'clock',
       },
       {
-        key: 'stayRatioActivity',
-        path: 'stayRatioActivity',
+        key: 'activityGraph',
+        path: 'activityGraph',
         icon: 'clock',
       },
       {
-        key: 'stayRatioMeeting',
-        path: 'stayRatioMeeting',
+        key: 'meetingGraph',
+        path: 'meetingGraph',
         icon: 'clock',
       },
       {
