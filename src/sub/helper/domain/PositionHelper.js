@@ -81,13 +81,10 @@ export const loadPosition = async (count, allShow = false, fixSize = false) => {
       // スタイルをセット
       let display = Util.getValue(pos.tx, DISP.TX.DISPLAY_PRIORITY + '.display', defaultDisplay)
       display = StyleHelper.getStyleDisplay1({...display, label}, {fixSize})
-      if (pos.transparent) {
-        display.opacity = 0.6
-      }
   
       return { ...pos, btxId: tx.btxId, deviceId: Util.v(exb, 'deviceId'), posx: pos.x, posy: pos.y,
-        label, location, exb, tx, updatetime: DateUtil.dateform(pos.positionDt), timestamp:DateUtil.dateform(pos.positionDt),
-        transparent: pos.transparent? pos.transparent: isTransparent(pos.timestamp, now),
+        label, location, exb, tx, updatetime: DateUtil.dateform(pos.positionDt), timestamp: DateUtil.dateform(pos.positionDt), // TODO: updatetimeかtimestampかどちらかに統一
+        isTransparent: isTransparent(pos.timestamp, now),
         isLost: isLost(pos.timestamp, now),
         display
       }
@@ -376,7 +373,7 @@ export const addFixedPosition = (orgPositions, locations = [], selectedMapId = n
         }
       }
       else {
-        pos.transparent = !pos.inFixedZone
+        pos.isTransparent = !pos.inFixedZone
       }
     }
   })
@@ -659,6 +656,8 @@ export const calcCoordinatesForMultiPosition = (positions, selectedAreaId) => {
 
 /**
  * 位置表示のTx詳細に必要な情報を取得する。
+ * TODO: 別のHelperに移動
+ * 
  * @method
  * @param {Number} x
  * @param {Number} y
@@ -705,6 +704,8 @@ export const createTxDetailInfo = (x, y, tx, canvasScale, offset, containerRect,
 
 /**
  * 位置表示（全体）のTx詳細に必要な情報を取得する。
+ * TODO: 別のHelperに移動
+ * 
  * @method
  * @param {Number} x
  * @param {Number} y

@@ -1139,7 +1139,7 @@ export const fetchSensorInfo = async (targetSensorIds = []) => {
     // pir: val.count >= DISP.PIR.MIN_COUNT // TODO: 元のソースにあったfilter条件。多分不要。
     // exb.sensorId == SENSOR.PRESSURE? exb.pressVol <= DISP.PRESSURE.VOL_MIN || DISP.PRESSURE.EMPTY_SHOW: exb.count > 0 || DISP.PIR.EMPTY_SHOW
     // APP.SENSOR.SHOW_MAGNET_ON_PIR) 
-    sensorMap[sensor.name] = sensorInfo.sortBy(sensor => 
+    sensorMap[sensor.name] = sensorInfo.sortBy(sensor => // MEDiTAGの場合、指定時間以内に転倒したものを先頭にソートする
       sensor.sensorId == SENSOR.MEDITAG && (new Date().getTime() - sensor.downLatest < APP.SENSOR.MEDITAG.DOWN_RED_TIME)?
         sensor.downLatest * -1
         : sensor.btxId
@@ -1188,22 +1188,22 @@ const addSensorInfo = (sensor, pos) => {
     // id: sensor.sensorId,
     ...sensor,
     // sensorId: sensor? sensor.id: null,
-    label: Util.getValue(tx, 'displayName', sensor.btxId), 
+    label: Util.v(tx, 'displayName', sensor.btxId), 
     ...tx,
     ...exb,
-    bg: getStressBg(sensor.stress), 
-    down: Util.getValue(sensor, 'down', 0),
-    count: Util.getValue(sensor, 'count', 0),
-    pressVol: Util.getValue(sensor, 'press_vol', 0),
+    deviceId: Util.v(exb,'deviceId', ''),
     x: location.x,
     y: location.y,
     updatetime,
+    sensorDt: DateUtil.formatDate(updatetime),
+    bg: getStressBg(sensor.stress), 
+    down: Util.v(sensor, 'down', 0),
+    count: Util.v(sensor, 'count', 0),
+    pressVol: Util.v(sensor, 'press_vol', 0),
     ambientLight: sensor.ambient_light,
     soundNoise: sensor.sound_noise,
-    sensorDt: DateUtil.formatDate(updatetime),
-    potName,
     state: getMagnetStateKey(sensor.magnet),
-    deviceId: exb && exb.deviceId? exb.deviceId: '',
+    potName,
     areaId,
     areaName,
     zoneIdList,

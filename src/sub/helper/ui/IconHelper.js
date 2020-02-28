@@ -255,8 +255,8 @@ export const createPositionRectInfo = (pos, bgColor) => {
   let fillAlpha = 1
   if (NumberUtil.bitON(pos.tx.disp, TX.DISP.ALWAYS)) {
     // 常時表示時
-    fillAlpha = pos.isLost? DISP.TX.LOST_ALPHA: pos.transparent? DISP.TX.ALPHA: fillAlpha
-  } else if (pos.transparent) {
+    fillAlpha = pos.isLost? DISP.TX.LOST_ALPHA: pos.isTransparent? DISP.TX.ALPHA: fillAlpha
+  } else if (pos.isTransparent) {
     // 通常の離席時
     strokeAlpha = DISP.TX.ALPHA
     fillAlpha = DISP.TX.ALPHA
@@ -356,7 +356,7 @@ export const createTxBtn = (pos, shape, color, bgColor, mapScale, isAbsent = fal
   txBtn.y = pos.y
   txBtn.color = color
   txBtn.bgColor = bgColor
-  txBtn.transparent
+  // txBtn.isTransparent  // TODO: 値をセットしていない
   return txBtn
 }
 

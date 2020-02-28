@@ -802,7 +802,7 @@ export default {
       // 既に該当btxIdのTXアイコンが作成済みか?
       // console.error(pos.btxId + '_' + pos.isFixedPosition, pos.x, pos.y)
       let txBtn = this.icons[pos.btxId + '_' + pos.isFixedPosition]
-      if (!txBtn || txBtn.color != color || txBtn.bgColor != bgColor || txBtn.transparent != pos.transparent) {
+      if (!txBtn || txBtn.color != color || txBtn.bgColor != bgColor || txBtn.isTransparent != pos.isTransparent) {
         // 作成されていない場合、新規作成してからiconsに登録
         txBtn = IconHelper.createTxBtn(pos, display.shape, color, bgColor, this.getMapScale())
         txBtn.on('click', evt => this.txOnClick(evt))
@@ -973,7 +973,7 @@ export default {
         return
       }
 
-      pos.transparent = pos.transparent || isAbsentZone // TODO: 別の場所に移動
+      pos.isTransparent = pos.isTransparent || isAbsentZone // TODO: 別の場所に移動
       const txBtn = this.updateTxBtn(pos, pos.tx, meditag, magnet)
       if(this.reloadSelectedTx.btxId == pos.btxId){
         this.showDetail(txBtn.btxId, txBtn.x, txBtn.y)
@@ -1000,7 +1000,7 @@ export default {
           txBtn = this.createQuantityTxBtn(location, SHAPE.SQUARE, DISP.TX_NUM.COLOR, DISP.TX_NUM.BGCOLOR)
           txBtn.color = DISP.TX_NUM.COLOR
           txBtn.bgColor = DISP.TX_NUM.BGCOLOR
-          txBtn.transparent
+          // txBtn.isTransparent // TODO: 値をセットしていない
           txBtn.cursor = 'pointer'
           this.txCont.addChild(txBtn)
         })
