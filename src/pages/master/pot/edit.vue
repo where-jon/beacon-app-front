@@ -93,7 +93,7 @@
             </b-form-group>
             <b-form-group v-if="editShowUser">
               <label v-t="'label.loginId'" />
-              <input v-model="userForm.loginId" :title="$i18n.tnl('message.validationList', {validate: $i18n.tnl('message.loginValidationList')})" type="text" minlength="3" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control" :required="editShowUser">
+              <input v-model="userForm.loginId" :title="$i18n.tnl('message.validationList', {validate: $i18n.tnl('message.loginValidationList')})" type="text" minlength="3" maxlength="16" pattern="^[a-zA-Z0-9][a-zA-Z0-9_\-@\.]*$" class="form-control" :required="editShowUser">
             </b-form-group>
             <b-form-group v-if="editShowUser">
               <label v-t="'label.role'" />
