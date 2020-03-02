@@ -126,6 +126,7 @@ export default {
     }
   },
   computed: {
+    // TODO:commonにあるよ
     ...mapState('app_service', [
       'groups',
       'pots',
@@ -162,8 +163,8 @@ export default {
     // this.form.datetimeFrom = DateUtil.getDatetime(date, {date: -1})
     // this.form.datetimeTo = DateUtil.getDatetime(date)
     
-    this.potMap = this.getPotMap()
-    this.exbMap = this.getExbMap()
+    this.form.potMap = this.getPotMap()
+    this.form.exbMap = this.getExbMap()
   },
   async mounted() {
     ViewHelper.importElementUI()
@@ -208,7 +209,7 @@ export default {
         }
 
         // データ取得
-        const data = await this.getData(this.form)
+        const data = await this.$parent.getData(this.form)
         if (_.isEmpty(data)) {
           this.message = this.$i18n.t('message.listEmpty')
           this.replace({showAlert: true})
@@ -216,18 +217,10 @@ export default {
           return
         }
 
-        // 人ごとにまとめる
-        if(this.type=='pot'){
-          this.viewList = this.createPotGraph(data)
-          if(isDownload){
-            this.downloadActivity(data)
-          }
-        }
-        if(this.type=='zone'){
-          this.viewList = this.createZoneGraph(data)
-          if(isDownload){
-            this.downloadMeeting(data)
-          }
+        // グラフ作成
+        this.viewList = this.$parent.createGraph(this.form, data)
+        if(isDownload){
+          this.downloadMeeting(data)
         }
 
         Util.debug("viewList", this.viewList)
@@ -248,238 +241,99 @@ export default {
       const m = date.getMinutes()
       return (h >= 10 ? h : "0" + h) + ":" + (m >= 10 ? m : "0" + m)
     },
-    downloadActivity(data) {
-      let csv = ""
-      const sum = this.sumData(data, 'txId')
+    // downloadActivity(data) {
+    //   let csv = ""
+    //   const sum = this.sumData(data, 'txId')
 
-      const from = new Date(this.form.datetimeFrom).getTime()
-      const to = new Date(this.form.datetimeTo).getTime()
-      const interval = APP.POSITION_SUMMARY_INTERVAL * 60 * 1000
+    //   const from = new Date(this.form.datetimeFrom).getTime()
+    //   const to = new Date(this.form.datetimeTo).getTime()
+    //   const interval = APP.POSITION_SUMMARY_INTERVAL * 60 * 1000
 
-      csv += ","
-      for(var time=from; time<to; time += interval){
-        csv += "," + this.formatTime(time)
-      }
-      csv += "\n"
+    //   csv += ","
+    //   for(var time=from; time<to; time += interval){
+    //     csv += "," + this.formatTime(time)
+    //   }
+    //   csv += "\n"
 
-      sum.forEach(posList => {
-        const pot = this.potMap[posList[0].txId]          
-        const groupName = pot && pot.group ? pot.group.groupName : null
-        const txCd = pot && pot.txIdNames[0]
-        if(groupName && txCd){
-        csv += groupName + "," + txCd
-          for(var time=from; time<to; time += interval){
-            const pos = posList.find(pos => {
-              // 線形探索をしているので重いかもしれない
-              const timestamp = pos.date + (Math.floor(pos.timestamp / 100) * 60 + pos.timestamp%60) * 60 * 1000
-              return time == timestamp
-            })
-            csv += ","
-            if(pos){
-              const exb = this.exbMap[pos.exbId]
-              csv += exb.deviceId
-            }
-          }
-        }
-        csv += "\n"
-      })        
+    //   sum.forEach(posList => {
+    //     const pot = this.potMap[posList[0].txId]          
+    //     const groupName = pot && pot.group ? pot.group.groupName : null
+    //     const txCd = pot && pot.txIdNames[0]
+    //     if(groupName && txCd){
+    //     csv += groupName + "," + txCd
+    //       for(var time=from; time<to; time += interval){
+    //         const pos = posList.find(pos => {
+    //           // 線形探索をしているので重いかもしれない
+    //           const timestamp = pos.date + (Math.floor(pos.timestamp / 100) * 60 + pos.timestamp%60) * 60 * 1000
+    //           return time == timestamp
+    //         })
+    //         csv += ","
+    //         if(pos){
+    //           const exb = this.exbMap[pos.exbId]
+    //           csv += exb.deviceId
+    //         }
+    //       }
+    //     }
+    //     csv += "\n"
+    //   })        
 
-      const searchDate = moment(this.form.date).format('YYYY-MM-DD')
-      const group = this.form.groupId? this.groups.find((val) => val.groupId == this.form.groupId): null
-      const groupName =  group? '_' + group.groupName: ''
+    //   const searchDate = moment(this.form.date).format('YYYY-MM-DD')
+    //   const group = this.form.groupId? this.groups.find((val) => val.groupId == this.form.groupId): null
+    //   const groupName =  group? '_' + group.groupName: ''
 
-      BrowserUtil.fileDL(
-        searchDate + groupName + '_activity.csv',
-        csv,
-        getCharSet(this.$store.state.loginId)
-      )
+    //   BrowserUtil.fileDL(
+    //     searchDate + groupName + '_activity.csv',
+    //     csv,
+    //     getCharSet(this.$store.state.loginId)
+    //   )
 
-    },
-    downloadMeeting(baseData) {
-      const from = new Date(this.form.datetimeFrom).getTime()
-      const to = new Date(this.form.datetimeTo).getTime()
-      const interval = APP.POSITION_SUMMARY_INTERVAL * 60 * 1000
+    // },
+    // downloadMeeting(baseData) {
+    //   const from = new Date(this.form.datetimeFrom).getTime()
+    //   const to = new Date(this.form.datetimeTo).getTime()
+    //   const interval = APP.POSITION_SUMMARY_INTERVAL * 60 * 1000
 
-      // zone情報を付与
-      const data = baseData.filter( d => {
-        const exb = this.exbMap[d.exbId]
-        if(!exb){
-          return false
-        }
-        return exb.location && exb.location.zoneList && exb.location.zoneList.length>=1
-      }).map( d => {
-        const exb = this.exbMap[d.exbId]
-        const zone = exb.location.zoneList[0]
-        return {...d, zoneId:zone.zoneId, zone}
-      })
+    //   // zone情報を付与
+    //   const data = baseData.filter( d => {
+    //     const exb = this.exbMap[d.exbId]
+    //     if(!exb){
+    //       return false
+    //     }
+    //     return exb.location && exb.location.zoneList && exb.location.zoneList.length>=1
+    //   }).map( d => {
+    //     const exb = this.exbMap[d.exbId]
+    //     const zone = exb.location.zoneList[0]
+    //     return {...d, zoneId:zone.zoneId, zone}
+    //   })
 
-      const sum = this.sumData(data, 'zoneId')
-      Util.debug('sum', sum)
+    //   const sum = this.sumData(data, 'zoneId')
+    //   Util.debug('sum', sum)
 
-      let csv = "basetime,device_id,count\n"
-      for(var time=from; time<to; time += interval){
-        sum.forEach(list => {
-          let count = 0
-          list.forEach(pos => {
-            const timestamp = pos.date + (Math.floor(pos.timestamp / 100) * 60 + pos.timestamp%60) * 60 * 1000
-            if(time == timestamp){
-              count++
-            }
-          })
-          csv += this.formatTime(time) + "," + list[0].zone.zoneName + "," + count + "\n"
-        })
-      }
+    //   let csv = "basetime,device_id,count\n"
+    //   for(var time=from; time<to; time += interval){
+    //     sum.forEach(list => {
+    //       let count = 0
+    //       list.forEach(pos => {
+    //         const timestamp = pos.date + (Math.floor(pos.timestamp / 100) * 60 + pos.timestamp%60) * 60 * 1000
+    //         if(time == timestamp){
+    //           count++
+    //         }
+    //       })
+    //       csv += this.formatTime(time) + "," + list[0].zone.zoneName + "," + count + "\n"
+    //     })
+    //   }
 
-      const searchDate = moment(this.form.date).format('YYYY-MM-DD')
-      const group = this.form.groupId? this.groups.find((val) => val.groupId == this.form.groupId): null
-      const groupName =  group? '_' + group.groupName: ''
+    //   const searchDate = moment(this.form.date).format('YYYY-MM-DD')
+    //   const group = this.form.groupId? this.groups.find((val) => val.groupId == this.form.groupId): null
+    //   const groupName =  group? '_' + group.groupName: ''
 
-      BrowserUtil.fileDL(
-        searchDate + groupName + '_meeting.csv',
-        csv,
-        getCharSet(this.$store.state.loginId)
-      )
+    //   BrowserUtil.fileDL(
+    //     searchDate + groupName + '_meeting.csv',
+    //     csv,
+    //     getCharSet(this.$store.state.loginId)
+    //   )
 
-    }, 
-    sumData(data, type){
-      return data.reduce( (sum, obj) => {
-        const key = obj[type]
-        if(!sum[key]){
-          sum[key] = []
-        }
-        sum[key].push(obj)
-        return sum
-      }, []).filter(d => d[type] == null)
-    },
-    createPotGraph(data) {
-      const sum = this.sumData(data, 'txId')
-      Util.debug('sum', sum)
-
-      const from = new Date(this.form.datetimeFrom).getTime()
-      const to = new Date(this.form.datetimeTo).getTime()
-      const total = (to - from)/1000
-      
-      return sum.map( posList => {
-        Util.debug('len', posList.length)
-        const stayTime = posList.length * APP.POSITION_SUMMARY_INTERVAL * 60
-        const posGroup = this.sumData(posList, 'exbId')
-        Util.debug('posGroup', posGroup)
-        const graph = posGroup.map( group => {
-          const exb = this.exbMap[group[0].exbId]
-          const zoneName = exb && exb.location && exb.location.zoneList && exb.location.zoneList.length >= 1 ? exb.location.zoneList[0].zoneName : null
-          const time = group.length * APP.POSITION_SUMMARY_INTERVAL * 60
-          const ratio = Math.floor(group.length * APP.POSITION_SUMMARY_INTERVAL * 60 / total * 100)
-          return {
-            name: zoneName,
-            time: DateUtil.toHHmm(time),
-            ratio
-          }
-        })
-        graph.sort( (a,b) => {
-          return b.ratio - a.ratio
-        })
-        graph.forEach( (g, i) => {
-          const color = this.getStackColor(i)
-          g.style = `width: ${g.ratio}% !important; background: ${color};`
-        })
-        // 不在追加
-        if(total - stayTime > 0){
-          const ratio = Math.floor((total-stayTime)/total*100)
-          const color = ColorUtil.colorCd4display(this.otherColor)
-          graph.push({
-            style: `width: ${ratio}% !important;`,
-            time: DateUtil.toHHmm(total-stayTime),
-            ratio
-          })
-        }
-        const pot = this.potMap[posList[0].txId]
-        const potName = pot ? pot.potName : null
-        const groupName = pot && pot.group ? pot.group.groupName : null
-        const groupId = pot && pot.group ? pot.group.groupId : null
-        return {
-          name: potName,
-          groupName,
-          groupId,
-          graph,
-          stayTime: DateUtil.toHHmm(stayTime),
-          lostTime: DateUtil.toHHmm(total - stayTime)
-        }
-      }).filter(view => view.name != null && !this.form.groupId || (view.groupId == this.form.groupId))
-    },
-    createZoneGraph(baseData) {
-
-      // zone情報を付与
-      const data = baseData.filter( d => {
-        const exb = this.exbMap[d.exbId]
-        if(!exb){
-          return false
-        }
-        return exb.location && exb.location.zoneList && exb.location.zoneList.length>=1
-      }).map( d => {
-        const exb = this.exbMap[d.exbId]
-        const zone = exb.location.zoneList[0]
-        return {...d, zoneId:zone.zoneId, zone}
-      })
-      Util.debug('data', data)
-
-      const sum = this.sumData(data, 'zoneId')
-      Util.debug('sum', sum)
-
-      const from = new Date(this.form.datetimeFrom).getTime()
-      const to = new Date(this.form.datetimeTo).getTime()
-      const total = (to - from)/1000
-      
-      return sum.map( posList => {
-        const posGroup = this.sumData(posList, 'txId')
-        Util.debug('posGroup', posGroup)
-        Util.debug('total', total)
-
-        // 同一時刻の集計
-        const countMap = {}
-        posList.forEach(pos => {
-          const timestamp = pos.date + Math.floor(pos.timestamp / 100) * 60 * 60 * 1000 + pos.timestamp % 100 * 60 * 1000
-          if(!countMap[timestamp]){
-            countMap[timestamp] = 0
-          }
-          countMap[timestamp]++
-          countMap[timestamp] = Math.min(countMap[timestamp], 6)
-        })
-        Util.debug(countMap)
-
-
-        // グラフ作成
-        const graph = []
-        let stayRatio = 0
-        let i=6
-        while(i-- > 0){
-          const countList = Object.keys(countMap).map(key => { return {key, value:countMap[key]} })
-          const times = countList.filter(c => c.value == i)
-          Util.debug('times', times)
-          const time = times.length * APP.POSITION_SUMMARY_INTERVAL * 60
-          const ratio = Math.floor(times.length * APP.POSITION_SUMMARY_INTERVAL * 60 / total * 100)
-          stayRatio += ratio
-          const color = this.getStackColor(i)
-          graph.push({
-            name: i,
-            style: `width: ${ratio}% !important; background: ${color};`,
-            time: DateUtil.toHHmm(time),
-            ratio
-          })
-        }
-
-        // リスト作成
-        const zoneName = posList[0].zone.zoneName
-        const categoryName = posList[0].zone.categoryName
-        const categoryId = posList[0].zone.categoryId
-        return {
-          name: zoneName,
-          groupName: categoryName,
-          categoryId,
-          graph,
-          ratio: stayRatio + "%"
-        }
-      }).filter(view => view.name != null && (!this.form.categoryId || this.form.categoryId==view.categoryId))
-    },
+    // }, 
     getPotMap() {
       const potMap = {}
       this.pots.forEach(pot => {
@@ -500,27 +354,7 @@ export default {
       const pot = this.pots.find(p => p.potId == potId)
       return pot && pot.group ? pot.group.groupName : null
     },
-    getStackColor(index) {
-      // 設定が6色以上ある事が前提
-      return DISP.SUM_STACK_COLOR[index % DISP.SUM_STACK_COLOR.length]
-    },
-    async getData(form){
-      const param = {}
-      const from = new Date(form.datetimeFrom).getTime()
-      const to = new Date(form.datetimeTo).getTime()
-      const url = `/core/positionHistory/summary/${from}/${to}/${APP.POSITION_SUMMARY_INTERVAL}/${APP.POSITION_SUMMARY_RECEIVE_COUNT}`
-      const sumData = await HttpHelper.getAppService(url)
-      Util.debug('sumData', sumData)
-      // 重複データを排除
-      let pre = null
-      const ret = sumData.filter(s => {
-        const dupe = pre && s.date==pre.date && s.timestamp==pre.timestamp && s.txId==pre.txId
-        pre = s       
-        return !dupe
-      })
-      Util.debug('filter', ret)
-      return ret
-    },
+
   }
 }
 </script>
