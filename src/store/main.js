@@ -2,13 +2,14 @@ import Vue from 'vue'
 import axios from 'axios'
 
 export const state = () => ({
-  selectedArea: null,
+  selectedAreaId: null,
   selectedTx: {},
   eachAreas: [],
   eachZones: [],
   sample: 'sample', // sample
   positions: [],
   timers: [],
+  locationMRoomPlanMap: []
 })
 
 const initState = state()

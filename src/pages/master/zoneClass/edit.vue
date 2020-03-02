@@ -167,13 +167,13 @@ export default {
   watch: {
     'vueSelected.area': {
       handler: function(newVal, oldVal){
-        this.form.areaId = Util.getValue(newVal, 'value', null)
+        this.form.areaId = Util.getValue(newVal, 'value')
       },
       deep: true,
     },
     'vueSelected.category': {
       handler: function(newVal, oldVal){
-        this.form.categoryId = Util.getValue(newVal, 'value', null)
+        this.form.categoryId = Util.getValue(newVal, 'value')
       },
       deep: true,
     },
@@ -202,7 +202,7 @@ export default {
 
       const zoneCategoryList = Util.getValue(this.form, 'zoneCategoryList', [])
       const zoneCategory = zoneCategoryList.find(zoneCategory => categoryMap[zoneCategory.zoneCategoryPK.categoryId] == CATEGORY.ZONE)
-      this.form.categoryId = Util.getValue(zoneCategory, 'zoneCategoryPK.categoryId', null)
+      this.form.categoryId = Util.getValue(zoneCategory, 'zoneCategoryPK.categoryId')
       this.form.zoneCategoryList = zoneCategoryList.filter(zoneCategory => categoryMap[zoneCategory.zoneCategoryPK.categoryId] != CATEGORY.ZONE)
 
       this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaNames, this.form.areaId)
@@ -222,8 +222,8 @@ export default {
       this.$set(this.form, 'zoneCd', MasterHelper.createMasterCd('zone', this.zones, this.zone))
     },
     async onBeforeReload(){
-      this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaNames, null)
-      this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryNames, null)
+      this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaNames)
+      this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryNames)
     },
     async onSaving() {
       const zoneId = Util.hasValue(this.form.zoneId)? this.form.zoneId: -1
@@ -239,6 +239,9 @@ export default {
       }
       ExtValueHelper.getExtValueKeys(APP.ZONE).forEach(key => entity.extValue[key] = this.form[key])
       if(this.form.categoryId) {
+        if (!entity.zoneCategoryList) {
+          entity.zoneCategoryList = []
+        }
         entity.zoneCategoryList.push({ zoneCategoryPK: {zoneId: zoneId, categoryId: this.form.categoryId} })
       }
       return await AppServiceHelper.bulkSave(this.pAppServicePath, [entity])

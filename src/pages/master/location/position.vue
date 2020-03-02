@@ -16,7 +16,7 @@
             </template>
           </v-select>
         </span>
-        <b-button v-t="'label.load'" :variant="theme" :disabled="settingStart || selectedArea == null" size="sm" class="mb-2" @click="changeArea" />
+        <b-button v-t="'label.load'" :variant="theme" :disabled="settingStart || selectedAreaId == null" size="sm" class="mb-2" @click="changeArea" />
       </b-form-row>
     </b-form>
     <b-form inline class="mt-2" @submit.prevent>
@@ -177,7 +177,7 @@ export default {
       'pageSendParam',
     ]),
     initAreaId(){
-      const areaId = Util.getValue(this.pageSendParam, 'areaId', null)
+      const areaId = Util.getValue(this.pageSendParam, 'areaId')
       return VueSelectHelper.getVueSelectData(this.areaOptions, areaId, !Util.hasValue(areaId))
     },
     locationDispOptions(){
@@ -224,13 +224,13 @@ export default {
   watch: {
     'vueSelected.area': {
       handler: function(newVal, oldVal){
-        this.selectedArea = Util.getValue(newVal, 'value', null)
+        this.selectedAreaId = Util.getValue(newVal, 'value')
       },
       deep: true,
     },
     'vueSelected.locationPos': {
       handler: function(newVal, oldVal){
-        this.form.locationPos = Util.getValue(newVal, 'value', null)
+        this.form.locationPos = Util.getValue(newVal, 'value')
       },
       deep: true,
     },
@@ -244,7 +244,7 @@ export default {
     }
   },
   async mounted() {
-    this.form.locationDisp = Util.getValue(this.locationDispOptions, '0.value', null)
+    this.form.locationDisp = Util.getValue(this.locationDispOptions, '0.value')
     this.vueSelected.area = this.initAreaId
     this.legend.items = this.legendItems
     this.replaceAS({pageSendParam: null})
@@ -254,7 +254,7 @@ export default {
     })
   },
   beforeDestroy() {
-    this.selectedArea = null
+    this.selectedAreaId = null
   },
   methods: {
     reset() {
@@ -294,7 +294,7 @@ export default {
     },
     // 現在エリアに存在する場所
     getPositionedLocationList(){
-      return this.work.locationList.filter(location => Util.hasValue(this.selectedArea) && this.selectedArea == Util.getValue(location, 'areaId', null))
+      return this.work.locationList.filter(location => Util.hasValue(this.selectedAreaId) && this.selectedAreaId == Util.getValue(location, 'areaId'))
     },
     // 種類を変更した場合に実行
     changeLocationDisp(newVal){
@@ -305,7 +305,7 @@ export default {
       const buttonNum = this.locationCon.numChildren
       for (let idx = buttonNum - 1; 0 <= idx; idx--) {
         const locationButton = this.locationCon.getChildAt(idx)
-        if (Util.getValue(locationButton, 'location.areaId', null) != this.oldSelectedArea) {
+        if (Util.getValue(locationButton, 'location.areaId') != this.oldSelectedAreaId) {
           this.locationCon.removeChild(locationButton)
         }
       }
@@ -326,31 +326,31 @@ export default {
       this.stage.update()
     },
     // アイコン内の全情報を最新化：フェッチ、詳細ポップアップ確定、削除後
-    refleshDeviceLocationList(deviceList){
-      const locationMap = {}
-      deviceList.forEach(device => {
-        if(Util.hasValue(device.locationId)){
-          if(!locationMap[device.locationId]){
-            locationMap[device.locationId] = []
-          }
-          locationMap[device.locationId].push(device)
-        }
-      })
-      return locationMap
-    },
+    // refleshDeviceLocationList(deviceList){
+    //   const locationMap = {}
+    //   deviceList.forEach(device => {
+    //     if(Util.hasValue(device.locationId)){
+    //       if(!locationMap[device.locationId]){
+    //         locationMap[device.locationId] = []
+    //       }
+    //       locationMap[device.locationId].push(device)
+    //     }
+    //   })
+    //   return locationMap
+    // },
     refleshLocationList(){
-      const locationExbMap = this.refleshDeviceLocationList(this.work.exbList)
-      const locationTxMap = this.refleshDeviceLocationList(this.work.txList)
+      // const locationExbMap = this.refleshDeviceLocationList(this.work.exbList)
+      // const locationTxMap = this.refleshDeviceLocationList(this.work.txList)
       this.work.locationList.forEach(location => {
-        const exbList = locationExbMap[location.locationId]? locationExbMap[location.locationId]: []
-        const exbNum = exbList.length
-        location.exbList = exbList
-        location.deviceId = Util.getValue(exbList, '0.deviceId', '') + (1 < exbNum? '+': '')
-        location.deviceIdX = Util.getValue(exbList, '0.deviceIdX', '') + (1 < exbNum? '+': '')
+        // const exbList = locationExbMap[location.locationId]? locationExbMap[location.locationId]: []
+        const exbNum = location.exbList.length
+        // location.exbList = exbList
+        location.deviceId = Util.getValue(location.exbList, '0.deviceId', '') + (1 < exbNum? '+': '')
+        location.deviceIdX = Util.getValue(location.exbList, '0.deviceIdX', '') + (1 < exbNum? '+': '')
 
-        const txList = locationTxMap[location.locationId]? locationTxMap[location.locationId]: []
-        location.txList = txList
-        location.txName = MasterHelper.getLocationTxName(Util.getValue(txList, '0', null), false) + (1 < txList.length? '+': '')
+        // const txList = locationTxMap[location.locationId]? locationTxMap[location.locationId]: []
+        // location.txList = txList
+        location.txName = MasterHelper.getLocationTxName(Util.v(location.txList, '0'), false) + (1 < location.txList.length? '+': '')
       })
       this.changeLocationDisp(this.form.locationDisp)
     },
@@ -388,8 +388,8 @@ export default {
         this.mapRatio = Math.floor(this.realWidth / this.pixelWidth)
         return
       }
-      if (this.selectedArea) {
-        const area = _.find(this.areas, area => area.areaId == this.selectedArea)
+      if (this.selectedAreaId) {
+        const area = this.areaIdMap[this.selectedAreaId]
         if (area && area.mapRatio) {
           this.mapRatio = area.mapRatio
         }
@@ -407,14 +407,14 @@ export default {
     },
     async changeAreaDone() {
       if (!this.isChangeArea) {
-        this.selectedArea = this.oldSelectedArea
+        this.selectedAreaId = this.oldSelectedAreaId
         return
       }
       this.isChangeArea = false
-      if (!this.selectedArea) {
+      if (!this.selectedAreaId) {
         return
       }
-      await StateHelper.loadAreaImage(this.selectedArea)
+      await StateHelper.loadAreaImage(this.selectedAreaId)
       this.reset()
       this.fetchData()
     },
@@ -459,7 +459,7 @@ export default {
         locationId: this.dummyKey--,
         locationCd: masterCd,
         locationName: this.$i18n.tnl('label.initLocation') + masterCd,
-        areaId: this.oldSelectedArea,
+        areaId: this.oldSelectedAreaId,
         x: x,
         y: y,
         isChanged: true,
@@ -474,7 +474,7 @@ export default {
       if(!target){
         return this.createEmptyLocation(x, y)
       }
-      target.areaId = this.oldSelectedArea
+      target.areaId = this.oldSelectedAreaId
       target.x = x
       target.y = y
       target.isChanged = true
@@ -521,7 +521,7 @@ export default {
       return this.createTxLocation(masterId, x, y)
     },
     showLocationOnMap(val, x = 50, y = 40) {
-      const masterId = Util.getValue(val, 'value', null)
+      const masterId = Util.v(val, 'value')
       if (masterId == null) {
         return
       }
@@ -680,7 +680,11 @@ export default {
     getSaveLocationList(){
       return this.work.locationList.filter(location => location.isChanged).map(location => {
         return {
-          ...location,
+          locationId: location.locationId,
+          locationCd: location.locationCd,
+          locationType: location.locationType,
+          locationName: location.locationName,
+          areaId: location.areaId,
           isChanged: false,
           exbList: [],
           exbIdList: Util.getValue(location, 'exbList', []).map(val => val.exbId),
@@ -693,9 +697,9 @@ export default {
       })
     },
     createSendArea(){
-      const currentArea = this.areas.find(area => area.areaId == this.oldSelectedArea)
+      const currentArea = this.areaIdMap[this.oldSelectedAreaId]
       const ret = {
-        areaId: this.oldSelectedArea,
+        areaId: this.oldSelectedAreaId,
         areaCd: currentArea.areaCd,
         areaName: currentArea.areaName,
         mapRatio: this.mapRatio,

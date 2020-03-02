@@ -63,6 +63,11 @@ export const merge = (dest, src, excludeKeys = []) => {
   if(src == null){
     return dest
   }
+
+  if (excludeKeys.length == 0) {
+    return Object.assign(dest, src)
+  }
+
   const temp = Object.assign({}, src)
   excludeKeys.forEach(key => delete temp[key])
   return Object.assign(dest, temp)

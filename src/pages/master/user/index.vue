@@ -39,9 +39,9 @@ export default {
     }
   },
   computed: {
-    ...mapState('app_service', [
-      'regions',
-    ]),
+    // ...mapState('app_service', [
+    //   'regions',
+    // ]),
   },
   async created() {
   },

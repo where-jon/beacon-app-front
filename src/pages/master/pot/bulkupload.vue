@@ -49,7 +49,8 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'pot', 'pots'
+      'pot'
+      // , 'pots'
     ]),
     backPath() {
       return this.pPath

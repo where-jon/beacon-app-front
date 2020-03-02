@@ -10,6 +10,7 @@ import * as LocalStorageHelper from '../sub/helper/base/LocalStorageHelper'
 import * as MenuHelper from '../sub/helper/dataproc/MenuHelper'
 import * as StateHelper from '../sub/helper/dataproc/StateHelper'
 import * as MasterHelper from '../sub/helper/domain/MasterHelper'
+import * as OptionHelper from '../sub/helper/dataproc/OptionHelper'
 
 export default async (context, inject) => {
   console.log('App Init') // If you need common initialize procedure, write here.
@@ -35,6 +36,7 @@ export default async (context, inject) => {
     }
     if (login) {
       // get all master
+      OptionHelper.setApp(context.app.i18n)
       MasterHelper.setApp(context.app.store, context.app.i18n)
       StateHelper.setApp(context.app.store, context.app.i18n)
       const start = new Date().getTime()

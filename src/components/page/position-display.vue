@@ -59,20 +59,19 @@ export default {
       listName: StringUtil.single2multi(this.masterName),
       eachListName: StringUtil.concatCamel('each', StringUtil.single2multi(this.masterName)),
       prohibitDetectList : null,
-      loadStates: [],
       showDismissibleAlert: false,
       positions: [],
     }
   },
   computed: {
     ...mapState('app_service', [
-      'txs',
-      'areas',
-      'zones',
-      'locations',
-      'locationIdMap',
-      'prohibits',
-      'lostZones',
+      // 'txs',
+      // 'areas',
+      // 'zones',
+      // 'locations',
+      // 'locationIdMap',
+      // 'prohibits',
+      // 'lostZones',
     ]),
     ...mapState('main', [
       'eachAreas',
@@ -114,7 +113,7 @@ export default {
           }
         }): false
         pos.isDisableArea = Util.getValue(location, 'isAbsentZone', false)
-        const posMasterIds = this.displayZone? Util.getValue(pos, 'location.zoneIdList', [null]): [Util.getValue(pos, 'location.areaId', null)]
+        const posMasterIds = this.displayZone? Util.getValue(pos, 'location.zoneIdList', [null]): [Util.getValue(pos, 'location.areaId')]
         posMasterIds.forEach(posMasterId => {
           const hasMasterId = Util.hasValue(posMasterId)
           const obj = hasMasterId ? tempMasterMap[posMasterId]: tempMasterExt
@@ -122,7 +121,13 @@ export default {
             obj.positions.push(pos)
           }else if(absentZone){
             // 不在ゾーンへの登録
-            tempMasterMap[absentZone.zoneId].positions.push(pos)
+            const map = tempMasterMap[absentZone.zoneId]
+            if (map) {
+              if (!map.positions) {
+                map.positions = []
+              }
+              map.positions.push(pos)
+            }
           }
         })
       })
@@ -137,20 +142,13 @@ export default {
       try {
         this.replace({showAlert:false})
         this.showProgress()
-        if (APP.POS.PROHIBIT_ALERT) {
-          this.loadStates.push('prohibit')
-        }
-        if (APP.POS.LOST_ALERT) {
-          this.loadStates.push('lostZones')
-        }
-        await Promise.all(this.loadStates.map(StateHelper.load))
         // positionデータ取得
         await PositionHelper.loadPosition(null, true, true)
         this.positions = PositionHelper.filterPositions(undefined, false, true, null, null, null, null)
 
         if (Util.hasValue(APP.POS.PROHIBIT_ALERT)
           && (Util.hasValue(APP.POS.PROHIBIT_GROUP_ZONE)||Util.hasValue(APP.POS.LOST_GROUP_ZONE))) {
-          ProhibitHelper.setProhibitDetect('display', this)
+          Util.merge(this, ProhibitHelper.setProhibitDetect('display', this.stage, this.icons, this.zones))
         }
 
         this.alertData.message = this.message

@@ -136,12 +136,12 @@ export default {
     }
   },
   computed: {
-    ...mapState('app_service', [
-      'areas',
-      'categories',
-      'groups',
-      'pots',
-    ]),
+    // ...mapState('app_service', [
+    //   'areas',
+    //   'categories',
+    //   'groups',
+    //   'pots',
+    // ]),
     enableCategory () {
       return MenuHelper.isEnabledMenu('category') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'category')
     },
@@ -158,28 +158,28 @@ export default {
   watch: {
     'vueSelected.area': {
       handler: function(newVal, oldVal){
-        this.form.areaId = Util.getValue(newVal, 'value', null)
+        this.form.areaId = Util.getValue(newVal, 'value')
         this.changeArea(this.form.areaId)
       },
       deep: true,
     },
     'vueSelected.category': {
       handler: function(newVal, oldVal){
-        this.form.categoryId = Util.getValue(newVal, 'value', null)
+        this.form.categoryId = Util.getValue(newVal, 'value')
         this.changeCategory()
       },
       deep: true,
     },
     'vueSelected.group': {
       handler: function(newVal, oldVal){
-        this.form.groupId = Util.getValue(newVal, 'value', null)
+        this.form.groupId = Util.getValue(newVal, 'value')
         this.changeGroup()
       },
       deep: true,
     },
     'vueSelected.pot': {
       handler: function(newVal, oldVal){
-        this.form.potId = Util.getValue(newVal, 'value', null)
+        this.form.potId = Util.getValue(newVal, 'value')
       },
       deep: true,
     },

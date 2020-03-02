@@ -255,8 +255,8 @@ export const createPositionRectInfo = (pos, bgColor) => {
   let fillAlpha = 1
   if (NumberUtil.bitON(pos.tx.disp, TX.DISP.ALWAYS)) {
     // 常時表示時
-    fillAlpha = pos.isLost? DISP.TX.LOST_ALPHA: pos.transparent? DISP.TX.ALPHA: fillAlpha
-  } else if (pos.transparent) {
+    fillAlpha = pos.isLost? DISP.TX.LOST_ALPHA: pos.isTransparent? DISP.TX.ALPHA: fillAlpha
+  } else if (pos.isTransparent) {
     // 通常の離席時
     strokeAlpha = DISP.TX.ALPHA
     fillAlpha = DISP.TX.ALPHA
@@ -356,7 +356,7 @@ export const createTxBtn = (pos, shape, color, bgColor, mapScale, isAbsent = fal
   txBtn.y = pos.y
   txBtn.color = color
   txBtn.bgColor = bgColor
-  txBtn.transparent
+  // txBtn.isTransparent  // TODO: 値をセットしていない
   return txBtn
 }
 
@@ -425,6 +425,13 @@ export const createUseStateIcon = (sensorId, count, mapScale) => {
   const shapeInfo = createExbShapeInfo(sensorId, count)
   const labelInfo = createExbLabelInfo(sensorId, count)
   return createCircleIcon(labelInfo.label, shapeInfo.width / mapScale, labelInfo.color, shapeInfo.bgColor, {bold: false})
+}
+
+export const createMRoomUseStateIcon = (sensorId, count, mapScale, bgColor) => {
+  const shapeInfo = createExbShapeInfo(sensorId, count)
+  const labelInfo = createExbLabelInfo(sensorId, count)
+  const size = shapeInfo.width / mapScale
+  return createRectIcon(labelInfo.label, size, size, labelInfo.color, bgColor, {bold: false})
 }
 
 /**
@@ -553,10 +560,10 @@ export const createThermohIcon = (device, mapScale, stage) => {
  */
 export const createExbIcon = (exb, exbSensorIdList, mapScale, stage) => {
   let exbBtn = null
-  if (SensorHelper.match(exb.sensorIds, SENSOR.TEMPERATURE, exbSensorIdList)) {
+  if (SensorHelper.match(exb.sensorIdList, SENSOR.TEMPERATURE, exbSensorIdList)) {
     exbBtn = createThermohIcon(exb, mapScale, stage)
   }
-  else if (SensorHelper.match(exb.sensorIds, SENSOR.THERMOPILE, exbSensorIdList) && exb.count != null) {
+  else if (SensorHelper.match(exb.sensorIdList, SENSOR.THERMOPILE, exbSensorIdList) && exb.count != null) {
     // not use?
     // if (exb.count > 10) {
     //   w = DISP.THERMOPILE_L_SIZE
@@ -567,22 +574,30 @@ export const createExbIcon = (exb, exbSensorIdList, mapScale, stage) => {
     // else {
     //   w = DISP.THERMOPILE_S_SIZE
     // }
-
     // only for Exhibition（delete immediately）
     exbBtn = createCountButton(exb.count, mapScale)
     exbBtn.cursor = ''
   }
-  else if (SensorHelper.match(exb.sensorIds, SENSOR.PRESSURE, exbSensorIdList) && exb.pressVol != null) {
+  else if (SensorHelper.match(exb.sensorIdList, SENSOR.PRESSURE, exbSensorIdList) && exb.pressVol != null) {
     exbBtn = createUseStateIcon(exb.sensorId, exb.pressVol, mapScale)
     exbBtn.cursor = ''
   }
-  else if (SensorHelper.match(exb.sensorIds, SENSOR.PIR, exbSensorIdList)) {
+  else if (SensorHelper.match(exb.sensorIdList, SENSOR.PIR, exbSensorIdList)) {
     exbBtn = createUseStateIcon(exb.sensorId, exb.count, mapScale)
     exbBtn.cursor = ''
-  }
-  else {
-    console.error('Sensor Not match', exb.sensorIds, exbSensorIdList)
-    return
+  } else {
+    let showMRoomStatus // FIXME: 定義されていないので仮にここに
+    if (exb.sensorId == SENSOR.PRESSURE && exb.pressVol != null) {
+      exbBtn = showMRoomStatus
+        ? createMRoomUseStateIcon(exb.sensorId, exb.pressVol, mapScale, bgColor)
+        : createUseStateIcon(exb.sensorId, exb.pressVol, mapScale)
+      exbBtn.cursor = ''
+    } else {
+      exbBtn = showMRoomStatus
+        ? createMRoomUseStateIcon(exb.sensorId, exb.count, mapScale, bgColor)
+        : createUseStateIcon(exb.sensorId, exb.count, mapScale)
+      exbBtn.cursor = ''
+    }
   }
   exbBtn.deviceId = exb.deviceId
   exbBtn.exbId = exb.exbId

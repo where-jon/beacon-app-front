@@ -276,10 +276,9 @@ export default {
     }
   },
   computed: {
-    ...mapState('app_service', [
-      'txs'
-    ]),
-
+    // ...mapState('app_service', [
+    //   'txs'
+    // ]),
     notifyStateOptions() {
       return _.slice(NOTIFY_STATE.getOptions()).filter((val) => APP.NOTIFY.STATE_TYPES.includes(val.index))
     },
@@ -294,7 +293,7 @@ export default {
   watch: {
     'vueSelected.tx': {
       handler: function(newVal, oldVal){
-        this.form.tx = Util.getValue(newVal, 'value', null)
+        this.form.tx = Util.getValue(newVal, 'value')
         this.changeTx(this.form.tx)
       },
       deep: true,
@@ -431,8 +430,7 @@ export default {
       this.bTx = ((evt == 'TX_DELIVERY_NOTIFY' || evt == 'TX_BATTERY_ALERT' || evt == 'USER_REG_NOTIFY') && this.userState == 'ALL_REGION') ? true: false
     },
     async changeTx(newVal){
-      const tx = this.txs.find((tx) => newVal == tx.txId)
-      this.txId = tx? tx.txId: null
+      this.txId = this.txIdMap[newVal]? newVal: null
     },
     async display() {
       this.container ? this.container.removeAllChildren() : null

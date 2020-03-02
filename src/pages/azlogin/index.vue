@@ -2,7 +2,7 @@
   <b-container fluid>
     <div class="not-registered" v-if="notRegistered">
       <b-row>
-        {{ $t('message.MSTEAMS.USER_GUIDE1') }}<br />{{ $t('message.MSTEAMS.USER_GUIDE2') }}
+        {{ $t('message.MSTEAMS.USER_GUIDE1') }}<br />{{ $t('message.MSTEAMS.USER_GUIDE2') }}<br />
       </b-row>
       <b-form inline class="tenant">
         <label class="tenant-name">{{ $t('label.tenantName') }}</label>
@@ -14,7 +14,8 @@
     <div v-if="!finishInit"><br />{{ $t('message.MSTEAMS.WAIT_A_MOMENT') }}</div>
     <div v-if="notShown">
       <p></p>
-      <div v-html="$t('message.MSTEAMS.IF_NOT_SHOWN')"></div><br/>
+      <div v-html="$t('message.MSTEAMS.IF_NOT_SHOWN')"></div>
+      <div v-html="$t('message.MSTEAMS.USER_GUIDE3')"></div>
       <button @click="signIn" class="button-windowslive">
         <div class="button-icon"></div>
         <div class="button-text">
@@ -56,7 +57,7 @@ export default {
   },
   mounted() {
     console.log('@@@@@@@@@@@@@@@@@ azLogin')
-    this.tenantName = this.tenantName || LocalStorageHelper.popLocalStorage('tenantName')
+    this.tenantName = this.tenantName || LocalStorageHelper.getLocalStorage('tenantName')
     APP.MENU.LOGIN_PAGE = APP.MENU.AZLOGIN_PAGE
     let token
     if (BrowserUtil.inIframe())  { // Teams内での表示
@@ -178,7 +179,7 @@ export default {
   position: relative;
   width: 250px;
   height: 50px;
-  margin: 0 8px 8px;
+  margin: 8px 8px 8px;
   background-color: #00a1f1; 
 }
 

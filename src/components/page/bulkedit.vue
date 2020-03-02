@@ -83,9 +83,9 @@ export default {
     }
   },
   computed: {
-    ...mapState('app_service', [
-      'sensors',
-    ]),
+    // ...mapState('app_service', [
+    //   'sensors',
+    // ]),
     charSets(){
       return CHAR_SET.map(e => ({ value: e.id, text: this.$i18n.tnl('label.' + e.name) }))
     }

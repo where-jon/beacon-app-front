@@ -135,13 +135,13 @@ export default {
     }
   },
   computed: {
-    ...mapState('app_service', [
-      'pots',
-      'areas',
-      'zones',
-      'categories',
-      'groups',
-    ]),
+    // ...mapState('app_service', [
+    //   'pots',
+    //   'areas',
+    //   'zones',
+    //   'categories',
+    //   'groups',
+    // ]),
     ...mapState([
       'showAlert',
     ]),
@@ -152,7 +152,7 @@ export default {
   watch: {
     'vueSelected.filter': {
       handler: function(newVal, oldVal){
-        this.form.filterId = Util.getValue(newVal, 'value', null)
+        this.form.filterId = Util.getValue(newVal, 'value')
       },
       deep: true,
     },
@@ -172,7 +172,7 @@ export default {
     changefilterKind(newVal = this.form.filterKind){
       this.form.filterKind = newVal
       this.vueSelected.filter = null
-      switch (newVal) {
+      switch (newVal) { // TODO: common.mixinのOptionを使う
       case 'potType':
         this.filterIdOptions = this.potTypeOptions()
         break

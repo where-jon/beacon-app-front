@@ -12,11 +12,13 @@ import * as BrowserUtil from '../../util/BrowserUtil'
 import * as Util from '../../util/Util'
 import * as AppServiceHelper from '../dataproc/AppServiceHelper'
 import * as ConfigHelper from '../dataproc/ConfigHelper'
+import * as OptionHelper from '../dataproc/OptionHelper'
 import * as HttpHelper from './HttpHelper'
 import * as LocaleHelper from './LocaleHelper'
 import * as LocalStorageHelper from './LocalStorageHelper'
 import * as MenuHelper from '../dataproc/MenuHelper'
 import * as MasterHelper from '../domain/MasterHelper'
+import * as StateHelper from '../dataproc/StateHelper'
 
 let router
 let store
@@ -126,6 +128,14 @@ export const getUserInfo = async (tenantAdmin) => {
   return {tenant, tenantFeatureList, user, featureList, menu, currentRegion, setting}
 }
 
+export const storeMagicNumberList = async () => {
+  await StateHelper.load('features')
+  await StateHelper.load('sensor')
+  const retMap = OptionHelper.getMagicNumberList(store.state.app_service.features)
+  Util.debug(retMap)
+  await HttpHelper.putAppService('/core/region/storeMagicNumberList', retMap)
+}
+
 /**
  * 設定情報をリセットする。
  * @method
@@ -164,7 +174,7 @@ export const authByAppService = async (loginId, password, success, err) => {
     const regionId = LocalStorageHelper.getLocalStorage(KEY.CURRENT.REGION)
     if(Util.hasValue(regionId)){
       const regionRes = await HttpHelper.putAppService(`/core/region/current/${regionId}`)
-      if(Util.getValue(regionRes, 'status', null)) {
+      if(Util.getValue(regionRes, 'status')) {
         LocalStorageHelper.removeLocalStorage(KEY.CURRENT.REGION)
         LocalStorageHelper.removeLocalStorage(KEY.CURRENT.AREA)
       }
@@ -189,6 +199,9 @@ export const authByAppService = async (loginId, password, success, err) => {
     success()
     LocaleHelper.setLocale(LocaleHelper.getLocale())
     store.commit('setLang', LocaleHelper.getLocale(BrowserUtil.getLangShort()))
+
+    // send magic number list (id and locale name)
+    await storeMagicNumberList()
 
   } catch (e) {
     console.error(e)
@@ -324,7 +337,7 @@ export const getTenantCd = (def, providerOk) => { // xxx.saas.ドメインの場
   }
   if (!providerOk && tenantCd == 'provider') {
     const login = LocalStorageHelper.getLogin()
-    tenantCd = Util.getValue(login, 'currentTenant.tenantCd', null)
+    tenantCd = Util.getValue(login, 'currentTenant.tenantCd')
   }
   return tenantCd || def
 }

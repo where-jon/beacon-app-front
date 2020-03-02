@@ -181,7 +181,8 @@ export default {
       return MasterHelper.getOptionsFromState('zone', false, true, zone => zone.x != null && zone.y != null)
     },
     ...mapState('app_service', [
-      'areas', 'zones', 'exbs', 'location', 'locations',
+      // 'areas', 'zones', 'exbs', 'locations',
+      'location', 
     ]),
     areaWarnMessage(){
       return this.$i18n.tnl('message.resetFromTo', {
@@ -199,9 +200,9 @@ export default {
   watch: {
     'vueSelected.area': {
       handler: function(newVal, oldVal){
-        this.form.areaId = Util.getValue(newVal, 'value', null)
+        this.form.areaId = Util.getValue(newVal, 'value')
         this.vueSelected.zones = []
-        if(this.checkWarn && Util.hasValue(this.form.locationZoneList) && Util.getValue(oldVal, 'value', null) != null){
+        if(this.checkWarn && Util.hasValue(this.form.locationZoneList) && Util.getValue(oldVal, 'value') != null){
           this.showAreaWarn = true
         }
       },
@@ -242,7 +243,7 @@ export default {
     this.checkWarnOn()
     this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, this.form.areaId)
     if(!Util.hasValue(this.form.locationType)){
-      this.form.locationType = Util.getValue(this.locationTypeOptions, '0.value', null)
+      this.form.locationType = Util.v(this.locationTypeOptions, '0.value')
     }
     if(!Util.hasValue(this.form.locationCd)){
       this.form.locationCd = MasterHelper.createMasterCd('location', this.locations, this.location)
@@ -298,8 +299,8 @@ export default {
       this.txIconsVertical = param.vertical
     },
     onBeforeReload(){
-      this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, null)
-      this.vueSelected.zone = VueSelectHelper.getVueSelectData(this.getZoneClassOptions(), null)
+      this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions)
+      this.vueSelected.zone = VueSelectHelper.getVueSelectData(this.getZoneClassOptions())
       this.checkWarnOn()
     },
     async onSaving() {

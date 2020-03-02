@@ -109,11 +109,11 @@ export default {
     }
   },
   computed: {
-    ...mapState('app_service', [
-      'groups',
-      'pots',
-      'categories',
-    ]),
+    // ...mapState('app_service', [
+    //   'groups',
+    //   'pots',
+    //   'categories',
+    // ]),
     iosOrAndroid() {
       return BrowserUtil.isAndroidOrIOS()
     },
@@ -121,7 +121,7 @@ export default {
   watch: {
     'vueSelected.group': {
       handler: function(newVal, oldVal){
-        this.form.groupId = Util.getValue(newVal, 'value', null)
+        this.form.groupId = Util.getValue(newVal, 'value')
       },
       deep: true,
     },
@@ -242,7 +242,7 @@ export default {
       ArrayUtil.sortIgnoreCase(viewList, 'name')
 
       const searchDate = moment(this.form.date).format('YYYY-MM-DD')
-      const group = this.form.groupId? this.groups.find((val) => val.groupId == this.form.groupId): null
+      const group = this.form.groupId? this.groupIdMap[this.form.groupId]: null
       const groupName =  group? '_' + group.groupName: ''
 
       BrowserUtil.fileDL(
@@ -315,7 +315,7 @@ export default {
         csvList = csvList.isEmpty? list: csvList.concat(list)
       }
 
-      const group = this.form.groupId? this.groups.find((val) => val.groupId == this.form.groupId): null
+      const group = this.form.groupId? this.groupIdMap[this.form.groupId]: null
       const groupName =  group? '_' + group.groupName: ''
       BrowserUtil.fileDL(
         moment(this.form.date).format('YYYYMM') + groupName + '_stayRatio.csv',

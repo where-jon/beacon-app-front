@@ -69,8 +69,8 @@ export default {
     }
   },
   computed: {
-    ...mapState('app_service', [
-    ]),
+    // ...mapState('app_service', [
+    // ]),
   },
   watch: {
     deviceId: function(newVal, oldVal) {

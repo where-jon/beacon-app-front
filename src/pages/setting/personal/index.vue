@@ -250,6 +250,7 @@ export default {
       const locale = lc != null && lc.id != LOCALE[0].id? lc.name : ''
       this.setLang(locale? locale: getLangShort())
       LocaleHelper.setLocale(locale)
+      AuthHelper.storeMagicNumberList()
       this.initialize()
     },
     handleUpdateConfirmPass (value) {

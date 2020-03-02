@@ -45,7 +45,7 @@ export const enableRegionOptions = regions => {
   if(!login){
     return []
   }
-  const ret = login.allRegionMove || login.isProvider || login.tenantAdmin?
+  const ret = login.allRegionMove || login.isProvider || login.tenantAdmin? // TODO: 何をしたいのか要コメントor書き直し
     regions.filter(val => val):
     Util.hasValue(login.userRegionIdList)?
       regions.filter(region => login.userRegionIdList.includes(region.regionId)):

@@ -89,11 +89,11 @@ export default {
       return Util.hasValue(this.form.areaId)
     },
     ...mapState('app_service', [
-      'areas',
+      // 'areas',
       'area',
-      'exbs',
-      'txs',
-      'zones',
+      // 'exbs',
+      // 'txs',
+      // 'zones',
     ]),
     mapConfigTypes(){
       return [
@@ -123,11 +123,11 @@ export default {
   },
   methods: {
     getNameByteLangth(){
-      const fileElement = Util.getValue(document.getElementsByClassName('custom-file'), '0', null)
+      const fileElement = Util.getValue(document.getElementsByClassName('custom-file'), '0')
       return fileElement? (fileElement.clientWidth - 80) / 12: 0
     },
     setFileName(name){
-      const file = Util.getValue(document.getElementsByClassName('custom-file-label'), '0', null)
+      const file = Util.getValue(document.getElementsByClassName('custom-file-label'), '0')
       const param = file.textContent? 'textContent': 'innerText'
       file[param] = name? name: this.$refs.inputThumbnail.placeholder
     },
@@ -141,7 +141,7 @@ export default {
         if(this.oldMap){
           this.mapUpdate = true
         }
-        const inputFileName = Util.getValue(e, 'target.files.0.name', null)
+        const inputFileName = Util.getValue(e, 'target.files.0.name')
         this.setFileName(inputFileName? StringUtil.cutOnLongByte(inputFileName, this.getNameByteLangth()): null)
         if(!inputFileName){
           this.clearImage(e)
@@ -172,7 +172,7 @@ export default {
     },
     async onSaved(){
       this.$set(this.form, 'areaCd', MasterHelper.createMasterCd('area', this.areas, this.area))
-      this.$store.commit('main/replaceMain', {selectedArea: null})
+      this.$store.commit('main/replaceMain', {selectedAreaId: null})
     },
     beforeSubmit(again){
       if(this.mapUpdate){

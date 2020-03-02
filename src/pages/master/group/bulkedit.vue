@@ -32,7 +32,8 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'group', 'groups'
+      'group'
+      // , 'groups'
     ]),
   },
   async created() {

@@ -10,7 +10,7 @@
           <input v-model="form.categoryCd" :readonly="!isEditable" type="text" maxlength="20" class="form-control">
         </b-form-group>
         <b-form-group>
-          <label v-t="'label.' + categoryTypeName" />
+          <label v-t="'label.' + categoryNameByType" />
           <input v-model="form.categoryName" :readonly="!isEditable" type="text" maxlength="40" class="form-control" required>
         </b-form-group>
         <b-form-group v-if="!pName && pTypeList.length > 1">
@@ -131,10 +131,10 @@ export default {
       ]),
       defaultColor: '#000000',
       defaultBgColor: '#ffffff',
-      oldType: Util.getValue(category, 'categoryType', null),
-      oldShape: Util.getValue(category, 'display.shape', null),
-      oldColor: Util.getValue(category, 'display.color', null),
-      oldBgColor: Util.getValue(category, 'display.bgColor', null),
+      oldType: Util.getValue(category, 'categoryType'),
+      oldShape: Util.getValue(category, 'display.shape'),
+      oldColor: Util.getValue(category, 'display.color'),
+      oldBgColor: Util.getValue(category, 'display.bgColor'),
       vueSelected: {
         zoneGuards: [],
         zoneDoors: [],
@@ -143,7 +143,8 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'category', 'categories', 'zones',
+      'category',
+      // 'categories', 'zones',
     ]),
     backPath() {
       return this.pPath
@@ -166,7 +167,7 @@ export default {
     dispName() {
       return StringUtil.concatCamel('category', this.pName)
     },
-    categoryTypeName() {
+    categoryNameByType() {
       return StringUtil.concatCamel(this.pName, 'categoryName')
     },
     extValue() {
@@ -198,16 +199,16 @@ export default {
     }
     if(Util.hasValue(this.form.zoneCategoryList)){
       this.vueSelected.zoneGuards = this.form.zoneCategoryList.filter(zoneCategory => 
-        zoneCategory.zoneType == ZONE.GUARD
+        zoneCategory.zone.zoneType == ZONE.GUARD
       ).map(zoneCategory =>
         VueSelectHelper.getVueSelectData(this.getZoneGuardOptions(), zoneCategory.zoneCategoryPK.zoneId)
-      ).sort((a, b) => Util.getValue(a, 'label', null) < Util.getValue(b, 'label', null)? -1: 1)
+      ).sort((a, b) => Util.getValue(a, 'label') < Util.getValue(b, 'label')? -1: 1)
 
       this.vueSelected.zoneDoors = this.form.zoneCategoryList.filter(zoneCategory => 
-        zoneCategory.zoneType == ZONE.DOOR
+        zoneCategory.zone.zoneType == ZONE.DOOR
       ).map(zoneCategory =>
         VueSelectHelper.getVueSelectData(this.getZoneDoorOptions(), zoneCategory.zoneCategoryPK.zoneId)
-      ).sort((a, b) => Util.getValue(a, 'label', null) < Util.getValue(b, 'label', null)? -1: 1)
+      ).sort((a, b) => Util.getValue(a, 'label') < Util.getValue(b, 'label')? -1: 1)
     }
     ValidateHelper.setCustomValidationMessage()
     VueSelectHelper.disabledAllSubmit()

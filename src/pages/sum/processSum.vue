@@ -50,9 +50,9 @@ export default {
     }
   },
   computed: {
-    ...mapState('app_service', [
-      'pots',
-    ]),
+    // ...mapState('app_service', [
+    //   'pots',
+    // ]),
     ...mapState([
       'reload',
     ]),
@@ -67,7 +67,7 @@ export default {
   },
   methods: {
     filterGrid(originItem){
-      const potId = Util.getValue(originItem, 'potId', null)
+      const potId = Util.getValue(originItem, 'potId')
       if(potId == null){
         return false
       }

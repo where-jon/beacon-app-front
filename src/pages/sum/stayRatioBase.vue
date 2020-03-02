@@ -58,7 +58,7 @@
         <b-form-checkbox-group v-if="isCategorySelected" id="checkbox-group-2" v-model="displayCheckList.category" name="flavour-2">
           <div v-for="(category, index) in categoryDisplayList" :key="`category-${index}`">
             <b-form-checkbox :value="category.categoryId">
-              {{ category.systemUse? $t('label.' + category.systemCategoryName): category.categoryName }} <span class="bgSquare" :style="`background-color: #${category.bgColor};`" />
+              {{ getDispCategoryName(category) }} <span class="bgSquare" :style="`background-color: #${category.bgColor};`" />
             </b-form-checkbox><br>
           </div>
           <b-form-checkbox :value="0">
@@ -156,8 +156,8 @@
       <slot />
       <b-row class="mt-3" />
       <b-table :items="viewList" :fields="fields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" :sort-compare="defaultSortCompare" stacked="md" striped hover outlined>
-        <template v-for="field in fields" slot-scope="data" :slot="`HEAD_${field.key}`">
-          <span v-html="data.label" :key="field.key"></span><span v-if="field.bgColor" :style="`color: ${field.bgColor};`" :key="field.key">■</span>
+        <template v-for="(field, index) in fields" :slot="`HEAD_${field.key}`" slot-scope="data">
+          <span :key="`field-${index}`" v-html="data.label" /><span v-if="field.bgColor" :key="`fieldbg-${index}`" :style="`color: ${field.bgColor};`">■</span>
         </template>
         <template slot="graph" slot-scope="row">
           <div style="position: relative;">
@@ -214,6 +214,7 @@ import { getCharSet } from '../../sub/helper/base/CharSetHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
+import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as StayTimeHelper from '../../sub/helper/domain/StayTimeHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
@@ -261,13 +262,6 @@ export default {
     }
   },
   computed: {
-    ...mapState('app_service', [
-      'groups',
-      'pots',
-      'categories',
-      'zones',
-      'areas',
-    ]),
     isIosOrAndroid() {
       return BrowserUtil.isAndroidOrIOS()
     },
@@ -287,13 +281,13 @@ export default {
   watch: {
     'vueSelected.group': {
       handler: function(newVal, oldVal){
-        this.form.groupId = Util.getValue(newVal, 'value', null)
+        this.form.groupId = Util.getValue(newVal, 'value')
       },
       deep: true,
     },
     'vueSelected.category': {
       handler: function(newVal, oldVal){
-        this.form.categoryId = Util.getValue(newVal, 'value', null)
+        this.form.categoryId = Util.getValue(newVal, 'value')
       },
       deep: true,
     },
@@ -337,6 +331,9 @@ export default {
         this.displayCheckList.area = []
       }
       this.isCategorySelected = isSelected
+    },
+    getDispCategoryName(category) {
+      return MasterHelper.getDispCategoryName(category)
     },
     getStackColor(index) {
       // 設定が6色以上ある事が前提
@@ -384,7 +381,7 @@ export default {
       _.filter(this.categories,(c) => { return c.categoryType === CATEGORY.ZONE })
         .forEach((category) => {
           const categoryClassName = _.some(selectedCategories, (data) => { return data.categoryId == category.categoryId})? '': disableClassName
-          let categoryName = (category.systemUse? i18n.tnl('label.' + category.systemCategoryName): category.categoryName)
+          let categoryName = MasterHelper.getDispCategoryName(category)
           fields.push({key: categoryName, sortable: true, label: categoryName, bgColor: '#' + category.bgColor
             , thStyle: {width:'100px !important'}, thClass: this.getThClassName() + ' ' + categoryClassName, tdClass: categoryClassName})
         })
@@ -483,7 +480,7 @@ export default {
       }
     },
     isAbsentZoneData(categoryId) {
-      let category = !this.isLostData(categoryId)? this.categories.find((e) => e.categoryId == categoryId): null
+      let category = !this.isLostData(categoryId)? this.categoryIdMap[categoryId]: null
       return category? category.categoryName == SYSTEM_ZONE_CATEGORY_NAME.ABSENT: false
     },
     isLostData(byId) {
@@ -505,7 +502,7 @@ export default {
         // カテゴリ用データ保持変数を初期化
         categoryData[0] = {name: 'categoryOther', value: 0}
         this.categories.forEach((category) => {
-          let categoryName = (category.systemUse? this.$i18n.tnl('label.' + category.systemCategoryName): category.categoryName)
+          let categoryName = MasterHelper.getDispCategoryName(category)
           if (category.categoryType == CATEGORY.ZONE) categoryData[category.categoryId] = {name: categoryName, value: 0}
         })
 
@@ -573,14 +570,14 @@ export default {
           return {
             index: graphListId++,
             isStay: isExistStayData,
-            isAbsentZone: isAbsentZone,
+            isAbsentZone,
             period: stay.period,
             start: stay.start,
             startTime: percent == 100? DateUtil.convertToTime(fromSecond): moment(stay.start).format('HH:mm:ss'),
             end: stay.end,
             endTime: percent == 100? DateUtil.convertToTime(toSecond): moment(stay.end).format('HH:mm:ss'),
-            time: time,
-            percent: percent,
+            time,
+            percent,
             categoryName: findCategory? findCategory.categoryName: this.$i18n.tnl('label.other'),
             categoryBgColor: findCategory? ColorUtil.colorCd4display(findCategory.bgColor): ColorUtil.colorCd4display(this.otherColor),
             areaBgColor: findArea? this.getStackColor(areaIndex): this.otherColor,
@@ -616,9 +613,9 @@ export default {
         var graphTemp = result.graph.slice();
         graphTemp.sort((a, b) => {
           if (a.percent < b.percent) {
-            return 1;
+            return 1
           } else {
-            return -1;
+            return -1
           }
         })
         const baseCount = 10 //配分するグラフデータ数制限
@@ -690,10 +687,10 @@ export default {
       const csvList = this.getCsvList(key, viewList)
 
       const searchDate = moment(this.form.date).format('YYYY-MM-DD')
-      const group = this.form.groupId? this.groups.find((val) => val.groupId == this.form.groupId): null
+      const group = this.form.groupId? this.groupIdMap[this.form.groupId]: null
       const groupName =  group? '_' + group.groupName: ''
-      const category = this.form.categoryId? this.categories.find((val) => val.categoryId == this.form.categoryId): null
-      const categoryName =  !category? '': category.systemUse == 1? category.systemCategoryName: '_' + category.categoryName
+      const category = this.form.categoryId? this.categoryIdMap[this.form.categoryId]: null
+      const categoryName =  !category? '': category.systemUse == 1? category.categoryName.toLowerCase(): '_' + category.categoryName
 
       const convertedCsvData = this.convertCsvData(key, csvList)
       BrowserUtil.fileDL(
@@ -827,10 +824,10 @@ export default {
           startDate.add(1, 'days')
         }
 
-        const group = this.form.groupId? this.groups.find((val) => val.groupId == this.form.groupId): null
+        const group = this.form.groupId? this.groupIdMap[this.form.groupId]: null
         const groupName =  group? '_' + group.groupName: ''
-        const category = this.form.categoryId? this.categories.find((val) => val.categoryId == this.form.categoryId): null
-        const categoryName =  !category? '': category.systemUse == 1? category.systemCategoryName: '_' + category.categoryName
+        const category = this.form.categoryId? this.categoryIdMap[this.form.categoryId]: null
+        const categoryName =  !category? '': category.systemUse == 1? category.categoryName.toLowerCase(): '_' + category.categoryName
 
         const convertedCsvData = this.convertCsvData(key, csvList)
         BrowserUtil.fileDL(

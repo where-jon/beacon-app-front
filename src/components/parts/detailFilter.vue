@@ -197,7 +197,7 @@ export default {
     hasFilterValue(){
       return this.pluginJson.some(plugin => {
         if(this.useVueSelect(plugin)){
-          return Util.hasValue(Util.getValue(plugin.value, 'value', null))
+          return Util.hasValue(Util.getValue(plugin.value, 'value'))
         }
         return Util.hasValue(plugin.value)
       })

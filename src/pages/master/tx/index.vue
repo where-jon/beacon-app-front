@@ -47,9 +47,9 @@ export default {
           return null
         }
         const ret = {key: val, label: val, sortable: true, tdClass: 'action-rowdata'}
-        if(['category', 'group'].includes(val)){
-          ret.key = val + 'Name'
-        }
+        // if(['category', 'group'].includes(val)){
+        //   ret.key = val + 'Name'
+        // }
         if(['description'].includes(val)){
           ret.thStyle = {width: '200px !important'}
         }
@@ -59,11 +59,6 @@ export default {
         }
         return ret
       }).filter(val => val)
-    },
-    async createListParams(){
-      const retMap = { sensor: {} }
-      this.sensorOptionsTx.forEach(option => retMap.sensor[option.value? option.value.toString(): '0'] = option.text)
-      return retMap
     },
     editResponse(data) {
       data.forEach(val => {

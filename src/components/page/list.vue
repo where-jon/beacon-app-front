@@ -134,8 +134,8 @@
         </template>
         <!-- リージョン名 -->
         <template slot="regionNames" slot-scope="row">
-          <div v-for="(regionName, index) in row.item.regionNames" :key="index">
-            {{ regionName }}
+          <div>
+            {{ row.item.regionNames }}
           </div>
         </template>
         <!-- tx名 -->
@@ -174,7 +174,7 @@
         <!-- EXBタイプ名 -->
         <template slot="exbTypeName" slot-scope="row">
           <div>
-            {{ getDispExbType(row.item) }}
+            {{ row.item.exbTypeName }}
           </div>
         </template>
         <!-- センサ名 -->
@@ -478,10 +478,10 @@ export default {
       'featureList',
     ]),
     ...mapState('app_service', [
-      'categories',
-      'groups',
-      'areas',
-      'regions',
+      // 'categories',
+      // 'groups',
+      // 'areas',
+      // 'regions',
       'listMessage',
       'editPage',
       'moveEditPage',
@@ -553,7 +553,7 @@ export default {
       return BrowserUtil.getLangShort() == 'ja'? {width: '100px !important'}: {width: '110px !important'}
     },
     selectedSensor() {
-      if (!Util.getValue(this.selectedTx, 'btxId', null)) {
+      if (!Util.getValue(this.selectedTx, 'btxId')) {
         return []
       }
       if (!this.positionedTxMap) return []
@@ -565,8 +565,8 @@ export default {
     'vueSelected': {
       handler: function(newVal, oldVal){
         Object.keys(this.vueSelected).forEach(key => {
-          const oVal = Util.getValue(oldVal[key], 'value', null)
-          const nVal = Util.getValue(newVal[key], 'value', null)
+          const oVal = Util.getValue(oldVal[key], 'value')
+          const nVal = Util.getValue(newVal[key], 'value')
           this.filter.extra[key] = nVal
           if(this.useCommonFilter(key)){
             this[this.getCommonFilterKey(key)] = nVal
@@ -582,7 +582,7 @@ export default {
       },
       deep: true,
     },
-    selectedArea: function(newVal, oldVal) {
+    selectedAreaId: function(newVal, oldVal) {
       LocalStorageHelper.setLocalStorage(KEY.CURRENT.AREA, newVal)
     },
   },
@@ -591,7 +591,7 @@ export default {
   async mounted() {
     const currentArea = LocalStorageHelper.getLocalStorage(KEY.CURRENT.AREA)
     if(Util.hasValue(currentArea)) {
-      this.selectedArea = currentArea
+      this.selectedAreaId = currentArea
     }
     const strageMessage = LocalStorageHelper.popLocalStorage('listMessage')
     this.message = Util.hasValue(strageMessage)? strageMessage: this.listMessage
@@ -696,8 +696,8 @@ export default {
         this.$parent.$options.methods.clearAction.call(this.$parent, key)
       }
     },
-    async createListParam() {
-      return this.$parent.$options.methods && this.$parent.$options.methods.createListParams? await this.$parent.$options.methods.createListParams.call(this.$parent): {}
+    createListParam(word) {
+      return this.$parent.$options.methods && this.$parent.$options.methods.createListParams? this.$parent.$options.methods.createListParams.call(this.$parent): {}
     },
     async showList() {
       if(!Util.hasValue(this.sortBy)) {
@@ -707,10 +707,10 @@ export default {
       }
       this.showProgress()
       try {
-        const params = await this.createListParam()
+        const params = {...this.createListParam()}
         params.word = this.filter.reg
-        params.category = this.selectedCategory
-        params.group = this.selectedGroup
+        params.category = this.selectedCategoryId
+        params.group = this.selectedGroupId
         const response = await AppServiceHelper.fetchCompactList(`${this.appServicePath}/listdownload/${this.perPage}/${this.currentPage}/${this.sortBy}/${this.sortDesc? 'desc': 'asc'}` , params)
         if( this.$parent.$options.methods && this.$parent.$options.methods.editResponse && response.data) {
           await this.$parent.$options.methods.editResponse.call(this.$parent, response.data)
@@ -726,7 +726,7 @@ export default {
       this.hideProgress()
     },
     async exportCsv() {
-      const params = await this.createListParam()
+      const params = this.createListParam()
       BrowserUtil.executeFileDL(
         APP_SERVICE.BASE_URL
         + this.params.appServicePath
@@ -971,7 +971,7 @@ export default {
         btxId: tx.btxId,
         thumbnail: tx.thumbnail,
       }
-      const selectedArea = Util.getValue(item, 'exb.location.areaId', null)
+      const selectedAreaId = Util.getValue(item, 'exb.location.areaId')
       const txOk = await this.$parent.$options.methods.checkDetectedTx.call(this.$parent, tx)
       if (txOk) {
         this.replaceMain({selectedTx})
@@ -980,7 +980,7 @@ export default {
         this.filterSelectedList.forEach(selected => this[StringUtil.concatCamel('selected', selected)] = null)
         this.replaceMain({ initDetailFilter: true })
       }
-      this.replaceMain({selectedArea})
+      this.replaceMain({selectedAreaId})
       this.$router.push('/main/position')
     },
     onDetailFilter(list){
