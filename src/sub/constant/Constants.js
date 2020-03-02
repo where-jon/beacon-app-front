@@ -13,12 +13,6 @@ export const PLAN_TARGET_TYPE = {
   POT_PERSON: 3
 }
 
-export const LOGIN_MODE = {
-  APP_SERVICE: 0,
-  LOCAL: 1,
-  NO_LOGIN: 2
-}
-
 export const THEME = [
   {id: 1,  name: 'default', color: '#588BC1'},
   {id: 2,  name: 'earthcolor', color: '#5C7886'},

@@ -130,6 +130,22 @@ export const getAppService = async (path, config, ignoreError, option) => {
 }
 
 /**
+ * 並行して処理を送る
+ * nameとurlからなるオブジェクト配列を渡し、nameをキーにした結果オブジェクトを返す。
+ * 
+ * @param {*} httpInfo 
+ */
+export const fetchConcurrent = async (httpInfos) => {
+  await Promise.all(httpInfos.map(fetchConcurrentExec))
+  return _.mapValues(_.keyBy(httpInfos, 'name'), 'data')
+}
+
+export const fetchConcurrentExec = async (httpInfo) => {
+  // eslint-disable-next-line require-atomic-updates
+  httpInfo.data = await getAppService(httpInfo.url)
+}
+
+/**
  * DELETEリクエストを送信する。
  * @method
  * @async

@@ -146,7 +146,7 @@ export default {
         else {
           Util.debug('No mapImage in showMapImageDef.')
           if (this.$route.path.startsWith('/main') && !disableErrorPopup) {
-            this.noImageErrorKey && this.loginId && this.showErrorModal({key: this.noImageErrorKey})
+            this.noImageErrorKey && this.showErrorModal({key: this.noImageErrorKey})
           }
         }
         return

@@ -76,7 +76,7 @@ const loadPluginMenuItems = async (orgMenuItems, masterFeatureList, tenantFeatur
   const pluginPathPrefix = PLUGIN_CONSTANTS.VIEW_URL_PREFIX
   const splice = Array.prototype.splice
 
-  return await axios.get(location.origin + '/' + iframeBaseDir + 'menu.json').then(res => {
+  return await axios.get(location.origin + '/' + iframeBaseDir + 'menu.json').then(res => { // TODO: HttpHelperを使って書き換える。なぜここでPromiseを使う？
     const length = orgMenuItems.length
     res.data
       .filter((d) => {

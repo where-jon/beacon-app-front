@@ -534,9 +534,6 @@ export default {
       ret.unshift({ value: null, text: '' })
       return ret
     },
-    loginId() {
-      return this.$store.state.loginId
-    },
     isTenantAdmin() {
       return this.login.tenantAdmin
     },

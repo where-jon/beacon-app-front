@@ -1,7 +1,7 @@
 // configuration for app
 // Basically using const but values are not primitive but objects or arrays because it may change from outside.
 
-import { DETECT_STATE, LOGIN_MODE, SHAPE } from './Constants'
+import { DETECT_STATE, SHAPE } from './Constants'
 
 export const DEV = { // 開発デバッグ関連
   DEBUG: 0, // デバッグモード (0:なし、1以上デバッグレベル)
@@ -12,7 +12,6 @@ export const DEV = { // 開発デバッグ関連
 }
 
 export const APP = { // 機能面に関する設定
-  LOGIN_MODE: LOGIN_MODE.APP_SERVICE, // ログインモード(なし、ローカル、AppService)
   SAAS_DOMAIN: '.saas.',
   COMMON: {
     VERSION: 'Version 1.3.2', // バージョン　this application version
@@ -344,16 +343,15 @@ export const APP = { // 機能面に関する設定
 
 
 // URL関連設定
-export const APP_SERVICE = { // used if APP.LOGIN_MODE == APP_SERVICE
+export const APP_SERVICE = {
   // BASE_URL: 'https://msteams-data.dev.exbeacon.com',
   BASE_URL: 'http://localhost:8080',
 }
 
 export const EXCLOUD = {
-  BASE_URL: 'https://nsome8q880.execute-api.ap-northeast-1.amazonaws.com/prod', // used if APP.LOGIN_MODE != APP_SERVICE
-  // BASE_URL: 'https://jfgo7xyh6h.execute-api.ap-northeast-1.amazonaws.com/prod', // used if APP.LOGIN_MODE != APP_SERVICE
+  BASE_URL: 'https://nsome8q880.execute-api.ap-northeast-1.amazonaws.com/prod', 
 
-  withCredentials: true, // false if APP.LOGIN_MODE != APP_SERVICE
+  withCredentials: true,
   // POSITION_URL: EXCLOUD.BASE_URL + "/beacon/position-kalman?_=",
   // GATEWAY_URL: EXCLOUD.BASE_URL + "/gateway/0?=",
   // TELEMETRY_URL: EXCLOUD.BASE_URL + "/telemetry/0?=",
@@ -634,58 +632,6 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     ZONE_OTHER: true // ゾーンその他を表示する
   },
 }
-
-// used when APP.LOGIN_MODE != APP_SERVICE with excloud old api -----------------------------------------------------
-
-// ローカルログイン認証設定
-export const LOCAL_LOGIN = { // local login md5 hash of id:pass // TODO: add Role
-  ID_PASS: ['0636c3371cd14c53cf2dae4e81fd4aff', 'd2abaa37a7c3db1137d385e1d8c15fd2']
-}
-
-export const EXB = [
-  {pos_id: 1, x: 110, y: 60},
-  {pos_id: 2, x: 101, y: 208},
-  {pos_id: 3, x: 318, y: 225},
-  {pos_id: 4, x: 551, y: 221},
-  {pos_id: 5, x: 250, y: 265},
-  {pos_id: 6, x: 300, y: 265},
-  {pos_id: 7, x: 350, y: 265},
-  {pos_id: 8, x: 400, y: 265},
-  {pos_id: 9, x: 450, y: 265},
-  {pos_id: 10, x: 500, y: 265},
-  {pos_id: 11, x: 550, y: 265},
-  {pos_id: 12, x: 500, y: 265},
-  {pos_id: 13, x: 100, y: 265},
-  {pos_id: 14, x: 150, y: 265},
-  {pos_id: 15, x: 200, y: 265},
-  {pos_id: 16, x: 250, y: 265},
-  {pos_id: 17, x: 265, y: 265},
-  {pos_id: 18, x: 350, y: 265},
-  {pos_id: 19, x: 400, y: 265},
-  {pos_id: 20, x: 450, y: 265},
-  {pos_id: 21, x: 500, y: 265},
-  {pos_id: 22, x: 550, y: 265},
-  {pos_id: 23, x: 550, y: 265},
-  {pos_id: 24, x: 600, y: 265},
-]
-
-export const Tx = [
-  {id: 1},
-  {id: 2},
-  {id: 3},
-  {id: 4},
-  {id: 5},
-  {id: 6},
-  {id: 7},
-  {id: 154},
-  {id: 156},
-  {id: 178},
-  {id: 179},
-  {id: 180},
-  {id: 181},
-  {id: 799},
-  {id: 800},
-]
 
 export const MSTEAMS_APP = {
   IS_COOPERATION: false,

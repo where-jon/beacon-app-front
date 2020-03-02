@@ -340,7 +340,6 @@ export default {
                 return
               }
               await this.save()
-              this.replace({pass: this.loginUser.passwordConfirm})
               this.replace({showInfo: true})
             } catch(e) {
               errorMessages.general.push(this.$i18n.tnl('message.error'))

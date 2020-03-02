@@ -43,7 +43,7 @@ class Common {
   }
 
   getApiKey() {
-    const loginInf = this.getLocalStorage('login')
-    return loginInf.apiKey ? md5(loginInf.apiKey) : ''
+    const login = this.getLocalStorage('login')
+    return login.apiKey ? md5(login.apiKey) : ''
   }
 }

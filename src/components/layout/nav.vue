@@ -115,7 +115,6 @@
 <script>
 import { mapState } from 'vuex'
 import { APP, DISP } from '../../sub/constant/config'
-import { LOGIN_MODE } from '../../sub/constant/Constants'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as AuthHelper from '../../sub/helper/base/AuthHelper'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
@@ -144,12 +143,6 @@ export default {
   computed: {
     isLoginPage() {
       return this.$route.path == APP.MENU.LOGIN_PAGE || this.$route.path == APP.MENU.LOGIN_PAGE + '/' || this.$route.path == APP.MENU.ERROR_PAGE
-    },
-    isNoLogin() {
-      return APP.LOGIN_MODE == LOGIN_MODE.NO_LOGIN
-    },
-    loginId() {
-      return this.$store.state.loginId
     },
     linkKey(){
       return HttpHelper.getResourcePath(APP.MENU.SHOW_MENU_LINK)
@@ -270,9 +263,10 @@ export default {
       await AuthHelper.switchRegion(item.regionId)
       location.reload()
     },
-    versionClick() {
-      console.log('app service revision:', this.$store.state.serviceRev)
-      console.log('app front revision:', this.$store.state.frontRev)
+    async versionClick() {
+      const {frontRev, serviceRev} = await AuthHelper.getRevInfo()
+      console.log('app service revision:', serviceRev)
+      console.log('app front revision:', frontRev)
     },
     getAppTitleWidth(){
       const appTitle = document.getElementById('appTitle')

@@ -11,20 +11,37 @@ import * as MenuHelper from '../sub/helper/dataproc/MenuHelper'
 import * as StateHelper from '../sub/helper/dataproc/StateHelper'
 import * as MasterHelper from '../sub/helper/domain/MasterHelper'
 import * as OptionHelper from '../sub/helper/dataproc/OptionHelper'
+import * as BrowserUtil from '../sub/util/BrowserUtil'
+import * as AnalysisHelper from '../sub/helper/domain/AnalysisHelper'
+import * as BulkHelper from '../sub/helper/dataproc/BulkHelper'
+import * as IconHelper from '../sub/helper/ui/IconHelper'
+import * as LocaleHelper from '../sub/helper/base/LocaleHelper'
+import * as MessageHelper from '../sub/helper/domain/MessageHelper'
+import * as ProhibitHelper from '../sub/helper/domain/ProhibitHelper'
+import * as PositionHelper from '../sub/helper/domain/PositionHelper'
+import * as SensorHelper from '../sub/helper/domain/SensorHelper'
+import * as SettingHelper from '../sub/helper/domain/SettingHelper'
+import * as TooltipHelper from '../sub/helper/domain/TooltipHelper'
+import * as ValidateHelper from '../sub/helper/dataproc/ValidateHelper'
+import * as ViewHelper from '../sub/helper/ui/ViewHelper'
+import * as VueSelectHelper from '../sub/helper/ui/VueSelectHelper'
 
 export default async (context, inject) => {
   console.log('App Init') // If you need common initialize procedure, write here.
-  LocalStorageHelper.setLocalStorage('defaultConfig', JSON.stringify(config))
-  LocalStorageHelper.setLocalStorage('defaultConfigConstants', JSON.stringify({
-    type: SETTING.getType(),
-    svc: SETTING.getDefault(),
-  }))
-  MenuHelper.setStore(context.store)
-  HttpHelper.setApp(context)
+  console.error(_.cloneDeep(context.store.state))
+
+  setContextToHelper(context)
+
+  LocalStorageHelper.setLocalStorage('defaultConfig', JSON.stringify(config)) // TODO: なぜローカルストレージに
+  // LocalStorageHelper.setLocalStorage('defaultConfigConstants', JSON.stringify({ // TODO: 未使用なら削除
+  //   type: SETTING.getType(),
+  //   svc: SETTING.getDefault(),
+  // }))
   await ConfigHelper.loadConfigJson()
   try {
     const login = LocalStorageHelper.getLogin()
     HttpHelper.setApiKey(login && login.apiKey? login.apiKey: null)
+    // ページデザインのため画面表示に関する設定を取得：サーバ側でセッションが維持されているかどうかで、CORSの設定が異なるリクエストを送る。最初のエラーを抑止したいがブラウザのコンソールに出てしまう。
     let setting = await HttpHelper.getAppService('/meta/setting/wsByTenant/' + AuthHelper.getTenantCd('default') + '/' + AuthHelper.getRegionId(), {}, true)
     if (setting == null) {
       setting = await HttpHelper.getAppServiceNoCrd('/meta/setting/byTenant/' + AuthHelper.getTenantCd('default') + '/' + AuthHelper.getRegionId())
@@ -36,9 +53,6 @@ export default async (context, inject) => {
     }
     if (login) {
       // get all master
-      OptionHelper.setApp(context.app.i18n)
-      MasterHelper.setApp(context.app.store, context.app.i18n)
-      StateHelper.setApp(context.app.store, context.app.i18n)
       const start = new Date().getTime()
       await MasterHelper.loadMaster()
       console.log('master get', new Date().getTime() - start, 'msec')
@@ -47,8 +61,9 @@ export default async (context, inject) => {
   catch (e) {
     console.error(e) // ignore
   }
+  console.error(_.cloneDeep(context.store.state))
 
-  // load map image
+  // check session
   setTimeout(() => {
     AuthHelper.checkSession()
   }, 500)
@@ -125,4 +140,28 @@ if (!String.prototype.repeat) {
   String.prototype.repeat = function(count) {
     return Array(count*1+1).join(this)
   }
+}
+
+const setContextToHelper = (context) => {
+  const lang = LocaleHelper.getLocale(process.browser? BrowserUtil.getLangShort(): 'ja')
+  context.app.i18n.locale = context.app.i18n.messages[lang]? lang: 'en'
+
+  MenuHelper.setStore(context.store)
+  AnalysisHelper.setApp(context.app.i18n)
+  AuthHelper.setApp(context.app.router, context.app.store)
+  MasterHelper.setApp(context.app.store, context.app.i18n)
+  StateHelper.setApp(context.app.store, context.app.i18n)
+  SensorHelper.setApp(context.app.store, context.app.i18n)
+  PositionHelper.setApp(context.app.store, context.app.i18n)
+  ViewHelper.setApp(context.app.i18n)
+  HttpHelper.setApp(context)
+  IconHelper.setApp(context.app.i18n)
+  SettingHelper.setApp(context.app.i18n)
+  BulkHelper.setApp(context.app.i18n)
+  MessageHelper.setApp(context.app.i18n)
+  OptionHelper.setApp(context.app.i18n)
+  ProhibitHelper.setApp(context.app.i18n)
+  TooltipHelper.setApp(context.app.i18n)
+  ValidateHelper.setApp(context.app.i18n)
+  VueSelectHelper.setApp(context.app.i18n)
 }

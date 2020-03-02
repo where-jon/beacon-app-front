@@ -81,9 +81,6 @@ export default {
       }
       return ''
     },
-    loginId() {
-      return this.$store.state.loginId
-    },
     isLoginPage() {
       return this.$route.path == APP.MENU.LOGIN_PAGE || this.$route.path == APP.MENU.LOGIN_PAGE + '/'
     },
