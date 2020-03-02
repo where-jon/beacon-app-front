@@ -3,6 +3,7 @@
     page="meetingGraph"
     type="zone"
     filter="category"
+    download="true"
   />
 </template>
 

@@ -39,7 +39,7 @@
 
           <b-form-row class="mt-3 mb-3">
             <b-button v-t="'label.display'" type="submit" :variant="theme" @click="display(false)" />
-            <b-button v-t="'label.download'" type="submit" :variant="theme" @click="display(true)" class="ml-2" />
+            <b-button v-if="download" v-t="'label.download'" type="submit" :variant="theme" @click="display(true)" class="ml-2" />
           </b-form-row>
         </b-form-group>
       </b-form>
@@ -102,7 +102,7 @@ export default {
     alert,
   },
   mixins: [commonmixin],
-  props: ['page', 'type', 'filter'],
+  props: ['page', 'type', 'filter', 'download'],
   data () {
     return {
       items: ViewHelper.createBreadCrumbItems('sumTitle', this.page),
