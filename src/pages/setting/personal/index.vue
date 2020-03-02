@@ -15,12 +15,12 @@
               <p v-for="(val, key) in errorMessages.loginId" :key="key" v-t="val" class="error" />
             </b-form-group>
 
-            <b-form-group v-show="showName">
+            <b-form-group v-show="showName && !isTenantAdmin()">
               <label v-t="'label.name'" />
               <input v-model="loginUser.name" :readonly="isChange" :state="errorMessages.name.length > 0 ? false : null" type="text" class="form-control" maxlength="20">
               <p v-for="(val, key) in errorMessages.name" :key="key" v-t="val" class="error" />
             </b-form-group>
-            <b-form-group v-show="showEmail">
+            <b-form-group v-show="showEmail && !isTenantAdmin()">
               <label v-t="'label.email'" />
               <input v-model="loginUser.email" :readonly="isChange" :state="errorMessages.email.length > 0 ? false : null" type="email" class="form-control">
               <p v-for="(val, key) in errorMessages.email" :key="key" v-t="val" class="error" />
@@ -85,7 +85,7 @@
         </b-col>
       </b-row>
       <!-- MS Teams版では常にキャンセル・変更ボタンを非表示 -->
-      <b-row v-if="!isMsTeams" :style="{ marginTop: '30px' }">
+      <b-row v-if="!isMsTeams && !isTenantAdmin()" :style="{ marginTop: '30px' }">
         <b-form-group class="col text-center">
           <b-button v-t="'label.cancel'" type="button" class="mr-4 mb-2 input-btn" variant="outline-danger" @click="handleCancelButton" />
           <b-button v-t="'label.modify'" :variant="theme" type="button" class="ml-4 mb-2 input-btn" @click="onSubmit" />
@@ -387,7 +387,7 @@ export default {
     },
     isTenantAdmin(){
       const login = LocalStorageHelper.getLogin()
-      return login? login.tenantAdmin: false
+      return login.isProvider
     },
     ...mapMutations('setting', [
       'replaceSetting', 
