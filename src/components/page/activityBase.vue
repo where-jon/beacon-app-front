@@ -230,7 +230,7 @@ export default {
           }
         }
 
-        console.log("viewList", this.viewList)
+        Util.debug("viewList", this.viewList)
 
 
         this.totalRows = this.viewList.length
@@ -314,7 +314,7 @@ export default {
       })
 
       const sum = this.sumData(data, 'zoneId')
-      console.log('sum', sum)
+      Util.debug('sum', sum)
 
       let csv = "basetime,device_id,count\n"
       for(var time=from; time<to; time += interval){
@@ -353,17 +353,17 @@ export default {
     },
     createPotGraph(data) {
       const sum = this.sumData(data, 'txId')
-      console.log('sum', sum)
+      Util.debug('sum', sum)
 
       const from = new Date(this.form.datetimeFrom).getTime()
       const to = new Date(this.form.datetimeTo).getTime()
       const total = (to - from)/1000
       
       return sum.map( posList => {
-        console.log('len', posList.length)
+        Util.debug('len', posList.length)
         const stayTime = posList.length * APP.POSITION_SUMMARY_INTERVAL * 60
         const posGroup = this.sumData(posList, 'exbId')
-        console.log('posGroup', posGroup)
+        Util.debug('posGroup', posGroup)
         const graph = posGroup.map( group => {
           const exb = this.exbMap[group[0].exbId]
           const zoneName = exb && exb.location && exb.location.zoneList && exb.location.zoneList.length >= 1 ? exb.location.zoneList[0].zoneName : null
@@ -420,10 +420,10 @@ export default {
         const zone = exb.location.zoneList[0]
         return {...d, zoneId:zone.zoneId, zone}
       })
-      console.log('data', data)
+      Util.debug('data', data)
 
       const sum = this.sumData(data, 'zoneId')
-      console.log('sum', sum)
+      Util.debug('sum', sum)
 
       const from = new Date(this.form.datetimeFrom).getTime()
       const to = new Date(this.form.datetimeTo).getTime()
@@ -431,8 +431,8 @@ export default {
       
       return sum.map( posList => {
         const posGroup = this.sumData(posList, 'txId')
-        console.log('posGroup', posGroup)
-        console.log('total', total)
+        Util.debug('posGroup', posGroup)
+        Util.debug('total', total)
 
         // 同一時刻の集計
         const countMap = {}
@@ -444,7 +444,7 @@ export default {
           countMap[timestamp]++
           countMap[timestamp] = Math.min(countMap[timestamp], 6)
         })
-        console.log(countMap)
+        Util.debug(countMap)
 
 
         // グラフ作成
@@ -454,7 +454,7 @@ export default {
         while(i-- > 0){
           const countList = Object.keys(countMap).map(key => { return {key, value:countMap[key]} })
           const times = countList.filter(c => c.value == i)
-          console.log('times', times)
+          Util.debug('times', times)
           const time = times.length * APP.POSITION_SUMMARY_INTERVAL * 60
           const ratio = Math.floor(times.length * APP.POSITION_SUMMARY_INTERVAL * 60 / total * 100)
           stayRatio += ratio
@@ -485,7 +485,7 @@ export default {
       this.pots.forEach(pot => {
         potMap[pot.txIds[0]] = pot
       })
-      console.log('potMap', potMap)
+      Util.debug('potMap', potMap)
       return potMap
     },
     getExbMap() {
@@ -493,7 +493,7 @@ export default {
       this.exbs.forEach(exb => {
         exbMap[exb.exbId] = exb
       })
-      console.log('exbMap', exbMap)
+      Util.debug('exbMap', exbMap)
       return exbMap
     },
     getGroupName(potId) {
@@ -510,7 +510,7 @@ export default {
       const to = new Date(form.datetimeTo).getTime()
       const url = `/core/positionHistory/summary/${from}/${to}/${APP.POSITION_SUMMARY_INTERVAL}/${APP.POSITION_SUMMARY_RECEIVE_COUNT}`
       const sumData = await HttpHelper.getAppService(url)
-      console.log('sumData', sumData)
+      Util.debug('sumData', sumData)
       // 重複データを排除
       let pre = null
       const ret = sumData.filter(s => {
@@ -518,7 +518,7 @@ export default {
         pre = s       
         return !dupe
       })
-      console.log('filter', ret)
+      Util.debug('filter', ret)
       return ret
     },
   }
