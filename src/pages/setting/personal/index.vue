@@ -49,7 +49,7 @@
               <b-form-select v-model="selectedLocale" :options="locales" class="mb-3" @change="localeSelected" />
             </b-form-group>
             <!-- プロフィール・パスワードを変更するボタン -->
-            <b-form-group v-if="isUpdatable">
+            <b-form-group v-if="isUpdatable && !isTenantAdmin()">
               <!-- MS Teams版ではパスワード変更不可-->
               <div v-if="!isMsTeams">
                 <b-button v-show="!isChange" v-t="'label.changeProfilePassword'" :variant="theme" 
@@ -384,6 +384,10 @@ export default {
       this.loginUser.role = user.role.roleName
       this.loginUser.roleId = user.role.roleId
       this.loginUser.description = user.description
+    },
+    isTenantAdmin(){
+      const login = LocalStorageHelper.getLogin()
+      return login? login.tenantAdmin: false
     },
     ...mapMutations('setting', [
       'replaceSetting', 
