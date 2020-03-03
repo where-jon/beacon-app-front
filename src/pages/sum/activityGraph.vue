@@ -26,7 +26,7 @@ export default {
       const param = {
         datetimeFrom: new Date(form.datetimeFrom).getTime(),
         datetimeTo: new Date(form.datetimeTo).getTime(),
-        stack: DISP.ACTIVITY.STACK_TYPE, // TODO:指定可能にする
+        stack: DISP.ACTIVITY.STACK_TYPE,
         axis: "pot"
       }
       const url = '/office/stayTime/sum?_=' + new Date().getTime() + '&' +  HttpHelper.toParam(param, true)

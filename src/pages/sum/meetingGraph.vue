@@ -29,7 +29,7 @@ export default {
       const param = {}
       const from = new Date(form.datetimeFrom).getTime()
       const to = new Date(form.datetimeTo).getTime()
-      const url = `/core/positionHistory/summary/${from}/${to}/${APP.POSITION_SUMMARY_INTERVAL}/${APP.POSITION_SUMMARY_RECEIVE_COUNT}`
+      const url = `/core/positionHistory/summaryBy/exb/${from}/${to}/${APP.POSITION_SUMMARY_INTERVAL}/${APP.POSITION_SUMMARY_RECEIVE_COUNT}`
       const sumData = await HttpHelper.getAppService(url)
       Util.debug('sumData', sumData)
       // 重複データを排除
@@ -57,7 +57,7 @@ export default {
       })
       Util.debug('data', data)
 
-      const sum = ArrayUtil.sumData(data, 'zoneId')
+      const sum = ArrayUtil.sumData(data, DISP.MEETING.AXIS_TYPE + 'Id')
       Util.debug('sum', sum)
 
       const from = new Date(form.datetimeFrom).getTime()

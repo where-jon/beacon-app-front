@@ -637,7 +637,11 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   // 活動実績
   ACTIVITY: {
     STACK_TYPE: 'zoneCategory'
-  }
+  },
+  // 会議室利用実績
+  MEETING: {
+    AXIS_TYPE: 'zone'
+  },
 }
 
 // used when APP.LOGIN_MODE != APP_SERVICE with excloud old api -----------------------------------------------------
