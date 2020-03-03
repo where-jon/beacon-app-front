@@ -59,7 +59,7 @@ export const loadMaster = async () => {
   addInfo(masters)
 
   console.log('commit', new Date())
-  storeCommit(masters, idmaps)
+  storeCommitAll(masters, idmaps)
 
   console.log('end', new Date())
   Util.debug({masters})
@@ -551,20 +551,25 @@ const addInfo = (masters) => {
 /**
  * Storeに保存
  */
-const storeCommit = (masters, idmaps) => {
+const storeCommitAll = (masters, idmaps) => {
   Object.keys(masters).forEach(key => {
     if (!isRelationEntity(key)) { // 関連エンティティは保存しない
-      StateHelper.storeCommit(StringUtil.single2multi(key), masters[key])
+      storeCommit(StringUtil.single2multi(key), masters[key])
     }
   })
 
   Object.keys(idmaps).forEach(key => { // idMapはIdMapの名前を後に付加
     if (!isRelationEntity(key)) { // 関連エンティティは保存しない
-      StateHelper.storeCommit(key + 'IdMap', idmaps[key])
+      storeCommit(key + 'IdMap', idmaps[key])
     }
   })
 
-  StateHelper.storeCommit('lastMasterFetchTime', new Date().getTime())
+  storeCommit('lastMasterFetchTime', new Date().getTime())
+}
+
+const storeCommit = (key, val) => {
+  StateHelper.storeCommit(key, val)
+  // StateHelper.setMaster(key, val)
 }
 
 

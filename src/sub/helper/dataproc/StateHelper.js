@@ -26,6 +26,13 @@ export const setApp = (pStore, pi18n) => {
   i18n = pi18n
 }
 
+/** 実験 not work yet */
+const master = {}
+export const setMaster = (key, val) => {
+  master[key] = val
+}
+export const getMaster = (key) => master[key]
+
 /**
  * マスタデータの強制更新フラグを取得する。
  * @method

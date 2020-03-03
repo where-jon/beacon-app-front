@@ -7,14 +7,27 @@ import * as StringUtil from '../../sub/util/StringUtil'
 import * as ConfigHelper from '../../sub/helper/dataproc/ConfigHelper'
 import * as LocaleHelper from '../../sub/helper/base/LocaleHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
+import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as OptionHelper from '../../sub/helper/dataproc/OptionHelper'
 import * as ThemeHelper from '../../sub/helper/ui/ThemeHelper'
 import * as VueSelectHelper from '../../sub/helper/ui/VueSelectHelper'
 import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 
+const exMapState = (namespace, map) => {
+  return mapState(namespace, map)
+  // let ret = {} // 実験：not work yet
+  // map.forEach(e => {
+  //   ret[e] = {
+  //     get: () => {return StateHelper.getMaster(e)},
+  //     set: (val) => {}
+  //   }
+  // })
+  // return ret
+}
+
 export default {
   computed: {
-    ...mapState('app_service', [
+    ...exMapState('app_service', [
       'exbs',
       'exbIdMap',
       'deviceIdMap',
