@@ -12,6 +12,7 @@ import { APP, DISP, DEV } from '../../sub/constant/config'
 import * as Util from '../../sub/util/Util'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
+import * as ColorUtil from '../../sub/util/ColorUtil'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 
 export default {
@@ -22,24 +23,19 @@ export default {
   },
   methods: {
     async getData(form){
-      const param = {}
-      const from = new Date(form.datetimeFrom).getTime()
-      const to = new Date(form.datetimeTo).getTime()
-      const url = `/core/positionHistory/summary/${from}/${to}/${APP.POSITION_SUMMARY_INTERVAL}/${APP.POSITION_SUMMARY_RECEIVE_COUNT}`
-      const sumData = await HttpHelper.getAppService(url)
-      Util.debug('sumData', sumData)
-      // 重複データを排除
-      let pre = null
-      const ret = sumData.filter(s => {
-        const dupe = pre && s.date==pre.date && s.timestamp==pre.timestamp && s.txId==pre.txId
-        pre = s       
-        return !dupe
-      })
-      Util.debug('filter', ret)
-      return ret
+      const param = {
+        datetimeFrom: new Date(form.datetimeFrom).getTime(),
+        datetimeTo: new Date(form.datetimeTo).getTime(),
+        stack: "zoneCategory", // TODO:指定可能にする
+        axis: "pot"
+      }
+      const url = '/office/stayTime/sum?_=' + new Date().getTime() + '&' +  HttpHelper.toParam(param, true)
+      const stayTime = await HttpHelper.getAppService(url)
+      Util.debug('stayTime', stayTime)
+      return stayTime
     },
     createGraph(form, data) {
-      const sum = ArrayUtil.sumData(data, 'txId')
+      const sum = ArrayUtil.sumData(data, 'axisId')
       Util.debug('sum', sum)
 
       const from = new Date(form.datetimeFrom).getTime()
@@ -47,15 +43,15 @@ export default {
       const total = (to - from)/1000
       
       return sum.map( posList => {
-        Util.debug('len', posList.length)
-        const stayTime = posList.length * APP.POSITION_SUMMARY_INTERVAL * 60
-        const posGroup = ArrayUtil.sumData(posList, 'exbId')
-        Util.debug('posGroup', posGroup)
-        const graph = posGroup.map( group => {
-          const exb = form.exbMap[group[0].exbId]
-          const zoneName = exb && exb.location && exb.location.zoneList && exb.location.zoneList.length >= 1 ? exb.location.zoneList[0].zoneName : null
-          const time = group.length * APP.POSITION_SUMMARY_INTERVAL * 60
-          const ratio = Math.floor(group.length * APP.POSITION_SUMMARY_INTERVAL * 60 / total * 100)
+        let stayTime = 0
+        const graph = posList.map( pos => {
+          //const exb = form.exbMap[pos.stackId]
+          //const zoneName = exb && exb.location && exb.location.zoneList && exb.location.zoneList.length >= 1 ? exb.location.zoneList[0].zoneName : null
+          const zoneName = pos.stack
+          const time = pos.period
+          stayTime += time
+          const ratio = time/total*100
+          console.log(ratio)
           return {
             name: zoneName,
             time: DateUtil.toHHmm(time),
@@ -79,7 +75,7 @@ export default {
             ratio
           })
         }
-        const pot = form.potMap[posList[0].txId]
+        const pot = form.potMap[posList[0].axisId]
         const potName = pot ? pot.potName : null
         const groupName = pot && pot.group ? pot.group.groupName : null
         const groupId = pot && pot.group ? pot.group.groupId : null
