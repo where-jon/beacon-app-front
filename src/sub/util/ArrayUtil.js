@@ -208,11 +208,11 @@ export const partitioningArray = (array, num) => {
  */
  export const sumData = (data, key) => {
   return data.reduce( (sum, obj) => {
-    const key = obj[key]
-    if(!sum[key]){
-      sum[key] = []
+    const v = obj[key]
+    if(!sum[v]){
+      sum[v] = []
     }
-    sum[key].push(obj)
+    sum[v].push(obj)
     return sum
   }, []).filter(d => d[key] == null)
 }
