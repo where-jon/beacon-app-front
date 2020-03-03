@@ -10,6 +10,7 @@ import * as DateUtil from '../../util/DateUtil'
 import * as StringUtil from '../../util/StringUtil'
 import * as AppServiceHelper from './AppServiceHelper'
 
+const areaImages = [] // Use normal variable instead of state
 
 let store
 let i18n
@@ -164,14 +165,21 @@ export const loadAreaImage = async (areaId, force) => {
     console.log('empty areas', areaId)
     return
   }
-  if (store.state.app_service.areaImages.find(areaImage => areaImage.areaId == areaId) && !force) {
+  if (areaImages[areaId] && !force) {
     console.log('FOUND areas', areaId)
-    return
+    return areaImages[areaId]
   }
+  // if (store.state.app_service.areaImages.find(areaImage => areaImage.areaId == areaId) && !force) {
+  //   console.log('FOUND areas', areaId)
+  //   return
+  // }
   console.log('load areas', areaId)
   let base64 = await AppServiceHelper.fetchMapImage('/core/area/' + areaId + '/mapImage')
-  const areaImages = [{areaId, mapImage: base64}]
-  store.commit('app_service/replaceAS', {areaImages})
+  // eslint-disable-next-line require-atomic-updates
+  areaImages[areaId] = base64
+  return base64
+  // const areaImages = [{areaId, mapImage: base64}]
+  // store.commit('app_service/replaceAS', {areaImages})
 }
 
 /**
@@ -203,10 +211,11 @@ export const initShowMessage = () => {
  * @return {String}
  */
 export const getMapImage = areaId => {
-  const areaImage = _.find(store.state.app_service.areaImages, (areaImage) => {
-    return areaImage.areaId == areaId
-  })
-  return areaImage && areaImage.mapImage
+  return areaImages[areaId]
+  // const areaImage = _.find(store.state.app_service.areaImages, (areaImage) => {
+  //   return areaImage.areaId == areaId
+  // })
+  // return areaImage && areaImage.mapImage
 
 }
 

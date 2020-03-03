@@ -28,7 +28,6 @@ import * as VueSelectHelper from '../sub/helper/ui/VueSelectHelper'
 
 export default async (context, inject) => {
   console.log('App Init') // If you need common initialize procedure, write here.
-  console.error(_.cloneDeep(context.store.state))
 
   setContextToHelper(context)
 
@@ -61,7 +60,6 @@ export default async (context, inject) => {
   catch (e) {
     console.error(e) // ignore
   }
-  console.error(_.cloneDeep(context.store.state))
 
   // check session
   setTimeout(() => {

@@ -8,7 +8,7 @@ export const state = () => ({
   sensors: [],
   potImages: [],
   areas: [],
-  areaImages: [],
+  // areaImages: [],
   area: {},
   exbs: [],
   exb: {},
