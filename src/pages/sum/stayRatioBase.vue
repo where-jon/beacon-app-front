@@ -560,10 +560,10 @@ export default {
           const isAbsentZone = this.isAbsentZoneData(stay.byId)
           if (this.isLostData(stay.byId) || isAbsentZone) {
             lostTime += stay.period
-            time = DateUtil.convertToTime(stay.period)
+            time = moment().startOf('days').add(stay.period, 's').format('HH:mm')
           } else {
             stayTime += stay.period
-            time = DateUtil.convertToTime(stay.period)
+            time = moment().startOf('days').add(stay.period, 's').format('HH:mm')
             isExistStayData = true
           }
           // カテゴリ毎の滞在時間を加算
@@ -611,9 +611,9 @@ export default {
             isAbsentZone,
             period: stay.period,
             start: stay.start,
-            startTime: percent == 100? DateUtil.convertToTime(fromSecond): moment(stay.start).format('HH:mm:ss'),
+            startTime: percent == 100? moment().startOf('days').add(fromSecond, 's').format('HH:mm'): moment(stay.start).format('HH:mm'),
             end: stay.end,
-            endTime: percent == 100? DateUtil.convertToTime(toSecond): moment(stay.end).format('HH:mm:ss'),
+            endTime: percent == 100? moment().startOf('days').add(toSecond, 's').format('HH:mm'): moment(stay.end).format('HH:mm'),
             time,
             percent,
             categoryName: findCategory? findCategory.categoryName: this.$i18n.tnl('label.other'),
@@ -632,18 +632,18 @@ export default {
           groupName: pot? pot.groupName: '',
           categoryName: pot? pot.categoryName: '',
           graph: graphList,
-          stayTime: DateUtil.convertToTime(stayTime) + ' (' + StayTimeHelper.getRatio(stayTime) + '%)', 
-          lostTime: DateUtil.convertToTime(lostTime) + ' (' + StayTimeHelper.getRatio(lostTime) + '%)', 
+          stayTime: moment().startOf('days').add(stayTime, 's').format('HH:mm') + ' (' + StayTimeHelper.getRatio(stayTime) + '%)', 
+          lostTime: moment().startOf('days').add(lostTime, 's').format('HH:mm') + ' (' + StayTimeHelper.getRatio(lostTime) + '%)', 
           baseTimeFrom: this.getDateStrFromSetting(APP.STAY_SUM.FROM),
           baseTimeTo: this.getDateStrFromSetting(APP.STAY_SUM.TO),
           graphTimeRatio: graphTimeRatio,
         }
 
         categoryData.forEach((cData) => {
-          result[cData.name] = DateUtil.convertToTime(cData.value) + ' (' + StayTimeHelper.getRatio(cData.value) + '%)'
+          result[cData.name] = moment().startOf('days').add(cData.value, 's').format('HH:mm') + ' (' + StayTimeHelper.getRatio(cData.value) + '%)'
         })
         areaData.forEach((aData) => {
-          result[aData.name] = DateUtil.convertToTime(aData.value) + ' (' + StayTimeHelper.getRatio(aData.value) + '%)'
+          result[aData.name] = moment().startOf('days').add(aData.value, 's').format('HH:mm') + ' (' + StayTimeHelper.getRatio(aData.value) + '%)'
         })
 
         // グラフのズレ対応。100%と実際のpercentとの差分を全体に分配する
