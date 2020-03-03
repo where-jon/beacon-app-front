@@ -26,7 +26,7 @@ export default {
       const param = {
         datetimeFrom: new Date(form.datetimeFrom).getTime(),
         datetimeTo: new Date(form.datetimeTo).getTime(),
-        stack: "zoneCategory", // TODO:指定可能にする
+        stack: DISP.ACTIVITY.STACK_TYPE, // TODO:指定可能にする
         axis: "pot"
       }
       const url = '/office/stayTime/sum?_=' + new Date().getTime() + '&' +  HttpHelper.toParam(param, true)
@@ -45,12 +45,10 @@ export default {
       return sum.map( posList => {
         let stayTime = 0
         const graph = posList.map( pos => {
-          //const exb = form.exbMap[pos.stackId]
-          //const zoneName = exb && exb.location && exb.location.zoneList && exb.location.zoneList.length >= 1 ? exb.location.zoneList[0].zoneName : null
           const zoneName = pos.stack
           const time = pos.period
           stayTime += time
-          const ratio = time/total*100
+          const ratio = Math.floor(time/total*100)
           console.log(ratio)
           return {
             name: zoneName,

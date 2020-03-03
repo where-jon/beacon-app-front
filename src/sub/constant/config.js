@@ -633,6 +633,11 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     TYPE: 1, // 表示方法
     ZONE_OTHER: true // ゾーンその他を表示する
   },
+
+  // 活動実績
+  ACTIVITY: {
+    STACK_TYPE: 'zoneCategory'
+  }
 }
 
 // used when APP.LOGIN_MODE != APP_SERVICE with excloud old api -----------------------------------------------------
