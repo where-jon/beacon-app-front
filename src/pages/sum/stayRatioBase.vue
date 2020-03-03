@@ -89,7 +89,7 @@
         </b-button>
       </div>
     </b-modal>
-    <breadcrumb :items="items" :reload="false" />
+    <breadcrumb :items="items" :legend-items="legendItems" :reload="false" />
     <div class="container">
       <alert :message="message" />
 
@@ -203,13 +203,15 @@ import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import moment from 'moment'
 import { APP, DISP, DEV } from '../../sub/constant/config'
-import { CATEGORY, SYSTEM_ZONE_CATEGORY_NAME } from '../../sub/constant/Constants'
+import { SHAPE, CATEGORY, SYSTEM_ZONE_CATEGORY_NAME } from '../../sub/constant/Constants'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as ColorUtil from '../../sub/util/ColorUtil'
 import * as CsvUtil from '../../sub/util/CsvUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
 import * as Util from '../../sub/util/Util'
+import * as VueUtil from '../../sub/util/VueUtil'
+import * as StyleHelper from '../../sub/helper/ui/StyleHelper'
 import { getCharSet } from '../../sub/helper/base/CharSetHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
@@ -231,6 +233,7 @@ export default {
   data () {
     return {
       items: ViewHelper.createBreadCrumbItems('sumTitle', 'stayRatioBase'),
+      legendItems: [],
       fields: this.getFields(true),
       form: {
         date: '',
@@ -312,8 +315,42 @@ export default {
 
     this.categoryDisplayList = this.categories.filter((c) => c.categoryType === CATEGORY.ZONE)
       .sort((a, b) => a.categoryId < b.categoryId ? -1 : 1)
+    VueUtil.nextTickEx(this, () => this.loadLegends())
   },
   methods: {
+    loadLegends() {
+      let lastIndex = 0
+      this.legendItems = []
+
+      if (this.isCategorySelected) {
+        _.filter(this.categories, category => { return category.systemUse != 1 })
+          .forEach((category, index) => {
+            this.legendItems.push({id:index, items:[
+              { id: 1, text: '', style: StyleHelper.getStyleDisplay1(
+                { shape:SHAPE.SQUARE, bgColor: category.bgColor, color: '#000000', fixSize: true }
+                ) },
+              { id: 2, text: category.categoryName, style: null },
+            ]})
+            lastIndex = index
+          })
+      } else {
+        _.forEach(this.areas, (area, index) => {
+          this.legendItems.push({id:index, items:[
+            { id: 1, text: '', style: StyleHelper.getStyleDisplay1(
+              { shape:SHAPE.SQUARE, bgColor: DISP.SUM_STACK_COLOR[index], color: '#000000', fixSize: true }
+            ) },
+            { id: 2, text: area.areaName, style: null },
+          ]})
+          lastIndex = index
+        })
+      }
+
+      const otherStyle = { shape:SHAPE.SQUARE, bgColor: this.otherColor, color: '#000000' }
+      this.legendItems.push({id:++lastIndex, items:[
+        { id: 1, text: '', style: StyleHelper.getStyleDisplay1(otherStyle) },
+        { id: 2, text: this.$i18n.tnl('label.other'), style: null },
+      ]})
+    },
     getThClassName() {
       return 'tableHeader'
     },
@@ -331,6 +368,7 @@ export default {
         this.displayCheckList.area = []
       }
       this.isCategorySelected = isSelected
+      this.loadLegends()
     },
     getDispCategoryName(category) {
       return MasterHelper.getDispCategoryName(category)
