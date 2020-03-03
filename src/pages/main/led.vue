@@ -67,10 +67,10 @@
           </b-form-radio-group>
         </b-form-group>
         <b-button v-show="isEditable" v-t="'label.start'" :variant="theme"
-                  :disabled="!deviceType" type="submit" class="my-1" @click="buttonClick(true)"
+                  :disabled="!deviceType" type="button" class="my-1" @click="buttonClick(true)"
         />
         <b-button v-show="isEditable" v-t="'label.end'" :variant="theme" 
-                  :disabled="!deviceType" type="submit" class="ml-2 my-1" @click="buttonClick(false)"
+                  :disabled="!deviceType" type="button" class="ml-2 my-1" @click="buttonClick(false)"
         />
       </b-form>
     </b-container>
@@ -199,23 +199,27 @@ export default {
         ['pattern' + no]: isOn? this.form.blink: 0,
       }]
     },
-    async onSaving() {
-      const entity = this.createEntity(this.lightOnCandidate)
-      Util.debug('led send: ', entity)
-      await EXCloudHelper.postLed(entity)
+    async buttonClick(bool) {
+      this.showProgress()
+      try {
+        this.lightOnCandidate = bool
+        const entity = this.createEntity(this.lightOnCandidate)
+        Util.debug('led send: ', entity)
+        await EXCloudHelper.postLed(entity)
 
-      const timerKey = 'led-' + entity[0].deviceId
-      if(APP.SENSOR.LED.AUTO_OFF_TIME > 0) {
-        if(this.lightOnCandidate) {
-          const req = this.createEntity(false)
-          this.pushTimer(timerKey, APP.SENSOR.LED.AUTO_OFF_TIME * 1000, () => EXCloudHelper.postLed(req))
-        } else {
-          this.popTimer(timerKey)
+        const timerKey = 'led-' + entity[0].deviceId
+        if(APP.SENSOR.LED.AUTO_OFF_TIME > 0) {
+          if(this.lightOnCandidate) {
+            const req = this.createEntity(false)
+            this.pushTimer(timerKey, APP.SENSOR.LED.AUTO_OFF_TIME * 1000, () => EXCloudHelper.postLed(req))
+          } else {
+            this.popTimer(timerKey)
+          }
         }
       }
-    },
-    buttonClick(bool) {
-      this.lightOnCandidate = bool
+      finally {
+        this.hideProgress()
+      }
     },
     backToList() {
       ViewHelper.disabledButtons(false)

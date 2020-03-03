@@ -489,7 +489,7 @@ export default {
         this.selectedAreaId = Util.getValue(newVal, 'value')
         LocalStorageHelper.setLocalStorage(KEY.CURRENT.AREA, this.selectedAreaId)
         if(this.isMounted && this.selectedAreaId != null){
-          this.changeArea(this.selectedAreaId)
+          this.changeArea(this.selectedAreaId) // ここが処理の起点。this.onChangeAreaDone()が呼ばれ、showMapImage()が呼ばれる
         }
       },
       deep: true,
@@ -537,7 +537,7 @@ export default {
       this.startPositionAutoReload()
       this.startOtherAutoReload()
     }
-    this.changeArea(this.selectedAreaId) // ここが処理の起点。this.onChangeAreaDone()が呼ばれ、showMapImage()が呼ばれる
+    // this.changeArea(this.selectedAreaId) 
     document.addEventListener('touchstart', this.touchEnd)
     // Canvas内クリックからの伝搬を止める
     document.getElementById('map').addEventListener('click', function(e) {
