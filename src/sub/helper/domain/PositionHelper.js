@@ -163,7 +163,7 @@ const positionFilter = (positions, groupId, categoryId, txIdList, freeWord) => {
     let freeWordHit = true
     if (tx) {
       if (groupId) {
-        grpHit = groupId == tx.groupId
+        grpHit = groupId == Util.getValue(tx, 'pot.group.groupId')
       }
       if (categoryId) {
         catHit = categoryId == Util.getValue(tx, 'pot.category.categoryId')

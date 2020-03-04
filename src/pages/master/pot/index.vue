@@ -78,9 +78,9 @@ export default {
       return this.pName? this.pName: 'pot'
     },
     editResponse(data) {
-      data.forEach(val => {
-        val.txIdNames = Util.getValue(val, 'btxId', Util.getValue(val, 'minor', '')).split(BULK.SPLITTER)
-        val.authCategoryNames = Util.getValue(val, 'auth', '').split(BULK.SPLITTER)
+      data.forEach(pot => {
+        pot.txIdNames = Util.getValue(pot, 'btxId', Util.getValue(pot, 'minor', '')).split(BULK.SPLITTER)
+        pot.authCategoryNames = Util.getValue(pot, 'auth', '').split(BULK.SPLITTER)
       })
     },
     getFields(){

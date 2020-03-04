@@ -566,7 +566,7 @@ export default {
             this.extraFilterSpec[key].change()
           }
           if(['category', 'group'].some(k => k == key)) {
-            this[StringUtil.concatCamel('selected', key)] = nVal
+            this[StringUtil.concatCamel('selected', key, 'id')] = nVal
           }
         })
         this.compactMode? this.fetchCompactListOnNext(): () => {} // コンパクトモードの場合、ここで一覧データ取得
@@ -969,7 +969,7 @@ export default {
         this.replaceMain({selectedTx})
       }
       if(filterReset) {
-        this.filterSelectedList.forEach(selected => this[StringUtil.concatCamel('selected', selected)] = null)
+        this.filterSelectedList.forEach(selected => this[StringUtil.concatCamel('selected', selected, 'id')] = null)
         this.replaceMain({ initDetailFilter: true })
       }
       this.replaceMain({selectedAreaId})

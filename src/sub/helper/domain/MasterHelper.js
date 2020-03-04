@@ -408,6 +408,8 @@ const addInfo = (masters) => {
         Util.merge(pot, {
           txIds: _.map(pot.txList, tx => tx.txId),
           txIdNames: pot.txList.forEach(tx => getTxIdName(tx)),
+          groupId: Util.v(pot, 'group.groupId'),
+          categoryId: Util.v(pot, 'category.categoryId'),
           authCategoryNames: Util.v(pot, 'authCategoryList', []).map(v => v.categoryName), // TODO: categoryListからfilterして取り出す
         })
         Util.merge(pot, pot.extValue)

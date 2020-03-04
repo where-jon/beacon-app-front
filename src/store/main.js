@@ -3,6 +3,8 @@ import axios from 'axios'
 
 export const state = () => ({
   selectedAreaId: null,
+  selectedGroupId: null,
+  selectedCategoryId: null,
   selectedTx: {},
   eachAreas: [],
   eachZones: [],
