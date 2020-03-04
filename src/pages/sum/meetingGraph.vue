@@ -33,15 +33,7 @@ export default {
       const url = `/core/positionHistory/summaryBy/${axis}/${from}/${to}/${APP.POSITION_SUMMARY_INTERVAL}/${APP.POSITION_SUMMARY_RECEIVE_COUNT}`
       const sumData = await HttpHelper.getAppService(url)
       Util.debug('sumData', sumData)
-      // 重複データを排除
-      let pre = null
-      const ret = sumData.filter(s => {
-        const dupe = pre && s.date==pre.date && s.timestamp==pre.timestamp && s.txId==pre.txId
-        pre = s       
-        return !dupe
-      })
-      Util.debug('filter', ret)
-      return ret
+      return sumData
     },
     createGraph(form, baseData) {
       // zone情報を付与
@@ -121,24 +113,21 @@ export default {
       }).map( d => {
         const exb = form.exbMap[d.exbId]
         const zone = exb.location.zoneList[0]
-        return {...d, zoneId:zone.zoneId, zone}
+        return {...d, exb, zoneId:zone.zoneId, zone}
       })
+      Util.debug('data', data)
 
-      const sum = ArrayUtil.sumData(data, 'zoneId')
+      const sum = ArrayUtil.sumData(data, 'timestamp') // なぜかできない
       Util.debug('sum', sum)
 
       let csv = "basetime,device_id,count\n"
       for(var time=from; time<to; time += interval){
-        sum.forEach(list => {
-          let count = 0
-          list.forEach(pos => {
-            const timestamp = pos.date + (Math.floor(pos.timestamp / 100) * 60 + pos.timestamp%60) * 60 * 1000
-            if(time == timestamp){
-              count++
-            }
+        if(sum[time]){
+          console.log(sum[time].length)
+          sum[time].forEach(pos => {
+            csv += this.formatTime(time) + "," + pos.exb.deviceId + "," + pos.cnt + "\n"
           })
-          csv += this.formatTime(time) + "," + list[0].zone.zoneName + "," + count + "\n"
-        })
+        }
       }
 
       const searchDate = moment(form.date).format('YYYY-MM-DD')

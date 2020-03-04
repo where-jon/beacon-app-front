@@ -214,5 +214,5 @@ export const partitioningArray = (array, num) => {
     }
     sum[v].push(obj)
     return sum
-  }, []).filter(d => d[key] == null)
+  }, [])
 }
