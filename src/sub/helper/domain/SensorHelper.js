@@ -1187,7 +1187,7 @@ const addSensorInfo = (sensor, pos) => {
     // id: sensor.sensorId,
     ...sensor,
     // sensorId: sensor? sensor.id: null,
-    label: Util.v(tx, 'displayName', sensor.btxId), 
+    label: Util.v(tx, 'pot.displayName', sensor.btxId), 
     ...tx,
     ...exb,
     deviceId: Util.v(exb,'deviceId', ''),

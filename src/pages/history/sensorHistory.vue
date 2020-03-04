@@ -131,7 +131,7 @@ export default {
 
       let tx = this.txIdMap[senHist.txId]
       if (senHist.txId != null && tx) {
-        senHist.potName = Util.getValue(tx, 'potName', Util.getValue(tx, ConfigHelper.includesBtxMinor('btxId')? 'btxId': 'minor', ''))
+        senHist.potName = Util.getValue(tx, 'pot.potName', Util.getValue(tx, ConfigHelper.includesBtxMinor('btxId')? 'btxId': 'minor', ''))
         senHist.major = tx.major
         senHist.minor = tx.minor
         senHist.locationName = tx.locationName

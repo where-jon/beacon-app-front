@@ -703,7 +703,7 @@ export const createTxDetailInfo = (x, y, tx, canvasScale, offset, containerRect,
 
 /**
  * 位置表示（全体）のTx詳細に必要な情報を取得する。
- * TODO: 別のHelperに移動
+ * TODO: 別のHelperに移動　（上のメソッドとほぼ重複、マージすること）
  * 
  * @method
  * @param {Number} x
@@ -727,12 +727,12 @@ export const createTxDetailInfoOnStack = (x, y, tx, offset, preloadThumbnail) =>
     containerWidth: null,
     containerHeight: null,
     class: !tx.btxId ? '': 'balloon-u', // 上表示のみに固定,
-    name: Util.getValue(tx, 'potName', ''),
-    tel: Util.getValue(tx, 'extValue.tel', ''),
+    name: Util.getValue(tx, 'pot.potName', ''),
+    tel: Util.getValue(tx, 'pot.extValue.tel', ''),
     timestamp: position ? DateUtil.formatDate(new Date(position.timestamp)) : '',
     thumbnail: Util.getValue(preloadThumbnail, 'src', ''),
-    category: Util.getValue(tx, 'categoryName', ''),
-    group: Util.getValue(tx, 'groupName', ''),
+    category: Util.getValue(tx, 'pot.category.categoryName', ''),
+    group: Util.getValue(tx, 'pot.group.groupName', ''),
     bgColor: display.bgColor,
     color: display.color,
     isDispRight: x + offset.x + 100 < window.innerWidth,
