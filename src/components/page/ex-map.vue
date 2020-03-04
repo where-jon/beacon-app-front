@@ -175,7 +175,7 @@ import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import { SENSOR, TX, POT_TYPE, SHAPE, KEY, SYSTEM_ZONE_CATEGORY_NAME } from '../../sub/constant/Constants'
-import { APP, DISP, DEV, APP_SERVICE, EXCLOUD, MSTEAMS_APP } from '../../sub/constant/config'
+import { APP, DISP, APP_SERVICE, EXCLOUD, MSTEAMS_APP } from '../../sub/constant/config'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as ColorUtil from '../../sub/util/ColorUtil'
@@ -210,7 +210,6 @@ import detailFilter from '../../components/parts/detailFilter.vue'
 import meditag from '../../components/parts/meditag.vue'
 import ToolTip from '../../components/parts/toolTip.vue'
 import txdetail from '../../components/parts/txdetail.vue'
-import moment from 'moment'
 
 export default {
   components: {
@@ -433,21 +432,6 @@ export default {
   computed: {
     ...mapState('main', [
       'selectedTx',
-    ]),
-    ...mapState('app_service', [
-      // 'categories',
-      // 'groups',
-      // 'prohibits',
-      // 'lostZones',
-      // 'absentDisplayZones',
-      // 'txs',
-      // 'btxIdMap',
-      // 'txIdMap',
-      // 'deviceIdMap',
-      // 'potIdMap',
-      // 'locationIdMap',
-      // 'locations',
-      // 'pots',
     ]),
     ...mapState([
       'reload',
