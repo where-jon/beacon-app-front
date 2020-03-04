@@ -8,9 +8,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { APP, DISP } from '../../sub/constant/config'
-import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as CsvUtil from '../../sub/util/CsvUtil'
 import * as Util from '../../sub/util/Util'
@@ -18,7 +16,6 @@ import { getCharSet } from '../../sub/helper/base/CharSetHelper'
 import * as ConfigHelper from '../../sub/helper/dataproc/ConfigHelper'
 import * as DetectStateHelper from '../../sub/helper/domain/DetectStateHelper'
 import * as EXCloudHelper from '../../sub/helper/dataproc/EXCloudHelper'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import commonmixin from '../../components/mixin/commonmixin.vue'
@@ -41,9 +38,6 @@ export default {
     }
   },
   computed: {
-    // ...mapState('app_service', [
-    //   'exbs',
-    // ]),
     allCount() {
       return this.telemetrys.length
     },
@@ -66,13 +60,13 @@ export default {
     },
     getCsvHeaders(){
       return {
-          deviceId: ConfigHelper.includesDeviceType('deviceId')? 'deviceId': null,
-          deviceIdX: ConfigHelper.includesDeviceType('deviceIdX')? 'deviceId(HEX)': null,
-          name: 'finalRevceivePlace',
-          powerLevel: 'powerLevel',
-          timestamp: 'timestamp',
-          state: 'state'
-        }
+        deviceId: ConfigHelper.includesDeviceType('deviceId')? 'deviceId': null,
+        deviceIdX: ConfigHelper.includesDeviceType('deviceIdX')? 'deviceId(HEX)': null,
+        name: 'finalRevceivePlace',
+        powerLevel: 'powerLevel',
+        timestamp: 'timestamp',
+        state: 'state'
+      }
     },
     getClass(telemetry, index){
       return this.getTrClass(index, telemetry.timestamp)

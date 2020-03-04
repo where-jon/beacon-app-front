@@ -13,6 +13,11 @@ import commonmixin from '../mixin/commonmixin.vue'
 import mList from './list.vue'
 
 export default {
+  components: {
+    breadcrumb,
+    mList,
+  },
+  mixins: [commonmixin],
   props: {
     pMasterName: {
       type: String,
@@ -31,11 +36,6 @@ export default {
       required: true,
     },
   },
-  components: {
-    breadcrumb,
-    mList,
-  },
-  mixins: [commonmixin],
   computed: {
     items() {
       return ViewHelper.createBreadCrumbItems('master', StringUtil.concatCamel(this.pMasterName, this.pCategoryName))

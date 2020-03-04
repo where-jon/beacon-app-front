@@ -54,7 +54,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import _ from 'lodash'
@@ -68,7 +67,6 @@ import { getCharSet } from '../../sub/helper/base/CharSetHelper'
 import * as ConfigHelper from '../../sub/helper/dataproc/ConfigHelper'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 import * as SensorHelper from '../../sub/helper/domain/SensorHelper'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
@@ -109,11 +107,6 @@ export default {
       fetchRows: 0,
       sortBy: null,
     }
-  },
-  computed: {
-    // ...mapState('app_service', [
-    //   'sensors'
-    // ]),
   },
   async created() {
     this.form.sensorId = Util.hasValue(this.sensorOptions)? this.sensorOptions[0].value: null

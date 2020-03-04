@@ -89,7 +89,6 @@ import { mapState } from 'vuex'
 import { Shape, Container, Text } from 'createjs-module'
 import { APP, DISP } from '../../../sub/constant/config'
 import { UPDATE_ONLY_NN, SETTING, SHAPE, SENSOR } from '../../../sub/constant/Constants'
-import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../../sub/util/BrowserUtil'
 import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
@@ -325,31 +324,11 @@ export default {
       }
       this.stage.update()
     },
-    // アイコン内の全情報を最新化：フェッチ、詳細ポップアップ確定、削除後
-    // refleshDeviceLocationList(deviceList){
-    //   const locationMap = {}
-    //   deviceList.forEach(device => {
-    //     if(Util.hasValue(device.locationId)){
-    //       if(!locationMap[device.locationId]){
-    //         locationMap[device.locationId] = []
-    //       }
-    //       locationMap[device.locationId].push(device)
-    //     }
-    //   })
-    //   return locationMap
-    // },
     refleshLocationList(){
-      // const locationExbMap = this.refleshDeviceLocationList(this.work.exbList)
-      // const locationTxMap = this.refleshDeviceLocationList(this.work.txList)
       this.work.locationList.forEach(location => {
-        // const exbList = locationExbMap[location.locationId]? locationExbMap[location.locationId]: []
         const exbNum = location.exbList.length
-        // location.exbList = exbList
         location.deviceId = Util.getValue(location.exbList, '0.deviceId', '') + (1 < exbNum? '+': '')
         location.deviceIdX = Util.getValue(location.exbList, '0.deviceIdX', '') + (1 < exbNum? '+': '')
-
-        // const txList = locationTxMap[location.locationId]? locationTxMap[location.locationId]: []
-        // location.txList = txList
         location.txName = MasterHelper.getLocationTxName(Util.v(location.txList, '0'), false) + (1 < location.txList.length? '+': '')
       })
       this.changeLocationDisp(this.form.locationDisp)
@@ -504,7 +483,6 @@ export default {
       }
       initTx.locationId = newLocation.locationId
 
-      const deviceId = '' + initTx.btxId
       newLocation.locationCd = SensorHelper.createTxLocationDummyName(initTx)
       newLocation.locationName = SensorHelper.createTxLocationDummyName(initTx)
       newLocation.txName = MasterHelper.getLocationTxName(initTx, false)

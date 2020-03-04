@@ -6,6 +6,7 @@ import * as AuthHelper from '../sub/helper/base/AuthHelper'
 import * as HttpHelper from '../sub/helper/base/HttpHelper'
 import * as LocalStorageHelper from '../sub/helper/base/LocalStorageHelper'
 import * as MenuHelper from '../sub/helper/dataproc/MenuHelper'
+import * as StateHelper from '../sub/helper/dataproc/StateHelper'
 import * as MasterHelper from '../sub/helper/domain/MasterHelper'
 
 export default function (context) {
@@ -78,6 +79,7 @@ export default function (context) {
   // マスタのキャッシュ時間を過ぎた場合、再ロード
   if (new Date().getTime() - context.store.state.app_service.lastMasterFetchTime > APP.SYS.STATE_EXPIRE_TIME) {
     MasterHelper.loadMaster()
+    StateHelper.clearAreaImages()
   }
 
 }

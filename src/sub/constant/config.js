@@ -281,7 +281,7 @@ export const APP = { // 機能面に関する設定
     WITH: ['deviceId', 'deviceIdX'],
   },
   SENSORGRAPH: {
-    SENSOR: [1,2,3,4,5,6,7,8,9],        // グラフで利用するセンサー一覧
+    SENSOR: [1,2,3,5,6,7,8,9],        // グラフで利用するセンサー一覧
     WITH_DEVICE: true,                // 画面上でデバイスを使用するか否か
     CSV_IMMEDIATE: false,             // csvで直近値を出力するか否か
   },

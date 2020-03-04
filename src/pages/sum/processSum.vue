@@ -29,7 +29,6 @@ import { CATEGORY, PROCESS_SUM } from '../../sub/constant/Constants'
 import * as DateUtil from '../../sub/util/DateUtil'
 import * as Util from '../../sub/util/Util'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import reloadmixin from '../../components/mixin/reloadmixin.vue'
@@ -50,9 +49,6 @@ export default {
     }
   },
   computed: {
-    // ...mapState('app_service', [
-    //   'pots',
-    // ]),
     ...mapState([
       'reload',
     ]),

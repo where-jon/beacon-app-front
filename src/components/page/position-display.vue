@@ -12,7 +12,6 @@ import * as StringUtil from '../../sub/util/StringUtil'
 import * as Util from '../../sub/util/Util'
 import * as PositionHelper from '../../sub/helper/domain/PositionHelper'
 import * as ProhibitHelper from '../../sub/helper/domain/ProhibitHelper'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import { addLabelByKey } from '../../sub/helper/ui/ViewHelper'
 import commonmixin from '../mixin/commonmixin.vue'
 import reloadmixin from '../mixin/reloadmixin.vue'
@@ -64,15 +63,6 @@ export default {
     }
   },
   computed: {
-    ...mapState('app_service', [
-      // 'txs',
-      // 'areas',
-      // 'zones',
-      // 'locations',
-      // 'locationIdMap',
-      // 'prohibits',
-      // 'lostZones',
-    ]),
     ...mapState('main', [
       'eachAreas',
       'eachZones',
@@ -104,6 +94,7 @@ export default {
 
       const absentZone = _.find(this.zones, zone => zone.categoryName == SYSTEM_ZONE_CATEGORY_NAME.ABSENT_DISPLAY)
 
+      // TODO: 以下の処理要書き直し
       _.forEach(positions, pos => {
         const location = this.locationIdMap[pos.locationId]
         prohibitDetectList? prohibitDetectList.some(data => {

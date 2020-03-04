@@ -33,8 +33,6 @@ import { SENSOR, LOCATION, SYSTEM_ZONE_CATEGORY_NAME } from '../../sub/constant/
 import * as Util from '../../sub/util/Util'
 import * as EXCloudHelper from '../../sub/helper/dataproc/EXCloudHelper'
 import * as IconHelper from '../../sub/helper/ui/IconHelper'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
-import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import reloadmixin from '../../components/mixin/reloadmixin.vue'
@@ -55,11 +53,6 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      // 'areas',
-      // 'zones',
-      // 'locations',
-      // 'txs',
-      // 'exbs',
       'positions',
     ]),
     autoReload() {

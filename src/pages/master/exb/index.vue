@@ -6,13 +6,11 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { APP } from '../../../sub/constant/config'
-import { EXB, BULK } from '../../../sub/constant/Constants'
+import { BULK } from '../../../sub/constant/Constants'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import * as Util from '../../../sub/util/Util'
 import * as ConfigHelper from '../../../sub/helper/dataproc/ConfigHelper'
-import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import commonmixin from '../../../components/mixin/commonmixin.vue'

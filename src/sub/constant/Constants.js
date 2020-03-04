@@ -324,6 +324,7 @@ export const SENSOR = {
   OMR_TP_HUMAN: 10,
   OMR_TP_ENV: 11,
   LED_TYPE5: 12,
+  LED_TYPE3: 13,
   MAGNET_STATUS: {
     OFF: 0,
     ON: 4,

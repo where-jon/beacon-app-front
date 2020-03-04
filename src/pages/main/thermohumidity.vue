@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { APP, DISP } from '../../sub/constant/config'
+import { APP } from '../../sub/constant/config'
 import { SENSOR } from '../../sub/constant/Constants'
 import * as SensorHelper from '../../sub/helper/domain/SensorHelper'
 import exMap from '../../components/page/ex-map.vue'

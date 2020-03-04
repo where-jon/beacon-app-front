@@ -132,7 +132,6 @@ import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper
 import * as ImageHelper from '../../../sub/helper/base/ImageHelper'
 import * as LocalStorageHelper from '../../../sub/helper/base/LocalStorageHelper'
 import * as PotHelper from '../../../sub/helper/domain/PotHelper'
-import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
@@ -145,6 +144,13 @@ import chromeInput from '../../../components/parts/chromeinput.vue'
 import extform from '../../../components/parts/extform.vue'
 
 export default {
+  components: {
+    breadcrumb,
+    alert,
+    chromeInput,
+    extform,
+  },
+  mixins: [commonmixin, editmixin],
   props: {
     pName: {
       type: String,
@@ -163,13 +169,6 @@ export default {
       default: () => [POT_TYPE.PERSON, POT_TYPE.THING, POT_TYPE.OTHER],
     },
   },
-  components: {
-    breadcrumb,
-    alert,
-    chromeInput,
-    extform,
-  },
-  mixins: [commonmixin, editmixin],
   data() {
     return {
       name: 'pot',
@@ -223,11 +222,6 @@ export default {
     },
     ...mapState('app_service', [
       'pot',
-      // 'pots',
-      // 'groups',
-      // 'roles',
-      // 'categories',
-      // 'txs',
       'updatedThumbnail',
     ]),
     hasUserId(){

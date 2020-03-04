@@ -235,7 +235,7 @@ export default {
       }
       this.icons = {} // キャッシュをクリア
       try {
-        await StateHelper.loadAreaImage(areaId, true)
+        await StateHelper.loadAreaImage(areaId)
         const area = this.areaIdMap[areaId]
         if (StateHelper.getMapImage(area.areaId)) {
           if(!Util.v(this, 'selectedTx.btxId')){

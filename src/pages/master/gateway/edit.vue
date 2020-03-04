@@ -28,16 +28,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
-import { APP } from '../../../sub/constant/config'
-import * as ArrayUtil from '../../../sub/util/ArrayUtil'
-import * as NumberUtil from '../../../sub/util/NumberUtil'
-import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
-import * as ConfigHelper from '../../../sub/helper/dataproc/ConfigHelper'
-import * as MenuHelper from '../../../sub/helper/dataproc/MenuHelper'
-import * as OptionHelper from '../../../sub/helper/dataproc/OptionHelper'
-import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import * as VueSelectHelper from '../../../sub/helper/ui/VueSelectHelper'
@@ -45,13 +36,11 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import commonmixin from '../../../components/mixin/commonmixin.vue'
 import editmixin from '../../../components/mixin/editmixin.vue'
 import alert from '../../../components/parts/alert.vue'
-import autoAlert from '../../../components/parts/autoAlert.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
-    autoAlert,
   },
   mixins: [commonmixin, editmixin],
   data() {
@@ -67,10 +56,6 @@ export default {
       meshId: null,
       maxDeviceId: 65535,
     }
-  },
-  computed: {
-    // ...mapState('app_service', [
-    // ]),
   },
   watch: {
     deviceId: function(newVal, oldVal) {

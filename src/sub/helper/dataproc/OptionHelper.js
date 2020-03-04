@@ -108,7 +108,7 @@ export const getTxOptions = (isBlank = false) => {
  * @param {Number[]} ignoreIds
  * @return {Object[]}
  */
-export const getAllSensorOptions = (ignoreIds = [SENSOR.LED_TYPE2, SENSOR.LED_TYPE5, SENSOR.BUTTON]) => {
+export const getAllSensorOptions = (ignoreIds = [SENSOR.LED_TYPE2, SENSOR.LED_TYPE5, SENSOR.LED_TYPE3, SENSOR.BUTTON]) => {
   return MasterHelper.getOptionsFromState('sensor', 
     sensor => i18n.tnl('label.' + sensor.sensorName),
     true,

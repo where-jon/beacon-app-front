@@ -49,7 +49,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import moment from 'moment'
@@ -62,7 +61,6 @@ import * as DateUtil from '../../sub/util/DateUtil'
 import * as Util from '../../sub/util/Util'
 import { getCharSet } from '../../sub/helper/base/CharSetHelper'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as StayTimeHelper from '../../sub/helper/domain/StayTimeHelper'
 import * as ValidateHelper from '../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
@@ -107,16 +105,6 @@ export default {
       sortBy: 'name',
       totalRows: 0,
     }
-  },
-  computed: {
-    // ...mapState('app_service', [
-    //   'groups',
-    //   'pots',
-    //   'categories',
-    // ]),
-    iosOrAndroid() {
-      return BrowserUtil.isAndroidOrIOS()
-    },
   },
   watch: {
     'vueSelected.group': {

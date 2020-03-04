@@ -99,28 +99,6 @@ const appStateConf = {
       }))
     }
   },
-  // absentDisplayZones: {
-  //   path: '/core/zone/absentDisplayZones'
-  // },
-  // lostZones: {
-  //   path: '/core/zone/lostZones',
-  // },
-  // prohibits: {
-  //   path: '/core/zone/prohibit',
-  //   beforeCommit: arr => {
-  //     let result = arr.map(val => (val? { // TODO: valがundefinedになる
-  //       ...val,
-  //       zoneId: val.zoneId,
-  //       zoneName:val.zoneName,
-  //       x: val.x,
-  //       y: val.y,
-  //       w: val.w,
-  //       h: val.h,
-  //       areaId: val.areaId,
-  //     }: null))
-  //     return result
-  //   }
-  // },
 }
 
 /**
@@ -176,17 +154,11 @@ export const loadAreaImage = async (areaId, force) => {
     console.log('FOUND areas', areaId)
     return areaImages[areaId]
   }
-  // if (store.state.app_service.areaImages.find(areaImage => areaImage.areaId == areaId) && !force) {
-  //   console.log('FOUND areas', areaId)
-  //   return
-  // }
   console.log('load areas', areaId)
   let base64 = await AppServiceHelper.fetchMapImage('/core/area/' + areaId + '/mapImage')
   // eslint-disable-next-line require-atomic-updates
   areaImages[areaId] = base64
   return base64
-  // const areaImages = [{areaId, mapImage: base64}]
-  // store.commit('app_service/replaceAS', {areaImages})
 }
 
 /**
@@ -195,9 +167,6 @@ export const loadAreaImage = async (areaId, force) => {
  * @async
  */
 export const loadAreaImages = async () => {
-  if (store.state.app_service.areas.length == 0) {
-    await load('area')
-  }
   store.state.app_service.areas.forEach(async (area) => {
     await loadAreaImage(area.areaId)
   })
@@ -219,10 +188,11 @@ export const initShowMessage = () => {
  */
 export const getMapImage = areaId => {
   return areaImages[areaId]
-  // const areaImage = _.find(store.state.app_service.areaImages, (areaImage) => {
-  //   return areaImage.areaId == areaId
-  // })
-  // return areaImage && areaImage.mapImage
-
 }
 
+/**
+ * areaImagesを全削除する
+ */
+export const clearAreaImages = () => {
+  areaImages.length = 0
+}

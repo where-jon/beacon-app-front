@@ -75,7 +75,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import { APP, DISP, APP_SERVICE } from '../../sub/constant/config'
@@ -86,7 +85,6 @@ import * as Util from '../../sub/util/Util'
 import { getCharSet } from '../../sub/helper/base/CharSetHelper'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
@@ -136,9 +134,6 @@ export default {
     }
   },
   computed: {
-    // ...mapState('app_service', [
-    //   'txs', 'exbs'
-    // ]),
     txOptions() {
       return MasterHelper.getOptionsFromState('tx',
         tx => tx.minor ? '' + tx.minor : 'txid=' + tx.txId,

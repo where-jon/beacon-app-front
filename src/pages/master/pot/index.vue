@@ -11,14 +11,16 @@ import { POT_TYPE, BULK } from '../../../sub/constant/Constants'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import * as Util from '../../../sub/util/Util'
 import * as MenuHelper from '../../../sub/helper/dataproc/MenuHelper'
-import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
-import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import * as PotHelper from '../../../sub/helper/domain/PotHelper'
 import commonmixin from '../../../components/mixin/commonmixin.vue'
 import exMaster from '../../../components/page/ex-master.vue'
 
 export default {
+  components: {
+    exMaster,
+  },
+  mixins: [commonmixin],
   props: {
     pName: {
       type: String,
@@ -36,10 +38,6 @@ export default {
       type: Array,
       default: () => [POT_TYPE.PERSON, POT_TYPE.THING, POT_TYPE.OTHER],
     },
-  },
-  mixins: [commonmixin],
-  components: {
-    exMaster,
   },
   data() {
     return {
@@ -66,7 +64,6 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      // 'categories',
       'updatedPotThumbnailList',
       'thumbnailUrls',
     ]),

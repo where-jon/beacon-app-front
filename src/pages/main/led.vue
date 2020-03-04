@@ -78,12 +78,10 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { APP } from '../../sub/constant/config'
 import { LED_COLORS, LED_BLINK_TYPES, SENSOR } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
 import * as EXCloudHelper from '../../sub/helper/dataproc/EXCloudHelper'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import * as VueSelectHelper from '../../sub/helper/ui/VueSelectHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
@@ -121,9 +119,6 @@ export default {
     }
   },
   computed: {
-    // ...mapState('app_service', [
-    //   'exbs',
-    // ]),
     deviceType() {
       if (!this.form.deviceId) return null
       return this.deviceIdMap[this.form.deviceId].sensorIdList.includes(SENSOR.LED_TYPE2)? 2: 5

@@ -39,7 +39,6 @@
 <script>
 import { EXTRA_NAV, POSITION_STACK_TYPES, CATEGORY } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
@@ -107,10 +106,6 @@ export default {
   methods: {
     isShow(type){
       return this.positionType == POSITION_STACK_TYPES[type.toUpperCase()]
-    },
-    fetchData(payload){
-      // this.$refs.areaPosition.fetchData(payload)
-      // this.$refs.zonePosition.fetchData(payload)
     },
   },
 }

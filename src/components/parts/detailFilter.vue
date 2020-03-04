@@ -81,7 +81,6 @@
 </template>
 
 <script>
-import _ from 'lodash'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import commonmixin from '../../components/mixin/commonmixin.vue'
@@ -89,7 +88,6 @@ import * as Util from '../../sub/util/Util'
 import * as AppServiceHelper from '../../sub/helper/dataproc/AppServiceHelper'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 import * as PluginHelper from '../../sub/helper/dataproc/PluginHelper'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 
 export default {
@@ -122,9 +120,6 @@ export default {
   computed: {
     vueSelected() {
       return ['area', 'category', 'group', 'tx', 'exb', 'pot', 'location', 'zone']
-    },
-    loadStates() { // TODO: 未使用なら削除
-      return []
     },
     numberRangeOption() {
       return [

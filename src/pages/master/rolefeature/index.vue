@@ -6,10 +6,9 @@
 
 <script>
 import { mapState } from 'vuex'
-import { ROLE_FEATURE, FEATURE, BULK } from '../../../sub/constant/Constants'
+import { BULK } from '../../../sub/constant/Constants'
 import * as Util from '../../../sub/util/Util'
 import * as MenuHelper from '../../../sub/helper/dataproc/MenuHelper'
-import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import commonmixin from '../../../components/mixin/commonmixin.vue'
 import mList from '../../../components/page/list.vue'

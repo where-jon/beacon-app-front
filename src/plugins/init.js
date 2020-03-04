@@ -1,7 +1,5 @@
-import _ from 'lodash'
 import Vue from 'vue'
 import * as config from '../sub/constant/config'
-import { SETTING } from '../sub/constant/Constants'
 import * as Util from '../sub/util/Util'
 import * as AuthHelper from '../sub/helper/base/AuthHelper'
 import * as ConfigHelper from '../sub/helper/dataproc/ConfigHelper'

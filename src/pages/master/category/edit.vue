@@ -68,7 +68,6 @@ import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
 import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
-import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
@@ -81,6 +80,13 @@ import colorPicker from '../../../components/parts/colorpicker'
 import extform from '../../../components/parts/extform.vue'
 
 export default {
+  components: {
+    breadcrumb,
+    alert,
+    colorPicker,
+    extform,
+  },
+  mixins: [commonmixin, editmixin],
   props: {
     pName: {
       type: String,
@@ -111,13 +117,6 @@ export default {
       default: () => [CATEGORY.PERSON, CATEGORY.THING, CATEGORY.ZONE, CATEGORY.OTHER],
     },
   },
-  components: {
-    breadcrumb,
-    alert,
-    colorPicker,
-    extform,
-  },
-  mixins: [commonmixin, editmixin],
   data() {
     const category = this.$store.state.app_service.category
     return {
@@ -144,7 +143,6 @@ export default {
   computed: {
     ...mapState('app_service', [
       'category',
-      // 'categories', 'zones',
     ]),
     backPath() {
       return this.pPath

@@ -9,7 +9,6 @@ import { APP } from '../../constant/config'
 import { FEATURE, KEY } from '../../constant/Constants'
 import * as BrowserUtil from '../../util/BrowserUtil'
 import * as Util from '../../util/Util'
-import * as AppServiceHelper from '../dataproc/AppServiceHelper'
 import * as ConfigHelper from '../dataproc/ConfigHelper'
 import * as OptionHelper from '../dataproc/OptionHelper'
 import * as HttpHelper from './HttpHelper'
@@ -17,7 +16,6 @@ import * as LocaleHelper from './LocaleHelper'
 import * as LocalStorageHelper from './LocalStorageHelper'
 import * as MenuHelper from '../dataproc/MenuHelper'
 import * as MasterHelper from '../domain/MasterHelper'
-import * as StateHelper from '../dataproc/StateHelper'
 
 let router
 let store

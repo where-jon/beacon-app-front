@@ -6,7 +6,7 @@
     <alert v-if="!callee" :message="message" />
     <div class="container">
       <m-list ref="mList" :params="params" :list="settingList" :per-page="settingList.length" :use-pagenation="false" :alert-force-hide="true" max-filter-length="40" />
-      <b-form id="updateForm" @submit.prevent="onUpdateSubmit" class="mb-3">
+      <b-form id="updateForm" class="mb-3" @submit.prevent="onUpdateSubmit">
         <b-button v-if="!callee && isEditable && !isShowNewForm" v-t="'label.update'" :variant="theme" type="submit" class="ml-2" @click="doBeforeSubmit(true)" />
         <b-button v-if="isRegistable && !isShowNewForm && useRegistForm" v-t="'label.addForm'" :variant="theme" type="button" class="float-right" @click="showNewForm(true)" />
       </b-form>

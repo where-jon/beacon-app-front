@@ -18,7 +18,6 @@ import * as ChartHelper from '../ui/ChartHelper'
 import * as ConfigHelper from '../dataproc/ConfigHelper'
 import * as EXCloudHelper from '../dataproc/EXCloudHelper'
 import * as HeatmapHelper from '../ui/HeatmapHelper'
-import * as MasterHelper from '../domain/MasterHelper'
 import * as StyleHelper from '../ui/StyleHelper'
 import * as PositionHelper from './PositionHelper'
 import { addLabelByKey } from '../ui/ViewHelper'
@@ -208,7 +207,7 @@ export const availableSensorAll = () =>  _([...APP.EXB.SENSOR, ...APP.SENSOR.TX_
  * @method
  * @return {Number[]}
  */
-export const availableSensorGraph = () =>  _([...APP.SENSORGRAPH.SENSOR]).sort().value()
+export const availableSensorGraph = () =>  _(APP.SENSORGRAPH.SENSOR).sort().value()
 
 
 /**

@@ -18,22 +18,24 @@
         <b-col v-if="bulkReferenceable" md="5">
           <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="theme" @click="download()" class="download-button float-right" />
         </b-col>
-      <b-table :fields="fields" :items="items" 
-                    :current-page="currentPage" 
-                    :per-page="perPage" 
-                    :filter="filterGrid" 
-                    :sort-by.sync="sortBy" 
-                    :sort-compare="sortCompare" 
-                    :sort-desc.sync="sortDesc" 
-                    :empty-filtered-text="emptyMessage" 
-                    show-empty stacked="md" 
-                    striped 
-                    hover 
-                    outlined 
-                    caption-top 
-                    @filtered="onFiltered"
-                    @sort-changed="() => {}"
-      >
+        <b-table
+          :fields="fields"
+          :items="items" 
+          :current-page="currentPage"
+          :per-page="perPage" 
+          :filter="filterGrid" 
+          :sort-by.sync="sortBy" 
+          :sort-compare="sortCompare" 
+          :sort-desc.sync="sortDesc" 
+          :empty-filtered-text="emptyMessage" 
+          show-empty stacked="md" 
+          striped 
+          hover 
+          outlined 
+          caption-top 
+          @filtered="onFiltered"
+          @sort-changed="() => {}"
+        >
           <template slot="powerLevel" slot-scope="row">
             <span  v-if="type == 'tx'" :class="getPositionPowerLevelClass(row.item.power_level)">
               {{ getPositionPowerLevelLabel(row.item.power_level) }}

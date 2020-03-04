@@ -262,9 +262,6 @@ export default {
     }
   },
   computed: {
-    isIosOrAndroid() {
-      return BrowserUtil.isAndroidOrIOS()
-    },
     isCategoryEnabled () {
       return MenuHelper.isEnabledMenu('category') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'category')
     },

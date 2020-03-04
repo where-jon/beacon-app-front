@@ -11,11 +11,11 @@
             <label v-t="'label.filter'" class="mr-2" />
             <b-input-group>
               <input v-model="filter.reg" class="form-control align-self-center" :maxlength="maxFilterLength">
-              <button v-if="compactMode" @click="fetchDataCompact()">
+              <button v-if="compactMode" @click="fetchCompactListOnNext()">
                 <font-awesome-icon class="" icon="search" fixed-width />
               </button>
               <b-input-group-append>
-                <b-btn v-t="'label.clear'" :disabled="!filter.reg" variant="secondary" class="align-self-center" @click="filter.reg = ''; compactMode? fetchDataCompact(): () => {}" />
+                <b-btn v-t="'label.clear'" :disabled="!filter.reg" variant="secondary" class="align-self-center" @click="filter.reg = ''; compactMode? fetchCompactListOnNext(): () => {}" />
               </b-input-group-append>
             </b-input-group>
           </b-form-row>
@@ -86,13 +86,15 @@
       <b-row class="mt-3" />
 
       <!-- table -->
-      <b-table :items="items" :fields="fields"
-                :current-page="compactMode? 1: currentPage" :per-page="perPage"
-                :filter="compactMode? () => true: filterGrid" :bordered="params.bordered"
-                :sort-by.sync="sortBy" :sort-compare="compactMode? () => 0: sortCompare" :sort-desc.sync="sortDesc" :empty-filtered-text="emptyMessage"
-                show-empty stacked="md" striped hover outlined caption-top
-                @filtered="onFiltered"
-                @sort-changed="compactMode? fetchDataCompact(): () => {}"
+      <b-table
+        :items="items"
+        :fields="fields"
+        :current-page="compactMode? 1: currentPage" :per-page="perPage"
+        :filter="compactMode? () => true: filterGrid" :bordered="params.bordered"
+        :sort-by.sync="sortBy" :sort-compare="compactMode? () => 0: sortCompare" :sort-desc.sync="sortDesc" :empty-filtered-text="emptyMessage"
+        show-empty stacked="md" striped hover outlined caption-top
+        @filtered="onFiltered"
+        @sort-changed="compactMode? fetchCompactListOnNext(): () => {}"
       >
         <template v-if="params.tableDescription" slot="table-caption">
           {{ $i18n.tnl('label.' + params.tableDescription) }}
@@ -246,7 +248,7 @@
       <!-- pager -->
       <b-row>
         <b-col v-if="usePagenation" md="6" class="mt-1 mb-3">
-          <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" class="my-0" @input="compactMode? fetchDataCompact(): () => {}" />
+          <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" class="my-0" @input="compactMode? fetchCompactListOnNext(): () => {}" />
         </b-col>
         <!-- bulk upload button -->
         <b-col v-if="isBulkRegistable && params.bulkUploadPath && !iosOrAndroid" md="6" class="my-1">
@@ -272,10 +274,9 @@
 
 import { mapState, mapMutations } from 'vuex'
 import { APP, APP_SERVICE , EXCLOUD} from '../../sub/constant/config'
-import { CATEGORY, DISP, SENSOR, EXB, KEY } from '../../sub/constant/Constants'
+import { CATEGORY, SENSOR, KEY } from '../../sub/constant/Constants'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
-import * as CsvUtil from '../../sub/util/CsvUtil'
 import * as StringUtil from '../../sub/util/StringUtil'
 import * as Util from '../../sub/util/Util'
 import * as DomUtil from '../../sub/util/DomUtil'
@@ -285,8 +286,6 @@ import { getCharSet } from '../../sub/helper/base/CharSetHelper'
 import * as DetectStateHelper from '../../sub/helper/domain/DetectStateHelper'
 import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
-import * as OptionHelper from '../../sub/helper/dataproc/OptionHelper'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as VueSelectHelper from '../../sub/helper/ui/VueSelectHelper'
 import * as PositionHelper from '../../sub/helper/domain/PositionHelper'
@@ -297,6 +296,8 @@ import alert from '../parts/alert.vue'
 import settinginput from '../parts/settinginput.vue'
 import txdetail from '../../components/parts/txdetail.vue'
 
+
+// TODO: Filterの実装は異常。要作り直し。
 export default {
   components: {
     detailFilter,
@@ -342,7 +343,7 @@ export default {
       type: Boolean,
       default: false,
     },
-    compactMode: {
+    compactMode: { // 一覧表示のページ分だけサーバから取得する場合true
       type: Boolean,
       default: false,
     },
@@ -407,7 +408,7 @@ export default {
       if(!dataList){
         return []
       }
-      return dataList.map(item => {
+      return dataList.map(item => { // allDispFieldsに指定されていないフィールドの場合、max50文字に短縮しているようだ
         return _.reduce(item, (result, val, key) => {
           const isAllDisp = Util.hasValue(this.params.allDispFields) && this.params.allDispFields.includes(key)
           result[key] = isAllDisp? val: StringUtil.cutOnLong(val, 50)
@@ -415,7 +416,7 @@ export default {
         }, {})
       })
     },
-    isDetailReferenceable() {
+    isDetailReferenceable() { // TODO: 以下同じパターンの繰り返し。パラメータに変えて一つにまとめる。
       if(this.$parent.$options.computed.isDetailReferenceable){
         return this.$parent.$options.computed.isDetailReferenceable.call(this.$parent)
       }
@@ -457,9 +458,6 @@ export default {
       }
       return MenuHelper.isEditable(this.indexPath)
     },
-    iosOrAndroid() {
-      return BrowserUtil.isAndroidOrIOS()
-    },
     extraFilterSpec() {
       if (!this.params.extraFilter) {
         return {}
@@ -478,10 +476,6 @@ export default {
       'featureList',
     ]),
     ...mapState('app_service', [
-      // 'categories',
-      // 'groups',
-      // 'areas',
-      // 'regions',
       'listMessage',
       'editPage',
       'moveEditPage',
@@ -490,7 +484,7 @@ export default {
       'selectedTx',
       'selectedarea',
     ]),
-    categoryOptions() {
+    categoryOptions() { // TODO: 以下commonmixinと重複しているのは削除
       return MasterHelper.getOptionsFromState('category', false, true, 
         category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
       )
@@ -564,7 +558,7 @@ export default {
         Object.keys(this.vueSelected).forEach(key => {
           const oVal = Util.getValue(oldVal[key], 'value')
           const nVal = Util.getValue(newVal[key], 'value')
-          this.filter.extra[key] = nVal
+          this.filter.extra[key] = nVal // このfilterの値の変更をトリガーに、b-tableのfilterが処理される
           if(this.useCommonFilter(key)){
             this[this.getCommonFilterKey(key)] = nVal
           }
@@ -575,7 +569,7 @@ export default {
             this[StringUtil.concatCamel('selected', key)] = nVal
           }
         })
-        this.compactMode? this.fetchDataCompact(): () => {}
+        this.compactMode? this.fetchCompactListOnNext(): () => {} // コンパクトモードの場合、ここで一覧データ取得
       },
       deep: true,
     },
@@ -594,13 +588,12 @@ export default {
     this.message = Util.hasValue(strageMessage)? strageMessage: this.listMessage
     this.replaceAS({listMessage: null})
     if(this.compactMode) {
-      await this.showList()
+      await this.fetchCompactList()
     } else {
       this.$parent.$options.methods.fetchData.apply(this.$parent)
     }
     if (this.params.extraFilter) {
       const filterColumnList = this.params.extraFilter.filter(str => str != 'detectState')
-      // await Promise.all(filterColumnList.map(state => StateHelper.load(state)))
       filterColumnList.filter(state => ['category', 'group', 'area'].some(s => s == state)).forEach(state => {
         const selectedKey = StringUtil.concatCamel('selected', state)
         this.vueSelected[state] = VueSelectHelper.getVueSelectData(this[state + 'Options'], this[selectedKey])
@@ -696,7 +689,7 @@ export default {
     createListParam(word) {
       return this.$parent.$options.methods && this.$parent.$options.methods.createListParams? this.$parent.$options.methods.createListParams.call(this.$parent): {}
     },
-    async showList() {
+    async fetchCompactList() {
       if(!Util.hasValue(this.sortBy)) {
         this.sortBy = this.old.sortBy
         this.sortDesc = this.old.sortDesc
@@ -720,7 +713,9 @@ export default {
       catch(e) {
         console.error(e)
       }
-      this.hideProgress()
+      finally {
+        this.hideProgress()
+      }
     },
     async exportCsv() {
       const params = this.createListParam()
@@ -732,8 +727,8 @@ export default {
         + '&params=' + encodeURI(JSON.stringify(params))
       )
     },
-    fetchDataCompact() {
-      this.$nextTick(() => this.showList())
+    fetchCompactListOnNext() {
+      this.$nextTick(() => this.fetchCompactList())
     },
     style(index) {
       return this.$parent.$options.methods.style.call(this.$parent, index)
@@ -922,7 +917,7 @@ export default {
         }
         this.replace({showInfo: true})
         if(this.compactMode) {
-          await this.showList()
+          await this.fetchCompactList()
         } else {
           await this.$parent.$options.methods.fetchData.apply(this.$parent)
         }

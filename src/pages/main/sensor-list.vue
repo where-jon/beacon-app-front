@@ -6,12 +6,10 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { SENSOR } from '../../sub/constant/Constants'
 import * as EXCloudHelper from '../../sub/helper/dataproc/EXCloudHelper'
 import * as PositionHelper from '../../sub/helper/domain/PositionHelper'
 import * as SensorHelper from '../../sub/helper/domain/SensorHelper'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import * as NumberUtil from '../../sub/util/NumberUtil'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
