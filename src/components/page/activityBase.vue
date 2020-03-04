@@ -24,9 +24,9 @@
               </v-select>
             </span>
 
-            <label v-if="filter=='category'" v-t="'label.group'" class="ml-2" />
-            <span v-if="filter=='category'" :title="vueSelectTitle(vueSelected.category)">
-              <v-select v-model="vueSelected.category" :options="zoneCategoryOptions" class="ml-2 inputSelect vue-options">
+            <label v-if="filter=='area'" v-t="'label.area'" class="ml-2" />
+            <span v-if="filter=='area'" :title="vueSelectTitle(vueSelected.area)">
+              <v-select v-model="vueSelected.area" :options="areaOptions" class="ml-2 inputSelect vue-options">
                 <template slot="selected-option" slot-scope="option">
                   {{ vueSelectCutOn(option) }}
                 </template>
@@ -115,7 +115,6 @@ export default {
     }
   },
   computed: {
-    // TODO:commonにあるよ
     ...mapState('app_service', [
       'groups',
       'pots',
@@ -125,13 +124,13 @@ export default {
     otherColor() {
       return APP.STAY_SUM.OTHER_COLOR
     },
-    zoneCategoryOptions() {
-      return MasterHelper.getOptionsFromState('category',
-        category => MasterHelper.getDispCategoryName(category),
-        true, 
-        category => CATEGORY.ZONE_AVAILABLE.includes(category.categoryType) && !category.systemUse
-      )
-    },
+    // zoneCategoryOptions() {
+    //   return MasterHelper.getOptionsFromState('category',
+    //     category => MasterHelper.getDispCategoryName(category),
+    //     true, 
+    //     category => CATEGORY.ZONE_AVAILABLE.includes(category.categoryType) && !category.systemUse
+    //   )
+    // },
   },
   watch: {
     'vueSelected.group': {
@@ -140,9 +139,9 @@ export default {
       },
       deep: true,
     },
-    'vueSelected.category': {
+    'vueSelected.area': {
       handler: function(newVal, oldVal){
-        this.form.categoryId = Util.getValue(newVal, 'value', null)
+        this.form.areaId = Util.getValue(newVal, 'value', null)
       },
       deep: true,
     },
@@ -177,8 +176,8 @@ export default {
       }
       if(this.type=="zone"){
         return [
-          {key: 'name', sortable: true, label: this.$i18n.tnl('label.potName')},
-          {key: 'groupName', sortable: true, label: this.$i18n.tnl('label.groupName') },
+          {key: 'name', sortable: true, label: this.$i18n.tnl('label.name')},
+          {key: 'areaName', sortable: true, label: this.$i18n.tnl('label.area') },
           {key: 'graph', sortable: false, label: this.$i18n.tnl('label.numUsersGraph'), thStyle: {height: '50px !important', width:'400px !important'} },
           {key: 'ratio', sortable: false, label: this.$i18n.tnl('label.utilizationRatio') },
         ]

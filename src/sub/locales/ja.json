@@ -1181,6 +1181,10 @@
       },
       "ACTIVITY": {
         "STACK_TYPE": "活動実績の集計方法::活動実績の集計方法を指定します。(location,zoneCategory)"
+      },
+      "MEETING": {
+        "AXIS_TYPE": "会議室利用実績の集計単位::会議室の単位を指定します。(location,zone)",
+        "MAX_NUM": "会議室利用実績集計の最大値"
       }
     },
     "DEV": {
@@ -1233,6 +1237,8 @@
         "POSITION_HISTORY": "位置情報履歴",
         "SENSORGRAPH": "センサグラフ",
         "STAY_SUM": "滞在時間集計",
+        "ACTIVITY": "活動実績",
+        "MEETING": "会議室利用実績",
         "HISTORY_EXC": "EXCloudを使用した履歴",
         "SVC": "サーバ",
         "BATCH": "バッチ",

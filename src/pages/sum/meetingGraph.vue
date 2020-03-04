@@ -2,7 +2,7 @@
   <activity-base
     page="meetingGraph"
     type="zone"
-    filter="category"
+    filter="area"
     download="true"
   />
 </template>
@@ -54,7 +54,7 @@ export default {
       }).map( d => {
         const exb = form.exbMap[d.exbId]
         const zone = exb.location.zoneList[0]
-        return {...d, zoneId:zone.zoneId, zone}
+        return {...d, exb, zoneId:zone.zoneId, zone}
       })
       Util.debug('data', data)
 
@@ -89,16 +89,18 @@ export default {
 
         // リスト作成
         const zoneName = posList[0].zone.zoneName
-        const categoryName = posList[0].zone.categoryName
-        const categoryId = posList[0].zone.categoryId
+        //const categoryName = posList[0].zone.categoryName
+        //const categoryId = posList[0].zone.categoryId
+        const areaName = posList[0].exb.areaName
+        const areaId = posList[0].exb.areaId
         return {
           name: zoneName,
-          groupName: categoryName,
-          categoryId,
+          areaId,
+          areaName,
           graph,
           ratio: stayRatio + "%"
         }
-      }).filter(view => view.name != null && (!form.categoryId || form.categoryId==view.categoryId))
+      }).filter(view => view.name != null && (!form.areaId || form.areaId==view.areaId))
     },
     getStackColor(index) {
       // 設定が6色以上ある事が前提
