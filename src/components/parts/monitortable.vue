@@ -6,9 +6,9 @@
         <b-form-row  md="2" class="mr-4 mb-2">
           <label v-t="'label.filter'" class="mr-2" />
           <b-input-group >
-            <input v-model="filter.reg" class="form-control align-self-center" :maxlength="maxFilterLength">
+            <input v-model="filter.word" class="form-control align-self-center" :maxlength="maxFilterLength">
             <b-input-group-append>
-              <b-btn v-t="'label.clear'" :disabled="!filter.reg" variant="secondary" class="align-self-center" @click="filter.reg = ''" />
+              <b-btn v-t="'label.clear'" :disabled="!filter.word" variant="secondary" class="align-self-center" @click="filter.word = ''" />
             </b-input-group-append>
           </b-input-group>
         </b-form-row>
@@ -131,7 +131,7 @@ export default {
       currentPage: 1,
       totalRows: 0,
       filter: {
-        reg: '',
+        word: '',
       },
       emptyMessage: this.$i18n.tnl('message.listEmpty'),
       sortBy: null,
@@ -188,11 +188,11 @@ export default {
       if(originItem.isParent){
         return this.items.find(item => !item.isParent && item.categoryKey == originItem.categoryKey && this.filterGrid(item))? true: false
       }
-      if(!this.filter.reg){
+      if(!this.filter.word){
         return true
       }
       try{
-        const regExp = new RegExp('.*' + this.filter.reg + '.*', 'i')
+        const regExp = new RegExp('.*' + this.filter.word + '.*', 'i')
         const param = this.fields.filter(field => Util.getValue(field, 'filterable', true)).concat(this.addFilterFields? this.addFilterFields.map(field => ({key: field})): []).map(val => Util.getValue(originItem, val.key, ''))
         return regExp.test(JSON.stringify(param))
       }

@@ -198,7 +198,6 @@
 
 <script>
 import Vue from 'vue'
-import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import moment from 'moment'

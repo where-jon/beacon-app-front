@@ -822,10 +822,6 @@ export default {
       return { txBtn, zoneBtxId }
     },
     showNomalTx(positions) {
-      if(!Util.hasValue(this.pShowTxSensorIds)){
-        return
-      }
-
       // 表示Txの画面上の座標位置の決定
       if(APP.POS.USE_MULTI_POSITIONING){
         // ３点測位はUSE_POSITION_HISTORYには非対応 TODO:要対応
@@ -839,6 +835,7 @@ export default {
         positions = SensorHelper.setStress(positions, this.sensorMap.meditag)
       }
 
+      this.detectedCount = 0
       // Txアイコンを表示する
       positions.forEach(pos => this.showTx(pos))
       this.positions = positions
@@ -902,7 +899,7 @@ export default {
       }
       this.txCont.addChild(txBtn)
     },
-    checkTxSensor(pos) {
+    checkTxSensor(pos) { // 表示指定（通常位置表示、センサー表示）に合致しないposの場合、res:falseをセットして返す
       let tx = pos.tx
 
       if (!SensorHelper.match(this.pShowTxSensorIds, tx.sensorId)) {
@@ -948,6 +945,10 @@ export default {
       const isAbsentZone = Util.getValue(pos, 'location.isAbsentZone', false)
       if (isAbsentZone && !isFixedPosOnArea) {
         return
+      }
+
+      if (!isFixedPosOnArea || pos.inFixedZone || pos.hasAnother) { // 固定座席以外もしくは、固定座席だが検知されている場合、検知数増加
+        this.detectedCount += 1
       }
 
       pos.isTransparent = pos.isTransparent || isAbsentZone // TODO: 別の場所に移動
@@ -1078,12 +1079,13 @@ export default {
       }
       // 表示Txのフィルタリング
       positions = this.pDisabledFilter? PositionHelper.filterPositions(positions, false, undefined, null, null, null): PositionHelper.filterPositions(positions)
-      this.detectedCount = PositionHelper.getDetectCount(positions, this.selectedAreaId)  // 検知数カウント増加
 
       if (this.isQuantity) { // 数量ボタン押下時
         this.showQuantityTx(positions)
       } else { // 個別ボタン押下時
-        this.showNomalTx(positions)
+        if (Util.hasValue(this.pShowTxSensorIds)) {
+          this.showNomalTx(positions)
+        }
       }
     },
     showExb(exb, bgColor = null) {
@@ -1106,9 +1108,6 @@ export default {
       }
     },
     showExbAll() { // EXB表示
-      if(!Util.hasValue(this.pShowExbSensorIds)){
-        return
-      }
       const locationMRoomMap = this.$store.state.main.locationMRoomPlanMap
       const positions = this.$store.state.main.positions
       const positionMap = positions.reduce((accum, pos) => {
@@ -1235,7 +1234,9 @@ export default {
 
       this.stage.on('click', evt => this.resetDetail())
 
-      this.showExbAll()
+      if (Util.hasValue(this.pShowExbSensorIds)) {
+        this.showExbAll()
+      }
       this.showTxAll()
 
       if(this.pShowHeatmap){

@@ -10,12 +10,12 @@
             <!-- 標準絞り込みフィルタ -->
             <label v-t="'label.filter'" class="mr-2" />
             <b-input-group>
-              <input v-model="filter.reg" class="form-control align-self-center" :maxlength="maxFilterLength">
+              <input v-model="filter.word" class="form-control align-self-center" :maxlength="maxFilterLength">
               <button v-if="compactMode" @click="fetchCompactListOnNext()">
                 <font-awesome-icon class="" icon="search" fixed-width />
               </button>
               <b-input-group-append>
-                <b-btn v-t="'label.clear'" :disabled="!filter.reg" variant="secondary" class="align-self-center" @click="filter.reg = ''; compactMode? fetchCompactListOnNext(): () => {}" />
+                <b-btn v-t="'label.clear'" :disabled="!filter.word" variant="secondary" class="align-self-center" @click="filter.word = ''; compactMode? fetchCompactListOnNext(): () => {}" />
               </b-input-group-append>
             </b-input-group>
           </b-form-row>
@@ -208,14 +208,14 @@
           <div class="d-inline-flex flex-wrap">
             <span v-if="useTxPopup">
               <div v-for="position in row.item.positions" :key="position.areaId"
-                  :style="position.display" :class="'d-inline-flex m-1 '+ position.blinking" @click="txOnClick($event,position.tx)"
+                   :style="position.display" :class="'d-inline-flex m-1 '+ position.blinking" @click="txOnClick($event,position.tx)"
               >
                 {{ position.label }}
               </div>
             </span>
             <span v-else>
               <div v-for="position in row.item.positions" :key="position.areaId"
-                  :style="position.display" :class="'d-inline-flex m-1 '+ position.blinking" @click.stop="mapDisplay(position, true)"
+                   :style="position.display" :class="'d-inline-flex m-1 '+ position.blinking" @click.stop="mapDisplay(position, true)"
               >
                 {{ position.label }}
               </div>
@@ -363,7 +363,7 @@ export default {
       thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
       useTxPopup: APP.POS_STACK.USE_POPUP,
       filter: {
-        reg: '',
+        word: '',
         extra: {
           category: '',
           group: '',
@@ -482,7 +482,6 @@ export default {
     ]),
     ...mapState('main', [
       'selectedTx',
-      'selectedarea',
     ]),
     categoryOptions() { // TODO: 以下commonmixinと重複しているのは削除
       return MasterHelper.getOptionsFromState('category', false, true, 
@@ -698,7 +697,7 @@ export default {
       this.showProgress()
       try {
         const params = {...this.createListParam()}
-        params.word = this.filter.reg
+        params.word = this.filter.word
         params.category = this.selectedCategoryId
         params.group = this.selectedGroupId
         const response = await AppServiceHelper.fetchCompactList(`${this.appServicePath}/listdownload/${this.perPage}/${this.currentPage}/${this.sortBy}/${this.sortDesc? 'desc': 'asc'}` , params)
@@ -783,11 +782,11 @@ export default {
       if(originItem.isParent){
         return this.items.find(item => !item.isParent && item.categoryKey == originItem.categoryKey && this.filterGrid(item))? true: false
       }
-      if(!this.filter.reg){
+      if(!this.filter.word){
         return true
       }
       try{
-        const regExp = new RegExp('.*' + this.filter.reg + '.*', 'i')
+        const regExp = new RegExp('.*' + this.filter.word + '.*', 'i')
         const param = this.params.fields.filter(field => Util.getValue(field, 'filterable', true)).concat(this.params.addFilterFields? this.params.addFilterFields.map(field => ({key: field})): []).map(val => Util.getValue(originItem, val.key, ''))
         return regExp.test(JSON.stringify(param))
       }

@@ -63,7 +63,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('main', [
+    ...mapState('main', [ // TODO: stateには定義されていない。この画面でしか使わないのであればstateに入れない
       'eachAreas',
       'eachZones',
     ]),
@@ -147,7 +147,7 @@ export default {
         this.replace({showAlert: this.alertData.isAlert})
         // 分類checkProhibitZone
         const tempMaster = this.splitMaster(this.positions, this.prohibitDetectList)
-        this.replaceMain({[this.eachListName]: tempMaster})
+        this.replaceMain({[this.eachListName]: tempMaster}) // TODO: 意味不明、Stateに入れる必要ある？
         if (payload && payload.done) {
           payload.done()
         }

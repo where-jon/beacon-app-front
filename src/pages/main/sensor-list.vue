@@ -40,14 +40,6 @@ export default {
       selectedSensor: SENSOR.TEMPERATURE,
     }
   },
-  computed: {
-    // ...mapState('app_service', [
-    //   'sensors',
-    //   'txs',
-    //   'areas',
-    //   'exbs',
-    // ]),
-  },
   async created() {
   },
   mounted() {

@@ -118,7 +118,7 @@ export default {
           finalReceiveTimestamp: this.getTimestamp(e.updatetime),
           powerLevel: this.$refs.monitorTable.getPositionPowerLevelLabel ? this.$refs.monitorTable.getPositionPowerLevelLabel(e.power_level) : null,
           state: this.$refs.monitorTable.getStateLabel('tx', e.updatetime),
-          sensorIdList: Util.getValue(tx, 'sensorList', []).map(sensor => sensor.sensorId), // TODO: 用途は？
+          sensorIdList: Util.getValue(tx, 'sensorList', []).map(sensor => sensor.sensorId),
           powerLevelTimestamp: this.getTimestamp(e.power_level_timestamp),
         }
       })
@@ -153,7 +153,7 @@ export default {
             sRet.push({
               ...sensorHistory,
               btxId: sensorHistory.btxId,
-              name: Util.getValue(tx, 'potName', ''),
+              name: Util.getValue(tx, 'pot.potName'),
               powerLevel: this.$refs.monitorTable.getPositionPowerLevelLabel(sensorHistory.power_level),
               finalReceiveTimestamp: this.getTimestamp(EXCloudHelper.getDispTime(sensorHistory)),
               state: this.$refs.monitorTable.getStateLabel('tx', EXCloudHelper.getDispTime(sensorHistory)),

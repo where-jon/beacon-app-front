@@ -5,10 +5,12 @@ export const state = () => ({
   selectedAreaId: null,
   selectedGroupId: null,
   selectedCategoryId: null,
+  selectedTxIdList: null,
+  selectedFreeWord: null,
   selectedTx: {},
   eachAreas: [],
   eachZones: [],
-  sample: 'sample', // sample
+  initDetailFilter: null,
   positions: [],
   timers: [],
   locationMRoomPlanMap: []

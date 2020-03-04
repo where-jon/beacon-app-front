@@ -231,7 +231,7 @@ export default {
     initFilter(){
       const noData = this[this.callee? 'pSettingList': 'settingList'].find(setting => Util.hasValue(setting.settingId))? false: true
       this.$refs.mList.filter.allShow = noData
-      this.$refs.mList.filter.reg = noData && this.useInitFilter? this.$i18n.tnl('label.favoriteMark'): ''
+      this.$refs.mList.filter.word = noData && this.useInitFilter? this.$i18n.tnl('label.favoriteMark'): ''
     },
     formatList(str, formatFunc){
       return str.split(',').filter(val => val.trim().length != 0).map(val => formatFunc(val.trim())).join(',')
