@@ -144,7 +144,7 @@ export const bulkSave = async (target, entities, updateOnlyNN = UPDATE_ONLY_NN.N
 }
 
 export const bulkSave2 = async (target, formData, charset, updateOnlyNN = UPDATE_ONLY_NN.NONE, ignoreImage = IGNORE.OFF) => {
-  const path = `${target}/bulk2/?charset=${charset}&updateOnlyNN=${updateOnlyNN}&ignoreImage=${ignoreImage}&_=${new Date().getTime()}`
+  const path = `${target}/bulk/?charset=${charset}&updateOnlyNN=${updateOnlyNN}&ignoreImage=${ignoreImage}&_=${new Date().getTime()}`
   const config = {
     headers: {
       'Content-Type': 'multipart/form-data'

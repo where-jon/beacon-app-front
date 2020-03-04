@@ -313,8 +313,8 @@ export const getBulkErrorMessage = (e, name, showLine) => {
       if (err.type == 'SameKeyLine') {
         return `${i18n.tnl('message.csvInvalidLine')}${formatBulkErrorLine(err.values)}`
       }
-      if (err.type == 'NotEnoughColumns') {
-        return `${i18n.tnl('message.csvNotEnoughColumnsLine')}${formatBulkErrorLine(err.values)}`
+      if (err.type == 'InsufficientColumns') {
+        return `${i18n.tnl('message.csvInsufficientColumnsLine')}${formatBulkErrorLine(err.values)}`
       }
 
       editBulkError(err)
