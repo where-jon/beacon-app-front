@@ -29,7 +29,8 @@ export default {
       const param = {}
       const from = new Date(form.datetimeFrom).getTime()
       const to = new Date(form.datetimeTo).getTime()
-      const url = `/core/positionHistory/summaryBy/exb/${from}/${to}/${APP.POSITION_SUMMARY_INTERVAL}/${APP.POSITION_SUMMARY_RECEIVE_COUNT}`
+      const axis = "exb"
+      const url = `/core/positionHistory/summaryBy/${axis}/${from}/${to}/${APP.POSITION_SUMMARY_INTERVAL}/${APP.POSITION_SUMMARY_RECEIVE_COUNT}`
       const sumData = await HttpHelper.getAppService(url)
       Util.debug('sumData', sumData)
       // 重複データを排除
@@ -63,33 +64,16 @@ export default {
       const from = new Date(form.datetimeFrom).getTime()
       const to = new Date(form.datetimeTo).getTime()
       const total = (to - from)/1000
+      Util.debug('total', total)
       
       return sum.map( posList => {
-        const posGroup = ArrayUtil.sumData(posList, 'txId')
-        Util.debug('posGroup', posGroup)
-        Util.debug('total', total)
-
-        // 同一時刻の集計
-        const countMap = {}
-        posList.forEach(pos => {
-          const timestamp = pos.date + Math.floor(pos.timestamp / 100) * 60 * 60 * 1000 + pos.timestamp % 100 * 60 * 1000
-          if(!countMap[timestamp]){
-            countMap[timestamp] = 0
-          }
-          countMap[timestamp]++
-          countMap[timestamp] = Math.min(countMap[timestamp], 6)
-        })
-        Util.debug(countMap)
-
-
         // グラフ作成
         const graph = []
         let stayRatio = 0
-        let i=6
-        while(i-- > 0){
-          const countList = Object.keys(countMap).map(key => { return {key, value:countMap[key]} })
-          const times = countList.filter(c => c.value == i)
-          Util.debug('times', times)
+        const max = DISP.MEETING.MAX_NUM
+        let i=max
+        while(i > 0){
+          const times = posList.filter(pos => pos.cnt==i || (i==max && pos.cnt>=max))
           const time = times.length * APP.POSITION_SUMMARY_INTERVAL * 60
           const ratio = Math.floor(times.length * APP.POSITION_SUMMARY_INTERVAL * 60 / total * 100)
           stayRatio += ratio
@@ -100,6 +84,7 @@ export default {
             time: DateUtil.toHHmm(time),
             ratio
           })
+          i--
         }
 
         // リスト作成
