@@ -124,13 +124,6 @@ export default {
     otherColor() {
       return APP.STAY_SUM.OTHER_COLOR
     },
-    // zoneCategoryOptions() {
-    //   return MasterHelper.getOptionsFromState('category',
-    //     category => MasterHelper.getDispCategoryName(category),
-    //     true, 
-    //     category => CATEGORY.ZONE_AVAILABLE.includes(category.categoryType) && !category.systemUse
-    //   )
-    // },
   },
   watch: {
     'vueSelected.group': {
@@ -148,11 +141,8 @@ export default {
   },
   async created() {
     const date = DateUtil.getDefaultDate()
-    // this.form.datetimeFrom = DateUtil.getDatetime(date, {date: -1})
-    // this.form.datetimeTo = DateUtil.getDatetime(date)
-    
-    this.form.potMap = this.getPotMap()
-    this.form.exbMap = this.getExbMap()
+    this.form.datetimeFrom = DateUtil.getDatetime(date, {date: -1})
+    this.form.datetimeTo = DateUtil.getDatetime(date)
   },
   async mounted() {
     ViewHelper.importElementUI()
@@ -223,43 +213,12 @@ export default {
         this.hideProgress()
       }
     },
-    getPotMap() {
-      const potMap = {}
-      this.pots.forEach(pot => {
-        potMap[pot.txIds[0]] = pot
-      })
-      Util.debug('potMap', potMap)
-      return potMap
-    },
-    getExbMap() {
-      const exbMap = {}
-      this.exbs.forEach(exb => {
-        exbMap[exb.exbId] = exb
-      })
-      Util.debug('exbMap', exbMap)
-      return exbMap
-    },
-    getGroupName(potId) {
-      const pot = this.pots.find(p => p.potId == potId)
-      return pot && pot.group ? pot.group.groupName : null
-    },
-
   }
 }
 </script>
 
 <style scoped lang="scss">
 @import "../../sub/constant/input.scss";
-.tableHeader {
-  word-break:break-all;
-}
-
-.bgSquare {
-  display: inline-block;
-  _display: inline;
-  width: 15px;
-  height: 15px;
-}
 .stay-bar {
   position: relative;
   display: inline-block;
@@ -288,16 +247,5 @@ export default {
 }
 .stay-bar:hover .graph-arrow-box, .lost-bar:hover .graph-arrow-box {
   display: block;
-}
-.time-area {
-  overflow: visible;
-  white-space: nowrap;
-  position: relative;
-  display: inline-block;
-  box-sizing:border-box;
-}
-.itemTitle {
-  font-weight: bold;
-  font-size: 14px;
 }
 </style>

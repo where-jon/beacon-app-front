@@ -14,11 +14,13 @@ import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
 import * as ColorUtil from '../../sub/util/ColorUtil'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
+import commonmixin from '../../components/mixin/commonmixin.vue'
 
 export default {
   components: {
     activityBase,
   },
+  mixins: [commonmixin],
   computed: {
   },
   methods: {
@@ -73,7 +75,8 @@ export default {
             ratio
           })
         }
-        const pot = form.potMap[posList[0].axisId]
+        const potMap = this.getPotMap()
+        const pot = potMap[posList[0].axisId]
         const potName = pot ? pot.potName : null
         const groupName = pot && pot.group ? pot.group.groupName : null
         const groupId = pot && pot.group ? pot.group.groupId : null
@@ -90,6 +93,14 @@ export default {
     getStackColor(index) {
       // 設定が6色以上ある事が前提
       return DISP.SUM_STACK_COLOR[index % DISP.SUM_STACK_COLOR.length]
+    },
+    getPotMap() {
+      const potMap = {}
+      this.pots.forEach(pot => {
+        potMap[pot.txIds[0]] = pot
+      })
+      Util.debug('potMap', potMap)
+      return potMap
     },
   }
 }

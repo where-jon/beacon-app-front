@@ -1180,10 +1180,11 @@
         "ZONE_OTHER": "ゾーンその他表示::位置情報（全体）にてゾーンその他を表示する。"
       },
       "ACTIVITY": {
-        "STACK_TYPE": "活動実績の集計方法::活動実績の集計方法を指定します。(location,zoneCategory)"
+        "STACK_TYPE": "活動実績の集計方法::活動実績の集計方法を指定します。(location zoneCategory)"
       },
       "MEETING": {
-        "AXIS_TYPE": "会議室利用実績の集計単位::会議室の単位を指定します。(location,zone)",
+        "GROUP_BY": "会議室利用実績の集計単位::会議室利用実績の集計単位を指定します。(exb location)",
+        "AXIS_TYPE": "会議室利用実績の表示単位::会議室の表示単位を指定します。(exb location zone)",
         "MAX_NUM": "会議室利用実績集計の最大値"
       }
     },

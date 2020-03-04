@@ -15,13 +15,15 @@ import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
-import moment from 'moment'
 import { getCharSet } from '../../sub/helper/base/CharSetHelper'
+import moment from 'moment'
+import commonmixin from '../../components/mixin/commonmixin.vue'
 
 export default {
   components: {
     activityBase,
   },
+  mixins: [commonmixin],
   computed: {
   },
   methods: {
@@ -29,28 +31,44 @@ export default {
       const param = {}
       const from = new Date(form.datetimeFrom).getTime()
       const to = new Date(form.datetimeTo).getTime()
-      const axis = "exb"
-      const url = `/core/positionHistory/summaryBy/${axis}/${from}/${to}/${APP.POSITION_SUMMARY_INTERVAL}/${APP.POSITION_SUMMARY_RECEIVE_COUNT}`
-      const sumData = await HttpHelper.getAppService(url)
-      Util.debug('sumData', sumData)
-      return sumData
-    },
-    createGraph(form, baseData) {
-      // zone情報を付与
-      const data = baseData.filter( d => {
-        const exb = form.exbMap[d.exbId]
-        if(!exb){
-          return false
-        }
-        return exb.location && exb.location.zoneList && exb.location.zoneList.length>=1
-      }).map( d => {
-        const exb = form.exbMap[d.exbId]
-        const zone = exb.location.zoneList[0]
-        return {...d, exb, zoneId:zone.zoneId, zone}
-      })
+      const url = `/core/positionHistory/summaryBy/${DISP.MEETING.GROUP_BY}_id/${from}/${to}/${APP.POSITION_SUMMARY_INTERVAL}/${APP.POSITION_SUMMARY_RECEIVE_COUNT}`
+      const data = await HttpHelper.getAppService(url)
       Util.debug('data', data)
 
-      const sum = ArrayUtil.sumData(data, DISP.MEETING.AXIS_TYPE + 'Id')
+      let ret = null
+      if(DISP.MEETING.AXIS_TYPE == "exb"){
+        const exbMap = this.getExbMap()
+        ret = data.filter( d => {
+          const exb = exbMap[d.axisId]
+          return exb && exb.location
+        }).map( d => {
+          const exb = exbMap[d.axisId]
+          return {...d, exb}
+        })
+      }else if(DISP.MEETING.AXIS_TYPE == "location" || DISP.MEETING.AXIS_TYPE == "zone"){
+        const locationMap = this.getLocationMap()
+        ret = data.filter( d => {
+          const location = locationMap[d.axisId]
+          return location != null
+        }).map( d => {
+          const location = locationMap[d.axisId]
+          return {...d, location}
+        })
+      }/*else if(DISP.MEETING.AXIS_TYPE == "zone"){
+        const zoneMap = this.getZoneMap()
+        ret = data.filter( d => {
+          const location = zoneMap[d.axisId]
+          return location != null
+        }).map( d => {
+          const location = zoneMap[d.axisId]
+          return {...d, location}
+        })
+      }*/
+      Util.debug('data2', ret)
+      return ret
+    },
+    createGraph(form, data) {
+      const sum = ArrayUtil.sumData(data, 'axisId')
       Util.debug('sum', sum)
 
       const from = new Date(form.datetimeFrom).getTime()
@@ -80,13 +98,11 @@ export default {
         }
 
         // リスト作成
-        const zoneName = posList[0].zone.zoneName
-        //const categoryName = posList[0].zone.categoryName
-        //const categoryId = posList[0].zone.categoryId
-        const areaName = posList[0].exb.areaName
-        const areaId = posList[0].exb.areaId
+        const name = this.getName(posList[0])
+        const areaName = this.getArea(posList[0]).areaName
+        const areaId = this.getArea(posList[0]).areaId
         return {
-          name: zoneName,
+          name,
           areaId,
           areaName,
           graph,
@@ -94,38 +110,77 @@ export default {
         }
       }).filter(view => view.name != null && (!form.areaId || form.areaId==view.areaId))
     },
+    getName(pos){
+      if(DISP.MEETING.AXIS_TYPE == "exb"){
+        return pos.exb.deviceId
+      }
+      if(DISP.MEETING.AXIS_TYPE == "location"){
+        return pos.location.locationName
+      }
+      if(DISP.MEETING.AXIS_TYPE == "zone"){
+        return pos.location.zoneList && pos.location.zoneList.length >= 1 ? 
+          pos.location.zoneList[0].zoneName : null
+      }
+      return null
+    },
+    getArea(pos){
+      if(DISP.MEETING.AXIS_TYPE == "exb"){
+        return { areaId: pos.exb.areaId, areaName: pos.exb.areaName }
+      }
+      if(DISP.MEETING.AXIS_TYPE == "location"){
+        return pos.location.area
+      }
+      if(DISP.MEETING.AXIS_TYPE == "zone"){
+        return pos.location.area
+      }
+      return null
+    },
+    // cdを返す
+    getCd(pos){
+      if(DISP.MEETING.AXIS_TYPE == "exb"){
+        return pos.exb.deviceId
+      }
+      if(DISP.MEETING.AXIS_TYPE == "location"){
+        return pos.location.locationCd
+      }
+      if(DISP.MEETING.AXIS_TYPE == "zone"){
+        return pos.location.zoneList && pos.location.zoneList.length >= 1 ? 
+          pos.location.zoneList[0].zoneCd : null
+      }
+      return null
+    },
+    // csvのカラムを返す
+    getCol(){
+      if(DISP.MEETING.AXIS_TYPE == "exb"){
+        return "device_id"
+      }
+      if(DISP.MEETING.AXIS_TYPE == "location"){
+        return "location_cd"
+      }
+      if(DISP.MEETING.AXIS_TYPE == "zone"){
+        return "zone_cd"
+      }
+      return null
+    },
     getStackColor(index) {
       // 設定が6色以上ある事が前提
       return DISP.SUM_STACK_COLOR[index % DISP.SUM_STACK_COLOR.length]
     },
-    download(form, baseData) {
+    download(form, data) {
       const from = new Date(form.datetimeFrom).getTime()
       const to = new Date(form.datetimeTo).getTime()
       const interval = APP.POSITION_SUMMARY_INTERVAL * 60 * 1000
 
-      // zone情報を付与
-      const data = baseData.filter( d => {
-        const exb = form.exbMap[d.exbId]
-        if(!exb){
-          return false
-        }
-        return exb.location && exb.location.zoneList && exb.location.zoneList.length>=1
-      }).map( d => {
-        const exb = form.exbMap[d.exbId]
-        const zone = exb.location.zoneList[0]
-        return {...d, exb, zoneId:zone.zoneId, zone}
-      })
-      Util.debug('data', data)
-
       const sum = ArrayUtil.sumData(data, 'timestamp') // なぜかできない
       Util.debug('sum', sum)
 
-      let csv = "basetime,device_id,count\n"
+      let csv = "basetime," + this.getCol() + ",count\n"
       for(var time=from; time<to; time += interval){
         if(sum[time]){
           console.log(sum[time].length)
           sum[time].forEach(pos => {
-            csv += this.formatTime(time) + "," + pos.exb.deviceId + "," + pos.cnt + "\n"
+            const cd = this.getCd(pos)
+            csv += this.formatTime(time) + "," + cd + "," + pos.cnt + "\n"
           })
         }
       }
@@ -145,6 +200,30 @@ export default {
       const h = date.getHours()
       const m = date.getMinutes()
       return (h >= 10 ? h : "0" + h) + ":" + (m >= 10 ? m : "0" + m)
+    },
+    getExbMap() {
+      const exbMap = {}
+      this.exbs.forEach(exb => {
+        exbMap[exb.exbId] = exb
+      })
+      Util.debug('exbMap', exbMap)
+      return exbMap
+    },
+    getLocationMap() {
+      const locationMap = {}
+      this.locations.forEach(loc => {
+        locationMap[loc.locationId] = loc
+      })
+      Util.debug('locationMap', locationMap)
+      return locationMap
+    },
+    getZoneMap() {
+      const zoneMap = {}
+      this.zones.forEach(zone => {
+        zoneMap[zone.zoneId] = zone
+      })
+      Util.debug('zoneMap', zoneMap)
+      return zoneMap
     },
   }
 }
