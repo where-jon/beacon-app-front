@@ -12,7 +12,7 @@
         <!-- 目次 -->
         <div v-for="(menuGroup,key) in this.$store.state.menu" :key="key">
           <div class="list-group mt-3"><b>{{ getLabel(menuGroup.key) }}</b></div>
-          <a v-for="page in menuGroup.pages" :key="page.key" :href="createLink(page.key)" class="list-group-item list-group-item-action">
+          <a v-for="page in menuGroup.pages" :key="page.key" :href="createInternalLink(page.key)" class="list-group-item list-group-item-action">
             {{ getLabel(page.key) }}
           </a>
         </div>
@@ -22,22 +22,33 @@
         <div v-for="page in menuGroup.pages" :id="page.key" :key="page.key">
           <hr>
           <!-- ヘッダー -->
-          <p class="helpLabelHeader">
+          <div class="helpLabelHeader">
             {{ getLabel(menuGroup.key) }}：{{ getLabel(page.key) }}
-          </p>
+          </div>
           <!-- 概要 -->
-          <p class="helpDetail">
-            {{ getHelpDescription(page.key, {detected: getLabel('detected'), temporaryUndetect: getLabel('temporaryUndetect'), undetect: getLabel('undetect'), none: getLabel('none')}) }}
-          </p>
+          <span class="helpDetail align-top">
+            {{ getHelpScreenDescription(page.key) }}
+          </span>
           <!-- 追加情報 -->
-          <div v-for="(addDesc, addkey) in getHelpAdditionalDescription(page.key)" :key="addkey">
+          <div v-for="(addDesc, addkey) in getHelpAdditionalDescription(page.key)" :key="addkey" class="mt-2">
             <span class="helpTitle">
               {{ getLabel(addkey) }}
             </span>
-            <p class="helpDetail">
+            <span class="helpDetail">
               {{ addDesc }}
-            </p>
+            </span>
           </div>
+          <!-- CSVファイル -->
+          <div v-if="getCsvItems(page.key)" class="mt-2">
+            <span class="helpTitle">
+              {{ getLabel('csvFile') }}
+            </span>
+            <span class="helpDetail">
+              {{ getHelpDescription('csvDescription') }}
+            </span>
+            <b-table striped hover small :items="getCsvItems(page.key)" :fields="csvFields" />
+          </div>
+          <!-- ----------- -->
         </div>
       </div>
     </div>
@@ -286,15 +297,272 @@ export default {
     getHelpDescription(key, option){
       return this.$i18n.tnl('helpDescription.' + key, option)
     },
+    getHelpScreenDescription(key, option){
+      return this.$i18n.tnl('helpScreenDescription.' + key, option)
+    },
     getConfig(key, option){
       return this.$i18n.tnl('config.' + key, option)
     },
-    createLink(key){
+    createInternalLink(key){
       return '#'+ key
     },
     getHelpAdditionalDescription(key, option){
       const ret = this.$i18n.tnl('helpAdditionalDescription.' + key, option)
       return ret != 'helpAdditionalDescription.' + key ? ret : null
+    },
+    // b-tableに表示する項目を取得
+    getCsvItems(key){
+      switch(key) {
+      case 'region':
+        return [
+          { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
+          { isActive: true, displayName: this.getLabel('regionName'), keyName: 'regionName' },
+          { isActive: true, displayName: this.getLabel('meshId'), keyName: 'meshId' },
+          { isActive: true, displayName: this.getLabel('description'), keyName: 'description' },
+          { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
+        ]
+      case 'area':
+        return [
+          { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
+          { isActive: true, displayName: this.getLabel('areaName'), keyName: 'areaName' },
+          { isActive: true, displayName: 'areaCd', keyName: 'areaCd' },
+          { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
+        ]
+      case 'exb':
+        return [
+          { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
+          { isActive: true, displayName: this.getLabel('deviceId'), keyName: 'deviceId' },
+          { isActive: true, displayName: this.getLabel('deviceIdX'), keyName: 'deviceIdX' },
+          { isActive: true, displayName: this.getLabel('locationName'), keyName: 'locationName' },
+          { isActive: true, displayName: this.getLabel('areaName'), keyName: 'areaName' },
+          { isActive: true, displayName: this.getLabel('locationX'), keyName: 'x' },
+          { isActive: true, displayName: this.getLabel('locationY'), keyName: 'y' },
+          { isActive: true, displayName: this.getHelpDescription('enabled'), keyName: 'enabled' },
+          { isActive: true, displayName: this.getLabel('type'), keyName: 'sensor' },
+          { isActive: true, displayName: this.getLabel('zoneName'), keyName: 'zoneName' },
+          { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
+        ]
+      case 'tx':
+        return [
+          { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
+          { isActive: true, displayName: this.getLabel('btxId'), keyName: 'btxId' },
+          { isActive: true, displayName: this.getLabel('major'), keyName: 'major' },
+          { isActive: true, displayName: this.getLabel('minor'), keyName: 'minor' },
+          { isActive: true, displayName: this.getLabel('type'), keyName: 'sensor' },
+          { isActive: true, displayName: this.getLabel('disp'), keyName: 'disp' },
+          { isActive: true, displayName: this.getHelpDescription('txAreaName'), keyName: 'areaName' },
+          { isActive: true, displayName: this.getHelpDescription('txXY'), keyName: 'x' },
+          { isActive: true, displayName: this.getHelpDescription('txXY'), keyName: 'y' },
+          { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
+        ]
+      case 'pot':
+        return [
+          { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
+          { isActive: true, displayName: this.getLabel('btxId'), keyName: 'btxId' },
+          { isActive: true, displayName: this.getLabel('minor'), keyName: 'minor' },
+          { isActive: true, displayName: this.getLabel('potCd'), keyName: 'potCd' },
+          { isActive: true, displayName: this.getLabel('potName'), keyName: 'potName' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'potType' },
+          { isActive: true, displayName: this.getLabel('displayName'), keyName: 'displayName' },
+          { isActive: true, displayName: this.getLabel('group'), keyName: 'groupName' },
+          { isActive: true, displayName: this.getLabel('category'), keyName: 'categoryName' },
+          { isActive: true, displayName: this.getLabel('post'), keyName: 'post' },
+          { isActive: true, displayName: this.getLabel('tel'), keyName: 'tel' },
+          { isActive: true, displayName: this.getLabel('description'), keyName: 'description' },
+          { isActive: true, displayName: this.getLabel('loginId'), keyName: 'loginId' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'roleName' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'pass' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'email' },
+          { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
+        ]
+      case 'category':
+        return [
+          { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
+          { isActive: true, displayName: this.getLabel('categoryName'), keyName: 'categoryName' },
+          { isActive: true, displayName: this.getLabel('categoryType'), keyName: 'categoryTypeName' },
+          { isActive: true, displayName: this.getLabel('display'), keyName: 'color' },
+          { isActive: true, displayName: this.getLabel('display'), keyName: 'bgColor' },
+          { isActive: true, displayName: this.getLabel('display'), keyName: 'Shape' },
+          { isActive: true, displayName: this.getLabel('description'), keyName: 'description' },
+          { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
+        ]
+      case 'group':
+        return [
+          { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
+          { isActive: true, displayName: this.getLabel('groupName'), keyName: 'groupName' },
+          { isActive: true, displayName: this.getLabel('ruby'), keyName: 'ruby' },
+          { isActive: true, displayName: this.getLabel('display'), keyName: 'color' },
+          { isActive: true, displayName: this.getLabel('display'), keyName: 'bgColor' },
+          { isActive: true, displayName: this.getLabel('display'), keyName: 'Shape' },
+          { isActive: true, displayName: this.getLabel('description'), keyName: 'description' },
+          { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
+        ]
+      case 'user':
+        return [
+          { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
+          { isActive: true, displayName: this.getLabel('loginId'), keyName: 'loginId' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'pass' },
+          { isActive: true, displayName: this.getLabel('email'), keyName: 'email' },
+          { isActive: true, displayName: this.getLabel('name'), keyName: 'name' },
+          { isActive: true, displayName: this.getLabel('regionName'), keyName: 'regionName' },
+          { isActive: true, displayName: this.getLabel('role'), keyName: 'roleName' },
+          { isActive: true, displayName: this.getLabel('description'), keyName: 'description' },
+          { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
+        ]
+      case 'role':
+        return [
+          { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
+          { isActive: true, displayName: this.getLabel('roleName'), keyName: 'roleName' },
+          { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
+        ]
+      case 'zoneClass':
+        return [
+          { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
+          { isActive: true, displayName: this.getLabel('zoneName'), keyName: 'zoneName' },
+          { isActive: true, displayName: this.getLabel('areaName'), keyName: 'areaName' },
+          { isActive: true, displayName: this.getLabel('categoryName'), keyName: 'categoryName' },
+          { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
+        ]
+      case 'gateway':
+        return [
+          { isActive: true, displayName: this.getLabel('no'), keyName: 'num' },
+          { isActive: true, displayName: this.getLabel('deviceId'), keyName: 'deviceId' },
+          { isActive: true, displayName: this.getLabel('finalReceiveTimestamp'), keyName: 'updated' },
+          { isActive: true, displayName: this.getLabel('state'), keyName: 'state' },
+        ]
+      case 'position':
+        return [
+          { isActive: true, displayName: this.getLabel('btxId'), keyName: 'btxId' },
+          { isActive: true, displayName: this.getLabel('major'), keyName: 'major' },
+          { isActive: true, displayName: this.getLabel('minor'), keyName: 'minor' },
+          { isActive: true, displayName: this.getLabel('name'), keyName: 'name' },
+          { isActive: true, displayName: this.getLabel('powerLevel'), keyName: 'powerLevel' },
+          { isActive: true, displayName: this.getLabel('finalReceiveLocation'), keyName: 'location' },
+          { isActive: true, displayName: this.getLabel('finalReceiveTimestamp'), keyName: 'timestamp' },
+          { isActive: true, displayName: this.getLabel('state'), keyName: 'state' },
+        ]
+      case 'telemetry':
+        return [
+          { isActive: true, displayName: this.getLabel('deviceId'), keyName: 'deviceId' },
+          { isActive: true, displayName: this.getLabel('deviceIdX'), keyName: 'deviceIdX' },
+          { isActive: true, displayName: this.getLabel('exbName'), keyName: 'finalRevceivePlace' },
+          { isActive: true, displayName: this.getLabel('powerLevel'), keyName: 'powerLevel' },
+          { isActive: true, displayName: this.getLabel('finalReceiveTimestamp'), keyName: 'timestamp' },
+          { isActive: true, displayName: this.getLabel('state'), keyName: 'state' },
+        ]
+      case 'usageSituation':
+        return [
+          { isActive: true, displayName: this.getLabel('zoneCategoryName'), keyName: 'zoneCategoryName' },
+          { isActive: true, displayName: this.getLabel('zoneName'), keyName: 'zoneName' },
+          { isActive: true, displayName: this.getLabel('utilizationRatioP'), keyName: 'rate' },
+          { isActive: true, displayName: this.getLabel('utilizationTime'), keyName: 'cnt' },
+          { isActive: true, displayName: this.getLabel('numOfUsers'), keyName: 'numUse' },
+        ]
+      case 'sensorGraph':
+        return [
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'humidity(lat)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'humidity(max)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'humidity(avg)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'humidity(min)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'temperature(lat)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'temperature(max)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'temperature(avg)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'temperature(min)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'count(lat)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'count(max)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'count(avg)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'count(min)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'step(lat)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'step(max)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'step(avg)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'step(min)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'beat(lat)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'beat(max)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'beat(avg)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'beat(min)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'low(lat)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'low(max)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'low(avg)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'low(min)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'high(lat)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'high(max)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'high(avg)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'high(min)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'down(lat)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'down(max)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'down(avg)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'down(min)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'magnet(max)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'magnet(min)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'pressVol(lat)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'pressVol(max)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'pressVol(avg)' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'pressVol(min)' },
+        ]
+      case 'stayRatio':
+        return [
+          { isActive: true, displayName: this.getLabel('date'), keyName: 'date' },
+          { isActive: true, displayName: this.getLabel('name'), keyName: 'name' },
+          { isActive: true, displayName: this.getLabel('groupName'), keyName: 'groupName' },
+          { isActive: true, displayName: this.getLabel('stayTime'), keyName: 'stayTime' },
+          { isActive: true, displayName: this.getLabel('absent1Time'), keyName: this.getLabel('stayRatioAbsent1Time') },
+          { isActive: true, displayName: this.getLabel('absent2Time'), keyName: this.getLabel('stayRatioAbsent2Time') },
+          { isActive: true, displayName: this.getLabel('lostTime'), keyName: 'lostTime' },
+          { isActive: true, displayName: this.getLabel('stayRatio'), keyName: 'stayRatio' },
+          { isActive: true, displayName: this.getLabel('absent1Ratio'), keyName: this.getLabel('stayRatioAbsent1Ratio') },
+          { isActive: true, displayName: this.getLabel('absent2Ratio'), keyName: this.getLabel('stayRatioAbsent2Ratio') },
+          { isActive: true, displayName: this.getLabel('lostRatio'), keyName: 'lostRatio' },
+        ]
+      case 'positionHistory':
+        return [
+          { isActive: true, displayName: this.getLabel('dt'), keyName: 'positionDt' },
+          { isActive: true, displayName: this.getConfig('OPTIONS.POSITION_HISTORY.txName'), keyName: 'txName' },
+          { isActive: true, displayName: this.getConfig('OPTIONS.POSITION_HISTORY.major'), keyName: 'major' },
+          { isActive: true, displayName: this.getConfig('OPTIONS.POSITION_HISTORY.minor'), keyName: 'minor' },
+          { isActive: true, displayName: this.getLabel('deviceId'), keyName: 'exbId' },
+          { isActive: true, displayName: this.getConfig('OPTIONS.POSITION_HISTORY.locationName'), keyName: 'locationName' },
+          { isActive: true, displayName: this.getLabel('area'), keyName: 'areaName' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'x' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'y' },
+        ]
+      case 'sensorHistory':
+        return [
+          { isActive: true, displayName: this.getLabel('dt'), keyName: 'sensorDt' },
+          { isActive: true, displayName: this.getLabel('sensorName'), keyName: 'sensorName' },
+          { isActive: true, displayName: this.getLabel('deviceNum'), keyName: 'deviceNum' },
+          { isActive: true, displayName: this.getLabel('deviceId'), keyName: 'deviceId' },
+          { isActive: true, displayName: this.getLabel('deviceIdX'), keyName: 'deviceIdX' },
+          { isActive: true, displayName: this.getLabel('locationZoneName'), keyName: 'locationName' },
+          { isActive: true, displayName: this.getLabel('areaName'), keyName: 'areaName' },
+          { isActive: true, displayName: this.getLabel('temperature'), keyName: 'temperature' },
+          { isActive: true, displayName: this.getLabel('humidity'), keyName: 'humidity' },
+          { isActive: true, displayName: this.getLabel('numUsers'), keyName: 'count' },
+          { isActive: true, displayName: this.getLabel('txName'), keyName: 'txName' },
+          { isActive: true, displayName: this.getLabel('major'), keyName: 'major' },
+          { isActive: true, displayName: this.getLabel('minor'), keyName: 'minor' },
+          { isActive: true, displayName: this.getLabel('h_blood_pressure'), keyName: 'high' },
+          { isActive: true, displayName: this.getLabel('l_blood_pressure'), keyName: 'low' },
+          { isActive: true, displayName: this.getLabel('heart_rate'), keyName: 'beat' },
+          { isActive: true, displayName: this.getLabel('step'), keyName: 'step' },
+          { isActive: true, displayName: this.getLabel('down_count'), keyName: 'down' },
+          { isActive: true, displayName: this.getLabel('state'), keyName: 'state' },
+          { isActive: true, displayName: this.getLabel('pressVol'), keyName: 'pressVol' },
+        ]
+      case 'notifyHistory':
+        return [
+          { isActive: true, displayName: this.getLabel('dt'), keyName: 'positionDt' },
+          { isActive: true, displayName: this.getLabel('notifyTo'), keyName: 'notifyTo' },
+          { isActive: true, displayName: this.getLabel('major'), keyName: 'majors' },
+          { isActive: true, displayName: this.getLabel('minor'), keyName: 'minor' },
+          { isActive: true, displayName: this.getLabel('minorPowerLevel'), keyName: 'minors' },
+          { isActive: true, displayName: this.getLabel('txName'), keyName: 'txName' },
+          { isActive: true, displayName: this.getLabel('deviceNum'), keyName: 'deviceNum' },
+          { isActive: true, displayName: this.getLabel('finalReceiveTime'), keyName: 'finalReceiveTime' },
+          { isActive: true, displayName: this.getLabel('notifyResult'), keyName: 'notifyResult' },
+        ]
+      default:
+        return null
+      }
     },
 
     bulkItems() {
@@ -306,272 +574,6 @@ export default {
         { isActive: true, description: this.getHelpDescription('bulkSystemUseNameFailed'), error_name: this.getMessage('bulkSystemUseNameFailed', {col: this.getLabel('linage'), value: this.getLabel('keyName')}) },
       ]
     },
-    regionCsvItems() {
-      return [
-        { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
-        { isActive: true, displayName: this.getLabel('regionName'), keyName: 'regionName' },
-        { isActive: true, displayName: this.getLabel('meshId'), keyName: 'meshId' },
-        { isActive: true, displayName: this.getLabel('description'), keyName: 'description' },
-        { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
-      ]
-    },
-    areaCsvItems() {
-      return [
-        { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
-        { isActive: true, displayName: this.getLabel('areaName'), keyName: 'areaName' },
-        { isActive: true, displayName: 'areaCd', keyName: 'areaCd' },
-        { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
-      ]
-    },
-    exbCsvItems() {
-      return [
-        { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
-        { isActive: true, displayName: this.getLabel('deviceId'), keyName: 'deviceId' },
-        { isActive: true, displayName: this.getLabel('deviceIdX'), keyName: 'deviceIdX' },
-        { isActive: true, displayName: this.getLabel('locationName'), keyName: 'locationName' },
-        { isActive: true, displayName: this.getLabel('areaName'), keyName: 'areaName' },
-        { isActive: true, displayName: this.getLabel('locationX'), keyName: 'x' },
-        { isActive: true, displayName: this.getLabel('locationY'), keyName: 'y' },
-        { isActive: true, displayName: this.getHelpDescription('enabled'), keyName: 'enabled' },
-        { isActive: true, displayName: this.getLabel('type'), keyName: 'sensor' },
-        { isActive: true, displayName: this.getLabel('zoneName'), keyName: 'zoneName' },
-        { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
-      ]
-    },
-    txCsvItems() {
-      return [
-        { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
-        { isActive: true, displayName: this.getLabel('btxId'), keyName: 'btxId' },
-        { isActive: true, displayName: this.getLabel('major'), keyName: 'major' },
-        { isActive: true, displayName: this.getLabel('minor'), keyName: 'minor' },
-        { isActive: true, displayName: this.getLabel('type'), keyName: 'sensor' },
-        { isActive: true, displayName: this.getLabel('disp'), keyName: 'disp' },
-        { isActive: true, displayName: this.getHelpDescription('txAreaName'), keyName: 'areaName' },
-        { isActive: true, displayName: this.getHelpDescription('txXY'), keyName: 'x' },
-        { isActive: true, displayName: this.getHelpDescription('txXY'), keyName: 'y' },
-        { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
-      ]
-    },
-    potCsvItems() {
-      return [
-        { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
-        { isActive: true, displayName: this.getLabel('btxId'), keyName: 'btxId' },
-        { isActive: true, displayName: this.getLabel('minor'), keyName: 'minor' },
-        { isActive: true, displayName: this.getLabel('potCd'), keyName: 'potCd' },
-        { isActive: true, displayName: this.getLabel('potName'), keyName: 'potName' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'potType' },
-        { isActive: true, displayName: this.getLabel('displayName'), keyName: 'displayName' },
-        { isActive: true, displayName: this.getLabel('group'), keyName: 'groupName' },
-        { isActive: true, displayName: this.getLabel('category'), keyName: 'categoryName' },
-        { isActive: true, displayName: this.getLabel('post'), keyName: 'post' },
-        { isActive: true, displayName: this.getLabel('tel'), keyName: 'tel' },
-        { isActive: true, displayName: this.getLabel('description'), keyName: 'description' },
-        { isActive: true, displayName: this.getLabel('loginId'), keyName: 'loginId' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'roleName' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'pass' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'email' },
-        { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
-      ]
-    },
-    categoryCsvItems() {
-      return [
-        { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
-        { isActive: true, displayName: this.getLabel('categoryName'), keyName: 'categoryName' },
-        { isActive: true, displayName: this.getLabel('categoryType'), keyName: 'categoryTypeName' },
-        { isActive: true, displayName: this.getLabel('display'), keyName: 'color' },
-        { isActive: true, displayName: this.getLabel('display'), keyName: 'bgColor' },
-        { isActive: true, displayName: this.getLabel('display'), keyName: 'Shape' },
-        { isActive: true, displayName: this.getLabel('description'), keyName: 'description' },
-        { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
-      ]
-    },
-    groupCsvItems() {
-      return [
-        { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
-        { isActive: true, displayName: this.getLabel('groupName'), keyName: 'groupName' },
-        { isActive: true, displayName: this.getLabel('ruby'), keyName: 'ruby' },
-        { isActive: true, displayName: this.getLabel('display'), keyName: 'color' },
-        { isActive: true, displayName: this.getLabel('display'), keyName: 'bgColor' },
-        { isActive: true, displayName: this.getLabel('display'), keyName: 'Shape' },
-        { isActive: true, displayName: this.getLabel('description'), keyName: 'description' },
-        { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
-      ]
-    },
-    userCsvItems() {
-      return [
-        { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
-        { isActive: true, displayName: this.getLabel('loginId'), keyName: 'loginId' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'pass' },
-        { isActive: true, displayName: this.getLabel('email'), keyName: 'email' },
-        { isActive: true, displayName: this.getLabel('name'), keyName: 'name' },
-        { isActive: true, displayName: this.getLabel('regionName'), keyName: 'regionName' },
-        { isActive: true, displayName: this.getLabel('role'), keyName: 'roleName' },
-        { isActive: true, displayName: this.getLabel('description'), keyName: 'description' },
-        { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
-      ]
-    },
-    roleCsvItems() {
-      return [
-        { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
-        { isActive: true, displayName: this.getLabel('roleName'), keyName: 'roleName' },
-        { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
-      ]
-    },
-    zoneClassCsvItems() {
-      return [
-        { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
-        { isActive: true, displayName: this.getLabel('zoneName'), keyName: 'zoneName' },
-        { isActive: true, displayName: this.getLabel('areaName'), keyName: 'areaName' },
-        { isActive: true, displayName: this.getLabel('categoryName'), keyName: 'categoryName' },
-        { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
-      ]
-    },
-    GatewayCsvItems() {
-      return [
-        { isActive: true, displayName: this.getLabel('no'), keyName: 'num' },
-        { isActive: true, displayName: this.getLabel('deviceId'), keyName: 'deviceId' },
-        { isActive: true, displayName: this.getLabel('finalReceiveTimestamp'), keyName: 'updated' },
-        { isActive: true, displayName: this.getLabel('state'), keyName: 'state' },
-      ]
-    },
-    positionCsvItems() {
-      return [
-        { isActive: true, displayName: this.getLabel('btxId'), keyName: 'btxId' },
-        { isActive: true, displayName: this.getLabel('major'), keyName: 'major' },
-        { isActive: true, displayName: this.getLabel('minor'), keyName: 'minor' },
-        { isActive: true, displayName: this.getLabel('name'), keyName: 'name' },
-        { isActive: true, displayName: this.getLabel('powerLevel'), keyName: 'powerLevel' },
-        { isActive: true, displayName: this.getLabel('finalReceiveLocation'), keyName: 'location' },
-        { isActive: true, displayName: this.getLabel('finalReceiveTimestamp'), keyName: 'timestamp' },
-        { isActive: true, displayName: this.getLabel('state'), keyName: 'state' },
-      ]
-    },
-    telemetryCsvItems() {
-      return [
-        { isActive: true, displayName: this.getLabel('deviceId'), keyName: 'deviceId' },
-        { isActive: true, displayName: this.getLabel('deviceIdX'), keyName: 'deviceIdX' },
-        { isActive: true, displayName: this.getLabel('exbName'), keyName: 'finalRevceivePlace' },
-        { isActive: true, displayName: this.getLabel('powerLevel'), keyName: 'powerLevel' },
-        { isActive: true, displayName: this.getLabel('finalReceiveTimestamp'), keyName: 'timestamp' },
-        { isActive: true, displayName: this.getLabel('state'), keyName: 'state' },
-      ]
-    },
-    usageSituationCsvItems() {
-      return [
-        { isActive: true, displayName: this.getLabel('zoneCategoryName'), keyName: 'zoneCategoryName' },
-        { isActive: true, displayName: this.getLabel('zoneName'), keyName: 'zoneName' },
-        { isActive: true, displayName: this.getLabel('utilizationRatioP'), keyName: 'rate' },
-        { isActive: true, displayName: this.getLabel('utilizationTime'), keyName: 'cnt' },
-        { isActive: true, displayName: this.getLabel('numOfUsers'), keyName: 'numUse' },
-      ]
-    },
-    sensorGraphCsvItems() {
-      return [
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'humidity(lat)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'humidity(max)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'humidity(avg)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'humidity(min)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'temperature(lat)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'temperature(max)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'temperature(avg)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'temperature(min)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'count(lat)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'count(max)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'count(avg)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'count(min)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'step(lat)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'step(max)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'step(avg)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'step(min)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'beat(lat)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'beat(max)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'beat(avg)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'beat(min)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'low(lat)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'low(max)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'low(avg)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'low(min)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'high(lat)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'high(max)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'high(avg)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'high(min)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'down(lat)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'down(max)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'down(avg)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'down(min)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'magnet(max)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'magnet(min)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'pressVol(lat)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'pressVol(max)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'pressVol(avg)' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'pressVol(min)' },
-      ]
-    },
-    stayRatioCsvItems() {
-      return [
-        { isActive: true, displayName: this.getLabel('date'), keyName: 'date' },
-        { isActive: true, displayName: this.getLabel('name'), keyName: 'name' },
-        { isActive: true, displayName: this.getLabel('groupName'), keyName: 'groupName' },
-        { isActive: true, displayName: this.getLabel('stayTime'), keyName: 'stayTime' },
-        { isActive: true, displayName: this.getLabel('absent1Time'), keyName: this.getLabel('stayRatioAbsent1Time') },
-        { isActive: true, displayName: this.getLabel('absent2Time'), keyName: this.getLabel('stayRatioAbsent2Time') },
-        { isActive: true, displayName: this.getLabel('lostTime'), keyName: 'lostTime' },
-        { isActive: true, displayName: this.getLabel('stayRatio'), keyName: 'stayRatio' },
-        { isActive: true, displayName: this.getLabel('absent1Ratio'), keyName: this.getLabel('stayRatioAbsent1Ratio') },
-        { isActive: true, displayName: this.getLabel('absent2Ratio'), keyName: this.getLabel('stayRatioAbsent2Ratio') },
-        { isActive: true, displayName: this.getLabel('lostRatio'), keyName: 'lostRatio' },
-      ]
-    },
-    positionHistoryCsvItems() {
-      return [
-        { isActive: true, displayName: this.getLabel('dt'), keyName: 'positionDt' },
-        { isActive: true, displayName: this.getConfig('OPTIONS.POSITION_HISTORY.txName'), keyName: 'txName' },
-        { isActive: true, displayName: this.getConfig('OPTIONS.POSITION_HISTORY.major'), keyName: 'major' },
-        { isActive: true, displayName: this.getConfig('OPTIONS.POSITION_HISTORY.minor'), keyName: 'minor' },
-        { isActive: true, displayName: this.getLabel('deviceId'), keyName: 'exbId' },
-        { isActive: true, displayName: this.getConfig('OPTIONS.POSITION_HISTORY.locationName'), keyName: 'locationName' },
-        { isActive: true, displayName: this.getLabel('area'), keyName: 'areaName' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'x' },
-        { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'y' },
-      ]
-    },
-    sensorHistoryCsvItems() {
-      return [
-        { isActive: true, displayName: this.getLabel('dt'), keyName: 'sensorDt' },
-        { isActive: true, displayName: this.getLabel('sensorName'), keyName: 'sensorName' },
-        { isActive: true, displayName: this.getLabel('deviceNum'), keyName: 'deviceNum' },
-        { isActive: true, displayName: this.getLabel('deviceId'), keyName: 'deviceId' },
-        { isActive: true, displayName: this.getLabel('deviceIdX'), keyName: 'deviceIdX' },
-        { isActive: true, displayName: this.getLabel('locationZoneName'), keyName: 'locationName' },
-        { isActive: true, displayName: this.getLabel('areaName'), keyName: 'areaName' },
-        { isActive: true, displayName: this.getLabel('temperature'), keyName: 'temperature' },
-        { isActive: true, displayName: this.getLabel('humidity'), keyName: 'humidity' },
-        { isActive: true, displayName: this.getLabel('numUsers'), keyName: 'count' },
-        { isActive: true, displayName: this.getLabel('txName'), keyName: 'txName' },
-        { isActive: true, displayName: this.getLabel('major'), keyName: 'major' },
-        { isActive: true, displayName: this.getLabel('minor'), keyName: 'minor' },
-        { isActive: true, displayName: this.getLabel('h_blood_pressure'), keyName: 'high' },
-        { isActive: true, displayName: this.getLabel('l_blood_pressure'), keyName: 'low' },
-        { isActive: true, displayName: this.getLabel('heart_rate'), keyName: 'beat' },
-        { isActive: true, displayName: this.getLabel('step'), keyName: 'step' },
-        { isActive: true, displayName: this.getLabel('down_count'), keyName: 'down' },
-        { isActive: true, displayName: this.getLabel('state'), keyName: 'state' },
-        { isActive: true, displayName: this.getLabel('pressVol'), keyName: 'pressVol' },
-      ]
-    },
-    notifyHistoryCsvItems() {
-      return [
-        { isActive: true, displayName: this.getLabel('dt'), keyName: 'positionDt' },
-        { isActive: true, displayName: this.getLabel('notifyTo'), keyName: 'notifyTo' },
-        { isActive: true, displayName: this.getLabel('major'), keyName: 'majors' },
-        { isActive: true, displayName: this.getLabel('minor'), keyName: 'minor' },
-        { isActive: true, displayName: this.getLabel('minorPowerLevel'), keyName: 'minors' },
-        { isActive: true, displayName: this.getLabel('txName'), keyName: 'txName' },
-        { isActive: true, displayName: this.getLabel('deviceNum'), keyName: 'deviceNum' },
-        { isActive: true, displayName: this.getLabel('finalReceiveTime'), keyName: 'finalReceiveTime' },
-        { isActive: true, displayName: this.getLabel('notifyResult'), keyName: 'notifyResult' },
-      ]
-    }
   }
 }
 </script>
