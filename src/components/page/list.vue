@@ -928,7 +928,7 @@ export default {
       this.$router.push('/main/position')
     },
 
-    // TX詳細ポップアップ関連処理
+    // TX詳細ポップアップ関連処理 TODO: ex-map.vueと重複。
     selectedSensor() {
       if (!Util.getValue(this.selectedTx, 'btxId')) {
         return []
