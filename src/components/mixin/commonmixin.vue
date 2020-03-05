@@ -60,7 +60,11 @@ export default {
     },
     isTenantAdmin() {
       const login = LocalStorageHelper.getLogin()
-      return login? login.tenantAdmin: false
+      return login? login.isTenantAdmin: false
+    },
+    isProviderUser(){
+      const login = LocalStorageHelper.getLogin()
+      return login.isProviderUser
     },
     editable(){
       return MenuHelper.isEditable(this.$route.path)

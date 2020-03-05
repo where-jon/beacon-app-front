@@ -130,14 +130,14 @@ export const ROLE_FEATURE = {
     ALL: 0x01FC,
   },
   getAllAuthorizationOption(){
-    const isProvider = LocalStorageHelper.getLogin().isProvider
-    return {text: i18n.tnl('label.allAuthorization'), value: isProvider? ROLE_FEATURE.MODE.SYS_ALL: ROLE_FEATURE.MODE.ALL}
+    const isProviderUser = LocalStorageHelper.getLogin().isProviderUser
+    return {text: i18n.tnl('label.allAuthorization'), value: isProviderUser? ROLE_FEATURE.MODE.SYS_ALL: ROLE_FEATURE.MODE.ALL}
   },
   getModeOptions(){
-    const isProvider = LocalStorageHelper.getLogin().isProvider
+    const isProviderUser = LocalStorageHelper.getLogin().isProviderUser
     return [
-      isProvider? {text: i18n.tnl('label.refer'), value: ROLE_FEATURE.MODE.SYS_REFERENCE}: null,
-      isProvider? {text: i18n.tnl('label.update'), value: ROLE_FEATURE.MODE.SYS_UPDATE}: null,
+      isProviderUser? {text: i18n.tnl('label.refer'), value: ROLE_FEATURE.MODE.SYS_REFERENCE}: null,
+      isProviderUser? {text: i18n.tnl('label.update'), value: ROLE_FEATURE.MODE.SYS_UPDATE}: null,
       {text: i18n.tnl('label.listReference'), value: ROLE_FEATURE.MODE.LIST_REFERENCE},
       {text: i18n.tnl('label.detailReference'), value: ROLE_FEATURE.MODE.DETAIL_REFERENCE},
       {text: i18n.tnl('label.bulkReference'), value: ROLE_FEATURE.MODE.BULK_REFERENCE},
@@ -850,7 +850,7 @@ export const FORCE_PUSH_MENU = [
     path: '/provider/tenant/tenantFeature',
     isPush: () => {
       const login = LocalStorageHelper.getLogin()
-      return !login || !login.tenantAdmin && login.isProvider
+      return !login || !login.isTenantAdmin && login.isProviderUser
     } ,
   },
 ]

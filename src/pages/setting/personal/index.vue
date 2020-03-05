@@ -15,12 +15,12 @@
               <p v-for="(val, key) in errorMessages.loginId" :key="key" v-t="val" class="error" />
             </b-form-group>
 
-            <b-form-group v-show="showName && !isTenantAdmin()">
+            <b-form-group v-show="showName && !isProviderUser">
               <label v-t="'label.name'" />
               <input v-model="loginUser.name" :readonly="isChange" :state="errorMessages.name.length > 0 ? false : null" type="text" class="form-control" maxlength="20">
               <p v-for="(val, key) in errorMessages.name" :key="key" v-t="val" class="error" />
             </b-form-group>
-            <b-form-group v-show="showEmail && !isTenantAdmin()">
+            <b-form-group v-show="showEmail && !isProviderUser">
               <label v-t="'label.email'" />
               <input v-model="loginUser.email" :readonly="isChange" :state="errorMessages.email.length > 0 ? false : null" type="email" class="form-control">
               <p v-for="(val, key) in errorMessages.email" :key="key" v-t="val" class="error" />
@@ -49,7 +49,7 @@
               <b-form-select v-model="selectedLocale" :options="locales" class="mb-3" @change="localeSelected" />
             </b-form-group>
             <!-- プロフィール・パスワードを変更するボタン -->
-            <b-form-group v-if="isUpdatable && !isTenantAdmin()">
+            <b-form-group v-if="isUpdatable && !isProviderUser">
               <!-- MS Teams版ではパスワード変更不可-->
               <div v-if="!isMsTeams">
                 <b-button v-show="!isChange" v-t="'label.changeProfilePassword'" :variant="theme" 
@@ -85,7 +85,7 @@
         </b-col>
       </b-row>
       <!-- MS Teams版では常にキャンセル・変更ボタンを非表示 -->
-      <b-row v-if="!isMsTeams && !isTenantAdmin()" :style="{ marginTop: '30px' }">
+      <b-row v-if="!isMsTeams && !isProviderUser" :style="{ marginTop: '30px' }">
         <b-form-group class="col text-center">
           <b-button v-t="'label.cancel'" type="button" class="mr-4 mb-2 input-btn" variant="outline-danger" @click="handleCancelButton" />
           <b-button v-t="'label.modify'" :variant="theme" type="button" class="ml-4 mb-2 input-btn" @click="onSubmit" />
@@ -383,10 +383,6 @@ export default {
       this.loginUser.role = user.role.roleName
       this.loginUser.roleId = user.role.roleId
       this.loginUser.description = user.description
-    },
-    isTenantAdmin(){
-      const login = LocalStorageHelper.getLogin()
-      return login.isProvider
     },
     ...mapMutations('setting', [
       'replaceSetting', 

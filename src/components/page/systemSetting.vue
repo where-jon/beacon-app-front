@@ -260,8 +260,8 @@ export default {
     async applyConfig() {
       await StateHelper.load('setting', true)
       const login = LocalStorageHelper.getLogin()
-      const userInfo = await AuthHelper.getUserInfo(login.tenantAdmin)
-      AuthHelper.resetConfig(login.tenantAdmin, userInfo.setting)
+      const userInfo = await AuthHelper.getUserInfo(login.isTenantAdmin)
+      AuthHelper.resetConfig(login.isTenantAdmin, userInfo.setting)
     },
     async onSaved() {
       await this.applyConfig()

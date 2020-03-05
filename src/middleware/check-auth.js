@@ -45,15 +45,15 @@ export default function (context) {
   // check tenant feature
   const tenantFeatureList = context.store.state.tenantFeatureList
   const loginInfo = LocalStorageHelper.getLogin()
-  const isTenantAdmin = loginInfo.tenantAdmin
-  const isProvider = loginInfo.isProvider
+  const isTenantAdmin = loginInfo.isTenantAdmin
+  const isProviderUser = loginInfo.isProviderUser
 
   const extraMenu = FORCE_PUSH_MENU.find(menu => menu.parent == context.route.path && menu.isPush())
   if(extraMenu){
     context.redirect(extraMenu.path)
     return
   }
-  if (!isProvider && !isTenantAdmin && (!tenantFeatureList || tenantFeatureList.length == 0)) {
+  if (!isProviderUser && !isTenantAdmin && (!tenantFeatureList || tenantFeatureList.length == 0)) {
     console.error('No tenant feature List', context.route.path)
     AuthHelper.logout()
     context.redirect('/')
@@ -61,7 +61,7 @@ export default function (context) {
     return
   }
   const roleFeatureList = context.store.state.featureList
-  const isUser = !isProvider && !isTenantAdmin
+  const isUser = !isProviderUser && !isTenantAdmin
   const notAuthTenantFeature = tenantFeatureList && !MenuHelper.featureOk(context.route.path, tenantFeatureList)
   const notAuthRoleFeature = roleFeatureList && (MenuHelper.getMode(context.route.path, roleFeatureList) & ROLE_FEATURE.MODE.SYS_ALL) == 0
   if (isUser && (notAuthTenantFeature || notAuthRoleFeature)) {
