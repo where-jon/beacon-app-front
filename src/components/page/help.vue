@@ -10,346 +10,24 @@
           {{ getHelpDescription('indexName') }}
         </p>
         <!-- 目次 -->
-        <span v-for="(menuGroup,key) in this.$store.state.menu" :key="key">
-          <div><b>{{ $i18n.tnl('label.'+ menuGroup.key) }}</b></div>
-          <div v-for="page in menuGroup.pages" :key="page.key" class="ml-4">
-            <a href="#master_region">
-              {{ $i18n.tnl('label.'+ page.key) }}
-            </a>
-          </div>
-        </span>
+        <div v-for="(menuGroup,key) in this.$store.state.menu" :key="key">
+          <div class="list-group mt-3"><b>{{ getLabel(menuGroup.key) }}</b></div>
+          <a v-for="page in menuGroup.pages" :key="page.key" :href="createLink(page.key)" class="list-group-item list-group-item-action">
+            {{ getLabel(page.key) }}
+          </a>
+        </div>
       </div>
       <!-- 説明文 -->
-      <div v-if="enablePositionList" id="main_position-list">
-        <hr>
-        <p class="helpLabelHeader">
-          {{ getLabel('positionList') }}
-        </p>
-        <p class="helpTitle">
-          {{ getLabel('state') }}
-        </p>
-        <p class="helpDetail">
-          {{ getHelpDescription('state', {detected: getLabel('detected'), temporaryUndetect: getLabel('temporaryUndetect'), undetect: getLabel('undetect'), none: getLabel('none')}) }}
-        </p>
-      </div>
-      <div v-if="enableBulkRegister" id="bulkedit">
-        <hr>
-        <p class="helpLabelHeader">
-          {{ getLabel('bulkRegister') }}
-        </p>
-        
-        <p class="helpTitle">
-          {{ getLabel('notes') }}
-        </p>
-        <p class="helpDetail">
-          {{ getHelpDescription('bulkNotes', {personal: getLabel('personal'), charSet: getLabel('charSet'), SJIS: getLabel('SJIS')}) }}
-        </p>
-        <p class="helpTitle">
-          {{ getLabel('register') }}
-        </p>
-        <p class="helpDetail">
-          {{ getHelpDescription('bulkRegister') }}
-        </p>
-        <b-table striped hover small :items="bulkItems()" :fields="bulkFields" />
-      </div>
-      <div v-if="enableRegion" id="master_region">
-        <hr>
-        <p class="helpLabelHeader">
-          {{ getLabel('masterRegion') }}
-        </p>
-        <p class="helpTitle">
-          {{ getLabel('csvFile') }}
-        </p>
-        <p class="helpDetail">
-          {{ getHelpDescription('csvDescription') }}
-        </p>
-        <b-table striped hover small :items="regionCsvItems()" :fields="csvFields" />
-      </div>
-      <div v-if="enableArea" id="master_area">
-        <hr>
-        <p class="helpLabelHeader">
-          {{ getLabel('masterArea') }}
-        </p>
-        <p class="helpTitle">
-          {{ getLabel('csvFile') }}
-        </p>
-        <p class="helpDetail">
-          {{ getHelpDescription('csvDescription') }}
-        </p>
-        <b-table striped hover small :items="areaCsvItems()" :fields="csvFields" />
-      </div>
-      <div v-if="enableExb" id="master_exb">
-        <hr>
-        <p class="helpLabelHeader">
-          {{ getLabel('masterExb') }}
-        </p>
-        <p class="helpTitle">
-          {{ getLabel('csvFile') }}
-        </p>
-        <p class="helpDetail">
-          {{ getHelpDescription('csvDescription') }}
-        </p>
-        <b-table striped hover small :items="exbCsvItems()" :fields="csvFields" />
-      </div>
-      <div v-if="enableTx" id="master_tx">
-        <hr>
-        <p class="helpLabelHeader">
-          {{ getLabel('masterTx') }}
-        </p>
-        <p class="helpTitle">
-          {{ getLabel('csvFile') }}
-        </p>
-        <p class="helpDetail">
-          {{ getHelpDescription('csvDescription') }}
-        </p>
-        <b-table striped hover small :items="txCsvItems()" :fields="csvFields" />
-      </div>
-      <div v-if="enablePot" id="master_pot">
-        <hr>
-        <p class="helpLabelHeader">
-          {{ getLabel('masterPot') }}
-        </p>
-        <p class="helpTitle">
-          {{ getLabel('csvFile') }}
-        </p>
-        <p class="helpDetail">
-          {{ getHelpDescription('csvDescription') }}
-        </p>
-        <b-table striped hover small :items="potCsvItems()" :fields="csvFields" />
-      </div>
-      <div v-if="isDisplayCategory" id="master_category">
-        <hr>
-        <p class="helpLabelHeader">
-          {{ getLabel('category') }}
-        </p>
-
-        <p class="helpTitle">
-          {{ getLabel('system') + getLabel('category') }}
-        </p>
-        <p class="helpDetail">
-          {{ getHelpDescription('systemCategory') }}
-        </p>
-        <p class="helpTitle">
-          {{ getLabel('absent') }}
-        </p>
-        <p class="helpDetail">
-          {{ getHelpDescription('absent') }}
-        </p>
-        <p class="helpTitle">
-          {{ getLabel('prohibit') }}
-        </p>
-        <p class="helpDetail">
-          {{ getHelpDescription('prohibit') }}
-        </p>
-        <p class="helpTitle">
-          {{ getLabel('csvFile') }}
-        </p>
-        <p class="helpDetail">
-          {{ getHelpDescription('csvDescription') }}
-        </p>
-        <b-table striped hover small :items="categoryCsvItems()" :fields="csvFields" />
-      </div>
-      <div v-if="enableGroup" id="master_group">
-        <hr>
-        <p class="helpLabelHeader">
-          {{ getLabel('masterGroup') }}
-        </p>
-        <p class="helpTitle">
-          {{ getLabel('csvFile') }}
-        </p>
-        <p class="helpDetail">
-          {{ getHelpDescription('csvDescription') }}
-        </p>
-        <b-table striped hover small :items="groupCsvItems()" :fields="csvFields" />
-      </div>
-      <div v-if="enableUser" id="master_user">
-        <hr>
-        <p class="helpLabelHeader">
-          {{ getLabel('masterUser') }}
-        </p>
-        <p class="helpTitle">
-          {{ getLabel('csvFile') }}
-        </p>
-        <p class="helpDetail">
-          {{ getHelpDescription('csvDescription') }}
-        </p>
-        <b-table striped hover small :items="userCsvItems()" :fields="csvFields" />
-      </div>
-      <div v-if="enableRole" id="master_role">
-        <hr>
-        <p class="helpLabelHeader">
-          {{ getLabel('masterRole') }}
-        </p>
-        <p class="helpTitle">
-          {{ getLabel('csvFile') }}
-        </p>
-        <p class="helpDetail">
-          {{ getHelpDescription('csvDescription') }}
-        </p>
-        <b-table striped hover small :items="roleCsvItems()" :fields="csvFields" />
-      </div>
-      <div v-if="isDisplayZoneClass" id="master_zoneClass">
-        <hr>
-        <p class="helpLabelHeader">
-          {{ getLabel('zoneClass') }}
-        </p>
-
-        <p class="helpTitle">
-          {{ getLabel('zone') }}
-        </p>
-        <p class="helpDetail">
-          {{ getHelpDescription('zoneClass') }}
-        </p>
-        <p class="helpTitle">
-          {{ getLabel('csvFile') }}
-        </p>
-        <p class="helpDetail">
-          {{ getHelpDescription('csvDescription') }}
-        </p>
-        <b-table striped hover small :items="zoneClassCsvItems()" :fields="csvFields" />
-      </div>
-      <div v-if="isDisplayZoneBlock" id="master_zoneBlock">
-        <hr>
-        <p class="helpLabelHeader">
-          {{ getLabel('zoneBlock') }}
-        </p>
-
-        <p class="helpTitle">
-          {{ getLabel('setting') }}
-        </p>
-        <p class="helpDetail">
-          {{ getHelpDescription('zoneBlock', {zoneBlock: getLabel('zoneBlock')}) }}
-        </p>
-      </div>
-      <div v-if="enableGateway" id="monitor_gateway">
-        <hr>
-        <p class="helpLabelHeader">
-          {{ getLabel('monitorGW') }}
-        </p>
-        <p class="helpTitle">
-          {{ getLabel('csvFile') }}
-        </p>
-        <p class="helpDetail">
-          {{ getHelpDescription('csvDescription') }}
-        </p>
-        <b-table striped hover small :items="GatewayCsvItems()" :fields="csvFields" />
-      </div>
-      <div v-if="enableMonitorTX" id="monitor_position">
-        <hr>
-        <p class="helpLabelHeader">
-          {{ getLabel('monitorTX') }}
-        </p>
-        <p class="helpTitle">
-          {{ getLabel('csvFile') }}
-        </p>
-        <p class="helpDetail">
-          {{ getHelpDescription('csvDescription') }}
-        </p>
-        <b-table striped hover small :items="positionCsvItems()" :fields="csvFields" />
-      </div>
-      <div v-if="enableTelemetry" id="monitor_telemetry">
-        <hr>
-        <p class="helpLabelHeader">
-          {{ getLabel('monitorEXB') }}
-        </p>
-        <p class="helpTitle">
-          {{ getLabel('csvFile') }}
-        </p>
-        <p class="helpDetail">
-          {{ getHelpDescription('csvDescription') }}
-        </p>
-        <b-table striped hover small :items="telemetryCsvItems()" :fields="csvFields" />
-      </div>
-      <div v-if="enableUsageSituation" id="sum_usage-situation">
-        <hr>
-        <p class="helpLabelHeader">
-          {{ getLabel('SumUtilizationRatio') }}
-        </p>
-        <p class="helpTitle">
-          {{ getLabel('csvFile') }}
-        </p>
-        <p class="helpDetail">
-          {{ getHelpDescription('csvDescription') }}
-        </p>
-        <b-table striped hover small :items="usageSituationCsvItems()" :fields="csvFields" />
-      </div>
-      <div v-if="enableSensorGraph" id="sum_sensorGraph">
-        <hr>
-        <p class="helpLabelHeader">
-          {{ getLabel('SensorGraph') }}
-        </p>
-        <p class="helpTitle">
-          {{ getLabel('csvFile') }}
-        </p>
-        <p class="helpDetail">
-          {{ getHelpDescription('csvDescription') }}
-        </p>
-        <b-table striped hover small :items="sensorGraphCsvItems()" :fields="csvFields" />
-      </div>
-      <div v-if="enableStayRatio" id="sum_stayRatio">
-        <hr>
-        <p class="helpLabelHeader">
-          {{ getLabel('stayRatio') }}
-        </p>
-        <p class="helpTitle">
-          {{ getLabel('csvFile') }}
-        </p>
-        <p class="helpDetail">
-          {{ getHelpDescription('csvDescription') }}
-        </p>
-        <b-table striped hover small :items="stayRatioCsvItems()" :fields="csvFields" />
-      </div>
-      <div v-if="enablePositionHistory" id="history_positionHistory">
-        <hr>
-        <p class="helpLabelHeader">
-          {{ getLabel('PositionHistory') }}
-        </p>
-        <p class="helpTitle">
-          {{ getLabel('csvFile') }}
-        </p>
-        <p class="helpDetail">
-          {{ getHelpDescription('csvDescription') }}
-        </p>
-        <b-table striped hover small :items="positionHistoryCsvItems()" :fields="csvFields" />
-      </div>
-      <div v-if="enableSensorHistory" id="history_sensorHistory">
-        <hr>
-        <p class="helpLabelHeader">
-          {{ getLabel('SensorHistory') }}
-        </p>
-        <p class="helpTitle">
-          {{ getLabel('csvFile') }}
-        </p>
-        <p class="helpDetail">
-          {{ getHelpDescription('csvDescription') }}
-        </p>
-        <b-table striped hover small :items="sensorHistoryCsvItems()" :fields="csvFields" />
-      </div>
-      <div v-if="enableNotifyHistory" id="history_notifyHistory">
-        <hr>
-        <p class="helpLabelHeader">
-          {{ getLabel('notifyHistory') }}
-        </p>
-        <p class="helpTitle">
-          {{ getLabel('csvFile') }}
-        </p>
-        <p class="helpDetail">
-          {{ getHelpDescription('csvDescription') }}
-        </p>
-        <b-table striped hover small :items="notifyHistoryCsvItems()" :fields="csvFields" />
-      </div>
-      <div v-if="enableStayRatioBase" id="sum_stayRatioBase">
-        <hr>
-        <p class="helpLabelHeader">
-          {{ getLabel('stayRatioBase') }}
-        </p>
-
-        <p class="helpTitle">
-          {{ getLabel('download') }}
-        </p>
-        <p class="helpDetail">
-          {{ getHelpDescription('stayRatioBaseDownload') }}
-        </p>
+      <div v-for="(menuGroup,key) in this.$store.state.menu" :key="key">
+        <div v-for="page in menuGroup.pages" :id="page.key" :key="page.key">
+          <hr>
+          <p class="helpLabelHeader">
+            {{ getLabel(menuGroup.key) }}：{{ getLabel(page.key) }}
+          </p>
+          <p class="helpDetail">
+            {{ getHelpDescription(page.key, {detected: getLabel('detected'), temporaryUndetect: getLabel('temporaryUndetect'), undetect: getLabel('undetect'), none: getLabel('none')}) }}
+          </p>
+        </div>
       </div>
     </div>
   </div>
@@ -600,6 +278,10 @@ export default {
     getConfig(key, option){
       return this.$i18n.tnl('config.' + key, option)
     },
+    createLink(key){
+      return '#'+ key
+    },
+
     bulkItems() {
       return [
         { isActive: true, description: this.getHelpDescription('bulkUniqueFailed'), error_name: this.getMessage('bulkUniqueFailed', {col: this.getLabel('linage'), value: this.getLabel('keyName')}) },
@@ -896,8 +578,7 @@ export default {
   font-size: 14px;
 }
 hr {
-  border-color: black;
-  border-top: double;
+  border-color: #e9ecef;
 }
 .fields {
   font-size: 14px !important;
