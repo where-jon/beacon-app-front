@@ -100,6 +100,31 @@
             <date-picker v-model="form.date" type="date" value-format="yyyyMMdd" class="mr-2 mb-2 inputdatefrom" @change="pickerChanged" />
           </b-form-row>
         </b-form-group>
+        <b-form-group class="mr-4">
+          <b-form-row class="mb-3 mr-3">
+            <b-form-row class="mr-3">
+              <span v-t="'label.filter'" class="d-flex align-items-center" />
+            </b-form-row>
+            <b-form-row>
+              <b-form-select v-model="form.filterKind" :options="filterKindOptions" class="ml-2 inputSelect" @change="changefilterKind" />
+            </b-form-row>
+            <b-form-row v-if="useVueSelect(form.filterKind)" class="ml-1">
+              <span :title="vueSelectTitle(vueSelected.filter)">
+                <v-select v-model="vueSelected.filter" :options="filterIdOptions" class="ml-2 inputSelect vue-options" :style="vueSelectStyle">
+                  <template slot="selected-option" slot-scope="option">
+                    {{ vueSelectCutOn(option) }}
+                  </template>
+                  <template slot="no-options">
+                    {{ vueSelectNoMatchingOptions }}
+                  </template>
+                </v-select>
+              </span>
+            </b-form-row>
+            <b-form-row v-else class="ml-1">
+              <b-form-select v-model="vueSelected.filter" :options="filterIdOptions" class="ml-2 inputSelect" />
+            </b-form-row>
+          </b-form-row>
+        </b-form-group>
         <b-form-group>
           <b-form-row v-if="isGroupEnabled" class="mb-3 mr-5">
             <label v-t="'label.group'" class="mr-2" />
@@ -203,7 +228,7 @@ import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import moment from 'moment'
 import { APP, DISP, DEV } from '../../sub/constant/config'
-import { SHAPE, CATEGORY, SYSTEM_ZONE_CATEGORY_NAME } from '../../sub/constant/Constants'
+import { SHAPE, CATEGORY, SYSTEM_ZONE_CATEGORY_NAME, STAY_RATIO_BASE_FILTER_KIND } from '../../sub/constant/Constants'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as ColorUtil from '../../sub/util/ColorUtil'
@@ -237,10 +262,13 @@ export default {
       fields: this.getFields(true),
       form: {
         date: '',
+        filterKind: null,
+        filterId: null,
       },
       vueSelected: {
         group: null,
         category: null,
+        filter: null,
       },
       displayCheckList: {
         stay: ['stay', 'lost'],
@@ -262,6 +290,9 @@ export default {
       isCategorySelected: false,
       checkboxLimit: 6,
       showModal: false,
+      filterKindOptions: STAY_RATIO_BASE_FILTER_KIND.getOptions(),
+      filterIdOptions: [],
+      vueSelectedKeys: ['pot'],
     }
   },
   computed: {
@@ -285,6 +316,12 @@ export default {
     },
   },
   watch: {
+    'vueSelected.filter': {
+      handler: function(newVal, oldVal){
+        this.form.filterId = Util.getValue(newVal, 'value')
+      },
+      deep: true,
+    },
     'vueSelected.group': {
       handler: function(newVal, oldVal){
         this.form.groupId = Util.getValue(newVal, 'value')
@@ -321,6 +358,21 @@ export default {
     VueUtil.nextTickEx(this, () => this.loadLegends())
   },
   methods: {
+    useVueSelect(key){
+      return this.vueSelectedKeys.includes(key)
+    },
+    changefilterKind(newVal = this.form.filterKind){
+      this.form.filterKind = newVal
+      this.vueSelected.filter = null
+      switch (newVal) {
+      case 'pot':
+        this.filterIdOptions = this.pots.map(e => ({value: e.potId, label: e.potName}))
+        break
+      default:
+        this.filterIdOptions = []
+        break
+      }
+    },
     loadLegends() {
       let lastIndex = 0
       this.legendItems = []
@@ -744,7 +796,8 @@ export default {
       const targetDate = moment(param.date).format('YYYYMMDD')
       const groupBy = param.groupId? '&groupId=' + param.groupId: ''
       const categoryBy = param.categoryId? '&categoryId=' + param.categoryId: ''
-      return '/office/stayTime/sumByDay/' + targetDate + '/zoneCategory?from=' + APP.STAY_SUM.FROM + '&to=' + APP.STAY_SUM.TO + groupBy + categoryBy
+      const potBy = param.filterId? '&filterKind=' + param.filterKind + '&filterId=' + param.filterId : ''
+      return '/office/stayTime/sumByDay/' + targetDate + '/zoneCategory?from=' + APP.STAY_SUM.FROM + '&to=' + APP.STAY_SUM.TO + groupBy + categoryBy + potBy
     },
     getCsvSumList(viewList) {
       const keys = []
