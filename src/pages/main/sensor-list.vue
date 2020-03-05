@@ -27,10 +27,11 @@ export default {
       params: {
         name: 'position-list',
         id: 'positionListId',
-        extraFilter: ['sensor', 'area', 'zone', 'zoneCategory'],
+        extraFilter: [
+          {key: 'sensor', change: (newVal) => this.sensorChange(newVal)},
+          'area', 'zone', 'zoneCategory'
+        ],
         initTotalRows: 0,
-        sensorChange: newVal => this.sensorChange(newVal),
-        showOnlyHas: ['zone', 'zoneCategory'],
         disableTableButtons: true,
         hideNormalSearchBox: true,
         fields: [],

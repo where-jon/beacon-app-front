@@ -140,7 +140,10 @@ export default {
         disableTableButtons: true,
         addFilterFields: ['title', 'inputData'],
         allDispFields: ['title', 'defaultVal'],
-        extraFilter: [this.useKeyCategoryFilter? 'keyCategory': null, this.useSettingCategoryFilter? 'settingCategory': null].filter(val => val),
+        extraFilter: [
+          this.useKeyCategoryFilter? 'keyCategory': null,
+          this.useSettingCategoryFilter? 'settingCategory': null
+        ].filter(val => val),
         tableDescription: 'settingDescription',
       },
       name: 'setting',

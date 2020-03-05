@@ -32,7 +32,7 @@
         <!-- region -->
         <table>
           <tr>
-            <td v-if="isTenantAdmin()" class="region-table pr-3">
+            <td v-if="isTenantAdmin" class="region-table pr-3">
               <font-awesome-icon icon="building" class="mr-1" style="visibility: hidden;" />
               <em v-t="this.$store.state.currentTenant? this.$store.state.currentTenant.tenantName: ''" class="region-em word-break" />
             </td>
@@ -226,10 +226,6 @@ export default {
     },
     useLastUrl(lastPath) {
       return lastPath == 'bulkedit'
-    },
-    isTenantAdmin() {
-      const login = LocalStorageHelper.getLogin()
-      return login? login.tenantAdmin: false
     },
     hasMultiRegion(regions){
       return regions && regions.length > 1

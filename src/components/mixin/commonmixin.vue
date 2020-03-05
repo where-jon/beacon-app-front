@@ -11,6 +11,7 @@ import * as OptionHelper from '../../sub/helper/dataproc/OptionHelper'
 import * as ThemeHelper from '../../sub/helper/ui/ThemeHelper'
 import * as VueSelectHelper from '../../sub/helper/ui/VueSelectHelper'
 import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
+import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
 
 const exMapState = (namespace, map) => {
   return mapState(namespace, map)
@@ -57,6 +58,10 @@ export default {
     iosOrAndroid() {
       return BrowserUtil.isAndroidOrIOS()
     },
+    isTenantAdmin() {
+      const login = LocalStorageHelper.getLogin()
+      return login? login.tenantAdmin: false
+    },
     editable(){
       return MenuHelper.isEditable(this.$route.path)
     },
@@ -71,6 +76,13 @@ export default {
     },
     categoryOptions() {
       return OptionHelper.getCategoryOptions(CATEGORY.POT_AVAILABLE)
+    },
+    zoneCategoryOptions() {
+      return MasterHelper.getOptionsFromState('category',
+        category => MasterHelper.getDispCategoryName(category),
+        true, 
+        category => CATEGORY.ZONE_AVAILABLE.includes(category.categoryType)
+      )
     },
     authCategoryOptions() {
       return OptionHelper.getCategoryOptions([CATEGORY.AUTH])

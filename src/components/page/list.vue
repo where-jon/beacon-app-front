@@ -21,10 +21,10 @@
           </b-form-row>
           <!-- カスタムフィルタ -->
           <template v-if="params.extraFilter">
-            <b-form-row v-for="item of extraFilterSpec" :key="item.key" class="mr-4 mb-2">
+            <b-form-row v-for="item in extraFilterSpec()" :key="item.key" class="mr-4 mb-2">
               <b-form-row v-if="item.show">
                 <label v-t="'label.' + item.key" for="item.key" class="mr-2" />
-                <b-input-group v-if="useVueSelect(item.key)">
+                <b-input-group v-if="item.useVueSelect">
                   <span :title="vueSelectTitle(vueSelected[item.key])">
                     <v-select v-model="vueSelected[item.key]" :input-id="item.key" :options="item.options" class="extra-filter vue-options" :style="vueSelectStyle">
                       <template slot="selected-option" slot-scope="option">
@@ -90,7 +90,7 @@
         :items="items"
         :fields="fields"
         :current-page="compactMode? 1: currentPage" :per-page="perPage"
-        :filter="compactMode? () => true: filterGrid" :bordered="params.bordered"
+        :filter="compactMode? () => true: executeFilter" :bordered="params.bordered"
         :sort-by.sync="sortBy" :sort-compare="compactMode? () => 0: sortCompare" :sort-desc.sync="sortDesc" :empty-filtered-text="emptyMessage"
         show-empty stacked="md" striped hover outlined caption-top
         @filtered="onFiltered"
@@ -260,7 +260,7 @@
 
       <!-- Tx詳細表示（ポップアップ） -->
       <div v-if="selectedTx.btxId && showReady">
-        <txdetail :selected-tx="selectedTx" :selected-sensor="selectedSensor" :is-show-modal="isShowModal()" @resetDetail="resetDetail" />
+        <txdetail :selected-tx="selectedTx" :selected-sensor="selectedSensor()" :is-show-modal="isShowModal()" @resetDetail="resetDetail" />
       </div>
       <!-- modal -->
       <b-modal id="modalInfo" :title="modalInfo.title" @hide="resetModal" @ok="execDelete(modalInfo.id)">
@@ -274,7 +274,7 @@
 
 import { mapState, mapMutations } from 'vuex'
 import { APP, APP_SERVICE , EXCLOUD} from '../../sub/constant/config'
-import { CATEGORY, SENSOR, KEY } from '../../sub/constant/Constants'
+import { SENSOR, KEY } from '../../sub/constant/Constants'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as StringUtil from '../../sub/util/StringUtil'
@@ -287,7 +287,6 @@ import * as DetectStateHelper from '../../sub/helper/domain/DetectStateHelper'
 import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
 import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
-import * as VueSelectHelper from '../../sub/helper/ui/VueSelectHelper'
 import * as PositionHelper from '../../sub/helper/domain/PositionHelper'
 import * as SensorHelper from '../../sub/helper/domain/SensorHelper'
 import commonmixin from '../mixin/commonmixin.vue'
@@ -297,7 +296,6 @@ import settinginput from '../parts/settinginput.vue'
 import txdetail from '../../components/parts/txdetail.vue'
 
 
-// TODO: Filterの実装は異常。要作り直し。
 export default {
   components: {
     detailFilter,
@@ -352,7 +350,7 @@ export default {
       type: Boolean,
       default: false,
     },
-},
+  },
   data() {
     return {
       currentPage: 1,
@@ -397,7 +395,6 @@ export default {
       error: null,
       sortBy: null,
       sortDesc: false,
-      login: LocalStorageHelper.getLogin(),
       sortCompare: (aData, bData, key) => this.sortCompareCustom(aData, bData, key),
       ...this.params
     }
@@ -458,20 +455,6 @@ export default {
       }
       return MenuHelper.isEditable(this.indexPath)
     },
-    extraFilterSpec() {
-      if (!this.params.extraFilter) {
-        return {}
-      }
-      return this.params.extraFilter.map(key => {
-        const optionFilter = this.params.extraFilterFunc && this.params.extraFilterFunc[key]? this.params.extraFilterFunc[key]: options => options
-        return {
-          key: key,
-          options: optionFilter(this[key + 'Options']),
-          change: this.params[key + 'Change']? this.params[key + 'Change']: () => {},
-          show: this.params.showOnlyHas && this.params.showOnlyHas.includes(key)? Util.hasValue(this[key + 'Options'].filter((val) => val.value != null)): true,
-        }
-      })
-    },
     ...mapState([
       'featureList',
     ]),
@@ -483,27 +466,6 @@ export default {
     ...mapState('main', [
       'selectedTx',
     ]),
-    categoryOptions() { // TODO: 以下commonmixinと重複しているのは削除
-      return MasterHelper.getOptionsFromState('category', false, true, 
-        category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
-      )
-    },
-    zoneOptions() {
-      return MasterHelper.getOptionsFromState('zone', false, true)
-    },
-    zoneCategoryOptions() {
-      return MasterHelper.getOptionsFromState('category',
-        category => MasterHelper.getDispCategoryName(category),
-        true, 
-        category => CATEGORY.ZONE_AVAILABLE.includes(category.categoryType)
-      )
-    },
-    groupOptions() {
-      return MasterHelper.getOptionsFromState('group', false, true)
-    },
-    areaOptions() {
-      return MasterHelper.getOptionsFromState('area', false, true)
-    },
     detectStateOptions() {
       let options = DetectStateHelper.getTypes()
       options.unshift({value:null, text:''})
@@ -527,9 +489,6 @@ export default {
       ret.unshift({ value: null, text: '' })
       return ret
     },
-    isTenantAdmin() {
-      return this.login.tenantAdmin
-    },
     showMessage(){
       return Util.hasValue(this.message)
     },
@@ -542,33 +501,23 @@ export default {
     anotherActionButtonStyle(){
       return BrowserUtil.getLangShort() == 'ja'? {width: '100px !important'}: {width: '110px !important'}
     },
-    selectedSensor() {
-      if (!Util.getValue(this.selectedTx, 'btxId')) {
-        return []
-      }
-      if (!this.positionedTxMap) return []
-      const ret = SensorHelper.getSensorFromBtxId('meditag', this.positionedTxMap.meditag, this.selectedTx.btxId)
-      return ret? [ret]: []
-    },
   },
   watch: {
-    'vueSelected': {
-      handler: function(newVal, oldVal){
+    vueSelected: {
+      handler: function(newVal, oldVal) {
         Object.keys(this.vueSelected).forEach(key => {
-          const oVal = Util.getValue(oldVal[key], 'value')
           const nVal = Util.getValue(newVal[key], 'value')
           this.filter.extra[key] = nVal // このfilterの値の変更をトリガーに、b-tableのfilterが処理される
-          if(this.useCommonFilter(key)){
-            this[this.getCommonFilterKey(key)] = nVal
+          if (key == 'category') {
+            this.selectedCategoryId = nVal
           }
-          if(oVal != nVal){
-            this.extraFilterSpec[key].change()
-          }
-          if(['category', 'group'].some(k => k == key)) {
-            this[StringUtil.concatCamel('selected', key, 'id')] = nVal
+          if (key == 'group') {
+            this.selectedGroupId = nVal
           }
         })
-        this.compactMode? this.fetchCompactListOnNext(): () => {} // コンパクトモードの場合、ここで一覧データ取得
+        if (this.compactMode) {
+          this.fetchCompactListOnNext() // コンパクトモードの場合、ここで一覧データ取得
+        }
       },
       deep: true,
     },
@@ -591,13 +540,13 @@ export default {
     } else {
       this.$parent.$options.methods.fetchData.apply(this.$parent)
     }
-    if (this.params.extraFilter) {
-      const filterColumnList = this.params.extraFilter.filter(str => str != 'detectState')
-      filterColumnList.filter(state => ['category', 'group', 'area'].some(s => s == state)).forEach(state => {
-        const selectedKey = StringUtil.concatCamel('selected', state)
-        this.vueSelected[state] = VueSelectHelper.getVueSelectData(this[state + 'Options'], this[selectedKey])
-      })
-    }
+    // if (this.params.extraFilter) { // TODO: このロジック必要？
+    //   const filterColumnList = this.params.extraFilter.filter(e => e != 'detectState')
+    //   filterColumnList.filter(e => ['category', 'group', 'area'].includes(e)).forEach(e => {
+    //     const selectedKey = StringUtil.concatCamel('selected', e, 'id')
+    //     this.vueSelected[e] = VueSelectHelper.getVueSelectData(this[e + 'Options'], this[selectedKey])
+    //   })
+    // }
     this.sortBy = this.params.sortBy? this.params.sortBy: null
     this.replace({showWarn: false, showAlert: this.showError, showInfo: this.showMessage})
 
@@ -622,17 +571,13 @@ export default {
     ...mapMutations([
       'replace', 
     ]),
-    useVueSelect(key){
-      return Object.keys(this.vueSelected).includes(key)
-    },
+
+    // 共通
     thumbnail(row) {
       return this.$parent.$options.methods.thumbnail.call(this.$parent, row)
     },
-    useCommonFilter(key){
-      return Util.getValue(this.params, 'commonFilter', []).some(v => v == key)
-    },
-    getCommonFilterKey(key){
-      return StringUtil.concatCamel('selected', key)
+    style(index) {
+      return this.$parent.$options.methods.style.call(this.$parent, index)
     },
     setEmptyMessage(){
       this.message = null
@@ -640,25 +585,14 @@ export default {
       this.replace({showWarn: false, showAlert: false, showInfo: false})
       this.$forceUpdate()
     },
-    isCurrentTenant(item){
-      return item.tenantId == this.login.currentTenant.tenantId
-    },
-    disabledTenantButton(item){
-      if(item.tenantId == null){
-        return false
-      }
-      return item.delFlg != 0
-    },
     sortCompareCustom(aData, bData, key){
       if(key == 'txIdName'){
         return ArrayUtil.sortByArray(aData.txIdNames, bData.txIdNames)
       }
       return this.defaultSortCompare(aData, bData, key)
     },
-    async switchTenant(item){
-      await AuthHelper.switchTenant(item.tenantId)
-      location.reload()
-    },
+
+    // システム設定関連
     getItem(key){
       if(this.$parent.$options.methods && this.$parent.$options.methods.getItem){
         return this.$parent.$options.methods.getItem.call(this.$parent, key)
@@ -685,10 +619,27 @@ export default {
         this.$parent.$options.methods.clearAction.call(this.$parent, key)
       }
     },
-    createListParam(word) {
-      return this.$parent.$options.methods && this.$parent.$options.methods.createListParams? this.$parent.$options.methods.createListParams.call(this.$parent): {}
+
+    // テナント管理関係
+    isCurrentTenant(item){
+      return item.tenantId == LocalStorageHelper.getLogin().currentTenant.tenantId
     },
-    async fetchCompactList() {
+    disabledTenantButton(item){
+      if(item.tenantId == null){
+        return false
+      }
+      return item.delFlg != 0
+    },
+    async switchTenant(item){
+      await AuthHelper.switchTenant(item.tenantId)
+      location.reload()
+    },
+
+    // 一覧表示（マスタ系）
+    fetchCompactListOnNext() {
+      this.$nextTick(() => this.fetchCompactList())
+    },
+    async fetchCompactList() { // マスタ一覧をサーバから取得
       if(!Util.hasValue(this.sortBy)) {
         this.sortBy = this.old.sortBy
         this.sortDesc = this.old.sortDesc
@@ -700,7 +651,7 @@ export default {
         params.word = this.filter.word
         params.category = this.selectedCategoryId
         params.group = this.selectedGroupId
-        const response = await AppServiceHelper.fetchCompactList(`${this.appServicePath}/listdownload/${this.perPage}/${this.currentPage}/${this.sortBy}/${this.sortDesc? 'desc': 'asc'}` , params)
+        const response = await AppServiceHelper.fetchCompactList(`${this.appServicePath}/list/${this.perPage}/${this.currentPage}/${this.sortBy}/${this.sortDesc? 'desc': 'asc'}` , params)
         if( this.$parent.$options.methods && this.$parent.$options.methods.editResponse && response.data) {
           await this.$parent.$options.methods.editResponse.call(this.$parent, response.data)
         }
@@ -716,6 +667,11 @@ export default {
         this.hideProgress()
       }
     },
+    createListParam(word) {
+      return this.$parent.$options.methods && this.$parent.$options.methods.createListParams? this.$parent.$options.methods.createListParams.call(this.$parent): {}
+    },
+
+    // CSVダウンロード
     async exportCsv() {
       const params = this.createListParam()
       BrowserUtil.executeFileDL(
@@ -726,12 +682,18 @@ export default {
         + '&params=' + encodeURI(JSON.stringify(params))
       )
     },
-    fetchCompactListOnNext() {
-      this.$nextTick(() => this.fetchCompactList())
+
+    // 一括登録
+    async bulkEdit(item, index, target) {
+      this.setEmptyMessage()
+      this.$router.push(this.params.bulkEditPath)
     },
-    style(index) {
-      return this.$parent.$options.methods.style.call(this.$parent, index)
+    async bulkUpload(item, index, target) {
+      this.setEmptyMessage()
+      this.$router.push(this.params.bulkUploadPath)
     },
+
+    // 更新ボタン押下時処理
     async edit(item, index, target) {
       this.setEmptyMessage()
       let entity = {}
@@ -745,157 +707,105 @@ export default {
       this.replaceAS({[this.name]: entity, editPage: this.currentPage})
       this.$router.push(this.editPath)
     },
-    getAnotherPageParam(name, item) {
-      const pageParam = this.anotherPageParams.find(val => val.name == name)
-      return pageParam && item[pageParam.id]? pageParam: null
-    },
-    async jumpAnotherPage(name, item) {
-      const pageParam = this.getAnotherPageParam(name, item)
-      const pageSendParam = {}
-      pageParam.sendParamNames.forEach(val => pageSendParam[val] = item[val])
-      this.replaceAS({pageSendParam: pageSendParam})
-      this.$router.push(pageParam.jumpPath)
-    },
-    async bulkEdit(item, index, target) {
-      this.setEmptyMessage()
-      this.$router.push(this.params.bulkEditPath)
-    },
-    async bulkUpload(item, index, target) {
-      this.setEmptyMessage()
-      this.$router.push(this.params.bulkUploadPath)
-    },
-    deleteConfirm(item, index, button) {
-      this.setEmptyMessage()
-      const masterId = this.compactMode? item.updateKey: item[this.id]
-      this.modalInfo.title = this.$i18n.tnl('label.confirm')
-      const confirmName = this.params.confirmName? this.params.confirmName: Util.getValue(this.params, 'name', '') + 'Name'
-      this.modalInfo.content = this.$i18n.tnl(this.params.delFilter && item.delFlg != 0? 'message.completeDeleteConfirm': 'message.deleteConfirm', {target: `${this.$i18n.tnl('label.' + confirmName)}:${item[confirmName]}`})
-      this.modalInfo.id = masterId
-      this.$root.$emit('bv::show::modal', 'modalInfo', button)
-    },
-    resetModal () {
-      this.modalInfo.title = ''
-      this.modalInfo.content = ''
-      this.modalInfo.id = ''
-    },
-    filterGridGeneral(originItem){
-      if(originItem.isParent){
-        return this.items.find(item => !item.isParent && item.categoryKey == originItem.categoryKey && this.filterGrid(item))? true: false
+
+    //　フィルタ関連処理(compactModeのときは実行されない)
+    extraFilterSpec() { // カスタムフィルタ配列を返す
+      if (!this.params.extraFilter) {
+        return []
       }
-      if(!this.filter.word){
+      return this.params.extraFilter.map(e => { // オブジェクトを生成（key, options, changeイベント処理, show:表示有無)、文字列で指定された場合デフォルトで設定する
+        const ret = (typeof e === 'string')? {key: e}: e
+        ret.options = ret.optionFunc? ret.optionFunc(): this[ret.key + 'Options']
+        ret.change = ret.change || function() {}
+        ret.show = Util.hasValue(ret.options)
+        ret.useVueSelect = Object.keys(this.vueSelected).includes(ret.key)
+        return ret
+      })
+    },
+    executeFilter(originItem) { // フィルタ実行の起点
+      const regBool = this.filterWord(originItem)
+      // 追加フィルタ
+      const extBool = this.filterExtra(originItem)
+      const delBool = this.filterDelFlg(originItem)
+      const allShowBool = this.filterAllShow(originItem)
+      const parentBool = this.filterParent(originItem)
+      const detailBool = this.filterDetail(originItem)
+      return regBool && extBool && delBool && allShowBool && parentBool && detailBool
+    },
+    filterWord(originItem) { // 絞り込み文字列によるフィルタ
+      if (originItem.isParent) { // システム設定のフィルタリング
+        return this.items.some(item => !item.isParent && item.categoryKey == originItem.categoryKey && this.executeFilter(item)) // 子要素に再帰的に検索
+      }
+      if (!this.filter.word) {
         return true
       }
-      try{
+      try { // 文字列検索
         const regExp = new RegExp('.*' + this.filter.word + '.*', 'i')
-        const param = this.params.fields.filter(field => Util.getValue(field, 'filterable', true)).concat(this.params.addFilterFields? this.params.addFilterFields.map(field => ({key: field})): []).map(val => Util.getValue(originItem, val.key, ''))
+        const param = this.params.fields.filter(field => Util.v(field, 'filterable', true)).concat(this.params.addFilterFields? this.params.addFilterFields.map(field => ({key: field})): []).map(val => Util.v(originItem, val.key, ''))
         return regExp.test(JSON.stringify(param))
       }
-      catch(e){
+      catch(e) {
         return false
       }
     },
-    filterGridExt(originItem){
+    filterExtra(originItem){ // カスタムフィルタによる絞り込み
       if (!this.params.extraFilter) {
         return true
       }
       const extra = this.filter.extra
       for (let item of this.params.extraFilter) {
-        switch (item) {
+        const key = (typeof item === 'string')? item: item.key
+        if (!extra[key]) {
+          continue
+        }
+        switch (key) {
         case 'category':
-          if (extra.category && !(extra.category === originItem.categoryId)) {
-            return false
-          }
-          break
         case 'group':
-          if (extra.group && !(extra.group === originItem.groupId)) {
-            return false
-          }
-          break
         case 'area':
-          if (extra.area && !(extra.area === originItem.areaId)) {
+          if (!(extra[key] === originItem[key + 'Id'])) {
             return false
           }
           break
         case 'detectState':
-          if (extra.detectState != null && !(extra.detectState === originItem.detectState)) {
+          if (!(extra[key] === originItem[key])) {
             return false
           }
           break
         case 'zone':
-          if (extra.zone && originItem.zoneIdList && !originItem.zoneIdList.includes(extra.zone)) {
-            return false
-          }
-          break
         case 'zoneCategory':
-          if (extra.zoneCategory && originItem.zoneCategoryIdList && !originItem.zoneCategoryIdList.includes(extra.zoneCategory)) {
+          if (originItem[key + 'IdList'] && !originItem[key + 'IdList'].includes(extra[key])) {
             return false
           }
           break
         case 'keyCategory':
-          if (extra.keyCategory){
-            if(originItem.isParent){
-              return false
-            }
-            return originItem.categoryKey == extra.keyCategory
+          if(originItem.isParent){
+            return false
           }
-          break
+          return originItem.categoryKey == extra[key]
         case 'settingCategory':
-          if (extra.settingCategory){
-            if(originItem.isParent){
-              return false
-            }
-            return originItem.category == extra.settingCategory
+          if(originItem.isParent){
+            return false
           }
-          break
+          return originItem.category == extra[key]
         }
       }
       return true
     },
-    filterGridDel(originItem){
-      if(!this.params.delFilter){
-        return true
-      }
-      if(this.filter.del){
-        return true
-      }
-      return originItem.delFlg == 0
+    filterDelFlg(originItem){
+      return !this.params.delFilter || !!this.filter.del || originItem.delFlg == 0
     },
     filterAllShow(originItem){
-      if(!this.params.allShowFilter){
-        return true
-      }
-      if(this.filter.allShow){
-        return true
-      }
-      if(originItem.isParent){
-        return true
-      }
-      return originItem[this.id]
+      return !this.params.allShowFilter || this.filter.allShow || originItem.isParent || originItem[this.id]
     },
     filterParent(originItem) {
-      const parentFilter = Util.getValue(this.params, 'parentFilter', {})
-      if(parentFilter.zoneCategory){
-        if (originItem.zoneCategoryIdList && !originItem.zoneCategoryIdList.includes(parentFilter.zoneCategory)) {
-          return false
-        }
+      const zoneCategory = Util.getValue(this.params, 'parentFilter.zoneCategory')
+      if (zoneCategory && originItem.zoneCategoryIdList && !originItem.zoneCategoryIdList.includes(zoneCategory)) {
+        return false
       }
       return true
     },
     filterDetail(originItem){
-      if(this.filter.detail == null){
-        return true
-      }
-      return this.filter.detail.some(id => id == originItem.txId)
-    },
-    filterGrid(originItem) {
-      const regBool = this.filterGridGeneral(originItem)
-      // 追加フィルタ
-      const extBool = this.filterGridExt(originItem)
-      const delBool = this.filterGridDel(originItem)
-      const allShowBool = this.filterAllShow(originItem)
-      const parentBool = this.filterParent(originItem)
-      const detailBool = this.filterDetail(originItem)
-      return regBool && extBool && delBool && allShowBool && parentBool && detailBool
+      return this.filter.detail == null || this.filter.detail.some(id => id == originItem.txId)
     },
     onFiltered(filteredItems) {
       if(this.compactMode) {
@@ -904,7 +814,21 @@ export default {
       this.totalRows = filteredItems.length
       this.currentPage = 1
     },
-    async execDelete(id) {
+    onDetailFilter(list){
+      this.filter.detail = list
+    },
+
+    // 削除関連処理
+    deleteConfirm(item, index, button) { // 削除確認
+      this.setEmptyMessage()
+      const masterId = this.compactMode? item.updateKey: item[this.id]
+      this.modalInfo.title = this.$i18n.tnl('label.confirm')
+      const confirmName = this.params.confirmName? this.params.confirmName: Util.getValue(this.params, 'name', '') + 'Name'
+      this.modalInfo.content = this.$i18n.tnl(this.params.delFilter && item.delFlg != 0? 'message.completeDeleteConfirm': 'message.deleteConfirm', {target: `${this.$i18n.tnl('label.' + confirmName)}:${item[confirmName]}`})
+      this.modalInfo.id = masterId
+      this.$root.$emit('bv::show::modal', 'modalInfo', button)
+    },
+    async execDelete(id) { // 削除処理実行
       this.replace({showInfo: false})
       const pageName = this.params.dispName? this.params.dispName: this.params.name
       try {
@@ -955,8 +879,25 @@ export default {
         }
       }
     },
-    // 位置把握(一覧)から在席表示に遷移する
-    async mapDisplay(item, filterReset) {
+    resetModal () {
+      this.modalInfo.title = ''
+      this.modalInfo.content = ''
+      this.modalInfo.id = ''
+    },
+
+    // 別画面遷移
+    getAnotherPageParam(name, item) {
+      const pageParam = this.anotherPageParams.find(val => val.name == name)
+      return pageParam && item[pageParam.id]? pageParam: null
+    },
+    async jumpAnotherPage(name, item) {
+      const pageParam = this.getAnotherPageParam(name, item)
+      const pageSendParam = {}
+      pageParam.sendParamNames.forEach(val => pageSendParam[val] = item[val])
+      this.replaceAS({pageSendParam: pageSendParam})
+      this.$router.push(pageParam.jumpPath)
+    },
+    async mapDisplay(item, filterReset) { // 位置把握(一覧)から在席表示に遷移する
       const tx = item.tx
       const selectedTx = {
         btxId: tx.btxId,
@@ -974,11 +915,17 @@ export default {
       this.replaceMain({selectedAreaId})
       this.$router.push('/main/position')
     },
-    onDetailFilter(list){
-      this.filter.detail = list
+
+    // TX詳細ポップアップ関連処理
+    selectedSensor() {
+      if (!Util.getValue(this.selectedTx, 'btxId')) {
+        return []
+      }
+      if (!this.positionedTxMap) return []
+      const ret = SensorHelper.getSensorFromBtxId('meditag', this.positionedTxMap.meditag, this.selectedTx.btxId)
+      return ret? [ret]: []
     },
-    // Txアイコンを選択した場合のポップアップ
-    setupSelectedTx (tx, x, y, isDispThumbnail) {
+    setupSelectedTx (tx, x, y, isDispThumbnail) { // Txアイコンを選択した場合のポップアップ
       const menuGroup = DomUtil.getRect('.menu-groups')  //  ナビの情報取得：x位置調整
       const navbar = DomUtil.getRect('.navbar')  // ナビの情報取得：y位置調整
       const selectedTx = PositionHelper.createTxDetailInfoOnStack(x, y, tx,{x: menuGroup.width, y: navbar.height} , isDispThumbnail? this.preloadThumbnail: {})
@@ -987,6 +934,9 @@ export default {
       if (this.isShowModal()) {
         this.$root.$emit('bv::show::modal', 'detailModal')
       }
+    },
+    isShowModal() { // pir, position
+      return BrowserUtil.isResponsiveMode()
     },
     showDetail(tx, x, y) {
       // アラート表示でずれるので遅延実行を行う
@@ -1012,10 +962,6 @@ export default {
       this.showReady = false
       this.showDetail(tx, evt.pageX - evt.offsetX, evt.pageY - evt.offsetY)
     },
-    isShowModal() { // pir, position
-      return BrowserUtil.isResponsiveMode()
-    },
-
     // ポップアップの自動非表示
     resetDetail() { // p, pir, position
       const selectedTx = {}

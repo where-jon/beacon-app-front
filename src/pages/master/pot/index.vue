@@ -7,7 +7,7 @@
 <script>
 import { mapState } from 'vuex'
 import { APP, EXCLOUD, APP_SERVICE } from '../../../sub/constant/config'
-import { POT_TYPE, BULK } from '../../../sub/constant/Constants'
+import { CATEGORY, BULK } from '../../../sub/constant/Constants'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import * as Util from '../../../sub/util/Util'
 import * as MenuHelper from '../../../sub/helper/dataproc/MenuHelper'
@@ -36,7 +36,7 @@ export default {
     },
     pTypeList: {
       type: Array,
-      default: () => [POT_TYPE.PERSON, POT_TYPE.THING, POT_TYPE.OTHER],
+      default: () => [CATEGORY.PERSON, CATEGORY.THING, CATEGORY.OTHER],
     },
   },
   data() {
@@ -51,8 +51,12 @@ export default {
         bulkUploadPath: this.pPath + '/bulkUpload',
         csvOut: true,
         fields: this.getFields(),
-        extraFilter: this.getExtraFilter(),
-        extraFilterFunc: this.getExtraFilterFunc(),
+        extraFilter: [
+          MenuHelper.isEnabledMenu('group') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'group')? 'group': null, 
+          MenuHelper.isEnabledMenu('category') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'category')? 
+            {key: 'category', optionFunc: this.filteredCategoryOptions}
+            : null
+        ].filter(e => e),
         sortBy: 'ID',
         addFilterFields: ['txIdNames'],
       },
@@ -74,6 +78,11 @@ export default {
     this.replaceAS({thumbnailUrls: this.thumbnailUrlMap})
   },
   methods: {
+    filteredCategoryOptions() {
+      return this.categoryOptions.filter(
+        option => this.pTypeList.includes(Util.v(this.categoryIdMap[option.value], 'categoryType'))
+      )
+    },
     getFullName(){
       return this.pName? this.pName: 'pot'
     },
@@ -94,16 +103,6 @@ export default {
         .concat([
           {key: 'actions', thStyle: {'min-width':'130px !important'} , tdClass: 'thumb-rowdata'},
         ])).filter(val => val)
-    },
-    async onSaved(){
-    },
-    getExtraFilter(){
-      return [MenuHelper.isEnabledMenu('group') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'group')? 'group': null, MenuHelper.isEnabledMenu('category') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'category')? 'category': null].filter(val => val)
-    },
-    getExtraFilterFunc(){
-      return {
-        category: options => options.filter(option => this.categories.find(category => category.categoryId == option.value && this.pTypeList.includes(category.categoryType)))
-      }
     },
     thumbnail(row) {
       let addUrlParam = ''
