@@ -995,6 +995,8 @@ export default {
 .helpLabelHeader {
   font-weight: bold;
   font-size: 16px;
+  background-color: #e9ecef;
+  padding: 7px;
 }
 .helpTitle {
   font-weight: bold;
