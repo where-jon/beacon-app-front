@@ -5,129 +5,19 @@
       <a id="initialize" href="#" @click="initialize" />
       
       <div id="indexList">
-        <p v-if="isEnableHelp" class="helpLabelHeader">
+        <!-- 目次の見出し -->
+        <p class="helpLabelHeader">
           {{ getHelpDescription('indexName') }}
         </p>
-        <!-- 目次の見出し -->
-        <p v-else class="helpLabelHeader">
-          {{ getHelpDescription('helpNone') }}
-        </p>
-        <!-- 目次の内容 -->
-        <div v-if="enablePositionList">
-          <a href="#main_position-list">
-            {{ $i18n.tnl('label.positionList') }}
-          </a><br>
-        </div>
-        <div v-if="enableBulkRegister">
-          <a href="#bulkedit">
-            {{ $i18n.tnl('label.bulkRegister') }}
-          </a><br>
-        </div>
-        <div v-if="enableRegion">
-          <a href="#master_region">
-            {{ $i18n.tnl('label.masterRegion') }}
-          </a><br>
-        </div>
-        <div v-if="enableArea">
-          <a href="#master_area">
-            {{ $i18n.tnl('label.masterArea') }}
-          </a><br>
-        </div>
-        <div v-if="enableExb">
-          <a href="#master_exb">
-            {{ $i18n.tnl('label.masterExb') }}
-          </a><br>
-        </div>
-        <div v-if="enableTx">
-          <a href="#master_tx">
-            {{ $i18n.tnl('label.masterTx') }}
-          </a><br>
-        </div>
-        <div v-if="enablePot">
-          <a href="#master_pot">
-            {{ $i18n.tnl('label.masterPot') }}
-          </a><br>
-        </div>
-        <div v-if="isDisplayCategory">
-          <a href="#master_category">
-            {{ $i18n.tnl('label.masterCategory') }}
-          </a><br>
-        </div>
-        <div v-if="enableGroup">
-          <a href="#master_group">
-            {{ $i18n.tnl('label.masterGroup') }}
-          </a><br>
-        </div>
-        <div v-if="enableUser">
-          <a href="#master_user">
-            {{ $i18n.tnl('label.masterUser') }}
-          </a><br>
-        </div>
-        <div v-if="enableRole">
-          <a href="#master_role">
-            {{ $i18n.tnl('label.masterRole') }}
-          </a><br>
-        </div>
-        <div v-if="isDisplayZoneClass">
-          <a href="#master_zoneClass">
-            {{ $i18n.tnl('label.zoneClass') }}
-          </a><br>
-        </div>
-        <div v-if="isDisplayZoneBlock">
-          <a href="#master_zoneBlock">
-            {{ $i18n.tnl('label.zoneBlock') }}
-          </a><br>
-        </div>
-        <div v-if="enableGateway">
-          <a href="#monitor_gateway">
-            {{ $i18n.tnl('label.monitorGW') }}
-          </a><br>
-        </div>
-        <div v-if="enableMonitorTX">
-          <a href="#monitor_position">
-            {{ $i18n.tnl('label.monitorTX') }}
-          </a><br>
-        </div>
-        <div v-if="enableTelemetry">
-          <a href="#monitor_telemetry">
-            {{ $i18n.tnl('label.monitorEXB') }}
-          </a><br>
-        </div>
-        <div v-if="enableUsageSituation">
-          <a href="#sum_usage-situation">
-            {{ $i18n.tnl('label.SumUtilizationRatio') }}
-          </a><br>
-        </div>
-        <div v-if="enableSensorGraph">
-          <a href="#sum_sensorGraph">
-            {{ $i18n.tnl('label.SensorGraph') }}
-          </a><br>
-        </div>
-        <div v-if="enableStayRatio">
-          <a href="#sum_stayRatio">
-            {{ $i18n.tnl('label.stayRatio') }}
-          </a><br>
-        </div>
-        <div v-if="enablePositionHistory">
-          <a href="#history_positionHistory">
-            {{ $i18n.tnl('label.PositionHistory') }}
-          </a><br>
-        </div>
-        <div v-if="enableSensorHistory">
-          <a href="#history_sensorHistory">
-            {{ $i18n.tnl('label.SensorHistory') }}
-          </a><br>
-        </div>
-        <div v-if="enableNotifyHistory">
-          <a href="#history_notifyHistory">
-            {{ $i18n.tnl('label.notifyHistory') }}
-          </a><br>
-        </div>
-        <div v-if="enableStayRatioBase">
-          <a href="#sum_stayRatioBase">
-            {{ $i18n.tnl('label.stayRatioBase') }}
-          </a><br>
-        </div>
+        <!-- 目次 -->
+        <span v-for="(menuGroup,key) in this.$store.state.menu" :key="key">
+          <div><b>{{ $i18n.tnl('label.'+ menuGroup.key) }}</b></div>
+          <div v-for="page in menuGroup.pages" :key="page.key" class="ml-4">
+            <a href="#master_region">
+              {{ $i18n.tnl('label.'+ page.key) }}
+            </a>
+          </div>
+        </span>
       </div>
       <!-- 説明文 -->
       <div v-if="enablePositionList" id="main_position-list">
