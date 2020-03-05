@@ -17,16 +17,27 @@
           </a>
         </div>
       </div>
-      <!-- 説明文 -->
-      <div v-for="(menuGroup,key) in this.$store.state.menu" :key="key">
+      <!-- ヘルプ本文 -->
+      <div v-for="(menuGroup, key) in this.$store.state.menu" :key="key">
         <div v-for="page in menuGroup.pages" :id="page.key" :key="page.key">
           <hr>
+          <!-- ヘッダー -->
           <p class="helpLabelHeader">
             {{ getLabel(menuGroup.key) }}：{{ getLabel(page.key) }}
           </p>
+          <!-- 概要 -->
           <p class="helpDetail">
             {{ getHelpDescription(page.key, {detected: getLabel('detected'), temporaryUndetect: getLabel('temporaryUndetect'), undetect: getLabel('undetect'), none: getLabel('none')}) }}
           </p>
+          <!-- 追加情報 -->
+          <div v-for="(addDesc, addkey) in getHelpAdditionalDescription(page.key)" :key="addkey">
+            <span class="helpTitle">
+              {{ getLabel(addkey) }}
+            </span>
+            <p class="helpDetail">
+              {{ addDesc }}
+            </p>
+          </div>
         </div>
       </div>
     </div>
@@ -280,6 +291,10 @@ export default {
     },
     createLink(key){
       return '#'+ key
+    },
+    getHelpAdditionalDescription(key, option){
+      const ret = this.$i18n.tnl('helpAdditionalDescription.' + key, option)
+      return ret != 'helpAdditionalDescription.' + key ? ret : null
     },
 
     bulkItems() {
@@ -576,6 +591,7 @@ export default {
 }
 .helpDetail {
   font-size: 14px;
+  white-space: pre-line;  // ボックス端で自動改行、\nで明示的に改行
 }
 hr {
   border-color: #e9ecef;
