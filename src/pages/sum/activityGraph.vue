@@ -37,12 +37,12 @@ export default {
       return stayTime
     },
     createGraph(form, data) {
-      const sum = ArrayUtil.sumData(data, 'axisId')
+      const sum = ArrayUtil.sumData(data, 'axisId') // TODO:_のkeyby
       Util.debug('sum', sum)
 
       const from = new Date(form.datetimeFrom).getTime()
       const to = new Date(form.datetimeTo).getTime()
-      const total = (to - from)/1000
+      const total = (to - from)/1000 // TODO:勤務時間を考慮する
       
       return sum.map( posList => {
         let stayTime = 0
@@ -51,7 +51,7 @@ export default {
           const time = pos.period
           stayTime += time
           const ratio = Math.floor(time/total*100)
-          console.log(ratio)
+          //console.log(ratio)
           return {
             name: zoneName,
             time: DateUtil.toHHmm(time),
@@ -75,6 +75,10 @@ export default {
             ratio
           })
         }
+        // TODO:リファクタリング
+        const pot = this.potIdMap[posList[0].axisId]
+        const groupName = Util.v(pot, 'group.groupName') 
+
         const potMap = this.getPotMap()
         const pot = potMap[posList[0].axisId]
         const potName = pot ? pot.potName : null
@@ -82,26 +86,27 @@ export default {
         const groupId = pot && pot.group ? pot.group.groupId : null
         return {
           name: potName,
-          groupName,
+          groupName: Util.v(pot, 'group.groupName'),
           groupId,
           graph,
           stayTime: DateUtil.toHHmm(stayTime),
           lostTime: DateUtil.toHHmm(total - stayTime)
         }
-      }).filter(view => view.name != null && !form.groupId || (view.groupId == form.groupId))
+      }).filter(e => !form.groupId || e.groupId == form.groupId)
     },
     getStackColor(index) {
       // 設定が6色以上ある事が前提
+      // TODO:ColorUtilへ
       return DISP.SUM_STACK_COLOR[index % DISP.SUM_STACK_COLOR.length]
     },
-    getPotMap() {
-      const potMap = {}
-      this.pots.forEach(pot => {
-        potMap[pot.txIds[0]] = pot
-      })
-      Util.debug('potMap', potMap)
-      return potMap
-    },
+    // getPotMap() {
+    //   const potMap = {}
+    //   this.pots.forEach(pot => {
+    //     potMap[pot.txIds[0]] = pot
+    //   })
+    //   Util.debug('potMap', potMap)
+    //   return potMap
+    // },
   }
 }
 </script>

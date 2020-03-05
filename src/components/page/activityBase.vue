@@ -115,12 +115,6 @@ export default {
     }
   },
   computed: {
-    ...mapState('app_service', [
-      'groups',
-      'pots',
-      'categories',
-      'zones',
-    ]),
     otherColor() {
       return APP.STAY_SUM.OTHER_COLOR
     },
@@ -175,7 +169,7 @@ export default {
       return []
     },
     async display(isDownload) {
-      this.container ? this.container.removeAllChildren() : null
+      //this.container ? this.container.removeAllChildren() : null // TODO:消す
       this.replace({showAlert: false})
       this.showProgress()
       try {
@@ -187,7 +181,7 @@ export default {
         }
 
         // データ取得
-        const data = await this.$parent.getData(this.form)
+        const data = await this.$parent.getData(this.form) // TODO:fetchData
         if (_.isEmpty(data)) {
           this.message = this.$i18n.t('message.listEmpty')
           this.replace({showAlert: true})
@@ -197,7 +191,7 @@ export default {
 
         // グラフ作成
         this.viewList = this.$parent.createGraph(this.form, data)
-        if(isDownload){
+        if(isDownload){ // TODO:ダウンロードにする
           this.$parent.download(this.form, data)
         }
 

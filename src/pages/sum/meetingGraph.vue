@@ -36,14 +36,14 @@ export default {
       Util.debug('data', data)
 
       let ret = null
-      if(DISP.MEETING.AXIS_TYPE == "exb"){
+      if(DISP.MEETING.AXIS_TYPE == "exb"){ // TODO:DISPではなくAPPへ
         const exbMap = this.getExbMap()
-        ret = data.filter( d => {
+        ret = data.filter( d => { // TODO:filterはいらない
           const exb = exbMap[d.axisId]
           return exb && exb.location
         }).map( d => {
           const exb = exbMap[d.axisId]
-          return {...d, exb}
+          return {...d, name:exb.deviceId}
         })
       }else if(DISP.MEETING.AXIS_TYPE == "location" || DISP.MEETING.AXIS_TYPE == "zone"){
         const locationMap = this.getLocationMap()
@@ -81,28 +81,27 @@ export default {
         const graph = []
         let stayRatio = 0
         const max = DISP.MEETING.MAX_NUM
-        let i=max
-        while(i > 0){
-          const times = posList.filter(pos => pos.cnt==i || (i==max && pos.cnt>=max))
-          const time = times.length * APP.POSITION_SUMMARY_INTERVAL * 60
-          const ratio = Math.floor(times.length * APP.POSITION_SUMMARY_INTERVAL * 60 / total * 100)
-          stayRatio += ratio
-          const color = this.getStackColor(i)
+        //let i = max
+        for(let i=1; i<=max; i++){
+          const count = posList.filter(pos => pos.cnt==i || (i==max && pos.cnt>=max)).length
+          const second = count * APP.POSITION_SUMMARY_INTERVAL * 60
+          const percent = second / total * 100.0
+          stayRatio += percent
+          const color = this.getStackColor(i) // TODO
           graph.push({
             name: i,
-            style: `width: ${ratio}% !important; background: ${color};`,
-            time: DateUtil.toHHmm(time),
-            ratio
+            style: `width: ${percent}% !important; background: ${color};`,
+            time: DateUtil.toHHmm(second),
+            percent: Math.floor(percent)
           })
-          i--
         }
+        // TODO:0人追加
 
         // リスト作成
-        const name = this.getName(posList[0])
-        const areaName = this.getArea(posList[0]).areaName
-        const areaId = this.getArea(posList[0]).areaId
+        const areaName = this.getArea(posList[0]).areaName // TODO
+        const areaId = this.getArea(posList[0]).areaId // TODO
         return {
-          name,
+          name: this.getName(posList[0]), // TODO
           areaId,
           areaName,
           graph,
@@ -110,6 +109,7 @@ export default {
         }
       }).filter(view => view.name != null && (!form.areaId || form.areaId==view.areaId))
     },
+    // TODO:以下消す
     getName(pos){
       if(DISP.MEETING.AXIS_TYPE == "exb"){
         return pos.exb.deviceId
@@ -152,13 +152,13 @@ export default {
     // csvのカラムを返す
     getCol(){
       if(DISP.MEETING.AXIS_TYPE == "exb"){
-        return "device_id"
+        return "device_id,location_name" // TODO:日本語化
       }
       if(DISP.MEETING.AXIS_TYPE == "location"){
-        return "location_cd"
+        return "location_cd,location_name"
       }
       if(DISP.MEETING.AXIS_TYPE == "zone"){
-        return "zone_cd"
+        return "zone_cd,zone_name"
       }
       return null
     },
@@ -171,7 +171,7 @@ export default {
       const to = new Date(form.datetimeTo).getTime()
       const interval = APP.POSITION_SUMMARY_INTERVAL * 60 * 1000
 
-      const sum = ArrayUtil.sumData(data, 'timestamp') // なぜかできない
+      const sum = ArrayUtil.sumData(data, 'timestamp') // TODO:keyBy
       Util.debug('sum', sum)
 
       let csv = "basetime," + this.getCol() + ",count\n"
@@ -180,12 +180,15 @@ export default {
           console.log(sum[time].length)
           sum[time].forEach(pos => {
             const cd = this.getCd(pos)
+            // TODO:nameも追加
             csv += this.formatTime(time) + "," + cd + "," + pos.cnt + "\n"
           })
         }
       }
 
-      const searchDate = moment(form.date).format('YYYY-MM-DD')
+      const searchDate = moment(form.date).format('YYYY-MM-DD') // TODOファイル名をfrom-toにする
+
+      // TODO:Areaに変更
       const group = form.groupId? this.groups.find((val) => val.groupId == form.groupId): null
       const groupName =  group? '_' + group.groupName: ''
 
@@ -201,6 +204,7 @@ export default {
       const m = date.getMinutes()
       return (h >= 10 ? h : "0" + h) + ":" + (m >= 10 ? m : "0" + m)
     },
+    // TODO
     getExbMap() {
       const exbMap = {}
       this.exbs.forEach(exb => {
