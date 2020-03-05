@@ -413,47 +413,26 @@ export default {
         }, {})
       })
     },
-    isDetailReferenceable() { // TODO: 以下同じパターンの繰り返し。パラメータに変えて一つにまとめる。
-      if(this.$parent.$options.computed.isDetailReferenceable){
-        return this.$parent.$options.computed.isDetailReferenceable.call(this.$parent)
-      }
-      return MenuHelper.isDetailReferenceable(this.indexPath)
+    isDetailReferenceable() {
+      return this.callParentMethod('isDetailReferenceable')
     },
     isUpdatable() {
-      if(this.$parent.$options.computed.isUpdatable){
-        return this.$parent.$options.computed.isUpdatable.call(this.$parent)
-      }
-      return MenuHelper.isUpdatable(this.indexPath)
+      return this.callParentMethod('isUpdatable')
     },
     isDeleteable() {
-      if(this.$parent.$options.computed.isDeleteable){
-        return this.$parent.$options.computed.isDeleteable.call(this.$parent)
-      }
-      return MenuHelper.isDeleteable(this.indexPath)
+      return this.callParentMethod('isDeleteable')
     },
     isRegistable() {
-      if(this.$parent.$options.computed.isRegistable){
-        return this.$parent.$options.computed.isRegistable.call(this.$parent)
-      }
-      return MenuHelper.isRegistable(this.indexPath)
+      return this.callParentMethod('isRegistable')
     },
     isBulkRegistable() {
-      if(this.$parent.$options.computed.isBulkRegistable){
-        return this.$parent.$options.computed.isBulkRegistable.call(this.$parent)
-      }
-      return MenuHelper.isBulkRegistable(this.indexPath)
+      return this.callParentMethod('isBulkRegistable')
     },
     isBulkReferenceable() {
-      if(this.$parent.$options.computed.isBulkReferenceable){
-        return this.$parent.$options.computed.isBulkReferenceable.call(this.$parent)
-      }
-      return MenuHelper.isBulkReferenceable(this.indexPath)
+      return this.callParentMethod('isBulkReferenceable')
     },
     isEditable() {
-      if(this.$parent.$options.computed.isEditable){
-        return this.$parent.$options.computed.isEditable.call(this.$parent)
-      }
-      return MenuHelper.isEditable(this.indexPath)
+      return this.callParentMethod('isEditable')
     },
     ...mapState([
       'featureList',
@@ -573,6 +552,12 @@ export default {
     ]),
 
     // 共通
+    callParentMethod(method) {
+      if (this.$parent.$options.computed[method]) {
+        return this.$parent.$options.computed[method].call(this.$parent)
+      }
+      return MenuHelper[method](this.indexPath)
+    },
     thumbnail(row) {
       return this.$parent.$options.methods.thumbnail.call(this.$parent, row)
     },
@@ -651,8 +636,13 @@ export default {
         params.word = this.filter.word
         params.category = this.selectedCategoryId
         params.group = this.selectedGroupId
+        // EXT_DEFでlistタイプのもので選択肢が多言語化される場合、予め絞り込みを行ってサーバに送る（"toilet=male,share;item=abc"のように指定）
+        if (params.word) {
+          const lword = this.createListWordParam(params.word)
+          if (lword) params.lword = lword
+        }
         const response = await AppServiceHelper.fetchCompactList(`${this.appServicePath}/list/${this.perPage}/${this.currentPage}/${this.sortBy}/${this.sortDesc? 'desc': 'asc'}` , params)
-        if( this.$parent.$options.methods && this.$parent.$options.methods.editResponse && response.data) {
+        if (this.$parent.$options.methods && this.$parent.$options.methods.editResponse && response.data) {
           await this.$parent.$options.methods.editResponse.call(this.$parent, response.data)
         }
         this.dataItemList = response.data
@@ -668,7 +658,29 @@ export default {
       }
     },
     createListParam(word) {
-      return this.$parent.$options.methods && this.$parent.$options.methods.createListParams? this.$parent.$options.methods.createListParams.call(this.$parent): {}
+      const func = Util.v(this.$parent.$options.methods, 'createListParams')
+      return func? func.call(this.$parent): {}
+    },
+    createListWordParam(word) { // EXT_DEFのlistタイプの検索用パラメータを作成
+      const ret = []
+      const WITH = Util.v(APP[this.params.name.toUpperCase()], 'WITH', [])
+      const EXT_DEF = Util.v(APP[this.params.name.toUpperCase()], 'EXT_DEF', [])
+      WITH.forEach(key => {
+        const def = EXT_DEF.find(e => e.key == key)
+        if (def && def.showlist && def.type == 'list' && def.format) {
+          const candidates = []
+          def.format.split('|').forEach(val => {
+            const label = this.$i18n.tnl('label.' + val)
+            if (label && label.indexOf(word) != -1) {
+              candidates.push(val)
+            }
+          })
+          if (candidates.length > 0) {
+            ret.push(key + '=' + candidates.join(','))
+          }
+        }
+      })
+      return ret.length > 0? ret.join(';'): null
     },
 
     // CSVダウンロード

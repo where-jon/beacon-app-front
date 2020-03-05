@@ -141,7 +141,7 @@
     <b-row class="mt-3">
       <canvas v-if="!showMeditag" v-show="isLoading || !isHeatmap" id="map" ref="map" @click="closeVueSelect" />
       <b-col v-if="showMeditag" v-show="isLoading || !isHeatmap">
-        <canvas id="map" ref="map" @click="closeVueSelect" class="floatLeft mr-5" />
+        <canvas id="map" ref="map" class="floatLeft mr-5" @click="closeVueSelect" />
         <div v-if="isShowRight && hasMeditagSensors()" class="rightPane">
           <meditag :sensors="sensorMap.meditag" :is-popup="false" class="rightPaneChild" />
         </div>
