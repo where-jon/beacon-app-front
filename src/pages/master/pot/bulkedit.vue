@@ -63,7 +63,7 @@ export default {
   },
   methods: {
     async onSaving() {
-      await this.$refs.bulkEdit.bulkSave({numberList: 'potType'})
+      await this.$refs.bulkEdit.bulkSave2({numberList: 'potType'})
     },
     restructTx(entity, dummyKey){
       const headerName = Util.hasValue(entity.btxId)? 'btxId': Util.hasValue(entity.minor)? 'minor': 'btxId'
