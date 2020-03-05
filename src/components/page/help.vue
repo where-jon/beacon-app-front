@@ -8,9 +8,11 @@
         <p v-if="isEnableHelp" class="helpLabelHeader">
           {{ getHelpDescription('indexName') }}
         </p>
+        <!-- 目次の見出し -->
         <p v-else class="helpLabelHeader">
           {{ getHelpDescription('helpNone') }}
         </p>
+        <!-- 目次の内容 -->
         <div v-if="enablePositionList">
           <a href="#main_position-list">
             {{ $i18n.tnl('label.positionList') }}
@@ -127,6 +129,7 @@
           </a><br>
         </div>
       </div>
+      <!-- 説明文 -->
       <div v-if="enablePositionList" id="main_position-list">
         <hr>
         <p class="helpLabelHeader">
