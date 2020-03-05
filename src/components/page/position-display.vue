@@ -135,7 +135,7 @@ export default {
         this.showProgress()
         // positionデータ取得
         await PositionHelper.loadPosition(null, true, true)
-        this.positions = PositionHelper.filterPositions(undefined, false, true, null, null, null, null)
+        this.positions = PositionHelper.filterPositions(undefined, false, true, null, null, null, null).filter(p => p.tx && p.tx.disp==1)
 
         if (Util.hasValue(APP.POS.PROHIBIT_ALERT)
           && (Util.hasValue(APP.POS.PROHIBIT_GROUP_ZONE)||Util.hasValue(APP.POS.LOST_GROUP_ZONE))) {
