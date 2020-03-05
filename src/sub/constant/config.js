@@ -264,6 +264,7 @@ export const APP = { // 機能面に関する設定
     SCALE_TIMES: [5, 12, 18], // 滞在率画面グラフ目盛り時刻(時)
     OTHER_COLOR: '#404040', // 滞在率その他の色
     GRAPH_LIMIT: 0.3, // 日単位滞在分析グラフの足切り％
+    ENABLE_DISPLAY_SPECIFIED: false // 日単位滞在分析画面の表示指定ボタン表示有無
   },
   // 交流分析
   PROXIMITY: {

@@ -444,6 +444,15 @@ export const PROXIMITY_TARGET = {
   }
 }
 
+export const STAY_RATIO_BASE_FILTER_KIND = {
+  getOptions(){
+    return [
+      {value:null, text: ''},
+      {value:'pot', text: i18n.t('label.pot')},
+    ]
+  }
+}
+
 export const THERMOHUMIDITY = {
   CALC: {
     DISCOMFORT: 1,
