@@ -40,9 +40,12 @@ export default {
       const sum = ArrayUtil.sumData(data, 'axisId')
       Util.debug('sum', sum)
 
-      const from = new Date(form.datetimeFrom).getTime()
-      const to = new Date(form.datetimeTo).getTime()
-      const total = (to - from)/1000 // TODO:勤務時間を考慮する
+      const start = new Date(form.datetimeFrom)
+      const end = new Date(form.datetimeTo)
+      const total = this.getTotal(start, end)
+
+      const from = start.getTime()
+      const to = end.getTime()
       
       return sum.map( posList => {
         let stayTime = 0
@@ -84,6 +87,39 @@ export default {
           lostTime: DateUtil.toHHmm(total - stayTime)
         }
       }).filter(e => !form.groupId || e.groupId == form.groupId)
+    },
+    getTotal(fromDt, toDt){
+      let fromDate = fromDt.getYear()*10000 + fromDt.getMonth()*100 + fromDt.getDate()
+      let toDate = toDt.getYear()*10000 + toDt.getMonth()*100 + toDt.getDate()
+      const start = (Math.floor(APP.SVC.STAY_SUM.START / 100)*60 + APP.SVC.STAY_SUM.START % 100) * 60
+      const end = (Math.floor(APP.SVC.STAY_SUM.END / 100)*60 + APP.SVC.STAY_SUM.END % 100) * 60
+
+      // 開始と終了時間を丸める
+      let fromTime = fromDt.getHours() * 3600 + fromDt.getMinutes() * 60 + fromDt.getSeconds()
+      let toTime = toDt.getHours() * 3600 + toDt.getMinutes() * 60 + toDt.getSeconds()
+      fromTime = Math.max(fromTime, start)
+      if(fromTime > end){
+        fromTime = start
+        fromDate++        
+      }
+      if(toTime < start){
+        toTime = end
+        toDate--
+      }
+      toTime = Math.min(toTime, end)
+
+      // 1日の場合
+      if(fromDate == toDate){
+        console.log('oneDay')
+        return toTime - fromTime
+      }
+      // 2日以上の場合
+      let total = 0
+      total += end - fromTime
+      total += toTime - end
+      total += (toDate - fromDate - 1) * (end - start)
+      console.log('total', total)
+      return total
     },
   }
 }
