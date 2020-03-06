@@ -9,16 +9,14 @@
         <p class="helpLabelHeader">
           {{ getHelpDescription('indexName') }}
         </p>
-        <!-- 目次：基本 -->
+        <!-- 目次：イントロダクション -->
         <div>
           <div class="list-group mt-3">
             <b>{{ getHelpDescription('introduction') }}</b>
           </div>
-          <div v-for="(menuGroup,key) in helpBaseKeys" :key="key">
-            <div class="list-group-item list-group-item-action">
-              {{ getLabel(menuGroup) }}
-            </div>
-          </div>
+          <a v-for="(intro,key) in helpBaseKeys" :key="key" :href="createInternalLink(intro)" class="list-group-item list-group-item-action">
+            {{ getLabel(intro) }}
+          </a>
         </div>
         <!-- 目次：画面 -->
         <div v-for="(menuGroup,key) in this.$store.state.menu" :key="key">
@@ -30,7 +28,27 @@
           </a>
         </div>
       </div>
-      <!-- ヘルプ本文 -->
+      <!-- ヘルプ本文：イントロダクション -->
+      <div v-for="intro in helpBaseKeys" :id="intro" :key="intro">
+        <hr>
+        <!-- ヘッダー -->
+        <div class="helpLabelHeader">
+          {{ getLabel(intro) }}
+        </div>
+        <!-- 概要 -->
+        <span class="helpDetail align-top">
+          {{ getHelpIntroduction(intro) }}
+        </span>
+        <!-- 目次へ戻るボタン -->
+        <div class="text-right">
+          <a href="#indexList">
+            <div class="btn btn-light">
+              {{ getHelpDescription('indexName') }}
+            </div>
+          </a>
+        </div>
+      </div>
+      <!-- ヘルプ本文：画面 -->
       <div v-for="(menuGroup, key) in this.$store.state.menu" :key="key">
         <div v-for="page in menuGroup.pages" :id="page.key" :key="page.key">
           <hr>
@@ -125,6 +143,9 @@ export default {
     },
     getHelpDescription(key, option){
       return this.$i18n.tnl('helpDescription.' + key, option)
+    },
+    getHelpIntroduction(key, option){
+      return this.$i18n.tnl('helpIntroduction.' + key, option)
     },
     getHelpScreenDescription(key, option){
       return this.$i18n.tnl('helpScreenDescription.' + key, option)
