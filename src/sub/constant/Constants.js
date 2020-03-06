@@ -1166,6 +1166,16 @@ export const MENU = [
         icon: 'clock',
       },
       {
+        key: 'activityGraph',
+        path: 'activityGraph',
+        icon: 'clock',
+      },
+      {
+        key: 'meetingGraph',
+        path: 'meetingGraph',
+        icon: 'clock',
+      },
+      {
         key: 'proximityGraph',
         path: 'proximityGraph',
         icon: 'chart-bar',

@@ -3,6 +3,8 @@
  * @module util/ColorUtil
  */
 
+import { DISP } from '../constant/config'
+
 /**
  * カラーコードの先頭から'#'を除去し、6文字になるように0埋めした文字列を取得。
  * @method
@@ -78,4 +80,11 @@ export const getRGBA = (colorCode, opacity) => {
     let alpha = opacity? opacity: 1
     return 'rgba(' + red + ',' + green + ',' + blue + ',' + alpha + ')'
   }
+}
+
+/**
+ * 色配列から色を取得
+ */
+export function getStackColor(index){
+  return DISP.SUM_STACK_COLOR[index % DISP.SUM_STACK_COLOR.length]
 }

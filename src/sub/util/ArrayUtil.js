@@ -201,3 +201,18 @@ export const partitioningArray = (array, num) => {
   return c
 }
 
+/**
+ * 配列を指定したキーで集約する
+ * @param {Object[]} data 
+ * @param {String} key 
+ */
+ export const sumData = (data, key) => {
+  return data.reduce( (sum, obj) => {
+    const v = obj[key]
+    if(!sum[v]){
+      sum[v] = []
+    }
+    sum[v].push(obj)
+    return sum
+  }, [])
+}
