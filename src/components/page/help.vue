@@ -11,7 +11,9 @@
         </p>
         <!-- 目次 -->
         <div v-for="(menuGroup,key) in this.$store.state.menu" :key="key">
-          <div class="list-group mt-3"><b>{{ getLabel(menuGroup.key) }}</b></div>
+          <div class="list-group mt-3">
+            <b>{{ getLabel(menuGroup.key) }}</b>
+          </div>
           <a v-for="page in menuGroup.pages" :key="page.key" :href="createInternalLink(page.key)" class="list-group-item list-group-item-action">
             {{ getLabel(page.key) }}
           </a>
@@ -29,7 +31,7 @@
           <span class="helpDetail align-top">
             {{ getHelpScreenDescription(page.key) }}
           </span>
-          <!-- 追加情報 -->
+          <!-- 概要以外の説明事項 -->
           <div v-for="(addDesc, addkey) in getHelpAdditionalDescription(page.key)" :key="addkey" class="mt-2">
             <span class="helpTitle">
               {{ getLabel(addkey) }}
@@ -38,7 +40,7 @@
               {{ addDesc }}
             </span>
           </div>
-          <!-- CSVファイル -->
+          <!-- CSVファイルの項目説明 -->
           <div v-if="getCsvItems(page.key)" class="mt-2">
             <span class="helpTitle">
               {{ getLabel('csvFile') }}
@@ -48,7 +50,14 @@
             </span>
             <b-table striped hover small :items="getCsvItems(page.key)" :fields="csvFields" />
           </div>
-          <!-- ----------- -->
+          <!-- 目次リンク -->
+          <div class="text-right">
+            <a href="#indexList">
+              <div class="btn btn-light">
+                目次
+              </div>
+            </a>
+          </div>
         </div>
       </div>
     </div>
