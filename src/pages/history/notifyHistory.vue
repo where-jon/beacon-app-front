@@ -152,7 +152,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import { APP } from '../../sub/constant/config'
@@ -165,7 +164,6 @@ import * as AppServiceHelper from '../../sub/helper/dataproc/AppServiceHelper'
 import { getCharSet } from '../../sub/helper/base/CharSetHelper'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import commonmixin from '../../components/mixin/commonmixin.vue'
@@ -276,9 +274,6 @@ export default {
     }
   },
   computed: {
-    // ...mapState('app_service', [
-    //   'txs'
-    // ]),
     notifyStateOptions() {
       return _.slice(NOTIFY_STATE.getOptions()).filter((val) => APP.NOTIFY.STATE_TYPES.includes(val.index))
     },
@@ -305,13 +300,13 @@ export default {
     this.form.datetimeTo = DateUtil.getDatetime(date)
     this.form.notifyState = this.notifyStateOptions[0].value
     const user = await AppServiceHelper.getCurrentUser()
-    const isProvider = LocalStorageHelper.getLogin().isProvider
+    const isProviderUser = LocalStorageHelper.getLogin().isProviderUser
     if(user.role.roleFeatureList){
       user.role.roleFeatureList.find((tval) =>
         tval.feature.featureName == 'ALL_REGION'? this.userState = 'ALL_REGION':this.userState = null
       )
-    }else if(isProvider){
-      isProvider? this.userState = 'ALL_REGION':this.userState = null
+    }else if(isProviderUser){
+      isProviderUser? this.userState = 'ALL_REGION':this.userState = null
     }
 
     this.userState == 'ALL_REGION'? this.bTx = true: this.bTx = false

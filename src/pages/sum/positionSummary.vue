@@ -25,7 +25,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import moment from 'moment'
@@ -34,7 +33,6 @@ import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as StringUtil from '../../sub/util/StringUtil'
 import { getCharSet } from '../../sub/helper/base/CharSetHelper'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as ValidateHelper from '../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
@@ -56,15 +54,6 @@ export default {
       },
       message: '',
     }
-  },
-  computed: {
-    // ...mapState('app_service', [
-    //   'txs',
-    //   'exbs',
-    // ]),
-    iosOrAndroid() {
-      return BrowserUtil.isAndroidOrIOS()
-    },
   },
   async created() {
     this.form.date = DEV.DEFAULT_DATE != '' ? new Date(DEV.DEFAULT_DATE) : moment().add(-1, 'days').format('YYYYMMDD')

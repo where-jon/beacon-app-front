@@ -10,6 +10,7 @@ import * as DateUtil from '../../util/DateUtil'
 import * as StringUtil from '../../util/StringUtil'
 import * as AppServiceHelper from './AppServiceHelper'
 
+const areaImages = [] // Use normal variable instead of state
 
 let store
 let i18n
@@ -24,6 +25,13 @@ export const setApp = (pStore, pi18n) => {
   store = pStore
   i18n = pi18n
 }
+
+/** 実験 not work yet */
+const master = {}
+export const setMaster = (key, val) => {
+  master[key] = val
+}
+export const getMaster = (key) => master[key]
 
 /**
  * マスタデータの強制更新フラグを取得する。
@@ -91,28 +99,6 @@ const appStateConf = {
       }))
     }
   },
-  // absentDisplayZones: {
-  //   path: '/core/zone/absentDisplayZones'
-  // },
-  // lostZones: {
-  //   path: '/core/zone/lostZones',
-  // },
-  // prohibits: {
-  //   path: '/core/zone/prohibit',
-  //   beforeCommit: arr => {
-  //     let result = arr.map(val => (val? { // TODO: valがundefinedになる
-  //       ...val,
-  //       zoneId: val.zoneId,
-  //       zoneName:val.zoneName,
-  //       x: val.x,
-  //       y: val.y,
-  //       w: val.w,
-  //       h: val.h,
-  //       areaId: val.areaId,
-  //     }: null))
-  //     return result
-  //   }
-  // },
 }
 
 /**
@@ -164,14 +150,15 @@ export const loadAreaImage = async (areaId, force) => {
     console.log('empty areas', areaId)
     return
   }
-  if (store.state.app_service.areaImages.find(areaImage => areaImage.areaId == areaId) && !force) {
+  if (areaImages[areaId] && !force) {
     console.log('FOUND areas', areaId)
-    return
+    return areaImages[areaId]
   }
   console.log('load areas', areaId)
   let base64 = await AppServiceHelper.fetchMapImage('/core/area/' + areaId + '/mapImage')
-  const areaImages = [{areaId, mapImage: base64}]
-  store.commit('app_service/replaceAS', {areaImages})
+  // eslint-disable-next-line require-atomic-updates
+  areaImages[areaId] = base64
+  return base64
 }
 
 /**
@@ -180,9 +167,6 @@ export const loadAreaImage = async (areaId, force) => {
  * @async
  */
 export const loadAreaImages = async () => {
-  if (store.state.app_service.areas.length == 0) {
-    await load('area')
-  }
   store.state.app_service.areas.forEach(async (area) => {
     await loadAreaImage(area.areaId)
   })
@@ -203,10 +187,12 @@ export const initShowMessage = () => {
  * @return {String}
  */
 export const getMapImage = areaId => {
-  const areaImage = _.find(store.state.app_service.areaImages, (areaImage) => {
-    return areaImage.areaId == areaId
-  })
-  return areaImage && areaImage.mapImage
-
+  return areaImages[areaId]
 }
 
+/**
+ * areaImagesを全削除する
+ */
+export const clearAreaImages = () => {
+  areaImages.length = 0
+}

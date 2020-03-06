@@ -131,7 +131,6 @@ import * as Util from '../../sub/util/Util'
 import * as AppServiceHelper from '../../sub/helper/dataproc/AppServiceHelper'
 import { getCharSet } from '../../sub/helper/base/CharSetHelper'
 import * as SensorHelper from '../../sub/helper/domain/SensorHelper'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as ValidateHelper from '../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import * as VueSelectHelper from '../../sub/helper/ui/VueSelectHelper'
@@ -214,11 +213,6 @@ export default {
     }
   },
   computed: {
-    // ...mapState('app_service', [
-    //   'exbs',
-    //   'txs',
-    //   'sensors',
-    // ]),
     ...mapState([
       'showAlert',
     ]),
@@ -235,9 +229,6 @@ export default {
         }
         return false
       })
-    },
-    iosOrAndroid() {
-      return BrowserUtil.isAndroidOrIOS()
     },
     showDevice(){
       return this.form.sensorId == SENSOR.TEMPERATURE && APP.SENSORGRAPH.WITH_DEVICE

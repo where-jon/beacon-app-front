@@ -109,9 +109,6 @@ export default {
     }
   },
   computed: {
-    loginId() {
-      return this.$store.state.loginId
-    },
     extNavClasses() {
       const theme = getThemeClasses()
       return _.findKey(theme, (val) => {return val})

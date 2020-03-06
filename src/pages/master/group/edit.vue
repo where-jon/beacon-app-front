@@ -45,7 +45,6 @@ import * as ColorUtil from '../../../sub/util/ColorUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
 import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
-import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
@@ -86,7 +85,6 @@ export default {
   computed: {
     ...mapState('app_service', [
       'group'
-      // , 'groups',
     ]),
     shapes(){
       return SHAPE.getShapes()

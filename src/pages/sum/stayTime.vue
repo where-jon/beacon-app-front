@@ -135,19 +135,9 @@ export default {
     }
   },
   computed: {
-    // ...mapState('app_service', [
-    //   'pots',
-    //   'areas',
-    //   'zones',
-    //   'categories',
-    //   'groups',
-    // ]),
     ...mapState([
       'showAlert',
     ]),
-    iosOrAndroid() {
-      return BrowserUtil.isAndroidOrIOS()
-    },
   },
   watch: {
     'vueSelected.filter': {

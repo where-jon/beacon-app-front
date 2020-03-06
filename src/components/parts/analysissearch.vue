@@ -87,17 +87,15 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import { APP, DEV } from '../../sub/constant/config'
+import { APP } from '../../sub/constant/config'
 import { POT_TYPE } from '../../sub/constant/Constants'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
 import * as Util from '../../sub/util/Util'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as ValidateHelper from '../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
@@ -136,12 +134,6 @@ export default {
     }
   },
   computed: {
-    // ...mapState('app_service', [
-    //   'areas',
-    //   'categories',
-    //   'groups',
-    //   'pots',
-    // ]),
     enableCategory () {
       return MenuHelper.isEnabledMenu('category') && ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'category')
     },

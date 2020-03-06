@@ -8,7 +8,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { APP } from '../../sub/constant/config'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as CsvUtil from '../../sub/util/CsvUtil'
@@ -17,7 +16,6 @@ import * as Util from '../../sub/util/Util'
 import { getCharSet } from '../../sub/helper/base/CharSetHelper'
 import * as DetectStateHelper from '../../sub/helper/domain/DetectStateHelper'
 import * as EXCloudHelper from '../../sub/helper/dataproc/EXCloudHelper'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import commonmixin from '../../components/mixin/commonmixin.vue'
@@ -44,9 +42,6 @@ export default {
     }
   },
   computed: {
-    // ...mapState('app_service', [
-    //   'txs', 'exbs', 'btxIdMap', 'deviceIdMap'
-    // ]),
     allCount() {
       return this.positions.length
     },
@@ -123,7 +118,7 @@ export default {
           finalReceiveTimestamp: this.getTimestamp(e.updatetime),
           powerLevel: this.$refs.monitorTable.getPositionPowerLevelLabel ? this.$refs.monitorTable.getPositionPowerLevelLabel(e.power_level) : null,
           state: this.$refs.monitorTable.getStateLabel('tx', e.updatetime),
-          sensorIdList: Util.getValue(tx, 'sensorList', []).map(sensor => sensor.sensorId), // TODO: 用途は？
+          sensorIdList: Util.getValue(tx, 'sensorList', []).map(sensor => sensor.sensorId),
           powerLevelTimestamp: this.getTimestamp(e.power_level_timestamp),
         }
       })
@@ -158,7 +153,7 @@ export default {
             sRet.push({
               ...sensorHistory,
               btxId: sensorHistory.btxId,
-              name: Util.getValue(tx, 'potName', ''),
+              name: Util.getValue(tx, 'pot.potName'),
               powerLevel: this.$refs.monitorTable.getPositionPowerLevelLabel(sensorHistory.power_level),
               finalReceiveTimestamp: this.getTimestamp(EXCloudHelper.getDispTime(sensorHistory)),
               state: this.$refs.monitorTable.getStateLabel('tx', EXCloudHelper.getDispTime(sensorHistory)),

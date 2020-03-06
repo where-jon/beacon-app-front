@@ -10,8 +10,6 @@ import { mapState } from 'vuex'
 import { APP } from '../../../sub/constant/config'
 import * as Util from '../../../sub/util/Util'
 import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
-import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
-import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
@@ -33,7 +31,6 @@ export default {
   computed: {
     ...mapState('app_service', [
       'group'
-      // , 'groups'
     ]),
   },
   async created() {

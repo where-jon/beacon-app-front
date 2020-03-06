@@ -111,7 +111,6 @@ export default {
         this.message = ''
         const theme = LocalStorageHelper.getLocalStorage(this.userId + '-theme')
         const charSet = LocalStorageHelper.getLocalStorage(this.userId + '-charSet')
-        this.replace({pass: this.password})
         this.replaceSetting({theme, charSet})
         this.hideProgress()
       },

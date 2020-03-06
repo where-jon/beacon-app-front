@@ -1,6 +1,6 @@
 <template>
   <div class="iframeWrap">
-    <iframe v-if="viewUrl" ref="parentFrame" width="100%" :style="iframeStyle" @load="loadCompleteFunc" allowfullscreen></iframe>
+    <iframe v-if="viewUrl" ref="parentFrame" width="100%" :style="iframeStyle" allowfullscreen @load="loadCompleteFunc" />
   </div>
 </template>
 

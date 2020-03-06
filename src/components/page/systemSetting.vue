@@ -6,7 +6,7 @@
     <alert v-if="!callee" :message="message" />
     <div class="container">
       <m-list ref="mList" :params="params" :list="settingList" :per-page="settingList.length" :use-pagenation="false" :alert-force-hide="true" max-filter-length="40" />
-      <b-form id="updateForm" @submit.prevent="onUpdateSubmit" class="mb-3">
+      <b-form id="updateForm" class="mb-3" @submit.prevent="onUpdateSubmit">
         <b-button v-if="!callee && isEditable && !isShowNewForm" v-t="'label.update'" :variant="theme" type="submit" class="ml-2" @click="doBeforeSubmit(true)" />
         <b-button v-if="isRegistable && !isShowNewForm && useRegistForm" v-t="'label.addForm'" :variant="theme" type="button" class="float-right" @click="showNewForm(true)" />
       </b-form>
@@ -140,7 +140,10 @@ export default {
         disableTableButtons: true,
         addFilterFields: ['title', 'inputData'],
         allDispFields: ['title', 'defaultVal'],
-        extraFilter: [this.useKeyCategoryFilter? 'keyCategory': null, this.useSettingCategoryFilter? 'settingCategory': null].filter(val => val),
+        extraFilter: [
+          this.useKeyCategoryFilter? 'keyCategory': null,
+          this.useSettingCategoryFilter? 'settingCategory': null
+        ].filter(val => val),
         tableDescription: 'settingDescription',
       },
       name: 'setting',
@@ -231,7 +234,7 @@ export default {
     initFilter(){
       const noData = this[this.callee? 'pSettingList': 'settingList'].find(setting => Util.hasValue(setting.settingId))? false: true
       this.$refs.mList.filter.allShow = noData
-      this.$refs.mList.filter.reg = noData && this.useInitFilter? this.$i18n.tnl('label.favoriteMark'): ''
+      this.$refs.mList.filter.word = noData && this.useInitFilter? this.$i18n.tnl('label.favoriteMark'): ''
     },
     formatList(str, formatFunc){
       return str.split(',').filter(val => val.trim().length != 0).map(val => formatFunc(val.trim())).join(',')
@@ -257,8 +260,8 @@ export default {
     async applyConfig() {
       await StateHelper.load('setting', true)
       const login = LocalStorageHelper.getLogin()
-      const userInfo = await AuthHelper.getUserInfo(login.tenantAdmin)
-      AuthHelper.resetConfig(login.tenantAdmin, userInfo.setting)
+      const userInfo = await AuthHelper.getUserInfo(login.isTenantAdmin)
+      AuthHelper.resetConfig(login.isTenantAdmin, userInfo.setting)
     },
     async onSaved() {
       await this.applyConfig()

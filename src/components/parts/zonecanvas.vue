@@ -471,10 +471,9 @@ export default {
       })
     },
     async onChangeAreaId(areaId) {
-      await StateHelper.loadAreaImage(areaId, true)
-      const areaImage = this.$store.state.app_service.areaImages.find((a) => { return a.areaId === areaId })
+      const areaImage = await StateHelper.loadAreaImage(areaId, true)
       if (areaImage) {
-        this.setupCanvas(areaImage.mapImage)
+        this.setupCanvas(areaImage)
       }
     },
     setupCanvas (mapImage) {

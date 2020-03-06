@@ -70,7 +70,6 @@ export default {
     },
     ...mapState('app_service', [
       'region',
-      //  'regions',
     ]),
     cdPattern(){
       return PATTERN.MASTER_CD

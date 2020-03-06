@@ -5,20 +5,17 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { APP } from '../../../sub/constant/config'
-import { ZONE, CATEGORY } from '../../../sub/constant/Constants'
-import * as Util from '../../../sub/util/Util'
 import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
-import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
-import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
-import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import commonmixin from '../../../components/mixin/commonmixin.vue'
-import mList from '../../../components/page/list.vue'
 import exMaster from '../../../components/page/ex-master.vue'
 
 export default {
+  components: {
+    exMaster,
+  },
+  mixins: [commonmixin],
   props: {
     pName: {
       type: String,
@@ -37,10 +34,6 @@ export default {
       default: () => APP.ZONE.TYPES,
     },
   },
-  components: {
-    exMaster,
-  },
-  mixins: [commonmixin],
   data() {
     return {
       params: {

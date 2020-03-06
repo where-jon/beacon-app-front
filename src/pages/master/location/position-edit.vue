@@ -50,17 +50,12 @@ import { PATTERN } from '../../../sub/constant/Constants'
 import * as Util from '../../../sub/util/Util'
 import * as ConfigHelper from '../../../sub/helper/dataproc/ConfigHelper'
 import * as HttpHelper from '../../../sub/helper/base/HttpHelper'
-import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as VueSelectHelper from '../../../sub/helper/ui/VueSelectHelper'
 import commonmixin from '../../../components/mixin/commonmixin.vue'
 import editmixin from '../../../components/mixin/editmixin.vue'
-import alert from '../../../components/parts/alert.vue'
 
 export default {
-  components: {
-    alert,
-  },
   mixins: [commonmixin, editmixin],
   data() {
     return {

@@ -6,12 +6,9 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { APP } from '../../../sub/constant/config'
 import { BULK } from '../../../sub/constant/Constants'
 import * as Util from '../../../sub/util/Util'
-import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
-import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import commonmixin from '../../../components/mixin/commonmixin.vue'
@@ -47,9 +44,6 @@ export default {
           return null
         }
         const ret = {key: val, label: val, sortable: true, tdClass: 'action-rowdata'}
-        // if(['category', 'group'].includes(val)){
-        //   ret.key = val + 'Name'
-        // }
         if(['description'].includes(val)){
           ret.thStyle = {width: '200px !important'}
         }

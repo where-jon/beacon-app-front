@@ -43,13 +43,9 @@ export default {
     return {
       nav : this.$store.state.menu,
       selectedItem: -1,
-      userRole: this.$store.state.role,
     }
   },
   computed: {
-    loginId() {
-      return this.$store.state.loginId
-    },
     linkKey(){
       return HttpHelper.getResourcePath(APP.MENU.SHOW_MENU_LINK)
     },

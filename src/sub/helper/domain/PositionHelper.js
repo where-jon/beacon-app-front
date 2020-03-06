@@ -115,7 +115,6 @@ export const filterPositions = (positions = store.state.main.positions,
   selectedCategoryId = store.state.main.selectedCategoryId, selectedGroupId = store.state.main.selectedGroupId,
   selectedTxIdList = store.state.main.selectedTxIdList,
   selectedFreeWord = store.state.main.selectedFreeWord) => { // p, position-display, rssimap, position-list, position, ProhibitHelper
-
   const txIdMap = store.state.app_service.btxIdMap
 
   if (!showTxNoOwner) { // potの所有状態で絞込み(TX未登録やPotと紐付いていない場合は表示しない)
@@ -164,7 +163,7 @@ const positionFilter = (positions, groupId, categoryId, txIdList, freeWord) => {
     let freeWordHit = true
     if (tx) {
       if (groupId) {
-        grpHit = groupId == tx.groupId
+        grpHit = groupId == Util.getValue(tx, 'pot.group.groupId')
       }
       if (categoryId) {
         catHit = categoryId == Util.getValue(tx, 'pot.category.categoryId')
@@ -682,12 +681,12 @@ export const createTxDetailInfo = (x, y, tx, canvasScale, offset, containerRect,
     containerWidth: containerRect.width,
     containerHeight: containerRect.height,
     class: !tx.btxId ? '': 'balloon-u', // 上表示のみに固定,
-    name: Util.getValue(tx, 'potName', ''),
-    tel: Util.getValue(tx, 'extValue.tel', ''),
+    name: Util.getValue(tx, 'pot.potName', ''),
+    tel: Util.getValue(tx, 'pot.extValue.tel', ''),
     timestamp: position ? DateUtil.formatDate(new Date(position.timestamp)) : '',
     thumbnail: Util.getValue(preloadThumbnail, 'src', ''),
-    category: Util.getValue(tx, 'categoryName', ''),
-    group: Util.getValue(tx, 'groupName', ''),
+    category: Util.getValue(tx, 'pot.cateogry.categoryName', ''),
+    group: Util.getValue(tx, 'pot.group.groupName', ''),
     bgColor: display.bgColor,
     color: display.color,
     isDispRight: x + offset.x + 100 < window.innerWidth,
@@ -704,7 +703,7 @@ export const createTxDetailInfo = (x, y, tx, canvasScale, offset, containerRect,
 
 /**
  * 位置表示（全体）のTx詳細に必要な情報を取得する。
- * TODO: 別のHelperに移動
+ * TODO: 別のHelperに移動　（上のメソッドとほぼ重複、マージすること）
  * 
  * @method
  * @param {Number} x
@@ -728,12 +727,12 @@ export const createTxDetailInfoOnStack = (x, y, tx, offset, preloadThumbnail) =>
     containerWidth: null,
     containerHeight: null,
     class: !tx.btxId ? '': 'balloon-u', // 上表示のみに固定,
-    name: Util.getValue(tx, 'potName', ''),
-    tel: Util.getValue(tx, 'extValue.tel', ''),
+    name: Util.getValue(tx, 'pot.potName', ''),
+    tel: Util.getValue(tx, 'pot.extValue.tel', ''),
     timestamp: position ? DateUtil.formatDate(new Date(position.timestamp)) : '',
     thumbnail: Util.getValue(preloadThumbnail, 'src', ''),
-    category: Util.getValue(tx, 'categoryName', ''),
-    group: Util.getValue(tx, 'groupName', ''),
+    category: Util.getValue(tx, 'pot.category.categoryName', ''),
+    group: Util.getValue(tx, 'pot.group.groupName', ''),
     bgColor: display.bgColor,
     color: display.color,
     isDispRight: x + offset.x + 100 < window.innerWidth,

@@ -467,6 +467,7 @@
     "person": "Person",
     "thing": "Thing",
     "zone": "Zone",
+    "linkedPerson": "Linked Person",
 
     "circle": "Circle",
     "square": "Square",

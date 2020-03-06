@@ -41,10 +41,10 @@ export const getTheme = () => {
   }
   const login = LocalStorageHelper.getLogin()
   if(login){
-    if(login.tenantAdmin){
+    if(login.isTenantAdmin){
       return THEME[0].name
     }
-    if(login.isProvider){
+    if(login.isProviderUser){
       return THEME[4].name
     }
   }

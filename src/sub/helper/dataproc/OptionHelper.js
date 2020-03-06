@@ -6,9 +6,9 @@
 import { APP } from '../../constant/config'
 import { SENSOR, FEATURE, CATEGORY, ZONE, ROLE_FEATURE } from '../../constant/Constants'
 import * as Util from '../../util/Util'
+import * as StringUtil from '../../util/StringUtil'
 import * as ConfigHelper from './ConfigHelper'
 import * as SensorHelper from '../domain/SensorHelper'
-import * as StateHelper from './StateHelper'
 import * as MasterHelper from '../domain/MasterHelper'
 
 let i18n
@@ -44,7 +44,13 @@ export const getMagicNumberList = (features) => {
   }
 
   retMap.featureName = {}
-  features.forEach(feature => retMap.featureName[feature.featureName.toLowerCase()] = i18n.tnl(`label.${feature.featureName}`))
+  features.forEach(feature => {
+    let featureName = feature.featureName
+    if (!featureName.includes('_')) {
+      featureName = StringUtil.toLowerCaseTop(feature.featureName)
+    }
+    retMap.featureName[feature.featureName.toLowerCase()] = i18n.tnl(`label.${featureName}`)
+  })
 
   return retMap
 }
@@ -108,7 +114,7 @@ export const getTxOptions = (isBlank = false) => {
  * @param {Number[]} ignoreIds
  * @return {Object[]}
  */
-export const getAllSensorOptions = (ignoreIds = [SENSOR.LED_TYPE2, SENSOR.LED_TYPE5, SENSOR.BUTTON]) => {
+export const getAllSensorOptions = (ignoreIds = [SENSOR.LED_TYPE2, SENSOR.LED_TYPE5, SENSOR.LED_TYPE3, SENSOR.BUTTON]) => {
   return MasterHelper.getOptionsFromState('sensor', 
     sensor => i18n.tnl('label.' + sensor.sensorName),
     true,

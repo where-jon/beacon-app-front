@@ -37,10 +37,8 @@
 </template>
 
 <script>
-import { EXTRA_NAV, POSITION_STACK_TYPES, CATEGORY } from '../../sub/constant/Constants'
+import { EXTRA_NAV, POSITION_STACK_TYPES } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
-import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import reloadmixin from '../../components/mixin/reloadmixin.vue'
@@ -86,13 +84,6 @@ export default {
     fixAlert(){
       return this.fix > 0
     },
-    zoneCategoryOptions() {
-      return MasterHelper.getOptionsFromState('category',
-        category => MasterHelper.getDispCategoryName(category),
-        true, 
-        category => CATEGORY.ZONE_AVAILABLE.includes(category.categoryType)
-      )
-    },
   },
   watch: {
     'vueSelected.zoneCategory': {
@@ -107,10 +98,6 @@ export default {
   methods: {
     isShow(type){
       return this.positionType == POSITION_STACK_TYPES[type.toUpperCase()]
-    },
-    fetchData(payload){
-      // this.$refs.areaPosition.fetchData(payload)
-      // this.$refs.zonePosition.fetchData(payload)
     },
   },
 }

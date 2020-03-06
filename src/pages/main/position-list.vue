@@ -3,13 +3,12 @@
     <breadcrumb :items="items" :extra-nav-spec="extraNavSpec"
                 :reload="reload" :short-name="shortName"
     />
-    <alert v-model="showDismissibleAlert" :message="message" :fix="fixHeight" :prohibit=showDismissibleAlert :prohibit-view="isProhibitView" :alert-style="alertStyle" />
-    <m-list :params="params" :totalRows="totalRows" :list="positionList" :alert-force-hide=true :use-detail-filter="useDetailFilter" />
+    <alert v-model="showDismissibleAlert" :message="message" :fix="fixHeight" :prohibit="showDismissibleAlert" :prohibit-view="isProhibitView" :alert-style="alertStyle" />
+    <m-list :params="params" :total-rows="totalRows" :list="positionList" :alert-force-hide="true" :use-detail-filter="useDetailFilter" />
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { APP, DISP } from '../../sub/constant/config'
 import { EXTRA_NAV } from '../../sub/constant/Constants'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
@@ -17,7 +16,6 @@ import * as Util from '../../sub/util/Util'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
 import * as PositionHelper from '../../sub/helper/domain/PositionHelper'
 import * as ProhibitHelper from '../../sub/helper/domain/ProhibitHelper'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import reloadmixin from '../../components/mixin/reloadmixin.vue'
@@ -59,10 +57,6 @@ export default {
           MenuHelper.useMaster('group') && APP.POS.WITH.GROUP? 'group' : null,
           MenuHelper.useMaster('category') && APP.POS.WITH.CATEGORY? 'category' : null,
           APP.POSITION_WITH_AREA? 'area' : null]).compact().value(),
-        commonFilter: _([
-          MenuHelper.useMaster('group') && APP.POS.WITH.GROUP? 'group' : null,
-          MenuHelper.useMaster('category') && APP.POS.WITH.CATEGORY? 'category' : null,
-        ]).compact().value(),
         disableTableButtons: true,
       },
       totalRows: 0,
@@ -78,13 +72,6 @@ export default {
     }
   },
   computed: {
-    ...mapState('app_service', [
-      // 'txs',
-      // 'areas',
-      // 'locations',
-      // 'prohibits',
-      // 'lostZones',
-    ]),
     alertStyle(){
       return {
         'font-weight': DISP.THERMOH.ALERT_WEIGHT,
@@ -128,7 +115,7 @@ export default {
             groupName: Util.v(pos, 'tx.pot.group.groupName'),
             categoryName: Util.v(pos, 'tx.pot.category.categoryName'),
             // 追加フィルタ用
-            groupId: Util.v(pos, 'tx.pot.groupId'),
+            groupId: Util.v(pos, 'tx.pot.group.groupId'),
             categoryId: Util.v(pos, 'tx.pot.category.categoryId'),
             areaId: Util.v(pos, 'location.areaId'),
             blinking : prohibitCheck? 'blinking' : null,

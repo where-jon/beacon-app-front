@@ -119,15 +119,13 @@ export default {
   },
   computed: {
     base64 () {
-      const areaImage = this.$store.state.app_service.areaImages.find((a) => { return a.areaId === this.areaId })
-      return areaImage ? areaImage.mapImage : ''
+      return StateHelper.getMapImage(this.areaId)
     },
     hasId (){
       return Util.hasValue(this.form.zoneId)
     },
     ...mapState('app_service', [
       'zone', 'pageSendParam',
-      // 'locations', 'areas', 
     ]),
   },
   watch: {

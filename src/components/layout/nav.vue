@@ -32,7 +32,7 @@
         <!-- region -->
         <table>
           <tr>
-            <td v-if="isTenantAdmin()" class="region-table pr-3">
+            <td v-if="isTenantAdmin" class="region-table pr-3">
               <font-awesome-icon icon="building" class="mr-1" style="visibility: hidden;" />
               <em v-t="this.$store.state.currentTenant? this.$store.state.currentTenant.tenantName: ''" class="region-em word-break" />
             </td>
@@ -115,14 +115,12 @@
 <script>
 import { mapState } from 'vuex'
 import { APP, DISP } from '../../sub/constant/config'
-import { LOGIN_MODE } from '../../sub/constant/Constants'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as AuthHelper from '../../sub/helper/base/AuthHelper'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 import * as ImageHelper from '../../sub/helper/base/ImageHelper'
 import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
 import * as RegionHelper from '../../sub/helper/domain/RegionHelper'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import { getThemeClasses } from '../../sub/helper/ui/ThemeHelper'
 import commonmixin from '../mixin/commonmixin.vue'
 import Help from '../page/help.vue'
@@ -144,12 +142,6 @@ export default {
   computed: {
     isLoginPage() {
       return this.$route.path == APP.MENU.LOGIN_PAGE || this.$route.path == APP.MENU.LOGIN_PAGE + '/' || this.$route.path == APP.MENU.ERROR_PAGE
-    },
-    isNoLogin() {
-      return APP.LOGIN_MODE == LOGIN_MODE.NO_LOGIN
-    },
-    loginId() {
-      return this.$store.state.loginId
     },
     linkKey(){
       return HttpHelper.getResourcePath(APP.MENU.SHOW_MENU_LINK)
@@ -235,10 +227,6 @@ export default {
     useLastUrl(lastPath) {
       return lastPath == 'bulkedit'
     },
-    isTenantAdmin() {
-      const login = LocalStorageHelper.getLogin()
-      return login? login.tenantAdmin: false
-    },
     hasMultiRegion(regions){
       return regions && regions.length > 1
     },
@@ -270,9 +258,10 @@ export default {
       await AuthHelper.switchRegion(item.regionId)
       location.reload()
     },
-    versionClick() {
-      console.log('app service revision:', this.$store.state.serviceRev)
-      console.log('app front revision:', this.$store.state.frontRev)
+    async versionClick() {
+      const {frontRev, serviceRev} = await AuthHelper.getRevInfo()
+      console.log('app service revision:', serviceRev)
+      console.log('app front revision:', frontRev)
     },
     getAppTitleWidth(){
       const appTitle = document.getElementById('appTitle')

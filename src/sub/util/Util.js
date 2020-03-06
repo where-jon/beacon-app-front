@@ -149,7 +149,7 @@ export const getValueWithKey = (obj, path, def) => {
   let lastKey
   for (let i=0; i<pathSpl.length; i++) {
     lastKey = pathSpl[i]
-    val = val instanceof Object? val[lastKey]: null
+    val = val && typeof val == 'object'? val[lastKey]: null
   }
   if (def !== undefined) {
     return val != null? val: def

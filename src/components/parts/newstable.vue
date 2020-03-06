@@ -59,7 +59,6 @@
 <script>
 import VueScrollingTable from 'vue-scrolling-table'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
-import * as Util from '../../sub/util/Util'
 import commonmixin from '../mixin/commonmixin.vue'
 import reloadmixin from '../mixin/reloadmixin.vue'
 

@@ -26,9 +26,9 @@
         </tr>
       </table>
     </div>
-    <p></p>
+    <p/>
     <b-row>
-      <b-col md="6" class="mt-1 mb-3" v-if="Math.floor(totalPages/perPage) > 1">
+      <b-col v-if="Math.floor(totalPages/perPage) > 1" md="6" class="mt-1 mb-3">
         <b-pagination v-model="currentPage" :total-rows="totalPages" :per-page="perPage" class="my-0" />
       </b-col>
     </b-row>
@@ -40,13 +40,11 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { APP, DISP } from '../../sub/constant/config'
 import * as Util from '../../sub/util/Util'
 import * as StringUtil from '../../sub/util/StringUtil'
 import * as PositionHelper from '../../sub/helper/domain/PositionHelper'
 import * as AppServiceHelper from '../../sub/helper/dataproc/AppServiceHelper'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import reloadmixin from '../../components/mixin/reloadmixin.vue'
@@ -75,15 +73,6 @@ export default {
       autoPagerPlay: false,
       modalInfo: { title: this.$i18n.tnl('label.confirm'), content: '', id:'' },
     }
-  },
-  computed: {
-    // ...mapState('app_service', [
-    //   'categories',
-    //   'zones',
-    //   'txs',
-    //   'pots',
-    //   'locations',
-    // ]),
   },
   created() {
     this.autoPagerPlay = APP.ENTER.AUTO_PAGE == 2

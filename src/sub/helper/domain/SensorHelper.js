@@ -18,7 +18,6 @@ import * as ChartHelper from '../ui/ChartHelper'
 import * as ConfigHelper from '../dataproc/ConfigHelper'
 import * as EXCloudHelper from '../dataproc/EXCloudHelper'
 import * as HeatmapHelper from '../ui/HeatmapHelper'
-import * as MasterHelper from '../domain/MasterHelper'
 import * as StyleHelper from '../ui/StyleHelper'
 import * as PositionHelper from './PositionHelper'
 import { addLabelByKey } from '../ui/ViewHelper'
@@ -208,7 +207,7 @@ export const availableSensorAll = () =>  _([...APP.EXB.SENSOR, ...APP.SENSOR.TX_
  * @method
  * @return {Number[]}
  */
-export const availableSensorGraph = () =>  _([...APP.SENSORGRAPH.SENSOR]).sort().value()
+export const availableSensorGraph = () =>  _(APP.SENSORGRAPH.SENSOR).sort().value()
 
 
 /**
@@ -1188,7 +1187,7 @@ const addSensorInfo = (sensor, pos) => {
     // id: sensor.sensorId,
     ...sensor,
     // sensorId: sensor? sensor.id: null,
-    label: Util.v(tx, 'displayName', sensor.btxId), 
+    label: Util.v(tx, 'pot.displayName', sensor.btxId), 
     ...tx,
     ...exb,
     deviceId: Util.v(exb,'deviceId', ''),
