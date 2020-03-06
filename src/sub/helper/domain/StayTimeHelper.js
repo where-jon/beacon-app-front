@@ -26,8 +26,8 @@ export const getRatio = (secTime, digit = APP.STAY_SUM.PARSENT_DIGIT, baseSecTim
  * @return {Number}
  */
 export const getStayBaseSec = () => {
-  let from = ((Math.floor(APP.STAY_SUM.FROM / 100) * 60) + Math.floor(APP.STAY_SUM.FROM % 100)) * 60
-  let to = ((Math.floor(APP.STAY_SUM.TO / 100) * 60) + Math.floor(APP.STAY_SUM.TO % 100)) * 60
+  let from = ((Math.floor(APP.SVC.STAY_SUM.START / 100) * 60) + Math.floor(APP.SVC.STAY_SUM.START % 100)) * 60
+  let to = ((Math.floor(APP.SVC.STAY_SUM.END / 100) * 60) + Math.floor(APP.SVC.STAY_SUM.END % 100)) * 60
   return to - from
 }
 

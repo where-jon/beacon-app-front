@@ -260,10 +260,8 @@ export const APP = { // 機能面に関する設定
     AXIS_FILL_GAP: 2, // 滞在時間集計の横軸で0件項目を表示(0:しない,1:する,2:月日の場合検索期間すべて表示)
     UNIT_HOUR: 5 * 60 * 60, // 指定秒を軸単位の最大値が超えた場合、滞在時間集計の表示を時間単位で表示する
     UNIT_MINUTE: 20 * 60,  // 指定秒を軸単位の最大値が超えた場合、滞在時間集計の表示を分単位で表示する
-    START: 0,
-    END: 2400,
-    FROM: 0,  // 滞在時間集計開始時間(時分) // TODO:STARTにする
-    TO: 2400,  // 滞在時間集計終了時間(時分)
+    START: 0, // 滞在時間集計開始時間(時分)
+    END: 2400, // 滞在時間集計終了時間(時分)
     SCALE_TIMES: [5, 12, 18], // 滞在率画面グラフ目盛り時刻(時)
     OTHER_COLOR: '#404040', // 滞在率その他の色
     GRAPH_LIMIT: 0.3, // 日単位滞在分析グラフの足切り％
@@ -322,6 +320,16 @@ export const APP = { // 機能面に関する設定
     AUTO_RELOAD: true, // 自動リロード
   },
 
+  // 活動実績
+  ACTIVITY: {
+    STACK_TYPE: 'zoneCategory'
+  },
+  // 会議室利用実績
+  MEETING: {
+    GROUP_BY: 'location', // サーバーでの集計単位
+    AXIS_TYPE: 'location', // 表示単位
+    MAX_NUM: 6 // 利用人数の最大値
+  },
   
   // 将来実装予定項目 START
   LOG_KEEP_TIME: 30,
@@ -636,16 +644,6 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     ZONE_OTHER: true // ゾーンその他を表示する
   },
 
-  // 活動実績
-  ACTIVITY: {
-    STACK_TYPE: 'zoneCategory'
-  },
-  // 会議室利用実績
-  MEETING: {
-    GROUP_BY: 'location', // サーバーでの集計単位
-    AXIS_TYPE: 'location', // 表示単位
-    MAX_NUM: 6 // 利用人数の最大値
-  },
 }
 
 // used when APP.LOGIN_MODE != APP_SERVICE with excloud old api -----------------------------------------------------

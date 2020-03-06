@@ -135,8 +135,8 @@ export default {
   },
   async created() {
     const date = DateUtil.getDefaultDate()
-    this.form.datetimeFrom = DateUtil.getDatetime(date, {date: -1})
-    this.form.datetimeTo = DateUtil.getDatetime(date)
+    // this.form.datetimeFrom = DateUtil.getDatetime(date, {date: -1})
+    // this.form.datetimeTo = DateUtil.getDatetime(date)
   },
   async mounted() {
     ViewHelper.importElementUI()
@@ -169,7 +169,6 @@ export default {
       return []
     },
     async display(isDownload) {
-      //this.container ? this.container.removeAllChildren() : null // TODO:消す
       this.replace({showAlert: false})
       this.showProgress()
       try {
@@ -181,7 +180,7 @@ export default {
         }
 
         // データ取得
-        const data = await this.$parent.getData(this.form) // TODO:fetchData
+        const data = await this.$parent.fetchData(this.form)
         if (_.isEmpty(data)) {
           this.message = this.$i18n.t('message.listEmpty')
           this.replace({showAlert: true})
@@ -190,13 +189,13 @@ export default {
         }
 
         // グラフ作成
-        this.viewList = this.$parent.createGraph(this.form, data)
         if(isDownload){ // TODO:ダウンロードにする
           this.$parent.download(this.form, data)
+        }else{
+          this.viewList = this.$parent.createGraph(this.form, data)
         }
 
         Util.debug("viewList", this.viewList)
-
 
         this.totalRows = this.viewList.length
       }

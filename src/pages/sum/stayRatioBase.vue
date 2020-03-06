@@ -487,8 +487,8 @@ export default {
       return byId == -1
     },
     getStayDataList(date, stayData, absentLimit = 0, lostLimit = APP.LOST_TIME) {
-      const fromSecond = (Math.floor(APP.STAY_SUM.FROM / 100) * 60 + APP.STAY_SUM.FROM % 100) * 60
-      const toSecond = (Math.floor(APP.STAY_SUM.TO / 100) * 60 + APP.STAY_SUM.TO % 100) * 60
+      const fromSecond = (Math.floor(APP.SVC.STAY_SUM.START / 100) * 60 + APP.SVC.STAY_SUM.START % 100) * 60
+      const toSecond = (Math.floor(APP.SVC.STAY_SUM.END / 100) * 60 + APP.SVC.STAY_SUM.END % 100) * 60
       const graphTimeRatio = this.getTimeRatioData()
       const fromToSettingDiff = toSecond - fromSecond
 
@@ -580,7 +580,7 @@ export default {
             percent,
             categoryName: findCategory? findCategory.categoryName: this.$i18n.tnl('label.other'),
             categoryBgColor: findCategory? ColorUtil.colorCd4display(findCategory.bgColor): ColorUtil.colorCd4display(this.otherColor),
-            areaBgColor: findArea? this.getStackColor(areaIndex): this.otherColor,
+            areaBgColor: findArea? ColorUtil.getStackColor(areaIndex): this.otherColor,
             areaName: findArea? findArea.areaName: this.$i18n.tnl('label.other'),
             zoneCategory: stay.byName,
           }
@@ -596,8 +596,8 @@ export default {
           graph: graphList,
           stayTime: DateUtil.convertToTime(stayTime) + ' (' + StayTimeHelper.getRatio(stayTime) + '%)', 
           lostTime: DateUtil.convertToTime(lostTime) + ' (' + StayTimeHelper.getRatio(lostTime) + '%)', 
-          baseTimeFrom: this.getDateStrFromSetting(APP.STAY_SUM.FROM),
-          baseTimeTo: this.getDateStrFromSetting(APP.STAY_SUM.TO),
+          baseTimeFrom: this.getDateStrFromSetting(APP.SVC.STAY_SUM.START),
+          baseTimeTo: this.getDateStrFromSetting(APP.SVC.STAY_SUM.END),
           graphTimeRatio: graphTimeRatio,
         }
 
@@ -643,9 +643,9 @@ export default {
     },
     getTimeRatioData() {
       // 開始から終了までの配列を作る
-      const fromHour = Math.floor(APP.STAY_SUM.FROM / 100) // 分は切る
-      const toHour = Math.floor(APP.STAY_SUM.TO / 100)
-      const toHourMinute = toHour * 60 + APP.STAY_SUM.TO % 100
+      const fromHour = Math.floor(APP.SVC.STAY_SUM.START / 100) // 分は切る
+      const toHour = Math.floor(APP.SVC.STAY_SUM.END / 100)
+      const toHourMinute = toHour * 60 + APP.SVC.STAY_SUM.END % 100
       const total = toHourMinute - fromHour * 60
       let times = []
       let timesMinute = []
@@ -703,7 +703,7 @@ export default {
       const targetDate = moment(param.date).format('YYYYMMDD')
       const groupBy = param.groupId? '&groupId=' + param.groupId: ''
       const categoryBy = param.categoryId? '&categoryId=' + param.categoryId: ''
-      return '/office/stayTime/sumByDay/' + targetDate + '/zoneCategory?from=' + APP.STAY_SUM.FROM + '&to=' + APP.STAY_SUM.TO + groupBy + categoryBy
+      return '/office/stayTime/sumByDay/' + targetDate + '/zoneCategory?from=' + APP.SVC.STAY_SUM.START + '&to=' + APP.SVC.STAY_SUM.END + groupBy + categoryBy
     },
     getCsvSumList(viewList) {
       const keys = []
@@ -807,7 +807,7 @@ export default {
         const categoryBy = this.form.categoryId? '&categoryId=' + this.form.categoryId: ''
         while (startDate.diff(endDate) <= 0) {
           const searchDate = startDate.format('YYYYMMDD')
-          const url = '/office/stayTime/sumByDay/' + searchDate + '/zoneCategory?from=' + APP.STAY_SUM.FROM + '&to=' + APP.STAY_SUM.TO + groupBy + categoryBy
+          const url = '/office/stayTime/sumByDay/' + searchDate + '/zoneCategory?from=' + APP.SVC.STAY_SUM.START + '&to=' + APP.SVC.STAY_SUM.END + groupBy + categoryBy
           const sumData = await HttpHelper.getAppService(url)
           if (_.isEmpty(sumData)) {
             Util.debug('searchDate: ' + searchDate)

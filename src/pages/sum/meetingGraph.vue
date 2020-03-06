@@ -19,6 +19,12 @@ import { getCharSet } from '../../sub/helper/base/CharSetHelper'
 import moment from 'moment'
 import commonmixin from '../../components/mixin/commonmixin.vue'
 
+// TODO
+// 勤務時間で絞る(findBy)
+// ０人追加
+// csv日本語化
+
+
 export default {
   components: {
     activityBase,
@@ -31,12 +37,12 @@ export default {
       const param = {}
       const from = new Date(form.datetimeFrom).getTime()
       const to = new Date(form.datetimeTo).getTime()
-      const url = `/core/positionHistory/summaryBy/${DISP.MEETING.GROUP_BY}_id/${from}/${to}/${APP.POSITION_SUMMARY_INTERVAL}/${APP.POSITION_SUMMARY_RECEIVE_COUNT}`
+      const url = `/core/positionHistory/summaryBy/${APP.MEETING.GROUP_BY}_id/${from}/${to}/${APP.POSITION_SUMMARY_INTERVAL}/${APP.POSITION_SUMMARY_RECEIVE_COUNT}`
       const data = await HttpHelper.getAppService(url)
       Util.debug('data', data)
 
       let ret = null
-      if(DISP.MEETING.AXIS_TYPE == "exb"){ // TODO:DISPではなくAPPへ
+      if(APP.MEETING.AXIS_TYPE == "exb"){ // TODO:DISPではなくAPPへ
         const exbMap = this.getExbMap()
         ret = data.filter( d => { // TODO:filterはいらない
           const exb = exbMap[d.axisId]
@@ -45,7 +51,7 @@ export default {
           const exb = exbMap[d.axisId]
           return {...d, name:exb.deviceId}
         })
-      }else if(DISP.MEETING.AXIS_TYPE == "location" || DISP.MEETING.AXIS_TYPE == "zone"){
+      }else if(APP.MEETING.AXIS_TYPE == "location" || APP.MEETING.AXIS_TYPE == "zone"){
         const locationMap = this.getLocationMap()
         ret = data.filter( d => {
           const location = locationMap[d.axisId]
@@ -80,14 +86,14 @@ export default {
         // グラフ作成
         const graph = []
         let stayRatio = 0
-        const max = DISP.MEETING.MAX_NUM
+        const max = APP.MEETING.MAX_NUM
         //let i = max
         for(let i=1; i<=max; i++){
           const count = posList.filter(pos => pos.cnt==i || (i==max && pos.cnt>=max)).length
           const second = count * APP.POSITION_SUMMARY_INTERVAL * 60
           const percent = second / total * 100.0
           stayRatio += percent
-          const color = this.getStackColor(i) // TODO
+          const color = ColorUtil.getStackColor(i) // TODO
           graph.push({
             name: i,
             style: `width: ${percent}% !important; background: ${color};`,
@@ -111,39 +117,39 @@ export default {
     },
     // TODO:以下消す
     getName(pos){
-      if(DISP.MEETING.AXIS_TYPE == "exb"){
+      if(APP.MEETING.AXIS_TYPE == "exb"){
         return pos.exb.deviceId
       }
-      if(DISP.MEETING.AXIS_TYPE == "location"){
+      if(APP.MEETING.AXIS_TYPE == "location"){
         return pos.location.locationName
       }
-      if(DISP.MEETING.AXIS_TYPE == "zone"){
+      if(APP.MEETING.AXIS_TYPE == "zone"){
         return pos.location.zoneList && pos.location.zoneList.length >= 1 ? 
           pos.location.zoneList[0].zoneName : null
       }
       return null
     },
     getArea(pos){
-      if(DISP.MEETING.AXIS_TYPE == "exb"){
+      if(APP.MEETING.AXIS_TYPE == "exb"){
         return { areaId: pos.exb.areaId, areaName: pos.exb.areaName }
       }
-      if(DISP.MEETING.AXIS_TYPE == "location"){
+      if(APP.MEETING.AXIS_TYPE == "location"){
         return pos.location.area
       }
-      if(DISP.MEETING.AXIS_TYPE == "zone"){
+      if(APP.MEETING.AXIS_TYPE == "zone"){
         return pos.location.area
       }
       return null
     },
     // cdを返す
     getCd(pos){
-      if(DISP.MEETING.AXIS_TYPE == "exb"){
+      if(APP.MEETING.AXIS_TYPE == "exb"){
         return pos.exb.deviceId
       }
-      if(DISP.MEETING.AXIS_TYPE == "location"){
+      if(APP.MEETING.AXIS_TYPE == "location"){
         return pos.location.locationCd
       }
-      if(DISP.MEETING.AXIS_TYPE == "zone"){
+      if(APP.MEETING.AXIS_TYPE == "zone"){
         return pos.location.zoneList && pos.location.zoneList.length >= 1 ? 
           pos.location.zoneList[0].zoneCd : null
       }
@@ -151,20 +157,16 @@ export default {
     },
     // csvのカラムを返す
     getCol(){
-      if(DISP.MEETING.AXIS_TYPE == "exb"){
+      if(APP.MEETING.AXIS_TYPE == "exb"){
         return "device_id,location_name" // TODO:日本語化
       }
-      if(DISP.MEETING.AXIS_TYPE == "location"){
+      if(APP.MEETING.AXIS_TYPE == "location"){
         return "location_cd,location_name"
       }
-      if(DISP.MEETING.AXIS_TYPE == "zone"){
+      if(APP.MEETING.AXIS_TYPE == "zone"){
         return "zone_cd,zone_name"
       }
       return null
-    },
-    getStackColor(index) {
-      // 設定が6色以上ある事が前提
-      return DISP.SUM_STACK_COLOR[index % DISP.SUM_STACK_COLOR.length]
     },
     download(form, data) {
       const from = new Date(form.datetimeFrom).getTime()
