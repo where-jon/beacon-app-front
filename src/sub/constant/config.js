@@ -329,7 +329,7 @@ export const APP = { // 機能面に関する設定
   // 会議室利用実績
   MEETING: {
     GROUP_BY: 'location', // サーバーでの集計単位
-    AXIS_TYPE: 'location', // 表示単位
+    AXIS_TYPE: 'zone', // 表示単位
     MAX_NUM: 6 // 利用人数の最大値
   },
   

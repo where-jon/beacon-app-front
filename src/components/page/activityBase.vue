@@ -115,9 +115,6 @@ export default {
     }
   },
   computed: {
-    otherColor() {
-      return APP.STAY_SUM.OTHER_COLOR
-    },
   },
   watch: {
     'vueSelected.group': {

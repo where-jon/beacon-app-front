@@ -70,7 +70,7 @@ export default {
         // 不在追加
         if(total - stayTime > 0){
           const ratio = Math.floor((total-stayTime)/total*100)
-          const color = ColorUtil.colorCd4display(this.otherColor)
+          const color = ColorUtil.colorCd4display(APP.STAY_SUM.OTHER_COLOR)
           graph.push({
             style: `width: ${ratio}% !important;`,
             time: DateUtil.toHHmm(total-stayTime),
