@@ -32,7 +32,6 @@ export default {
       const param = {}
       const from = new Date(form.datetimeFrom).getTime()
       const to = new Date(form.datetimeTo).getTime()
-      // TODO:時間で絞る
       const url = `/core/positionHistory/summaryBy/${APP.MEETING.GROUP_BY}_id/${from}/${to}/${APP.POSITION_SUMMARY_INTERVAL}/${APP.POSITION_SUMMARY_RECEIVE_COUNT}`
       const data = await HttpHelper.getAppService(url)
       Util.debug('data', data)
@@ -62,14 +61,17 @@ export default {
       Util.debug('data2', ret)
       return ret
     },
-    createGraph(form, data) {
+    createGraph(form, data, func) {
       const sum = ArrayUtil.sumData(data, 'axisId')
       Util.debug('sum', sum)
 
-      const from = new Date(form.datetimeFrom).getTime()
-      const to = new Date(form.datetimeTo).getTime()
-      const total = (to - from)/1000 // TODO
+      const start = new Date(form.datetimeFrom)
+      const end = new Date(form.datetimeTo)
+      const total = func.getTotal(start, end)
       Util.debug('total', total)
+
+      const from = start.getTime()
+      const to = end.getTime()
       
       return sum.map( posList => {
         // グラフ作成
@@ -90,7 +92,7 @@ export default {
           })
         }
         if(stayRatio < 100){
-          const color = ColorUtil.colorCd4display(APP.STAY_SUM.OTHER_COLOR)
+          const color = 'gray'
           const per = 100 - stayRatio
           const second = Math.floor(total * stayRatio / 100)
           graph.push({

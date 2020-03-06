@@ -186,10 +186,11 @@ export default {
         }
 
         // グラフ作成
+        const func = {getTotal: this.getTotal}
         if(isDownload){ // TODO:ダウンロードにする
           this.$parent.download(this.form, data)
         }else{
-          this.viewList = this.$parent.createGraph(this.form, data)
+          this.viewList = this.$parent.createGraph(this.form, data, func)
         }
 
         Util.debug("viewList", this.viewList)
@@ -202,6 +203,39 @@ export default {
       finally {
         this.hideProgress()
       }
+    },
+    getTotal(fromDt, toDt){
+      let fromDate = fromDt.getYear()*10000 + fromDt.getMonth()*100 + fromDt.getDate()
+      let toDate = toDt.getYear()*10000 + toDt.getMonth()*100 + toDt.getDate()
+      const start = (Math.floor(APP.SVC.STAY_SUM.START / 100)*60 + APP.SVC.STAY_SUM.START % 100) * 60
+      const end = (Math.floor(APP.SVC.STAY_SUM.END / 100)*60 + APP.SVC.STAY_SUM.END % 100) * 60
+
+      // 開始と終了時間を丸める
+      let fromTime = fromDt.getHours() * 3600 + fromDt.getMinutes() * 60 + fromDt.getSeconds()
+      let toTime = toDt.getHours() * 3600 + toDt.getMinutes() * 60 + toDt.getSeconds()
+      fromTime = Math.max(fromTime, start)
+      if(fromTime > end){
+        fromTime = start
+        fromDate++        
+      }
+      if(toTime < start){
+        toTime = end
+        toDate--
+      }
+      toTime = Math.min(toTime, end)
+
+      // 1日の場合
+      if(fromDate == toDate){
+        console.log('oneDay')
+        return toTime - fromTime
+      }
+      // 2日以上の場合
+      let total = 0
+      total += end - fromTime
+      total += toTime - end
+      total += (toDate - fromDate - 1) * (end - start)
+      console.log('total', total)
+      return total
     },
   }
 }
