@@ -9,7 +9,18 @@
         <p class="helpLabelHeader">
           {{ getHelpDescription('indexName') }}
         </p>
-        <!-- 目次 -->
+        <!-- 目次：基本 -->
+        <div>
+          <div class="list-group mt-3">
+            <b>{{ getHelpDescription('introduction') }}</b>
+          </div>
+          <div v-for="(menuGroup,key) in helpBaseKeys" :key="key">
+            <div class="list-group-item list-group-item-action">
+              {{ getLabel(menuGroup) }}
+            </div>
+          </div>
+        </div>
+        <!-- 目次：画面 -->
         <div v-for="(menuGroup,key) in this.$store.state.menu" :key="key">
           <div class="list-group mt-3">
             <b>{{ getLabel(menuGroup.key) }}</b>
@@ -50,11 +61,11 @@
             </span>
             <b-table striped hover small :items="getCsvItems(page.key)" :fields="csvFields" />
           </div>
-          <!-- 目次リンク -->
+          <!-- 目次へ戻るボタン -->
           <div class="text-right">
             <a href="#indexList">
               <div class="btn btn-light">
-                目次
+                {{ getHelpDescription('indexName') }}
               </div>
             </a>
           </div>
@@ -78,112 +89,19 @@ export default {
   },
   data () {
     return {
-      isEnableHelp: true,
-      isDisplayPositionList: false,
-      isDisplayBulkRegister: false,
-      isDisplayRegion: false,
-      isDisplayArea: false,
-      isDisplayExb: false,
-      isDisplayTx: false,
-      isDisplayPot: false,
-      isDisplayCategory: false,
-      isDisplayGroup: false,
-      isDisplayUser: false,
-      isDisplayRole: false,
-      isDisplayZoneClass: false,
-      isDisplayZoneBlock: false,
-      isDisplayGateway: false,
-      isDisplayMonitorTX: false,
-      isDisplayTelemetry: false,
-      isDisplayUsageSituation: false,
-      isDisplaySensorGraph: false,
-      isDisplayStayRatio: false,
-      isDisplayPositionHistory: false,
-      isDisplaySensorHistory: false,
-      isDisplayNotifyHistory: false,
-      isDisplayStayRatioBase: false,
       csvFields: [],
       bulkFields: [],
+      helpBaseKeys: ['overview','notes'],  // 表示対象の説明文のKey(メニュー以外)を追加　helpBaseDescriptionに説明文追加
     }
   },
   computed: {
     ...mapState([
       'menu',
     ]),
-    enablePositionList() {
-      return this.isDisplayPositionList
-    },
-    enableBulkRegister() {
-      return this.isDisplayBulkRegister
-    },
-    enableRegion() {
-      return this.isDisplayRegion
-    },
-    enableArea() {
-      return this.isDisplayArea
-    },
-    enableExb() {
-      return this.isDisplayExb
-    },
-    enableTx() {
-      return this.isDisplayTx
-    },
-    enablePot() {
-      return this.isDisplayPot
-    },
-    enableCategory() {
-      return this.isDisplayCategory
-    },
-    enableGroup() {
-      return this.isDisplayGroup
-    },
-    enableUser() {
-      return this.isDisplayUser
-    },
-    enableRole() {
-      return this.isDisplayRole
-    },
-    enablePZoneClass() {
-      return this.isDisplayZoneClass
-    },
-    enableZoneBlock() {
-      return this.isDisplayZoneBlock
-    },
-    enableGateway() {
-      return this.isDisplayGateway
-    },
-    enableMonitorTX() {
-      return this.isDisplayMonitorTX
-    },
-    enableTelemetry() {
-      return this.isDisplayTelemetry
-    },
-    enableUsageSituation() {
-      return this.isDisplayUsageSituation
-    },
-    enableSensorGraph() {
-      return this.isDisplaySensorGraph
-    },
-    enableStayRatio() {
-      return this.isDisplayStayRatio
-    },
-    enablePositionHistory() {
-      return this.isDisplayPositionHistory
-    },
-    enableSensorHistory() {
-      return this.isDisplaySensorHistory
-    },
-    enableNotifyHistory() {
-      return this.isDisplayNotifyHistory
-    },
-    enableStayRatioBase() {
-      return this.isDisplayStayRatioBase
-    },
   },
   methods: {
     initialize() {
       this.createLabel()
-      this.checkMenu()
       Vue.nextTick(function () {
         // if反映された後の描画を待ってページ内遷移させる
         document.getElementById('helpAutoLink').click()
@@ -198,104 +116,6 @@ export default {
         {key: 'error_name', sortable: true, label: 'error', thClass: 'fields', tdClass: 'items'},
         {key: 'description', sortable: false, label: 'detail', thClass: 'fields', tdClass: 'items'},
       ])
-    },
-    checkMenu() {
-      this.menu.forEach(function(parent) {
-        if (!this.isDisplayPositionList) {
-          this.isDisplayPositionList = parent.pages.find((val) => val.path == 'position-list')? true: false
-        }
-        if (parent.key == 'main' && !this.isDisplayBulkRegister) {
-          this.isDisplayBulkRegister = parent.pages.length > 0? true: false
-        }
-        if (!this.isDisplayRegion) {
-          this.isDisplayRegion = parent.pages.find((val) => val.path == 'region')? true: false
-        }
-        if (!this.isDisplayArea) {
-          this.isDisplayArea = parent.pages.find((val) => val.path == 'area')? true: false
-        }
-        if (!this.isDisplayExb) {
-          this.isDisplayExb = parent.pages.find((val) => val.path == 'exb')? true: false
-        }
-        if (!this.isDisplayTx) {
-          this.isDisplayTx = parent.pages.find((val) => val.path == 'tx')? true: false
-        }
-        if (!this.isDisplayPot) {
-          this.isDisplayPot = parent.pages.find((val) => val.path == 'pot')? true: false
-        }
-        if (!this.isDisplayCategory) {
-          this.isDisplayCategory = parent.pages.find((val) => val.path == 'category')? true: false
-        }
-        if (!this.isDisplayGroup) {
-          this.isDisplayGroup = parent.pages.find((val) => val.path == 'group')? true: false
-        }
-        if (!this.isDisplayUser) {
-          this.isDisplayUser = parent.pages.find((val) => val.path == 'user')? true: false
-        }
-        if (!this.isDisplayRole) {
-          this.isDisplayRole = parent.pages.find((val) => val.path == 'role')? true: false
-        }
-        if (!this.isDisplayZoneClass) {
-          this.isDisplayZoneClass = parent.pages.find((val) => val.path == 'zoneClass')? true: false
-        }
-        if (!this.isDisplayZoneBlock) {
-          this.isDisplayZoneBlock = parent.pages.find((val) => val.path == 'zoneBlock')? true: false
-        }
-        if (!this.isDisplayGateway) {
-          this.isDisplayGateway = parent.pages.find((val) => val.path == 'gateway')? true: false
-        }
-        if (parent.key == 'monitor' && !this.isDisplayMonitorTX) {
-          this.isDisplayMonitorTX = parent.pages.find((val) => val.path == 'position')? true: false
-        }
-        if (!this.isDisplayTelemetry) {
-          this.isDisplayTelemetry = parent.pages.find((val) => val.path == 'telemetry')? true: false
-        }
-        if (!this.isDisplayUsageSituation) {
-          this.isDisplayUsageSituation = parent.pages.find((val) => val.path == 'usage-situation')? true: false
-        }
-        if (!this.isDisplaySensorGraph) {
-          this.isDisplaySensorGraph = parent.pages.find((val) => val.path == 'sensorGraph')? true: false
-        }
-        if (!this.isDisplayStayRatio) {
-          this.isDisplayStayRatio = parent.pages.find((val) => val.path == 'stayRatio')? true: false
-        }
-        if (!this.isDisplayPositionHistory) {
-          this.isDisplayPositionHistory = parent.pages.find((val) => val.path == 'positionHistory')? true: false
-        }
-        if (!this.isDisplaySensorHistory) {
-          this.isDisplaySensorHistory = parent.pages.find((val) => val.path == 'sensorHistory')? true: false
-        }
-        if (!this.isDisplayNotifyHistory) {
-          this.isDisplayNotifyHistory = parent.pages.find((val) => val.path == 'notifyHistory')? true: false
-        }
-        if (!this.isDisplayStayRatioBase) {
-          this.isDisplayStayRatioBase = parent.pages.find((val) => val.path == 'stayRatioBase')? true: false
-        }
-      }.bind(this))
-
-      this.isEnableHelp = this.isDisplayPositionList || 
-        this.isDisplayBulkRegister || 
-        this.isDisplayRegion || 
-        this.isDisplayArea || 
-        this.isDisplayExb || 
-        this.isDisplayTx || 
-        this.isDisplayPot || 
-        this.isDisplayCategory || 
-        this.isDisplayGroup || 
-        this.isDisplayUser || 
-        this.isDisplayRole || 
-        this.isDisplayZoneClass || 
-        this.isDisplayZoneBlock || 
-        this.isDisplayGateway || 
-        this.isDisplayMonitorTX || 
-        this.isDisplayTelemetry || 
-        this.isDisplayUsageSituation || 
-        this.isDisplaySensorGraph || 
-        this.isDisplayStayRatio || 
-        this.isDisplayPositionHistory || 
-        this.isDisplaySensorHistory || 
-        this.isDisplayNotifyHistory || 
-        this.isDisplayStayRatioBase
-
     },
     getLabel(key, option){
       return this.$i18n.tnl('label.' + key, option)
@@ -319,7 +139,7 @@ export default {
       const ret = this.$i18n.tnl('helpAdditionalDescription.' + key, option)
       return ret != 'helpAdditionalDescription.' + key ? ret : null
     },
-    // b-tableに表示する項目を取得
+    // b-tableに表示する項目
     getCsvItems(key){
       switch(key) {
       case 'region':
