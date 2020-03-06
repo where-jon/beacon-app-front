@@ -132,8 +132,8 @@ export default {
   },
   async created() {
     const date = DateUtil.getDefaultDate()
-    // this.form.datetimeFrom = DateUtil.getDatetime(date, {date: -1})
-    // this.form.datetimeTo = DateUtil.getDatetime(date)
+    this.form.datetimeFrom = DateUtil.getDatetime(date, {date: -1})
+    this.form.datetimeTo = DateUtil.getDatetime(date)
   },
   async mounted() {
     ViewHelper.importElementUI()
