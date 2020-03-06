@@ -618,9 +618,8 @@ export default {
           this.showProgress()
         }
         VueUtil.nextTickEx(this, () => {
-          if(this.$parent.$options.methods && this.$parent.$options.methods.getLegendItems){
-            this.legendItems = this.$parent.$options.methods.getLegendItems.call(this.$parent, this)
-          }
+          let legendItems = this.callParentMethod('getLegendItems', this)
+          if (legendItems) this.legendItems = legendItems
         })
         // マップ画像の表示
         this.showMapImageDef(async () => {

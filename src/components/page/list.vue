@@ -414,25 +414,25 @@ export default {
       })
     },
     isDetailReferenceable() {
-      return this.callParentMethod('isDetailReferenceable')
+      return this.callParentComputedOrMenu('isDetailReferenceable')
     },
     isUpdatable() {
-      return this.callParentMethod('isUpdatable')
+      return this.callParentComputedOrMenu('isUpdatable')
     },
     isDeleteable() {
-      return this.callParentMethod('isDeleteable')
+      return this.callParentComputedOrMenu('isDeleteable')
     },
     isRegistable() {
-      return this.callParentMethod('isRegistable')
+      return this.callParentComputedOrMenu('isRegistable')
     },
     isBulkRegistable() {
-      return this.callParentMethod('isBulkRegistable')
+      return this.callParentComputedOrMenu('isBulkRegistable')
     },
     isBulkReferenceable() {
-      return this.callParentMethod('isBulkReferenceable')
+      return this.callParentComputedOrMenu('isBulkReferenceable')
     },
     isEditable() {
-      return this.callParentMethod('isEditable')
+      return this.callParentComputedOrMenu('isEditable')
     },
     ...mapState([
       'featureList',
@@ -517,7 +517,7 @@ export default {
     if(this.compactMode) {
       await this.fetchCompactList()
     } else {
-      this.$parent.$options.methods.fetchData.apply(this.$parent)
+      this.callParentMethod('fetchData') // TODO: ここで呼ばなくても別途呼ばれる
     }
     // if (this.params.extraFilter) { // TODO: このロジック必要？
     //   const filterColumnList = this.params.extraFilter.filter(e => e != 'detectState')
@@ -552,17 +552,16 @@ export default {
     ]),
 
     // 共通
-    callParentMethod(method) {
-      if (this.$parent.$options.computed[method]) {
-        return this.$parent.$options.computed[method].call(this.$parent)
-      }
+    callParentComputedOrMenu(method) {
+      const ret = this.callParentComputed(method)
+      if (ret !== undefined) return ret
       return MenuHelper[method](this.indexPath)
     },
     thumbnail(row) {
-      return this.$parent.$options.methods.thumbnail.call(this.$parent, row)
+      return this.callParentMethod('thumbnail', row)
     },
     style(index) {
-      return this.$parent.$options.methods.style.call(this.$parent, index)
+      return this.callParentMethod('style', index)
     },
     setEmptyMessage(){
       this.message = null
@@ -579,10 +578,7 @@ export default {
 
     // システム設定関連
     getItem(key){
-      if(this.$parent.$options.methods && this.$parent.$options.methods.getItem){
-        return this.$parent.$options.methods.getItem.call(this.$parent, key)
-      }
-      return {}
+      return this.callParentMethodOrDef('getItem', {}, key)
     },
     getTooltipInfo(item){
       const ret = {
@@ -600,9 +596,7 @@ export default {
       return ret
     },
     clearAction(key){
-      if(this.$parent.$options.methods && this.$parent.$options.methods.clearAction){
-        this.$parent.$options.methods.clearAction.call(this.$parent, key)
-      }
+      this.callParentMethod('clearAction', key)
     },
 
     // テナント管理関係
@@ -632,7 +626,7 @@ export default {
       }
       this.showProgress()
       try {
-        const params = {...this.createListParam()}
+        const params = {...this.createListParam(this.filter.word)}
         params.word = this.filter.word
         params.category = this.selectedCategoryId
         params.group = this.selectedGroupId
@@ -642,8 +636,8 @@ export default {
           if (lword) params.lword = lword
         }
         const response = await AppServiceHelper.fetchCompactList(`${this.appServicePath}/list/${this.perPage}/${this.currentPage}/${this.sortBy}/${this.sortDesc? 'desc': 'asc'}` , params)
-        if (this.$parent.$options.methods && this.$parent.$options.methods.editResponse && response.data) {
-          await this.$parent.$options.methods.editResponse.call(this.$parent, response.data)
+        if (response.data) {
+          this.callParentMethod('editResponse', response.data)
         }
         this.dataItemList = response.data
         this.totalRows = response.count
@@ -658,8 +652,7 @@ export default {
       }
     },
     createListParam(word) {
-      const func = Util.v(this.$parent.$options.methods, 'createListParams')
-      return func? func.call(this.$parent): {}
+      return this.callParentMethodOrDef('createListParams', {}, word)
     },
     createListWordParam(word) { // EXT_DEFのlistタイプの検索用パラメータを作成
       const ret = []
@@ -710,12 +703,10 @@ export default {
       this.setEmptyMessage()
       let entity = {}
       if(item != null) {
-        const masterId = this.compactMode? this.$parent.$options.methods && this.$parent.$options.methods.getEditKey? this.$parent.$options.methods.getEditKey.call(this.$parent, item): item.updateKey: item[this.id]
+        const masterId = this.compactMode? this.callParentMethodOrDef('getEditKey', item.updateKey, item): item[this.id]
         entity = await AppServiceHelper.fetch(this.appServicePath, masterId)
       }
-      if (this.$parent.$options.methods && this.$parent.$options.methods.convBeforeEdit) {
-        entity = this.$parent.$options.methods.convBeforeEdit.call(this.$parent, entity)
-      }
+      entity = this.callParentMethodOrDef('convBeforeEdit', entity, entity)
       this.replaceAS({[this.name]: entity, editPage: this.currentPage})
       this.$router.push(this.editPath)
     },
@@ -847,14 +838,12 @@ export default {
         await AppServiceHelper.deleteEntity(this.appServicePath, id)
         await MasterHelper.loadMaster()
         this.message = this.$i18n.tnl('message.deleteCompleted', {target: this.$i18n.tnl('label.' + this.params.name)})
-        if(this.$parent.$options.methods && this.$parent.$options.methods.onSaved){
-          this.$parent.$options.methods.onSaved.call(this.$parent, {message: this.message})
-        }
+        this.callParentMethod('onSaved', {message: this.message})
         this.replace({showInfo: true})
         if(this.compactMode) {
           await this.fetchCompactList()
         } else {
-          await this.$parent.$options.methods.fetchData.apply(this.$parent)
+          await this.callParentMethod('fetchData')
         }
       } catch (e) {
         this.message = null
@@ -916,7 +905,7 @@ export default {
         thumbnail: tx.thumbnail,
       }
       const selectedAreaId = Util.getValue(item, 'exb.location.areaId')
-      const txOk = await this.$parent.$options.methods.checkDetectedTx.call(this.$parent, tx)
+      const txOk = await this.callParentMethod('checkDetectedTx', tx)
       if (txOk) {
         this.replaceMain({selectedTx})
       }

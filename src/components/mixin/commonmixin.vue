@@ -4,6 +4,7 @@ import { mapState, mapMutations, mapActions } from 'vuex'
 import { CATEGORY, POT_TYPE } from '../../sub/constant/Constants'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as StringUtil from '../../sub/util/StringUtil'
+import * as Util from '../../sub/util/Util'
 import * as ConfigHelper from '../../sub/helper/dataproc/ConfigHelper'
 import * as LocaleHelper from '../../sub/helper/base/LocaleHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
@@ -172,6 +173,18 @@ export default {
       'showProgress',
       'hideProgress',
     ]),
+    callParentComputed(method) {
+      const func = Util.v(this.$parent.$options.computed, method)
+      return func? func.call(this.$parent): undefined
+    },
+    callParentMethod(method, ...params) {
+      const func = Util.v(this.$parent.$options.methods, method)
+      return func? func.call(this.$parent, ...params): undefined
+    },
+    callParentMethodOrDef(method, def, ...params) {
+      const ret = this.callParentMethod(method, ...params)
+      return ret === undefined? def: ret
+    },
     vueSelectCutOn(option, required){
       return VueSelectHelper.vueSelectCutOn(option, required)
     },

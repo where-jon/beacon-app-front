@@ -59,7 +59,6 @@ export default {
     },
   },
   mounted() {
-    this.fetchData()
     this.items = ViewHelper.createBreadCrumbItems('develop', 'gateway')
   },
   methods: {
