@@ -43,7 +43,7 @@
           <!-- CSVファイルの項目説明 -->
           <div v-if="getCsvItems(page.key)" class="mt-2">
             <span class="helpTitle">
-              {{ getLabel('csvFile') }}
+              {{ getLabel('download') }}
             </span>
             <span class="helpDetail">
               {{ getHelpDescription('csvDescription') }}
