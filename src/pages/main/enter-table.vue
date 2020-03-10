@@ -223,6 +223,9 @@ export default {
       }
     },
     startAutoPager() {
+      if (this.timer) {
+        clearTimeout(this.timer)
+      }
       this.timer = setTimeout(async () =>{
         if (this.currentPage == this.totalPages) {
           this.currentPage = 0
