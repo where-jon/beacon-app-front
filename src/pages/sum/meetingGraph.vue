@@ -28,6 +28,15 @@ export default {
   computed: {
   },
   methods: {
+   getField(){
+      return [
+        {key: 'name', sortable: true, label: this.$i18n.tnl('label.name')},
+        {key: 'areaName', sortable: true, label: this.$i18n.tnl('label.area') },
+        {key: 'graph', sortable: false, label: this.$i18n.tnl('label.numUsersGraph'), thStyle: {height: '50px !important', width:'400px !important'} },
+        {key: 'ratio', sortable: false, label: this.$i18n.tnl('label.utilizationRatio') },
+        {key: 'useRatio', sortable: false, label: this.$i18n.tnl('label.useRatio') },
+      ]
+    },
     async fetchData(form){
       const param = {}
       const from = new Date(form.datetimeFrom).getTime()
@@ -40,12 +49,14 @@ export default {
       if(APP.MEETING.AXIS_TYPE == "exb"){
         ret = data.map( d => {
           const exb = this.exbIdMap[d.axisId]
-          return {...d, name: exb.deviceId, areaId:exb.areaId, areaName:exb.areaName}
+          const capacity = Util.v(exb, 'location.capacity')
+          return {...d, name: exb.deviceId, areaId: exb.areaId, areaName: exb.areaName, capacity }
         })
       }else if(APP.MEETING.AXIS_TYPE == "location"){
         ret = data.map( d => {
           const location = this.locationIdMap[d.axisId]
-          return {...d, name: location.locationName, areaId: location.area.areaId, areaName: location.area.areaName}
+          const capacity = Util.v(location, 'capacity')
+          return {...d, name: location.locationName, areaId: location.area.areaId, areaName: location.area.areaName, capacity}
         })
       // locationとzoneは1対1が前提。表示がzone名になるだけ。
       }else if(APP.MEETING.AXIS_TYPE == "zone"){
@@ -55,7 +66,8 @@ export default {
         }).map( d => {
           const location = this.locationIdMap[d.axisId]
           const zone = location.zoneList[0]
-          return {...d, name: zone.zoneName, areaId: location.area.areaId, areaName: location.area.areaName}
+          const capacity = Util.v(location, 'capacity')
+          return {...d, name: zone.zoneName, areaId: location.area.areaId, areaName: location.area.areaName, capacity}
         })
       }
       Util.debug('data2', ret)
@@ -82,14 +94,17 @@ export default {
           const count = posList.filter(pos => pos.cnt==i || (i==max && pos.cnt>=max)).length
           const second = count * APP.POSITION_SUMMARY_INTERVAL * 60
           const per = second / total * 100.0
+          console.log('test')
           stayRatio += per
           const color = ColorUtil.getStackColor(i)
-          graph.push({
-            name: i,
-            style: `width: ${per}% !important; background: ${color};`,
-            time: DateUtil.toHHmm(second),
-            ratio: Math.floor(per)
-          })
+          if(per > 0){
+            graph.push({
+              name: i,
+              style: `width: ${per}% !important; background: ${color};`,
+              time: DateUtil.toHHmm(second),
+              ratio: Math.floor(per)
+            })
+          }
         }
         if(stayRatio < 100){
           const color = 'gray'
@@ -110,7 +125,8 @@ export default {
           areaId: pos.areaId,
           areaName: pos.areaName,
           graph,
-          ratio: Math.floor(stayRatio) + "%"
+          ratio: Math.floor(stayRatio) + "%",
+          useRatio: Math.floor(this.getUseRatio(posList, total) * 100) + "%"
         }
       }).filter(view => view.name != null && (!form.areaId || form.areaId==view.areaId))
     },
@@ -182,6 +198,15 @@ export default {
       const m = date.getMinutes()
       return (h >= 10 ? h : "0" + h) + ":" + (m >= 10 ? m : "0" + m)
     },
+    getUseRatio(posList, total){
+      console.log(posList)
+      let sum = 0.0
+      posList.forEach(pos => {        
+        sum += pos.cnt / (pos.capacity ? pos.capacity : pos.cnt) * APP.POSITION_SUMMARY_INTERVAL * 60
+
+      })
+      return sum / total
+    }
   }
 }
 </script>

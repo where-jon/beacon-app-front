@@ -24,6 +24,15 @@ export default {
   computed: {
   },
   methods: {
+   getField(){
+      return [
+        {key: 'name', sortable: true, label: this.$i18n.tnl('label.potName')},
+        {key: 'groupName', sortable: true, label: this.$i18n.tnl('label.groupName') },
+        {key: 'graph', sortable: false, label: this.$i18n.tnl('label.graph'), thStyle: {height: '50px !important', width:'400px !important'} },
+        {key: 'stayTime', sortable: false, label: this.$i18n.tnl('label.stayTime') },
+        {key: 'lostTime', sortable: false, label: this.$i18n.tnl('label.lostTime') },
+      ]
+    },
     async fetchData(form){
       const param = {
         datetimeFrom: new Date(form.datetimeFrom).getTime(),

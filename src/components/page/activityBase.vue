@@ -146,24 +146,7 @@ export default {
   },
   methods: {
     getField(){
-      if(this.type=="pot"){
-        return [
-          {key: 'name', sortable: true, label: this.$i18n.tnl('label.potName')},
-          {key: 'groupName', sortable: true, label: this.$i18n.tnl('label.groupName') },
-          {key: 'graph', sortable: false, label: this.$i18n.tnl('label.graph'), thStyle: {height: '50px !important', width:'400px !important'} },
-          {key: 'stayTime', sortable: false, label: this.$i18n.tnl('label.stayTime') },
-          {key: 'lostTime', sortable: false, label: this.$i18n.tnl('label.lostTime') },
-        ]
-      }
-      if(this.type=="zone"){
-        return [
-          {key: 'name', sortable: true, label: this.$i18n.tnl('label.name')},
-          {key: 'areaName', sortable: true, label: this.$i18n.tnl('label.area') },
-          {key: 'graph', sortable: false, label: this.$i18n.tnl('label.numUsersGraph'), thStyle: {height: '50px !important', width:'400px !important'} },
-          {key: 'ratio', sortable: false, label: this.$i18n.tnl('label.utilizationRatio') },
-        ]
-      }
-      return []
+      return this.$parent.getField()
     },
     async display(isDownload) {
       this.replace({showAlert: false})
@@ -187,7 +170,7 @@ export default {
 
         // グラフ作成
         const func = {getTotal: this.getTotal}
-        if(isDownload){ // TODO:ダウンロードにする
+        if(isDownload){
           this.$parent.download(this.form, data)
         }else{
           this.viewList = this.$parent.createGraph(this.form, data, func)
@@ -213,11 +196,11 @@ export default {
       // 開始と終了時間を丸める
       let fromTime = fromDt.getHours() * 3600 + fromDt.getMinutes() * 60 + fromDt.getSeconds()
       let toTime = toDt.getHours() * 3600 + toDt.getMinutes() * 60 + toDt.getSeconds()
-      fromTime = Math.max(fromTime, start)
       if(fromTime > end){
         fromTime = start
         fromDate++        
       }
+      fromTime = Math.max(fromTime, start)
       if(toTime < start){
         toTime = end
         toDate--
@@ -232,9 +215,9 @@ export default {
       // 2日以上の場合
       let total = 0
       total += end - fromTime
-      total += toTime - end
+      total += toTime - start
       total += (toDate - fromDate - 1) * (end - start)
-      console.log('total', total)
+      //console.log('total', total)
       return total
     },
   }
