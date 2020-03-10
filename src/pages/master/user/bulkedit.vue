@@ -61,7 +61,8 @@ export default {
       }
       return dummyKey
     },
-    async onSaved(){
+    async onSaving() {
+      await this.$refs.bulkEdit.bulkSave2()
     },
   }
 }
