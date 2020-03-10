@@ -252,7 +252,7 @@ const convert = (row, colNames) => {
     // その他Numberとなるもの
     else if (col.endsWith('Type') || col.endsWith('Ratio') || col.endsWith('Width') || col.endsWith('Height')
       || col.startsWith('threshold') || col.startsWith('adjust')
-      || ArrayUtil.equalsAny(col, ['major','minor','x','y','z','w','h','disp','systemUse'])) {
+      || ArrayUtil.equalsAny(col, ['major','minor','x','y','z','w','h','capacity','disp','systemUse'])) {
       ret[col] = Util.hasValue(val)? Number(val): null     
     }
     else {

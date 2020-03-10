@@ -77,6 +77,11 @@
               <v-select :value="getZoneBlockItems()" :options="zoneBlockOptions" disabled multiple class="vue-options-multi" />
             </b-form-group>
 
+            <b-form-group>
+              <label v-t="'label.capacity'" />
+              <input v-model="form.capacity" :readonly="!isEditable" type="number" min="0" max="99999" class="form-control">
+            </b-form-group>
+
             <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
             <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="doBeforeSubmit(false)">
               {{ $i18n.tnl(`label.${isUpdate? 'update': 'register'}`) }}
@@ -132,7 +137,7 @@ export default {
       useZoneBlock: MenuHelper.isMenuEntry('/master/zoneBlock') && this.isShown('LOCATION.WITH', 'zoneBlock'),
       form: Util.extract(this.$store.state.app_service.location, [
         'locationId', 'locationCd', 'locationType', 'locationName',
-        'areaId', 'x', 'y',
+        'areaId', 'x', 'y', 'capacity',
         'txViewType', 'locationZoneList',
         'exbIds', 'txIds', 
         ...ExtValueHelper.getExtValueKeys(APP.LOCATION, true)
@@ -317,6 +322,7 @@ export default {
         extValue: {},
         x: this.form.x,
         y: this.form.y,
+        capacity: this.form.capacity,
         exbIdList: this.form.exbIds,
         txIdList: this.form.txIds,
       }
