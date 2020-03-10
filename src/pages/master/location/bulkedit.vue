@@ -36,8 +36,8 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'location'
-      // , 'locations', 'zones'
+      'location',
+      'zones'
     ]),
     zoneMap(){
       const ret = {}
@@ -49,7 +49,7 @@ export default {
   },
   methods: {
     async onSaving() {
-      await this.$refs.bulkEdit.bulkSave({numberList: ['x', 'y'], nullableList: ['x', 'y']})
+      await this.$refs.bulkEdit.bulkSave({numberList: ['x', 'y', 'capacity'], nullableList: ['x', 'y', 'capacity']})
     },
     restructExb(entity, dummyKey){
       ['deviceId', 'deviceIdX'].forEach(key => {
