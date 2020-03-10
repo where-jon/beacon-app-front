@@ -802,9 +802,16 @@ export default {
     },
     filterParent(originItem) {
       const zoneCategory = Util.getValue(this.params, 'parentFilter.zoneCategory')
-      if (zoneCategory && originItem.zoneCategoryIdList && !originItem.zoneCategoryIdList.includes(zoneCategory)) {
+      console.log('this.params:',this.params)
+      console.log('zoneCategory:',zoneCategory)
+      console.log('originItem:',originItem)
+      console.log('originItem:',Util.getValue(originItem, 'categoryId'))
+      const categoryId = Util.getValue(originItem, 'categoryId')
+      if (zoneCategory && categoryId && zoneCategory != categoryId ) {
+        console.log('if-false')
         return false
       }
+      console.log('if-true')
       return true
     },
     filterDetail(originItem){
