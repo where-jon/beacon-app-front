@@ -12,9 +12,9 @@
         <!-- 目次：イントロダクション -->
         <div>
           <div class="list-group mt-3">
-            <b>{{ getHelpDescription('introduction') }}</b>
+            <b>{{ getHelpDescription(introduction) }}</b>
           </div>
-          <a v-for="(intro,key) in helpBaseKeys" :key="key" :href="createInternalLink(intro)" class="list-group-item list-group-item-action">
+          <a v-for="(intro,key) in helpBaseKeys" :key="key" :href="createInternalLink(introduction, intro)" class="list-group-item list-group-item-action">
             {{ getLabel(intro) }}
           </a>
         </div>
@@ -23,13 +23,13 @@
           <div class="list-group mt-3">
             <b>{{ getLabel(menuGroup.key) }}</b>
           </div>
-          <a v-for="page in menuGroup.pages" :key="page.key" :href="createInternalLink(page.key)" class="list-group-item list-group-item-action">
+          <a v-for="page in menuGroup.pages" :key="page.key" :href="createInternalLink(menuGroup.key, page.key)" class="list-group-item list-group-item-action">
             {{ getLabel(page.key) }}
           </a>
         </div>
       </div>
       <!-- ヘルプ本文：イントロダクション -->
-      <div v-for="intro in helpBaseKeys" :id="intro" :key="intro">
+      <div v-for="intro in helpBaseKeys" :id="introduction + '_' + intro" :key="intro">
         <hr>
         <!-- ヘッダー -->
         <div class="helpLabelHeader">
@@ -50,7 +50,7 @@
       </div>
       <!-- ヘルプ本文：画面 -->
       <div v-for="(menuGroup, key) in this.$store.state.menu" :key="key">
-        <div v-for="page in menuGroup.pages" :id="page.key" :key="page.key">
+        <div v-for="page in menuGroup.pages" :id="menuGroup.key + '_' + page.key" :key="page.key">
           <hr>
           <!-- ヘッダー -->
           <div class="helpLabelHeader">
@@ -110,6 +110,7 @@ export default {
       csvFields: [],
       bulkFields: [],
       helpBaseKeys: ['overview','notes'],  // 表示対象の説明文のKey(メニュー以外)を追加　helpBaseDescriptionに説明文追加
+      introduction: 'introduction'
     }
   },
   computed: {
@@ -153,8 +154,8 @@ export default {
     getConfig(key, option){
       return this.$i18n.tnl('config.' + key, option)
     },
-    createInternalLink(key){
-      return '#'+ key
+    createInternalLink(groupKey, pageKey){
+      return '#'+ groupKey + '_' + pageKey
     },
     getHelpAdditionalDescription(key, option){
       const ret = this.$i18n.tnl('helpAdditionalDescription.' + key, option)
