@@ -165,7 +165,7 @@ export const authByAppService = async (loginId, password, success, err) => {
     }
 
     await login({loginId, ...userInfo,
-      isTenantAdmin: data.isTenantAdmin, // テナント管理画面を表示するか
+      isTenantAdmin: data.tenantAdmin, // テナント管理画面を表示するか(サーバ側も変数がisTenantAdminだがjson化時にtenantAdminになってしまうため)
       apiKey: data.apiKey,
       isProviderUser: userInfo.user.providerUserId != null,
       userRegionIdList, allRegionMove: allRegionMove, isAd })
