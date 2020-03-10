@@ -39,6 +39,17 @@
         <span class="helpDetail align-top">
           {{ getHelpIntroduction(intro) }}
         </span>
+        <!-- CSVファイルの項目説明 -->
+        <div v-if="getCsvItems('bulkItems')" class="mt-2">
+          <span class="helpTitle">
+            {{ getLabel('register') }}
+          </span>
+          <span class="helpDetail">
+            {{ getHelpDescription('bulkRegister') }}
+          </span>
+          <b-table striped hover small :items="getCsvItems('bulkItems')" :fields="bulkFields" />
+        </div>
+
         <!-- 目次へ戻るボタン -->
         <div class="text-right">
           <a href="#indexList">
@@ -411,19 +422,17 @@ export default {
           { isActive: true, displayName: this.getLabel('finalReceiveTime'), keyName: 'finalReceiveTime' },
           { isActive: true, displayName: this.getLabel('notifyResult'), keyName: 'notifyResult' },
         ]
+      case 'bulkItems':
+        return [
+          { isActive: true, description: this.getHelpDescription('bulkUniqueFailed'), error_name: this.getMessage('bulkUniqueFailed', {col: this.getLabel('linage'), value: this.getLabel('keyName')}) },
+          { isActive: true, description: this.getHelpDescription('bulkExistFailed'), error_name: this.getMessage('bulkExistFailed', {col: this.getLabel('linage'), value: this.getLabel('keyName')}) },
+          { isActive: true, description: this.getHelpDescription('bulkAuthFailed'), error_name: this.getMessage('bulkAuthFailed', {col: this.getLabel('linage'), value: this.getLabel('keyName')}) },
+          { isActive: true, description: this.getHelpDescription('bulkSystemUseFailed'), error_name: this.getMessage('bulkSystemUseFailed', {col: this.getLabel('linage'), value: this.getLabel('keyName')}) },
+          { isActive: true, description: this.getHelpDescription('bulkSystemUseNameFailed'), error_name: this.getMessage('bulkSystemUseNameFailed', {col: this.getLabel('linage'), value: this.getLabel('keyName')}) },
+        ]
       default:
         return null
       }
-    },
-
-    bulkItems() {
-      return [
-        { isActive: true, description: this.getHelpDescription('bulkUniqueFailed'), error_name: this.getMessage('bulkUniqueFailed', {col: this.getLabel('linage'), value: this.getLabel('keyName')}) },
-        { isActive: true, description: this.getHelpDescription('bulkExistFailed'), error_name: this.getMessage('bulkExistFailed', {col: this.getLabel('linage'), value: this.getLabel('keyName')}) },
-        { isActive: true, description: this.getHelpDescription('bulkAuthFailed'), error_name: this.getMessage('bulkAuthFailed', {col: this.getLabel('linage'), value: this.getLabel('keyName')}) },
-        { isActive: true, description: this.getHelpDescription('bulkSystemUseFailed'), error_name: this.getMessage('bulkSystemUseFailed', {col: this.getLabel('linage'), value: this.getLabel('keyName')}) },
-        { isActive: true, description: this.getHelpDescription('bulkSystemUseNameFailed'), error_name: this.getMessage('bulkSystemUseNameFailed', {col: this.getLabel('linage'), value: this.getLabel('keyName')}) },
-      ]
     },
   }
 }
