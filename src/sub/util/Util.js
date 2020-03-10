@@ -141,7 +141,7 @@ export const v = (obj, path, def = null) =>  getValueWithKey(obj, path, def)
  * @method
  * @param {Object} obj
  * @param {String} path オブジェクトのメンバー以下を.でつなげる。配列は添字を使う。
- * @param {*} def 省略すると、値と最後のキー値のペアを返す。省略しないとnullのときdefを返す
+ * @param {*} def 省略すると、値と最後のキー値のペアを返す。省略しないとnullか空文字のときdefを返す
  */
 export const getValueWithKey = (obj, path, def) => {
   let pathSpl = path.split('.')
@@ -152,7 +152,7 @@ export const getValueWithKey = (obj, path, def) => {
     val = val && typeof val == 'object'? val[lastKey]: null
   }
   if (def !== undefined) {
-    return val != null? val: def
+    return val != null && val != ''? val: def
   }
   return {val, lastKey}
 }

@@ -272,7 +272,7 @@ export const isTransparent = (timestamp, now) => {
 }
 
 /**
- * 消失状態か判定する。
+ * 消失状態（未検知含む）か判定する。
  * @method
  * @param {Number} timestamp
  * @param {Number} now
