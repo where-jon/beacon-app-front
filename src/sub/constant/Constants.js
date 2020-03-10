@@ -694,6 +694,9 @@ export const SETTING = {
           MIDIUM_TYPES: SETTING.NUMBER_LIST,
           STATE_TYPES: SETTING.NUMBER_LIST,
         },
+        MAIL: {
+          PASSWORD: SETTING.PASSWORD,
+        },
         STAY_SUM: {
           SCALE_TIMES: SETTING.NUMBER_LIST,
         },
@@ -737,6 +740,11 @@ export const SETTING = {
           PROCESS: {
             LOCATION_TYPE_TO_RELEASE_TX_POT: SETTING.NUMBER,
           },
+        },
+        SVCONLY: {
+          EXCLOUD: {
+            AUTH_HEADER: SETTING.PASSWORD
+          }
         },
         BATCH: {
           POSITION: {
