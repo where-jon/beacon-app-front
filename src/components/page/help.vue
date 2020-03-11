@@ -218,45 +218,140 @@ export default {
           { isActive: true, displayName: this.getHelpDescription('txXY'), keyName: 'y' },
           { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
         ]
+      case 'locationList':
+        return [
+          { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
+          { isActive: true, displayName: this.getLabel('locationCd'), keyName: 'locationCd' },
+          { isActive: true, displayName: this.getLabel('locationName'), keyName: 'locationName' },
+          { isActive: true, displayName: this.getLabel('areaName'), keyName: 'areaName' },
+          { isActive: true, displayName: this.getHelpDescription('locationXY'), keyName: 'x' },
+          { isActive: true, displayName: this.getHelpDescription('locationXY'), keyName: 'y' },
+          { isActive: true, displayName: this.getLabel('txViewType'), keyName: 'txViewType' },
+          { isActive: true, displayName: this.getLabel('visible'), keyName: 'visible' },
+          { isActive: true, displayName: this.getLabel('zoneClass'), keyName: 'zoneClass' },
+          { isActive: true, displayName: this.getLabel('zoneClass'), keyName: 'zoneClass' },
+          { isActive: true, displayName: this.getLabel('deviceId'), keyName: 'deviceId' },
+          { isActive: true, displayName: this.getLabel('btxId'), keyName: 'btxId' },
+          { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
+        ]
       case 'pot':
         return [
           { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
-          { isActive: true, displayName: this.getLabel('btxId'), keyName: 'btxId' },
-          { isActive: true, displayName: this.getLabel('minor'), keyName: 'minor' },
           { isActive: true, displayName: this.getLabel('potCd'), keyName: 'potCd' },
+          { isActive: true, displayName: this.getLabel('btxId'), keyName: 'btxId' },
           { isActive: true, displayName: this.getLabel('potName'), keyName: 'potName' },
           { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'potType' },
           { isActive: true, displayName: this.getLabel('displayName'), keyName: 'displayName' },
-          { isActive: true, displayName: this.getLabel('group'), keyName: 'groupName' },
-          { isActive: true, displayName: this.getLabel('category'), keyName: 'categoryName' },
-          { isActive: true, displayName: this.getLabel('post'), keyName: 'post' },
-          { isActive: true, displayName: this.getLabel('tel'), keyName: 'tel' },
-          { isActive: true, displayName: this.getLabel('description'), keyName: 'description' },
-          { isActive: true, displayName: this.getLabel('loginId'), keyName: 'loginId' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'roleName' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'pass' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'email' },
           { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
+          { isActive: true, displayName: this.getLabel('category'), keyName: 'categoryName' },
+          { isActive: true, displayName: this.getLabel('ruby'), keyName: 'ruby' },
+          { isActive: true, displayName: this.getLabel('description'), keyName: 'description' },
+        ]
+      case 'potPerson':
+        return [
+          { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
+          { isActive: true, displayName: this.getLabel('potCd'), keyName: 'potCd' },
+          { isActive: true, displayName: this.getLabel('btxId'), keyName: 'btxId' },
+          { isActive: true, displayName: this.getLabel('potName'), keyName: 'potName' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'potType' },
+          { isActive: true, displayName: this.getLabel('displayName'), keyName: 'displayName' },
+          { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
+          { isActive: true, displayName: this.getLabel('category'), keyName: 'categoryName' },
+          { isActive: true, displayName: this.getLabel('ruby'), keyName: 'ruby' },
+          { isActive: true, displayName: this.getLabel('description'), keyName: 'description' },
+        ]
+      case 'potThing':
+        return [
+          { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
+          { isActive: true, displayName: this.getLabel('potCd'), keyName: 'potCd' },
+          { isActive: true, displayName: this.getLabel('btxId'), keyName: 'btxId' },
+          { isActive: true, displayName: this.getLabel('potName'), keyName: 'potName' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'potType' },
+          { isActive: true, displayName: this.getLabel('displayName'), keyName: 'displayName' },
+          { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
+          { isActive: true, displayName: this.getLabel('category'), keyName: 'categoryName' },
+          { isActive: true, displayName: this.getLabel('ruby'), keyName: 'ruby' },
+          { isActive: true, displayName: this.getLabel('description'), keyName: 'description' },
+        ]
+      case 'potOther':
+        return [
+          { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
+          { isActive: true, displayName: this.getLabel('potCd'), keyName: 'potCd' },
+          { isActive: true, displayName: this.getLabel('btxId'), keyName: 'btxId' },
+          { isActive: true, displayName: this.getLabel('potName'), keyName: 'potName' },
+          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'potType' },
+          { isActive: true, displayName: this.getLabel('displayName'), keyName: 'displayName' },
+          { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
+          { isActive: true, displayName: this.getLabel('category'), keyName: 'categoryName' },
+          { isActive: true, displayName: this.getLabel('ruby'), keyName: 'ruby' },
+          { isActive: true, displayName: this.getLabel('description'), keyName: 'description' },
         ]
       case 'category':
         return [
           { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
+          { isActive: true, displayName: this.getLabel('categoryCd'), keyName: 'ID' },
           { isActive: true, displayName: this.getLabel('categoryName'), keyName: 'categoryName' },
           { isActive: true, displayName: this.getLabel('categoryType'), keyName: 'categoryTypeName' },
-          { isActive: true, displayName: this.getLabel('display'), keyName: 'color' },
-          { isActive: true, displayName: this.getLabel('display'), keyName: 'bgColor' },
-          { isActive: true, displayName: this.getLabel('display'), keyName: 'Shape' },
+          { isActive: true, displayName: this.getLabel('color'), keyName: 'color' },
+          { isActive: true, displayName: this.getLabel('bgColor'), keyName: 'bgColor' },
+          { isActive: true, displayName: this.getLabel('shape'), keyName: 'Shape' },
           { isActive: true, displayName: this.getLabel('description'), keyName: 'description' },
           { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
+        ]
+      case 'categoryPerson':
+        return [
+          { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
+          { isActive: true, displayName: this.getLabel('categoryCd'), keyName: 'ID' },
+          { isActive: true, displayName: this.getLabel('categoryName'), keyName: 'categoryName' },
+          { isActive: true, displayName: this.getLabel('categoryType'), keyName: 'categoryTypeName' },
+          { isActive: true, displayName: this.getLabel('color'), keyName: 'color' },
+          { isActive: true, displayName: this.getLabel('bgColor'), keyName: 'bgColor' },
+          { isActive: true, displayName: this.getLabel('shape'), keyName: 'Shape' },
+          { isActive: true, displayName: this.getLabel('description'), keyName: 'description' },
+          { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
+        ]
+      case 'categoryThing':
+        return [
+          { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
+          { isActive: true, displayName: this.getLabel('categoryCd'), keyName: 'ID' },
+          { isActive: true, displayName: this.getLabel('categoryName'), keyName: 'categoryName' },
+          { isActive: true, displayName: this.getLabel('categoryType'), keyName: 'categoryTypeName' },
+          { isActive: true, displayName: this.getLabel('color'), keyName: 'color' },
+          { isActive: true, displayName: this.getLabel('bgColor'), keyName: 'bgColor' },
+          { isActive: true, displayName: this.getLabel('shape'), keyName: 'Shape' },
+          { isActive: true, displayName: this.getLabel('description'), keyName: 'description' },
+          { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
+        ]
+      case 'categoryZone':
+        return [
+          { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
+          { isActive: true, displayName: this.getLabel('categoryCd'), keyName: 'ID' },
+          { isActive: true, displayName: this.getLabel('categoryName'), keyName: 'categoryName' },
+          { isActive: true, displayName: this.getLabel('categoryType'), keyName: 'categoryTypeName' },
+          { isActive: true, displayName: this.getLabel('color'), keyName: 'color' },
+          { isActive: true, displayName: this.getLabel('bgColor'), keyName: 'bgColor' },
+          { isActive: true, displayName: this.getLabel('shape'), keyName: 'Shape' },
+          { isActive: true, displayName: this.getLabel('description'), keyName: 'description' },
+          { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
+        ]
+      case 'categoryAuth':
+        return [
+          { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
+          { isActive: true, displayName: this.getLabel('categoryCd'), keyName: 'ID' },
+          { isActive: true, displayName: this.getLabel('authCategoryName'), keyName: 'categoryName' },
+          { isActive: true, displayName: this.getLabel('categoryType'), keyName: 'categoryTypeName' },
+          { isActive: true, displayName: this.getLabel('zoneGuard'), keyName: 'guardNames' },
+          { isActive: true, displayName: this.getLabel('zoneDoor'), keyName: 'doorNames' },
         ]
       case 'group':
         return [
           { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
+          { isActive: true, displayName: this.getLabel('groupCd'), keyName: 'ID' },
           { isActive: true, displayName: this.getLabel('groupName'), keyName: 'groupName' },
           { isActive: true, displayName: this.getLabel('ruby'), keyName: 'ruby' },
-          { isActive: true, displayName: this.getLabel('display'), keyName: 'color' },
-          { isActive: true, displayName: this.getLabel('display'), keyName: 'bgColor' },
-          { isActive: true, displayName: this.getLabel('display'), keyName: 'Shape' },
+          { isActive: true, displayName: this.getLabel('color'), keyName: 'color' },
+          { isActive: true, displayName: this.getLabel('bgColor'), keyName: 'bgColor' },
+          { isActive: true, displayName: this.getLabel('shape'), keyName: 'Shape' },
           { isActive: true, displayName: this.getLabel('description'), keyName: 'description' },
           { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
         ]
@@ -267,7 +362,6 @@ export default {
           { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'pass' },
           { isActive: true, displayName: this.getLabel('email'), keyName: 'email' },
           { isActive: true, displayName: this.getLabel('name'), keyName: 'name' },
-          { isActive: true, displayName: this.getLabel('regionName'), keyName: 'regionName' },
           { isActive: true, displayName: this.getLabel('role'), keyName: 'roleName' },
           { isActive: true, displayName: this.getLabel('description'), keyName: 'description' },
           { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
@@ -281,6 +375,8 @@ export default {
       case 'zoneClass':
         return [
           { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
+          { isActive: true, displayName: this.getLabel('categoryCd'), keyName: 'ID' },
+          { isActive: true, displayName: this.getLabel('categoryType'), keyName: 'zoneType' },
           { isActive: true, displayName: this.getLabel('zoneName'), keyName: 'zoneName' },
           { isActive: true, displayName: this.getLabel('areaName'), keyName: 'areaName' },
           { isActive: true, displayName: this.getLabel('categoryName'), keyName: 'categoryName' },
@@ -307,8 +403,7 @@ export default {
       case 'telemetry':
         return [
           { isActive: true, displayName: this.getLabel('deviceId'), keyName: 'deviceId' },
-          { isActive: true, displayName: this.getLabel('deviceIdX'), keyName: 'deviceIdX' },
-          { isActive: true, displayName: this.getLabel('exbName'), keyName: 'finalRevceivePlace' },
+          { isActive: true, displayName: this.getLabel('locationName'), keyName: 'locationName' },
           { isActive: true, displayName: this.getLabel('powerLevel'), keyName: 'powerLevel' },
           { isActive: true, displayName: this.getLabel('finalReceiveTimestamp'), keyName: 'timestamp' },
           { isActive: true, displayName: this.getLabel('state'), keyName: 'state' },
