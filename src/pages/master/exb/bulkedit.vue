@@ -39,11 +39,12 @@ export default {
   },
   methods: {
     async onSaving() {
-      await this.$refs.bulkEdit.bulkSave({
-        numberList: ['deviceId', 'threshold1', 'threshold2', 'adjust1', 'adjust2'],
-        hexList: ['deviceIdX'],
-        nullableList: ['threshold1', 'threshold2', 'adjust1', 'adjust2', 'sensorNames']
-      })
+      await this.$refs.bulkEdit.bulkSave2()
+      // await this.$refs.bulkEdit.bulkSave({
+      //   numberList: ['deviceId', 'threshold1', 'threshold2', 'adjust1', 'adjust2'],
+      //   hexList: ['deviceIdX'],
+      //   nullableList: ['threshold1', 'threshold2', 'adjust1', 'adjust2', 'sensorNames']
+      // })
     },
     onRestruct(entity, dummyKey){
       if(Util.hasValue(entity.deviceId) || Util.hasValue(entity.deviceIdX)){

@@ -45,7 +45,8 @@ export default {
       return prefix + '_' + (new Date().getTime() % 10000)
     },
     async onSaving() {
-      await this.$refs.bulkEdit.bulkSave({numberList: ['btxId', 'major', 'minor', 'disp', 'x', 'y'], nullableList: ['locationName', 'x', 'y', 'sensorNames']})
+      await this.$refs.bulkEdit.bulkSave2()
+      // await this.$refs.bulkEdit.bulkSave({numberList: ['btxId', 'major', 'minor', 'disp', 'x', 'y'], nullableList: ['locationName', 'x', 'y', 'sensorNames']})
     },
     restructTx(entity, dummyKey){
       if(APP.TX.BTX_MINOR == 'minor'){
