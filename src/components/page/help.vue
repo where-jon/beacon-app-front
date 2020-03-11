@@ -40,14 +40,14 @@
           {{ getHelpIntroduction(intro) }}
         </span>
         <!-- CSVファイルの項目説明 -->
-        <div v-if="getCsvItems('bulkItems')" class="mt-2">
+        <div v-if="intro == 'notes' && getIntroductionItems('bulkItems')" class="mt-2">
           <span class="helpTitle">
-            {{ getLabel('register') }}
+            {{ getLabel('bulkRegister') }}
           </span>
           <span class="helpDetail">
             {{ getHelpDescription('bulkRegister') }}
           </span>
-          <b-table striped hover small :items="getCsvItems('bulkItems')" :fields="bulkFields" />
+          <b-table striped hover small :items="getIntroductionItems('bulkItems')" :fields="bulkFields" />
         </div>
 
         <!-- 目次へ戻るボタン -->
@@ -498,28 +498,29 @@ export default {
           { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'x' },
           { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'y' },
         ]
+      case 'positionHistoryExc':
+        return [
+          { isActive: true, displayName: this.getLabel('basetime'), keyName: 'basetime' },
+          { isActive: true, displayName: this.getLabel('receivedtime'), keyName: 'receivedtime' },
+          { isActive: true, displayName: this.getLabel('txId'), keyName: 'txid' },
+          { isActive: true, displayName: this.getLabel('posId'), keyName: 'posid' },
+        ]
       case 'sensorHistory':
         return [
           { isActive: true, displayName: this.getLabel('dt'), keyName: 'sensorDt' },
           { isActive: true, displayName: this.getLabel('sensorName'), keyName: 'sensorName' },
-          { isActive: true, displayName: this.getLabel('deviceNum'), keyName: 'deviceNum' },
           { isActive: true, displayName: this.getLabel('deviceId'), keyName: 'deviceId' },
-          { isActive: true, displayName: this.getLabel('deviceIdX'), keyName: 'deviceIdX' },
           { isActive: true, displayName: this.getLabel('locationZoneName'), keyName: 'locationName' },
           { isActive: true, displayName: this.getLabel('areaName'), keyName: 'areaName' },
           { isActive: true, displayName: this.getLabel('temperature'), keyName: 'temperature' },
           { isActive: true, displayName: this.getLabel('humidity'), keyName: 'humidity' },
-          { isActive: true, displayName: this.getLabel('numUsers'), keyName: 'count' },
-          { isActive: true, displayName: this.getLabel('txName'), keyName: 'txName' },
-          { isActive: true, displayName: this.getLabel('major'), keyName: 'major' },
-          { isActive: true, displayName: this.getLabel('minor'), keyName: 'minor' },
-          { isActive: true, displayName: this.getLabel('h_blood_pressure'), keyName: 'high' },
-          { isActive: true, displayName: this.getLabel('l_blood_pressure'), keyName: 'low' },
-          { isActive: true, displayName: this.getLabel('heart_rate'), keyName: 'beat' },
-          { isActive: true, displayName: this.getLabel('step'), keyName: 'step' },
-          { isActive: true, displayName: this.getLabel('down_count'), keyName: 'down' },
-          { isActive: true, displayName: this.getLabel('state'), keyName: 'state' },
-          { isActive: true, displayName: this.getLabel('pressVol'), keyName: 'pressVol' },
+        ]
+      case 'sensorHistoryExc':
+        return [
+          { isActive: true, displayName: this.getLabel('receivedtime'), keyName: 'receivedtime' },
+          { isActive: true, displayName: this.getLabel('deviceId'), keyName: 'deviceId' },
+          { isActive: true, displayName: this.getLabel('temperature'), keyName: 'temperature' },
+          { isActive: true, displayName: this.getLabel('humidity'), keyName: 'humidity' },
         ]
       case 'notifyHistory':
         return [
@@ -533,6 +534,26 @@ export default {
           { isActive: true, displayName: this.getLabel('finalReceiveTime'), keyName: 'finalReceiveTime' },
           { isActive: true, displayName: this.getLabel('notifyResult'), keyName: 'notifyResult' },
         ]
+      case 'planActualHistory':
+        return [
+          { isActive: true, displayName: this.getLabel('startDt'), keyName: 'startDt' },
+          { isActive: true, displayName: this.getLabel('endDt'), keyName: 'endDt' },
+          { isActive: true, displayName: this.getLabel('planId'), keyName: 'planId' },
+          { isActive: true, displayName: this.getLabel('planName'), keyName: 'planName' },
+          { isActive: true, displayName: this.getLabel('planDetailId'), keyName: 'planDetailId' },
+          { isActive: true, displayName: this.getLabel('zoneId'), keyName: 'zoneId' },
+          { isActive: true, displayName: this.getLabel('zoneName'), keyName: 'zoneName' },
+          { isActive: true, displayName: this.getLabel('potId'), keyName: 'potId' },
+          { isActive: true, displayName: this.getLabel('potName'), keyName: 'potName' },
+          { isActive: true, displayName: this.getLabel('potCategoryType'), keyName: 'potCategoryType' },
+        ]
+      default:
+        return null
+      }
+    },
+    // イントロダクションに表示する表の内容
+    getIntroductionItems(key){
+      switch(key) {
       case 'bulkItems':
         return [
           { isActive: true, description: this.getHelpDescription('bulkUniqueFailed'), error_name: this.getMessage('bulkUniqueFailed', {col: this.getLabel('linage'), value: this.getLabel('keyName')}) },
