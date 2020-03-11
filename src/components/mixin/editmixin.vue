@@ -50,10 +50,6 @@ export default {
     isEditable() {
       return this.isRegistable || this.isUpdatable
     },
-    isProvider(){
-      const loginInfo = LocalStorageHelper.getLogin()
-      return loginInfo.isProvider
-    },
     ...mapState('app_service', [
       'listMessage',
       'showLine',

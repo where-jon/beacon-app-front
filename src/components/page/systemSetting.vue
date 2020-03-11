@@ -140,7 +140,10 @@ export default {
         disableTableButtons: true,
         addFilterFields: ['title', 'inputData'],
         allDispFields: ['title', 'defaultVal'],
-        extraFilter: [this.useKeyCategoryFilter? 'keyCategory': null, this.useSettingCategoryFilter? 'settingCategory': null].filter(val => val),
+        extraFilter: [
+          this.useKeyCategoryFilter? 'keyCategory': null,
+          this.useSettingCategoryFilter? 'settingCategory': null
+        ].filter(val => val),
         tableDescription: 'settingDescription',
       },
       name: 'setting',
@@ -257,8 +260,8 @@ export default {
     async applyConfig() {
       await StateHelper.load('setting', true)
       const login = LocalStorageHelper.getLogin()
-      const userInfo = await AuthHelper.getUserInfo(login.tenantAdmin)
-      AuthHelper.resetConfig(login.tenantAdmin, userInfo.setting)
+      const userInfo = await AuthHelper.getUserInfo(login.isTenantAdmin)
+      AuthHelper.resetConfig(login.isTenantAdmin, userInfo.setting)
     },
     async onSaved() {
       await this.applyConfig()

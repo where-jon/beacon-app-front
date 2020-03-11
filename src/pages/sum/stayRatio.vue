@@ -242,7 +242,7 @@ export default {
     getApiUrl(param) {
       const targetDate = moment(param.date).format('YYYYMMDD')
       const groupBy = param.groupId? '&groupId=' + param.groupId: ''
-      const url = '/office/stayTime/sumByDay/' + targetDate + '/zoneCategory?from=' + APP.STAY_SUM.FROM + '&to=' + APP.STAY_SUM.TO + groupBy
+      const url = '/office/stayTime/sumByDay/' + targetDate + '/zoneCategory?from=' + APP.SVC.STAY_SUM.START + '&to=' + APP.SVC.STAY_SUM.END + groupBy
       return url
     },
     updateColumnName(){
@@ -288,7 +288,7 @@ export default {
       let day = 0
       while (day <= csvDays) {
         const searchDate = moment(this.form.date).startOf('months').add(day++, 'day').format('YYYYMMDD')
-        const url = '/office/stayTime/sumByDay/' + searchDate + '/zoneCategory?from=' + APP.STAY_SUM.FROM + '&to=' + APP.STAY_SUM.TO + groupBy
+        const url = '/office/stayTime/sumByDay/' + searchDate + '/zoneCategory?from=' + APP.SVC.STAY_SUM.START + '&to=' + APP.SVC.STAY_SUM.END + groupBy
         const sumData = await HttpHelper.getAppService(url)
         if (_.isEmpty(sumData)) {
           Util.debug('searchDate: ' + searchDate)

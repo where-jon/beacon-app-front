@@ -28,11 +28,11 @@ export const setStore = pStore => {
  * @param {Object[]} masterFeatureList m_featureデータ
  * @param {Object[]} tenantFeatureList r_tenant_featureデータ
  * @param {Object[]} featureList r_role_featureデータ
- * @param {Boolean} isProvider 
+ * @param {Boolean} isProviderUser 
  * @param {Boolean} isTenantAdmin 
  * @return {Object[]}
  */
-export const fetchNav = async (masterFeatureList, tenantFeatureList, featureList, isProvider, isTenantAdmin) => {
+export const fetchNav = async (masterFeatureList, tenantFeatureList, featureList, isProviderUser, isTenantAdmin) => {
   let retNav = _.map(MENU, group => {
     let pages = _.filter(group.pages, page => {
       if(page.exserver && !DISP.POS.EXSERVER){ // EXSERVERは静的に設定する必要有り
@@ -41,19 +41,19 @@ export const fetchNav = async (masterFeatureList, tenantFeatureList, featureList
       if (isTenantAdmin && group.tenantOnly) {
         return true
       }
-      if (isProvider && group.providerOnlyForce && page.providerOnlyForce) {
+      if (isProviderUser && group.providerOnlyForce && page.providerOnlyForce) {
         return true
       }
-      if (AuthHelper.isSingleTenant() && isProvider && group.singleOnlyForce && page.singleOnlyForce) {
+      if (AuthHelper.isSingleTenant() && isProviderUser && group.singleOnlyForce && page.singleOnlyForce) {
         return true
       }
       if(!featureOk('/' + group.base + page.path, masterFeatureList)){
         return false
       }
-      if (!isProvider && group.providerOnly) {
+      if (!isProviderUser && group.providerOnly) {
         return false
       }
-      if(isTenantAdmin || isProvider){
+      if(isTenantAdmin || isProviderUser){
         return true
       }
       return featureOk('/' + group.base + page.path, tenantFeatureList) && getMode('/' + group.base + page.path, featureList) & ROLE_FEATURE.MODE.SYS_ALL
@@ -66,10 +66,10 @@ export const fetchNav = async (masterFeatureList, tenantFeatureList, featureList
   })
 
   // プラグインメニュー項目をmenu.jsonからロードする
-  return await loadPluginMenuItems(retNav, masterFeatureList, tenantFeatureList, featureList, isProvider, isTenantAdmin)
+  return await loadPluginMenuItems(retNav, masterFeatureList, tenantFeatureList, featureList, isProviderUser, isTenantAdmin)
 }
 
-const loadPluginMenuItems = async (orgMenuItems, masterFeatureList, tenantFeatureList, featureList, isProvider, isTenantAdmin) => {
+const loadPluginMenuItems = async (orgMenuItems, masterFeatureList, tenantFeatureList, featureList, isProviderUser, isTenantAdmin) => {
 
   const iframeBaseDir = PLUGIN_CONSTANTS.IFRAME_BASE_DIR
   const pluginKeyPrefix = PLUGIN_CONSTANTS.PLUGIN_KEY_PREFIX
@@ -80,7 +80,7 @@ const loadPluginMenuItems = async (orgMenuItems, masterFeatureList, tenantFeatur
     const length = orgMenuItems.length
     res.data
       .filter((d) => {
-        if (isTenantAdmin || isProvider) {
+        if (isTenantAdmin || isProviderUser) {
           return true
         }
         const path = pluginPathPrefix + d.base
@@ -249,7 +249,7 @@ export const getThemeClasses = selectedTheme => {
  */
 export const useMaster = feature => {
   const login = LocalStorageHelper.getLogin()
-  if (login && login.tenantAdmin) {
+  if (login && login.isTenantAdmin) {
     return true
   }
   const featureList = store.state.tenantFeatureList

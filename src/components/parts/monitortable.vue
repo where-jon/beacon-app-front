@@ -169,20 +169,16 @@ export default {
     getPositionPowerLevelClass(val) {
       const LEVEL_CLASS_MAP = {good:'success', warning:'warning', poor:'danger'}
       const powerLevel = TelemetryHelper.getPositionPowerLevel(val)
-      console.log(val)
-      console.log(powerLevel)
       if (powerLevel) {
         return this.badgeClassPrefix + LEVEL_CLASS_MAP[powerLevel]
       }
       return ''
     },
     async fetchData(payload) {
-      if(this.$parent.$options.methods && this.$parent.$options.methods.fetchData){
-        await this.$parent.$options.methods.fetchData.call(this.$parent, payload)
-      }
+      await this.callParentMethod('fetchData', payload)
     },
     download() {
-      this.$parent.$options.methods.download.call(this.$parent)
+      this.callParentMethod('download')
     },
     filterGridGeneral(originItem){
       if(originItem.isParent){

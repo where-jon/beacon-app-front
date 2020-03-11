@@ -62,10 +62,10 @@ export const getRevInfo = async () => {
  * ユーザ情報を取得する。
  * @method
  * @async
- * @param {Boolean} tenantAdmin 
+ * @param {Boolean} isTenantAdmin 
  * @return {{tenant: Object, tenantFeatureList: Object[], user: Object, featureList: Object[], menu: Object[], currentRegion: Object, setting: Object[]}}
  */
-export const getUserInfo = async (tenantAdmin) => {
+export const getUserInfo = async (isTenantAdmin) => {
   // Get feature, tenant, region, user
   const httpInfos = [
     {name:'masterFeatureList', url: '/meta/feature'},
@@ -78,7 +78,7 @@ export const getUserInfo = async (tenantAdmin) => {
   store.commit('app_service/replaceAS', {features: masterFeatureList})
 
   if (user.providerUserId != null) {
-    user.role = {roleId: -1, roleName: 'tenantAdmin'}
+    user.role = {roleId: -1, roleName: 'isTenantAdmin'}
   }
   Util.debug(user)
 
@@ -88,7 +88,7 @@ export const getUserInfo = async (tenantAdmin) => {
     return {path: roleFeature.feature.path, mode: roleFeature.mode}
   }).sortBy(val => val.path.length * -1).value()
 
-  const menu = await MenuHelper.fetchNav(masterFeatureList.map(m => m.path), tenantFeatureList, featureList, user.providerUserId != null, tenantAdmin)
+  const menu = await MenuHelper.fetchNav(masterFeatureList.map(m => m.path), tenantFeatureList, featureList, user.providerUserId != null, isTenantAdmin)
 
   LocalStorageHelper.setLocalStorage(KEY.CURRENT.REGION, currentRegion.regionId)
 
@@ -150,8 +150,8 @@ export const authByAppService = async (loginId, password, success, err) => {
       }
     }
 
-    const userInfo = await getUserInfo(data.tenantAdmin)
-    resetConfig(data.tenantAdmin, userInfo.setting)
+    const userInfo = await getUserInfo(data.isTenantAdmin)
+    resetConfig(data.isTenantAdmin, userInfo.setting)
 
     const userRegionIdList = Util.getValue(userInfo, 'user.userRegionList', []).map(val => val.userRegionPK.regionId)
     const allRegionMove = Util.getValue(userInfo, 'user.role.roleFeatureList', []).some(val => val.feature.featureName == FEATURE.NAME.ALL_REGION && val.mode != 0)
@@ -165,9 +165,9 @@ export const authByAppService = async (loginId, password, success, err) => {
     }
 
     await login({loginId, ...userInfo,
-      tenantAdmin: data.tenantAdmin,
+      isTenantAdmin: data.tenantAdmin, // テナント管理画面を表示するか(サーバ側も変数がisTenantAdminだがjson化時にtenantAdminになってしまうため)
       apiKey: data.apiKey,
-      isProvider: userInfo.user.providerUserId != null,
+      isProviderUser: userInfo.user.providerUserId != null,
       userRegionIdList, allRegionMove: allRegionMove, isAd })
 
     success()
@@ -218,8 +218,8 @@ export const switchAppService = async () => {
   try {
     const loginInfo = LocalStorageHelper.getLogin()
 
-    const userInfo = await getUserInfo(loginInfo.tenantAdmin)
-    resetConfig(loginInfo.tenantAdmin, userInfo.setting)
+    const userInfo = await getUserInfo(loginInfo.isTenantAdmin)
+    resetConfig(loginInfo.isTenantAdmin, userInfo.setting)
 
     await login({...loginInfo, ...userInfo})
   } catch (e) {

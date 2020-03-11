@@ -26,13 +26,19 @@
             </template>
           </v-select>
         </b-form-group>
-        <b-form-group v-show="showRegion">
-          <label v-t="'label.region'" />
-          <v-select v-model="vueSelected.regions" :options="regionOptions" :disabled="!isEditable" multiple :close-on-select="false" class="vue-options-multi">
-            <template slot="no-options">
-              {{ vueSelectNoMatchingOptions }}
-            </template>
-          </v-select>
+        <b-form-group v-if="showRegion">
+          <span v-for="(regionId, index) in regionIdList" :key="index">
+            <b-form-group>
+              <label>
+                {{ $i18n.tnl('label.region') + (index + 1) }}
+              </label>
+              <b-form-select v-model="regionIdList[index]" :options="getRegionOptions(regionId)" :disabled="!isEditable" :readonly="!isEditable" class="ml-3 col-4" @change="changeRegion($event, index)" />
+              <label>
+                {{ $i18n.tnl('label.linkedPerson') + (index + 1) }}
+              </label>
+              <b-form-select v-model="potIdList[index]" :options="potOptionList[index]" :disabled="!isEditable" :readonly="!isEditable" class="ml-3 col-4" />
+            </b-form-group>
+          </span>
         </b-form-group>
         <b-form-group>
           <label v-t="'label.description'" />
@@ -64,6 +70,7 @@ import { APP } from '../../../sub/constant/config'
 import * as ArrayUtil from '../../../sub/util/ArrayUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
+import * as HttpHelper from '../../../sub/helper/base/HttpHelper'
 import * as AuthHelper from '../../../sub/helper/base/AuthHelper'
 import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
@@ -89,12 +96,16 @@ export default {
       backPath: '/master/user',
       appServicePath: '/meta/user',
       items: ViewHelper.createBreadCrumbItems('master', {text: 'user', href: '/master/user'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.user.userId)),
-      form: Util.extract(this.$store.state.app_service.user, ['userId', 'loginId', 'name', 'email', 'roleId', 'userRegionList', 'description']),
+      form: Util.extract(this.$store.state.app_service.user, ['userId', 'loginId', 'name', 'email', 'roleId', 'userRegionList', 'potUserList', 'description']),
       vueSelected: {
         role: null,
         regions: [],
       },
       roleOptions: [],
+      regionIdList: [],
+      potIdList: [],
+      regionPotMap: {},
+      potOptionList: [],
       role: null,
       pass: null,
       passConfirm: null,
@@ -127,12 +138,6 @@ export default {
     },
   },
   watch: {
-    'vueSelected.regions': {
-      handler: function(newVal, oldVal){
-        this.form.userRegionList = newVal.map(val => ({userRegionPK: {regionId: val.value}}))
-      },
-      deep: true,
-    },
     'vueSelected.role': {
       handler: function(newVal, oldVal){
         this.role = Util.getValue(newVal, 'value')
@@ -144,14 +149,71 @@ export default {
     this.roleOptions = MasterHelper.getOptionsFromState('role', false, true)
     this.vueSelected.role = VueSelectHelper.getVueSelectData(this.roleOptions, Util.getValue(this.form, 'roleId', this.roleOptions.reduce((prev, cur) => cur).value))
     if(Util.hasValue(this.form.userRegionList)){
-      this.vueSelected.regions = this.form.userRegionList.map(userRegion => VueSelectHelper.getVueSelectData(this.regionOptions, userRegion.userRegionPK.regionId)).sort((a, b) => a.label < b.label? -1: 1)
+      this.regionIdList = this.form.userRegionList.map(userRegion => userRegion.userRegionPK.regionId)
+      if (this.form.potUserList) {
+        this.potIdList = this.form.userRegionList.map(userRegion => Util.v(this.form.potUserList.find(potUser => potUser.pot.potRegionId == userRegion.userRegionPK.regionId), 'pot.potId'))
+      }
+      this.regionIdList.forEach((regionId, index) => {
+        this.loadPotOptions(index, regionId)
+      })
     }
+    this.addEmptyRegionId()
   },
   mounted(){
     ValidateHelper.setCustomValidationMessage()
     VueSelectHelper.disabledAllSubmit()
   },
   methods: {
+    getRegionOptions(regionId) {
+      return MasterHelper.getOptionsFromState('region', false, false).map(option => {
+        if (!option.value || !this.regionIdList.includes(option.value) || regionId != -1 && option.value == regionId) {
+          return option
+        }
+      }).filter(e => e)
+    },
+    async loadPotOptions(index, regionId) {
+      let potOptions = this.regionPotMap[regionId] // キャッシュがあればそれを使用
+
+      // app-serviceからregionに対応したpotのリストを取得
+      if (!potOptions) {
+        const regionPotList = await HttpHelper.getAppService(`/basic/pot/byRegion/${regionId}`)
+        if (!regionPotList) return []
+
+        // Option形式に変換
+        potOptions = regionPotList.map(pot => {
+          return {
+            value: pot.potId,
+            text: pot.potName,
+            lavbel: pot.potName,
+          }
+        })
+        potOptions.unshift({value: null, text: '', label: ''})
+        this.regionPotMap[regionId] = potOptions
+      }
+      this.potOptionList[index] = potOptions
+      this.$nextTick(() => this.$forceUpdate())
+    },
+    addEmptyRegionId(newVal, index) {
+      const regionIdList = Object.assign([], this.regionIdList)
+      if (index != null) regionIdList[index] = newVal // 更新後の配列を作る
+      if (regionIdList.length < this.regions.length && !regionIdList.some(val => val == null)) { // リージョンの上限以下でnullが選択肢にない場合追加する
+        this.regionIdList.push(null)
+        this.potIdList.push(null)
+      }
+    },
+    changeRegion(newVal, index) {
+      if(newVal == null) {
+        this.regionIdList.splice(index, 1)
+        this.potIdList.splice(index, 1)
+        this.potOptionList.splice(index, 1)
+      }     
+      this.addEmptyRegionId(newVal, index)
+      if (newVal) {
+        this.loadPotOptions(index, newVal)
+      }
+      this.$nextTick(() => this.$forceUpdate())
+    },
+
     isErrorPasswordRequired(){
       if(Util.hasValue(this.form.userId)){
         return false
@@ -198,7 +260,6 @@ export default {
     },
     onBeforeReload(){
       this.vueSelected.role = VueSelectHelper.getVueSelectData(this.roleOptions, this.roleOptions.reduce((prev, cur) => cur).value)
-      this.vueSelected.regions = []
     },
     async onSaving() {
       let dummyKey = -1
@@ -211,11 +272,20 @@ export default {
         description: this.form.description,
         pass: this.pass,
         userRegionList: [],
+        potUserList: [],
       }
-      if(Util.hasValue(this.form.userRegionList)){
-        entity.userRegionList = this.form.userRegionList.map(userRegion => ({
-          userRegionPK: {userId: dummyKey--, regionId: userRegion.userRegionPK.regionId}
+      if(Util.hasValue(this.regionIdList)){
+        entity.userRegionList = this.regionIdList.filter(e => e).map(regionId => ({
+          userRegionPK: {userId: dummyKey--, regionId}
         }))
+      }
+      if(Util.hasValue(this.potIdList)){
+        entity.potUserList = this.potIdList.map((potId, index) => {
+          if (!potId) return
+          return {
+            potUserPK: {userId: dummyKey--, potId}, regionId: this.regionIdList[index]
+          }
+        })
       }
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
     },

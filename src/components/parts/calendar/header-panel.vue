@@ -4,8 +4,8 @@
       <div class="tui-full-calendar-dayname-leftmargin" :style="{'margin-left': styles.marginLeft}">
         <div v-for="(headerOpt, idx) in headerOpts" :key="idx" :class="className(headerOpt)" :style="style(headerOpt)">
           <span class="tui-full-calendar-dayname-date-area" :style="color(headerOpt)">
-              <span class="tui-full-calendar-dayname-date">{{ date(headerOpt) }}</span>&nbsp;&nbsp;
-              <span v-if="planMode == 'normal'" class="tui-full-calendar-dayname-name">{{ headerOpt.label }}</span>
+            <span class="tui-full-calendar-dayname-date">{{ date(headerOpt) }}</span>&nbsp;&nbsp;
+            <span v-if="planMode == 'normal'" class="tui-full-calendar-dayname-name">{{ headerOpt.label }}</span>
           </span>
         </div>
       </div>

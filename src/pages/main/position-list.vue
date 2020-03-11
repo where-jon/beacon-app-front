@@ -53,14 +53,10 @@ export default {
           // {key: 'powerLevel', label: 'powerLevel', tdClass: 'action-rowdata', 'class': 'text-md-center'},
           ArrayUtil.includesIgnoreCase(APP.POS_LIST.WITH, 'mapDisplay')? {key: 'mapDisplay', tdClass: 'action-rowdata'}: null,
         ]),
-        extraFilter: _(['detectState', // TODO: なぜextraFilterとcommonFilterにgroupとcategoryが重複？
+        extraFilter: _(['detectState',
           MenuHelper.useMaster('group') && APP.POS.WITH.GROUP? 'group' : null,
           MenuHelper.useMaster('category') && APP.POS.WITH.CATEGORY? 'category' : null,
           APP.POSITION_WITH_AREA? 'area' : null]).compact().value(),
-        commonFilter: _([
-          MenuHelper.useMaster('group') && APP.POS.WITH.GROUP? 'group' : null,
-          MenuHelper.useMaster('category') && APP.POS.WITH.CATEGORY? 'category' : null,
-        ]).compact().value(),
         disableTableButtons: true,
       },
       totalRows: 0,

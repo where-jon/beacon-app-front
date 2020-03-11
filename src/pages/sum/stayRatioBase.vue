@@ -89,7 +89,7 @@
         </b-button>
       </div>
     </b-modal>
-    <breadcrumb :items="items" :reload="false" />
+    <breadcrumb :items="items" :legend-items="legendItems" :reload="false" />
     <div class="container">
       <alert :message="message" />
 
@@ -98,6 +98,31 @@
           <b-form-row class="mr-3">
             <label v-t="'label.date'" class="mr-2 mb-2 d-flex align-items-center" />
             <date-picker v-model="form.date" type="date" value-format="yyyyMMdd" class="mr-2 mb-2 inputdatefrom" @change="pickerChanged" />
+          </b-form-row>
+        </b-form-group>
+        <b-form-group class="mr-4">
+          <b-form-row class="mb-3 mr-3">
+            <b-form-row class="mr-3">
+              <span v-t="'label.filter'" class="d-flex align-items-center" />
+            </b-form-row>
+            <b-form-row>
+              <b-form-select v-model="form.filterKind" :options="filterKindOptions" class="ml-2 inputSelect" @change="changefilterKind" />
+            </b-form-row>
+            <b-form-row v-if="useVueSelect(form.filterKind)" class="ml-1">
+              <span :title="vueSelectTitle(vueSelected.filter)">
+                <v-select v-model="vueSelected.filter" :options="filterIdOptions" class="ml-2 inputSelect vue-options" :style="vueSelectStyle">
+                  <template slot="selected-option" slot-scope="option">
+                    {{ vueSelectCutOn(option) }}
+                  </template>
+                  <template slot="no-options">
+                    {{ vueSelectNoMatchingOptions }}
+                  </template>
+                </v-select>
+              </span>
+            </b-form-row>
+            <b-form-row v-else class="ml-1">
+              <b-form-select v-model="vueSelected.filter" :options="filterIdOptions" class="ml-2 inputSelect" />
+            </b-form-row>
           </b-form-row>
         </b-form-group>
         <b-form-group>
@@ -149,7 +174,7 @@
                 {{ $t('label.detail') + $t('label.downloadMonth') }}
               </b-dropdown-item>
             </b-dropdown>
-            <b-button v-t="'label.displaySpecified'" :variant="theme" class="ml-2" @click="showModal=true" />
+            <b-button v-if="isDisplaySpecifiedBtn" v-t="'label.displaySpecified'" :variant="theme" class="ml-2" @click="showModal=true" />
           </b-form-row>
         </b-form-group>
       </b-form>
@@ -202,13 +227,15 @@ import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import moment from 'moment'
 import { APP, DISP, DEV } from '../../sub/constant/config'
-import { CATEGORY, SYSTEM_ZONE_CATEGORY_NAME } from '../../sub/constant/Constants'
+import { SHAPE, CATEGORY, SYSTEM_ZONE_CATEGORY_NAME, STAY_RATIO_BASE_FILTER_KIND } from '../../sub/constant/Constants'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as ColorUtil from '../../sub/util/ColorUtil'
 import * as CsvUtil from '../../sub/util/CsvUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
 import * as Util from '../../sub/util/Util'
+import * as VueUtil from '../../sub/util/VueUtil'
+import * as StyleHelper from '../../sub/helper/ui/StyleHelper'
 import { getCharSet } from '../../sub/helper/base/CharSetHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
@@ -230,13 +257,17 @@ export default {
   data () {
     return {
       items: ViewHelper.createBreadCrumbItems('sumTitle', 'stayRatioBase'),
+      legendItems: [],
       fields: this.getFields(true),
       form: {
         date: '',
+        filterKind: null,
+        filterId: null,
       },
       vueSelected: {
         group: null,
         category: null,
+        filter: null,
       },
       displayCheckList: {
         stay: ['stay', 'lost'],
@@ -258,6 +289,9 @@ export default {
       isCategorySelected: false,
       checkboxLimit: 6,
       showModal: false,
+      filterKindOptions: STAY_RATIO_BASE_FILTER_KIND.getOptions(),
+      filterIdOptions: [],
+      vueSelectedKeys: ['pot'],
     }
   },
   computed: {
@@ -273,8 +307,17 @@ export default {
     otherColor() {
       return APP.STAY_SUM.OTHER_COLOR
     },
+    isDisplaySpecifiedBtn() {
+      return APP.STAY_SUM.ENABLE_DISPLAY_SPECIFIED
+    },
   },
   watch: {
+    'vueSelected.filter': {
+      handler: function(newVal, oldVal){
+        this.form.filterId = Util.getValue(newVal, 'value')
+      },
+      deep: true,
+    },
     'vueSelected.group': {
       handler: function(newVal, oldVal){
         this.form.groupId = Util.getValue(newVal, 'value')
@@ -308,8 +351,57 @@ export default {
 
     this.categoryDisplayList = this.categories.filter((c) => c.categoryType === CATEGORY.ZONE)
       .sort((a, b) => a.categoryId < b.categoryId ? -1 : 1)
+    VueUtil.nextTickEx(this, () => this.loadLegends())
   },
   methods: {
+    useVueSelect(key){
+      return this.vueSelectedKeys.includes(key)
+    },
+    changefilterKind(newVal = this.form.filterKind){
+      this.form.filterKind = newVal
+      this.vueSelected.filter = null
+      switch (newVal) {
+      case 'pot':
+        this.filterIdOptions = this.pots.map(e => ({value: e.potId, label: e.potName}))
+        break
+      default:
+        this.filterIdOptions = []
+        break
+      }
+    },
+    loadLegends() {
+      let lastIndex = 0
+      this.legendItems = []
+
+      if (this.isCategorySelected) {
+        _.filter(this.categories, category => { return category.systemUse != 1 })
+          .forEach((category, index) => {
+            this.legendItems.push({id:index, items:[
+              { id: 1, text: '', style: StyleHelper.getStyleDisplay1(
+                { shape:SHAPE.SQUARE, bgColor: category.bgColor, color: '#000000', fixSize: true }
+                ) },
+              { id: 2, text: category.categoryName, style: null },
+            ]})
+            lastIndex = index
+          })
+      } else {
+        _.forEach(this.areas, (area, index) => {
+          this.legendItems.push({id:index, items:[
+            { id: 1, text: '', style: StyleHelper.getStyleDisplay1(
+              { shape:SHAPE.SQUARE, bgColor: DISP.SUM_STACK_COLOR[index], color: '#000000', fixSize: true }
+            ) },
+            { id: 2, text: area.areaName, style: null },
+          ]})
+          lastIndex = index
+        })
+      }
+
+      const otherStyle = { shape:SHAPE.SQUARE, bgColor: this.otherColor, color: '#000000' }
+      this.legendItems.push({id:++lastIndex, items:[
+        { id: 1, text: '', style: StyleHelper.getStyleDisplay1(otherStyle) },
+        { id: 2, text: this.$i18n.tnl('label.other'), style: null },
+      ]})
+    },
     getThClassName() {
       return 'tableHeader'
     },
@@ -327,6 +419,7 @@ export default {
         this.displayCheckList.area = []
       }
       this.isCategorySelected = isSelected
+      this.loadLegends()
     },
     getDispCategoryName(category) {
       return MasterHelper.getDispCategoryName(category)
@@ -483,8 +576,8 @@ export default {
       return byId == -1
     },
     getStayDataList(date, stayData, absentLimit = 0, lostLimit = APP.LOST_TIME) {
-      const fromSecond = (Math.floor(APP.STAY_SUM.FROM / 100) * 60 + APP.STAY_SUM.FROM % 100) * 60
-      const toSecond = (Math.floor(APP.STAY_SUM.TO / 100) * 60 + APP.STAY_SUM.TO % 100) * 60
+      const fromSecond = (Math.floor(APP.SVC.STAY_SUM.START / 100) * 60 + APP.SVC.STAY_SUM.START % 100) * 60
+      const toSecond = (Math.floor(APP.SVC.STAY_SUM.END / 100) * 60 + APP.SVC.STAY_SUM.END % 100) * 60
       const graphTimeRatio = this.getTimeRatioData()
       const fromToSettingDiff = toSecond - fromSecond
 
@@ -518,10 +611,10 @@ export default {
           const isAbsentZone = this.isAbsentZoneData(stay.byId)
           if (this.isLostData(stay.byId) || isAbsentZone) {
             lostTime += stay.period
-            time = DateUtil.convertToTime(stay.period)
+            time = moment().startOf('days').add(stay.period, 's').format('HH:mm')
           } else {
             stayTime += stay.period
-            time = DateUtil.convertToTime(stay.period)
+            time = moment().startOf('days').add(stay.period, 's').format('HH:mm')
             isExistStayData = true
           }
           // カテゴリ毎の滞在時間を加算
@@ -569,14 +662,14 @@ export default {
             isAbsentZone,
             period: stay.period,
             start: stay.start,
-            startTime: percent == 100? DateUtil.convertToTime(fromSecond): moment(stay.start).format('HH:mm:ss'),
+            startTime: percent == 100? moment().startOf('days').add(fromSecond, 's').format('HH:mm'): moment(stay.start).format('HH:mm'),
             end: stay.end,
-            endTime: percent == 100? DateUtil.convertToTime(toSecond): moment(stay.end).format('HH:mm:ss'),
+            endTime: percent == 100? moment().startOf('days').add(toSecond, 's').format('HH:mm'): moment(stay.end).format('HH:mm'),
             time,
             percent,
             categoryName: findCategory? findCategory.categoryName: this.$i18n.tnl('label.other'),
             categoryBgColor: findCategory? ColorUtil.colorCd4display(findCategory.bgColor): ColorUtil.colorCd4display(this.otherColor),
-            areaBgColor: findArea? this.getStackColor(areaIndex): this.otherColor,
+            areaBgColor: findArea? ColorUtil.getStackColor(areaIndex): this.otherColor,
             areaName: findArea? findArea.areaName: this.$i18n.tnl('label.other'),
             zoneCategory: stay.byName,
           }
@@ -590,18 +683,18 @@ export default {
           groupName: pot? pot.groupName: '',
           categoryName: pot? pot.categoryName: '',
           graph: graphList,
-          stayTime: DateUtil.convertToTime(stayTime) + ' (' + StayTimeHelper.getRatio(stayTime) + '%)', 
-          lostTime: DateUtil.convertToTime(lostTime) + ' (' + StayTimeHelper.getRatio(lostTime) + '%)', 
-          baseTimeFrom: this.getDateStrFromSetting(APP.STAY_SUM.FROM),
-          baseTimeTo: this.getDateStrFromSetting(APP.STAY_SUM.TO),
+          stayTime: moment().startOf('days').add(stayTime, 's').format('HH:mm') + ' (' + StayTimeHelper.getRatio(stayTime) + '%)', 
+          lostTime: moment().startOf('days').add(lostTime, 's').format('HH:mm') + ' (' + StayTimeHelper.getRatio(lostTime) + '%)', 
+          baseTimeFrom: this.getDateStrFromSetting(APP.SVC.STAY_SUM.START),
+          baseTimeTo: this.getDateStrFromSetting(APP.SVC.STAY_SUM.END),
           graphTimeRatio: graphTimeRatio,
         }
 
         categoryData.forEach((cData) => {
-          result[cData.name] = DateUtil.convertToTime(cData.value) + ' (' + StayTimeHelper.getRatio(cData.value) + '%)'
+          result[cData.name] = moment().startOf('days').add(cData.value, 's').format('HH:mm') + ' (' + StayTimeHelper.getRatio(cData.value) + '%)'
         })
         areaData.forEach((aData) => {
-          result[aData.name] = DateUtil.convertToTime(aData.value) + ' (' + StayTimeHelper.getRatio(aData.value) + '%)'
+          result[aData.name] = moment().startOf('days').add(aData.value, 's').format('HH:mm') + ' (' + StayTimeHelper.getRatio(aData.value) + '%)'
         })
 
         // グラフのズレ対応。100%と実際のpercentとの差分を全体に分配する
@@ -639,9 +732,9 @@ export default {
     },
     getTimeRatioData() {
       // 開始から終了までの配列を作る
-      const fromHour = Math.floor(APP.STAY_SUM.FROM / 100) // 分は切る
-      const toHour = Math.floor(APP.STAY_SUM.TO / 100)
-      const toHourMinute = toHour * 60 + APP.STAY_SUM.TO % 100
+      const fromHour = Math.floor(APP.SVC.STAY_SUM.START / 100) // 分は切る
+      const toHour = Math.floor(APP.SVC.STAY_SUM.END / 100)
+      const toHourMinute = toHour * 60 + APP.SVC.STAY_SUM.END % 100
       const total = toHourMinute - fromHour * 60
       let times = []
       let timesMinute = []
@@ -699,7 +792,8 @@ export default {
       const targetDate = moment(param.date).format('YYYYMMDD')
       const groupBy = param.groupId? '&groupId=' + param.groupId: ''
       const categoryBy = param.categoryId? '&categoryId=' + param.categoryId: ''
-      return '/office/stayTime/sumByDay/' + targetDate + '/zoneCategory?from=' + APP.STAY_SUM.FROM + '&to=' + APP.STAY_SUM.TO + groupBy + categoryBy
+      const potBy = param.filterId? '&filterKind=' + param.filterKind + '&filterId=' + param.filterId : ''
+      return '/office/stayTime/sumByDay/' + targetDate + '/zoneCategory?from=' + APP.SVC.STAY_SUM.START + '&to=' + APP.SVC.STAY_SUM.END + groupBy + categoryBy + potBy
     },
     getCsvSumList(viewList) {
       const keys = []
@@ -803,7 +897,7 @@ export default {
         const categoryBy = this.form.categoryId? '&categoryId=' + this.form.categoryId: ''
         while (startDate.diff(endDate) <= 0) {
           const searchDate = startDate.format('YYYYMMDD')
-          const url = '/office/stayTime/sumByDay/' + searchDate + '/zoneCategory?from=' + APP.STAY_SUM.FROM + '&to=' + APP.STAY_SUM.TO + groupBy + categoryBy
+          const url = '/office/stayTime/sumByDay/' + searchDate + '/zoneCategory?from=' + APP.SVC.STAY_SUM.START + '&to=' + APP.SVC.STAY_SUM.END + groupBy + categoryBy
           const sumData = await HttpHelper.getAppService(url)
           if (_.isEmpty(sumData)) {
             Util.debug('searchDate: ' + searchDate)

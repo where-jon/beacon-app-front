@@ -91,15 +91,13 @@ export default {
     },
     getCustumCsvColumns(){
       return [
-          'ID', 'categoryName', 'categoryType'
+        'ID', 'categoryName', 'categoryType'
       ].concat(this.createCustomColumn(true).map(val => val.key))
         .concat(['color', 'bgColor', 'display.shape', 'description',
           this.pShowAuth? 'guardNames': null,
           this.pShowAuth? 'doorNames': null
         ])
         .filter(val => val)
-    },
-    async Saved(){
     },
     style(row) {
       return StyleHelper.getStyleDisplay1(row)

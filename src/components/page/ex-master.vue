@@ -42,31 +42,20 @@ export default {
     },
   },
   methods: {
-    createListParams(){
-      if(this.$parent.$options.methods && this.$parent.$options.methods.createListParams){
-        return this.$parent.$options.methods.createListParams.call(this.$parent)
-      }
-      return {}
+    createListParams(word){
+      return this.callParentMethodOrDef('createListParams', {}, word)
     },
     editResponse(data) {
-      if(this.$parent.$options.methods && this.$parent.$options.methods.editResponse){
-        this.$parent.$options.methods.editResponse.call(this.$parent, data)
-      }
+      this.callParentMethod('editResponse', data)
     },
     onSaved(val){
-      if(this.$parent.$options.methods && this.$parent.$options.methods.onSaved){
-        this.$parent.$options.methods.onSaved.call(this.$parent, val)
-      }
+      this.callParentMethod('onSaved', val)
     },
     thumbnail(row) {
-      if(this.$parent.$options.methods && this.$parent.$options.methods.thumbnail){
-        return this.$parent.$options.methods.thumbnail.call(this.$parent, row)
-      }
+      return this.callParentMethod('thumbnail', row)
     },
     style(row) {
-      if(this.$parent.$options.methods && this.$parent.$options.methods.style){
-        return this.$parent.$options.methods.style.call(this.$parent, row)
-      }
+      return this.callParentMethod('style', row)
     },
   }
 }

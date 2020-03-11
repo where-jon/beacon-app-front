@@ -79,7 +79,7 @@ export default {
     },
   },
   methods: {
-    createListParams() {
+    createListParams(word) {
       return {
         roleId: this.role.roleId,
       }

@@ -300,13 +300,13 @@ export default {
     this.form.datetimeTo = DateUtil.getDatetime(date)
     this.form.notifyState = this.notifyStateOptions[0].value
     const user = await AppServiceHelper.getCurrentUser()
-    const isProvider = LocalStorageHelper.getLogin().isProvider
+    const isProviderUser = LocalStorageHelper.getLogin().isProviderUser
     if(user.role.roleFeatureList){
       user.role.roleFeatureList.find((tval) =>
         tval.feature.featureName == 'ALL_REGION'? this.userState = 'ALL_REGION':this.userState = null
       )
-    }else if(isProvider){
-      isProvider? this.userState = 'ALL_REGION':this.userState = null
+    }else if(isProviderUser){
+      isProviderUser? this.userState = 'ALL_REGION':this.userState = null
     }
 
     this.userState == 'ALL_REGION'? this.bTx = true: this.bTx = false
