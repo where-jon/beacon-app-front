@@ -410,6 +410,7 @@ export default {
         ]
       case 'usageSituation':
         return [
+          { isActive: true, displayName: this.getLabel('date'), keyName: 'date' },
           { isActive: true, displayName: this.getLabel('zoneCategoryName'), keyName: 'zoneCategoryName' },
           { isActive: true, displayName: this.getLabel('zoneName'), keyName: 'zoneName' },
           { isActive: true, displayName: this.getLabel('utilizationRatioP'), keyName: 'rate' },
@@ -457,7 +458,21 @@ export default {
           { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'pressVol(avg)' },
           { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'pressVol(min)' },
         ]
-      case 'stayRatio':
+      case 'stayRatioGp':
+        return [
+          { isActive: true, displayName: this.getLabel('date'), keyName: 'date' },
+          { isActive: true, displayName: this.getLabel('name'), keyName: 'name' },
+          { isActive: true, displayName: this.getLabel('groupName'), keyName: 'groupName' },
+          { isActive: true, displayName: this.getLabel('stayTime'), keyName: 'stayTime' },
+          { isActive: true, displayName: this.getLabel('absent1Time'), keyName: this.getLabel('stayRatioAbsent1Time') },
+          { isActive: true, displayName: this.getLabel('absent2Time'), keyName: this.getLabel('stayRatioAbsent2Time') },
+          { isActive: true, displayName: this.getLabel('lostTime'), keyName: 'lostTime' },
+          { isActive: true, displayName: this.getLabel('stayRatio'), keyName: 'stayRatio' },
+          { isActive: true, displayName: this.getLabel('absent1Ratio'), keyName: this.getLabel('stayRatioAbsent1Ratio') },
+          { isActive: true, displayName: this.getLabel('absent2Ratio'), keyName: this.getLabel('stayRatioAbsent2Ratio') },
+          { isActive: true, displayName: this.getLabel('lostRatio'), keyName: 'lostRatio' },
+        ]
+      case 'stayRatioBase':
         return [
           { isActive: true, displayName: this.getLabel('date'), keyName: 'date' },
           { isActive: true, displayName: this.getLabel('name'), keyName: 'name' },
