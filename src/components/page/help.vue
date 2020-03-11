@@ -178,6 +178,7 @@ export default {
       case 'region':
         return [
           { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
+          { isActive: true, displayName: this.getLabel('regionCd'), keyName: this.getLabel('regionCd') }, // TODO: js.jsonに登録
           { isActive: true, displayName: this.getLabel('regionName'), keyName: 'regionName' },
           { isActive: true, displayName: this.getLabel('meshId'), keyName: 'meshId' },
           { isActive: true, displayName: this.getLabel('description'), keyName: 'description' },
@@ -186,22 +187,21 @@ export default {
       case 'area':
         return [
           { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
+          { isActive: true, displayName: this.getLabel('areaCd'), keyName: this.getLabel('areaCd') },
           { isActive: true, displayName: this.getLabel('areaName'), keyName: 'areaName' },
-          { isActive: true, displayName: 'areaCd', keyName: 'areaCd' },
           { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
         ]
       case 'exb':
         return [
           { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
           { isActive: true, displayName: this.getLabel('deviceId'), keyName: 'deviceId' },
-          { isActive: true, displayName: this.getLabel('deviceIdX'), keyName: 'deviceIdX' },
+          { isActive: true, displayName: this.getLabel('threshold1'), keyName: 'threshold1' },
+          { isActive: true, displayName: this.getLabel('threshold2'), keyName: 'threshold2' },
+          { isActive: true, displayName: this.getLabel('adjust1'), keyName: 'adjust1' },
+          { isActive: true, displayName: this.getLabel('adjust2'), keyName: 'adjust2' },
+          { isActive: true, displayName: this.getLabel('sensorName'), keyName: 'sensorNames' }, // ラベルは単数形
+          { isActive: true, displayName: this.getLabel('locationCdComp'), keyName: 'locationCd' },
           { isActive: true, displayName: this.getLabel('locationName'), keyName: 'locationName' },
-          { isActive: true, displayName: this.getLabel('areaName'), keyName: 'areaName' },
-          { isActive: true, displayName: this.getLabel('locationX'), keyName: 'x' },
-          { isActive: true, displayName: this.getLabel('locationY'), keyName: 'y' },
-          { isActive: true, displayName: this.getHelpDescription('enabled'), keyName: 'enabled' },
-          { isActive: true, displayName: this.getLabel('type'), keyName: 'sensor' },
-          { isActive: true, displayName: this.getLabel('zoneName'), keyName: 'zoneName' },
           { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
         ]
       case 'tx':
@@ -209,10 +209,11 @@ export default {
           { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
           { isActive: true, displayName: this.getLabel('btxId'), keyName: 'btxId' },
           { isActive: true, displayName: this.getLabel('major'), keyName: 'major' },
+          { isActive: true, displayName: this.getLabel('type'), keyName: 'sensorNames' },
           { isActive: true, displayName: this.getLabel('minor'), keyName: 'minor' },
-          { isActive: true, displayName: this.getLabel('type'), keyName: 'sensor' },
           { isActive: true, displayName: this.getLabel('disp'), keyName: 'disp' },
           { isActive: true, displayName: this.getHelpDescription('txAreaName'), keyName: 'areaName' },
+          { isActive: true, displayName: this.getHelpDescription('txLocationName'), keyName: 'locationName' },
           { isActive: true, displayName: this.getHelpDescription('txXY'), keyName: 'x' },
           { isActive: true, displayName: this.getHelpDescription('txXY'), keyName: 'y' },
           { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
