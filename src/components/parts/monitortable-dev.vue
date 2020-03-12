@@ -146,12 +146,10 @@ export default {
       return ''
     },
     async fetchData(payload) {
-      if(this.$parent.$options.methods && this.$parent.$options.methods.fetchData){
-        await this.$parent.$options.methods.fetchData.call(this.$parent, payload)
-      }
+      await this.callParentMethod('fetchData', payload)
     },
     download() {
-      this.$parent.$options.methods.download.call(this.$parent)
+      this.callParentMethod('download')
     },
   }
 }

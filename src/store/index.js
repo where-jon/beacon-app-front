@@ -5,11 +5,6 @@ import * as Util from '../sub/util/Util'
 export const state = () => ({
   locales: ['en', 'ja'],
   locale: 'ja',
-  serviceRev: null,
-  frontRev: null,
-  loginId: '',
-  pass: '',
-  role: '',
   featureList: [],
   menu: [],
   error: null,
@@ -26,7 +21,7 @@ const initState = state()
 
 export const mutations = {
   replace(state, obj) {
-    Util.debug('replace')
+    Util.debug('replace', obj)
     if (obj) {
       for (let key in obj) {
         Vue.set(state, key, obj[key])

@@ -22,7 +22,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { CHAR_SET, UPDATE_ONLY_NN, IGNORE } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
 import * as AppServiceHelper from '../../sub/helper/dataproc/AppServiceHelper'
@@ -83,9 +82,6 @@ export default {
     }
   },
   computed: {
-    ...mapState('app_service', [
-      'sensors',
-    ]),
     charSets(){
       return CHAR_SET.map(e => ({ value: e.id, text: this.$i18n.tnl('label.' + e.name) }))
     }

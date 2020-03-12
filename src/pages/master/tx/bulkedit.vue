@@ -35,7 +35,8 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'tx', 'txs', 'categories', 'groups', 'pots', 'potImages'
+      'tx', 'potImages'
+      // , 'txs', 'categories', 'groups', 'pots'
     ]),
   },
   async mounted() {
@@ -81,11 +82,11 @@ export default {
           potCd: Util.getValue(pot, 'potCd', this.createDefaultName(dummyKey)),
           potName: Util.getValue(pot, 'potName', this.createDefaultName(dummyKey--)),
           potType: Util.getValue(pot, 'potType', POT_TYPE.getTypes()[0].value),
-          extValue: Util.getValue(pot, 'extValue', null),
+          extValue: Util.getValue(pot, 'extValue'),
         }
       }])
-      Util.setValue(entity, 'potTxList.0.pot.displayName', Util.getValue(entity, 'displayName', Util.getValue(pot, 'displayName', null)))
-      Util.setValue(entity, 'potTxList.0.pot.description', Util.getValue(entity, 'description', Util.getValue(pot, 'description', null)))
+      Util.setValue(entity, 'potTxList.0.pot.displayName', Util.getValue(entity, 'displayName', Util.getValue(pot, 'displayName')))
+      Util.setValue(entity, 'potTxList.0.pot.description', Util.getValue(entity, 'description', Util.getValue(pot, 'description')))
       if(pot){
         const potImage = this.potImages.find(val => val.id == pot.potId)
         Util.setValue(entity, 'potTxList.0.pot.thumbnail', potImage? potImage.thumbnail: null)
@@ -97,7 +98,7 @@ export default {
     },
     restructCategory(entity, dummyKey, pot){
       if(entity.categoryName == null){
-        if(!Util.hasValue(Util.getValue(pot, 'categoryName', null))){
+        if(!Util.hasValue(Util.getValue(pot, 'categoryName'))){
           return dummyKey
         }
         entity.categoryName = pot.categoryName
@@ -116,7 +117,7 @@ export default {
     },
     restructGroup(entity, dummyKey, pot){
       if(entity.groupName == null){
-        if(!Util.hasValue(Util.getValue(pot, 'groupName', null))){
+        if(!Util.hasValue(Util.getValue(pot, 'groupName'))){
           return dummyKey
         }
         entity.groupName = pot.groupName

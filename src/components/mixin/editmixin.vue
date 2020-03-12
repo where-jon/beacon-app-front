@@ -50,12 +50,7 @@ export default {
     isEditable() {
       return this.isRegistable || this.isUpdatable
     },
-    isProvider(){
-      const loginInfo = LocalStorageHelper.getLogin()
-      return loginInfo.isProvider
-    },
     ...mapState('app_service', [
-      'roles',
       'listMessage',
       'showLine',
     ]),
@@ -82,7 +77,7 @@ export default {
       }
       return setting
     },
-    async onSaving() {
+    async onSaving() { // デフォルトの保存メソッド（各edit.vueでオーバーライド。通常マスタ更新はbulkSaveを使用）
       return await AppServiceHelper.save(this.appServicePath, this.form, this.updateOnlyNN)
     },
     async save(evt) {

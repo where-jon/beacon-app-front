@@ -9,13 +9,11 @@ import * as StringUtil from '../../util/StringUtil'
 import * as ArrayUtil from '../../util/ArrayUtil'
 import _ from 'lodash'
 import { APP, DISP } from '../../constant/config'
-import { EXB, CATEGORY, ZONE, SHAPE, FEATURE, NOTIFY_STATE, SYSTEM_ZONE_CATEGORY_NAME} from '../../constant/Constants'
+import { EXB, NOTIFY_STATE, SYSTEM_ZONE_CATEGORY_NAME} from '../../constant/Constants'
 import * as Util from '../../util/Util'
 import * as ConfigHelper from './../dataproc/ConfigHelper'
 import * as StateHelper from './../dataproc/StateHelper'
-import * as ExtValueHelper from '../domain/ExtValueHelper'
 import * as LocaleHelper from '../base/LocaleHelper'
-import * as OptionHelper from './../dataproc/OptionHelper'
 import * as SensorHelper from '../domain/SensorHelper'
 
 let store
@@ -59,7 +57,7 @@ export const loadMaster = async () => {
   addInfo(masters)
 
   console.log('commit', new Date())
-  storeCommit(masters, idmaps)
+  storeCommitAll(masters, idmaps)
 
   console.log('end', new Date())
   Util.debug({masters})
@@ -176,7 +174,7 @@ const buildMasters = (data) => {
         }
         idmaps[currentMaster][row[0]].push(row[1])
 
-        if (!idmaps[currentMaster + '_Rev']) {
+        if (!idmaps[currentMaster + '_Rev']) { // 逆引きのidmapの場合は_Revを付加
           idmaps[currentMaster + '_Rev'] = {}
         }
         if (!idmaps[currentMaster + '_Rev'][row[1]]) {
@@ -184,7 +182,7 @@ const buildMasters = (data) => {
         }
         idmaps[currentMaster + '_Rev'][row[1]].push(row[0])
 
-        if (currentMaster == 'locationZone') {
+        if (currentMaster == 'locationZone') { // 関連テーブルに値がある場合は、_Valを付加
           if (!idmaps[currentMaster + '_Val']) {
             idmaps[currentMaster + '_Val'] = {}
           }
@@ -196,12 +194,30 @@ const buildMasters = (data) => {
       }
       else {
         if (currentMaster == 'tx') {
-          idmaps['btx'][row[1]] = obj
+          idmaps['btx'][row[1]] = obj // btxId(2列名)をキーにしてidmapを作成
+          if (!idmaps['txLocation_Rev']) { // locationIdとtxIdのidmapを作成
+            idmaps['txLocation_Rev'] = {}
+          }
+          if (row[6]) { // locationId(7列名)をキーにしてidmapを作成 TODO: 列が後ろすぎるのでAPI側で前列に持ってくる
+            if (!idmaps['txLocation_Rev'][row[6]]) {
+              idmaps['txLocation_Rev'][row[6]] = []
+            }
+            idmaps['txLocation_Rev'][row[6]].push(row[0])
+          }
         }
         if (currentMaster == 'exb') {
-          idmaps['device'][row[1]] = obj
+          idmaps['device'][row[1]] = obj // deviceId(2列名)をキーにしてidmapを作成
+          if (!idmaps['exbLocation_Rev']) { // locationIdとexbIdのidmapを作成
+            idmaps['exbLocation_Rev'] = {}
+          }
+          if (row[2]) { // locationId(3列名)をキーにしてidmapを作成
+            if (!idmaps['exbLocation_Rev'][row[2]]) {
+              idmaps['exbLocation_Rev'][row[2]] = []
+            }
+            idmaps['exbLocation_Rev'][row[2]].push(row[0])
+          }
         }
-        idmaps[currentMaster][row[0]] = obj
+        idmaps[currentMaster][row[0]] = obj // プライマリキー(1列名)をキーにしてidmapを作成
       }
     }
   })
@@ -236,7 +252,7 @@ const convert = (row, colNames) => {
     // その他Numberとなるもの
     else if (col.endsWith('Type') || col.endsWith('Ratio') || col.endsWith('Width') || col.endsWith('Height')
       || col.startsWith('threshold') || col.startsWith('adjust')
-      || ArrayUtil.equalsAny(col, ['major','minor','x','y','z','w','h','disp','systemUse'])) {
+      || ArrayUtil.equalsAny(col, ['major','minor','x','y','z','w','h','capacity','disp','systemUse'])) {
       ret[col] = Util.hasValue(val)? Number(val): null     
     }
     else {
@@ -247,7 +263,7 @@ const convert = (row, colNames) => {
 }
 
 /**
- * JSONデータをパースして返す。
+ * JSONデータをパースして返す。|を"に戻してから変換。
  * エラーの場合、カラム、値をログに出力してからthrow
  * 
  * @param {*} col 
@@ -284,7 +300,7 @@ const buildRelation = (masters, idmaps) => {
     case 'tx':
       list.forEach(e => {
         e.sensorList = relate(e, 'txId', idmaps.txSensor, 'sensorId', idmaps.sensor)
-        e.pot = relate(e, 'txId', idmaps.potTx, 'potId', idmaps.pot)[0]
+        e.pot = relate(e, 'txId', idmaps.potTx_Rev, 'potId', idmaps.pot)[0] || {}
         e.location = relate(e, 'locationId', idmaps.location)
         // Util.debug(e)
       })  
@@ -299,6 +315,8 @@ const buildRelation = (masters, idmaps) => {
     case 'location':
       list.forEach(e => {
         e.zoneList = relate(e, 'locationId', idmaps.locationZone, 'zoneId', idmaps.zone)
+        e.exbList = relate(e, 'locationId', idmaps.exbLocation_Rev, 'exbId', idmaps.exb)
+        e.txList = relate(e, 'locationId', idmaps.txLocation_Rev, 'txId', idmaps.tx)
         e.locationZoneList = relate(e, 'locationId', idmaps['locationZone_Val'])
         e.area = relate(e, 'areaId', idmaps.area)
         //Util.debug(e)
@@ -308,6 +326,7 @@ const buildRelation = (masters, idmaps) => {
       list.forEach(e => {
         e.area = relate(e, 'areaId', idmaps.area)
         e.categoryList = relate(e, 'zoneId', idmaps.zoneCategory, 'categoryId', idmaps.category)
+        e.locationList = relate(e, 'zoneId', idmaps['locationZone_Rev'], 'locationId', idmaps.location)
         //Util.debug(e)
       })  
       break
@@ -318,14 +337,14 @@ const buildRelation = (masters, idmaps) => {
       })  
       break
     case 'group':
-      list.forEach(e => {
-        //Util.debug(e)
-      })  
+      // list.forEach(e => {
+      //   //Util.debug(e)
+      // })  
       break
     case 'region':
-      list.forEach(e => {
-        //Util.debug(e)
-      })  
+      // list.forEach(e => {
+      //   //Util.debug(e)
+      // })  
       break
     case 'user':
       list.forEach(e => {
@@ -364,7 +383,7 @@ const relate = (e, relateId, relationMap, targetId, targetMap) => {
 
 /**
  * エンティティに付加情報を追加し、ソートを実行
- * TODO: これは極力排除。使う箇所でエンティティをたどるようにする。未使用の項目を削除する。
+ * TODO: これは極力排除。使う箇所でエンティティをたどるようにする。未使用の項目を削除する。→済：問題なければコメントアウト箇所削除
  * 
  * @param {*} masters 
  */
@@ -375,30 +394,25 @@ const addInfo = (masters) => {
     case 'area':
       list.sort((a, b) => StringUtil.sortByString(a.areaCd, b.areaCd, LocaleHelper.getSystemLocale()))
       break
-    case 'sensor':
-      ArrayUtil.sortIgnoreCase(list, 'sensorId')  
-      break
-    case 'region':
-      ArrayUtil.sortIgnoreCase(list, 'regionName')  
-      break
+    // case 'sensor':
+    //   ArrayUtil.sortIgnoreCase(list, 'sensorId')  
+    //   break
     case 'pot':
       list.forEach(pot => {
-        if (pot.extValue) { // extValue.rubyといった.を含む値をキーにするとb-tableでソートができないのでオブジェクト直下にextValuerubyなどのキーを追加する。
-          var extValues = _.reduce(pot.extValue, (obj, val, key) => {
-            obj['extValue' + key] = val
-            return obj
-          }, {})
-        }
+        // if (pot.extValue) { // extValue.rubyといった.を含む値をキーにするとb-tableでソートができないのでオブジェクト直下にextValuerubyなどのキーを追加する。
+        //   var extValues = _.reduce(pot.extValue, (obj, val, key) => { // TODO: 必要性？
+        //     obj['extValue' + key] = val
+        //     return obj
+        //   }, {})
+        // }
         Util.merge(pot, {
-          txIds: getTxIds(pot.txList),
-          txIdNames: getTxIdNames(pot.txList),
-          txParams: getTxParams(pot.txList),
-          btxId: pot.btxId,
-          minor: pot.minor,
-          ruby: pot.extValue? pot.extValue.ruby: null,
-          authCategoryNames: Util.v(pot, 'authCategoryList', []).map(v => v.categoryName),
+          txIds: _.map(pot.txList, tx => tx.txId),
+          txIdNames: pot.txList.forEach(tx => getTxIdName(tx)),
+          groupId: Util.v(pot, 'group.groupId'),
+          categoryId: Util.v(pot, 'category.categoryId'),
+          authCategoryNames: Util.v(pot, 'authCategoryList', []).map(v => v.categoryName), // TODO: categoryListからfilterして取り出す
         })
-        Util.merge(pot, extValues)
+        Util.merge(pot, pot.extValue)
       })
       list.sort((a, b) => StringUtil.sortByString(a.potCd, b.potCd, LocaleHelper.getSystemLocale()))
       break
@@ -406,9 +420,6 @@ const addInfo = (masters) => {
       list.forEach(tx => {
         Util.merge(tx, {
           sensorId: Util.v(tx, 'sensorList.0.sensorId'),
-          sensor: i18n.tnl('label.' + Util.v(tx, 'sensorList.0.sensorName', 'normal')),
-          potName: Util.v(tx, 'potList.0.potName'),
-          locationId: Util.v(tx, 'location.locationId'),
           dispPos: tx.disp & 1,
           dispPir: tx.disp & 2,
           dispAlways: tx.disp & 4,
@@ -418,27 +429,16 @@ const addInfo = (masters) => {
       break
     case 'exb':
       list.forEach(exb => {
-        const location = exb.location
-        const locationZoneList = Util.v(exb, 'location.zoneList', [])
-        const categoryList = locationZoneList.map(val => Util.v(val, 'categoryList', []))
-        const zoneCategoryIdList = categoryList.map(c => c.categoryId).flatMap(e => e).filter(e => e)
+        const location = exb.location || {}
         const sensors = SensorHelper.getSensors(exb.sensorList)
         Util.merge(exb, {
           deviceIdX: exb.deviceId.toString(16).toUpperCase(),
-          x: location? Math.round(location.x * 10)/10: null,
-          y: location? Math.round(location.y * 10)/10: null,
-          areaId: location? location.areaId: null,
-          areaName: location? location.area.areaName: null,
-          locationName: location? location.locationName: null,
-          sensor: i18n.tnl('label.' + Util.v(exb, 'sensorName', 'normal')),
-          isAbsentZone: locationZoneList.some(e => e.categoryName == SYSTEM_ZONE_CATEGORY_NAME.ABSENT),
-          isFixedPosZone: locationZoneList.some(e => e.categoryName == SYSTEM_ZONE_CATEGORY_NAME.FIXED_POS),
-          sensorIds: sensors.map(val => val.sensorId),
-          sensorIdNames: sensors.map(val => val.sensorName),
-          zoneIdList: locationZoneList.map(val => Util.v(val, 'zoneId')).filter(val => val),
-          zoneCategoryIdList,
-          zoneClass: Util.v(location, 'zoneList', []).filter(val => val.zoneType == ZONE.NON_COORDINATE).map(val => val.zoneName),
-          zoneBlock: Util.v(location, 'zoneList', []).filter(val => val.zoneType == ZONE.COORDINATE).map(val => val.zoneName),
+          x: location.x? Math.round(location.x * 10)/10: null,
+          y: location.y? Math.round(location.y * 10)/10: null,
+          areaId: location.areaId,
+          areaName: Util.v(location, 'area.areaName'),
+          locationName: location.locationName,
+          sensorIdList: sensors.map(val => val.sensorId),
           exbTypeName: Util.v(EXB.getTypes().find(val => val.value == exb.exbType), 'text', ''),
         })
       })
@@ -446,89 +446,48 @@ const addInfo = (masters) => {
       break
     case 'location':
       list.forEach(location => {
-        const zoneList = Util.v(location, 'zoneList', [])
-        const zoneTypeMap = {}
-        zoneList.forEach(zone => {
-          const zoneType = ZONE.getOptions().find(option => option.value == zone.zoneType)? ZONE.NON_COORDINATE: ZONE.COORDINATE
-          const key = '' + zoneType
-          if(!zoneTypeMap[key]){
-            zoneTypeMap[key] = []
-          }
-          if (!zoneTypeMap[key].includes(zone.zoneName)) {
-            zoneTypeMap[key].push(zone.zoneName)
-          }
-        })
-        const categoryList = zoneList.map(val => Util.v(val, 'categoryList', []))
-        if (categoryList) {
-          var zoneCategoryIdList = categoryList.map(c => c.categoryId).flatMap(e => e).filter(e => e)
-        }
-        ExtValueHelper.copyToParent(location)
-        const locationTypeOptions = OptionHelper.getLocationTypeOptions()
+        const zoneCategoryList = location.zoneList.map(zone => zone.categoryList).flatMap(e => e).filter(e => e)
         Util.merge(location, {
-          locationTypeName: Util.v(locationTypeOptions.find(val => val.value == location.locationType), 'text', ''),
-          zoneClass: zoneTypeMap['' + ZONE.NON_COORDINATE],
-          zoneBlock: zoneTypeMap['' + ZONE.COORDINATE],
-          isAbsentZone: location.categoryName === SYSTEM_ZONE_CATEGORY_NAME.ABSENT,
-          isFixedPosZone: location.categoryName === SYSTEM_ZONE_CATEGORY_NAME.FIXED_POS,
-          zoneIdList: zoneList.map(zone => zone.zoneId),
-          zoneCategoryIdList,
+          isAbsentZone: zoneCategoryList.some(category => category.categoryCd === SYSTEM_ZONE_CATEGORY_NAME.ABSENT),
+          isFixedPosZone: zoneCategoryList.some(category => category.categoryCd === SYSTEM_ZONE_CATEGORY_NAME.FIXED_POS),
+          isToiletZone: zoneCategoryList.some(category => category.categoryCd === SYSTEM_ZONE_CATEGORY_NAME.TOILET),
+          zoneIdList: location.zoneList.map(zone => zone.zoneId),
+          zoneCategoryIdList: zoneCategoryList.map(c => c.categoryId),
+          getZone: categoryCd => {
+            return location.zoneList.find(zone => zone.categoryList.some(category => category.categoryCd == categoryCd))
+          }
         })
+        Util.merge(location, location.extValue)
       })
       break
     case 'zone':
       list.forEach(zone => {
         const category = Util.v(zone, 'categoryList.0', {})
-        const zoneType = ZONE.getOptions().find(option => option.value == zone.zoneType)
-        Util.merge(zone, {
-          zoneTypeName: zoneType? zoneType.text: '',
-          areaId: Util.v(zone, 'area.areaId'),
-          areaName: Util.v(zone, 'area.areaName'),
-          categoryId: category.categoryId,
-          categoryName: category.categoryName,
-          zoneCategoryIdList: zone.categoryList.map(val => Util.v(val, 'categoryId')).filter(val => val),
-        })
+        zone.categoryId = category.categoryId
+        zone.categoryName = category.categoryName
         Util.merge(zone, zone.extValue)
       })
-      ArrayUtil.sortIgnoreCase(list, 'regionName')  
       break
     case 'category':
       list.forEach(category => {
-        Util.merge(category, {
-          categoryName: category.categoryName,
-          shape: Util.v(category, 'display.shape'),
-          color: Util.v(category, 'display.color'),
-          bgColor: category.systemUse == 1? getSystemUseBgColor(category): getCategoryDisplayBgColor(category),
-          shapeName: category.display? getShapeName(category.display.shape): null,
-          categoryTypeName: getCategoryTypeName(category),
-          systemCategoryName: category.systemUse != 0? category.categoryName.toLowerCase(): null,
-          // guardNames: category.zoneList.filter(zc => zc.zoneType == ZONE.GUARD).map(zoneCategory => Util.v(zoneCategory, 'zoneName', '')).sort((a, b) => a < b? -1: 1),
-          // doorNames: category.zoneList.filter(zc => zc.zoneType == ZONE.DOOR).map(zoneCategory => Util.v(zoneCategory, 'zoneName', '')).sort((a, b) => a < b? -1: 1),
-        })
+        category.bgColor = getBgColor(category)
+        category.shape = Util.v(category, 'display.shape')
+        category.color = Util.v(category, 'display.color')
         Util.merge(category, category.extValue)
       })
       list.sort((a, b) => StringUtil.sortByString(a.categoryCd, b.categoryCd, LocaleHelper.getSystemLocale()))
       break
-    case 'group':
+    case 'group': 
       list.forEach(group => {
-        Util.merge(group, {
-          shape: Util.v(group, 'display.shape'),
-          color: Util.v(group, 'display.color'),
-          bgColor: group.systemUse == 1? getSystemUseBgColor(group): getCategoryDisplayBgColor(group),
-          shapeName: group.display? getShapeName(group.display.shape): null
-        })
+        Util.merge(group, group.display)
         Util.merge(group, group.extValue)
       })
       list.sort((a, b) => StringUtil.sortByString(a.groupCd, b.groupCd, LocaleHelper.getSystemLocale()))
       break
-    case 'user':
-      list.forEach(user => {
-        user.roleName = user.role.roleName
-        user.regionNames = Util.v(user, 'userRegionList', []).map(e => Util.v(e, 'regionName', '')).sort((a, b) => a < b? -1: 1)
-      })
-      ArrayUtil.sortIgnoreCase(list, ArrayUtil.includesIgnoreCase(APP.USER.WITH, 'name')? 'name': 'loginId')  
-      break
-    case 'template':
-      list.forEach(t => {
+    // case 'user':
+    //   break
+    case 'template': // TODO: notifyTemplate/edit.vueでしか使っていないので、そこにロジックを持っていく
+      list.forEach(t => { 
         const templateKeyName = NOTIFY_STATE.getOptions().find(tval => tval.value === t.notifyTemplateKey)
         t.notifyTemplateKey = templateKeyName? templateKeyName.text: null
         t.notifyMedium = t.notifyMedium == 0? i18n.tnl('label.email'): i18n.tnl('label.slack')
@@ -543,20 +502,25 @@ const addInfo = (masters) => {
 /**
  * Storeに保存
  */
-const storeCommit = (masters, idmaps) => {
+const storeCommitAll = (masters, idmaps) => {
   Object.keys(masters).forEach(key => {
     if (!isRelationEntity(key)) { // 関連エンティティは保存しない
-      StateHelper.storeCommit(StringUtil.single2multi(key), masters[key])
+      storeCommit(StringUtil.single2multi(key), masters[key])
     }
   })
 
   Object.keys(idmaps).forEach(key => { // idMapはIdMapの名前を後に付加
     if (!isRelationEntity(key)) { // 関連エンティティは保存しない
-      StateHelper.storeCommit(key + 'IdMap', idmaps[key])
+      storeCommit(key + 'IdMap', idmaps[key])
     }
   })
 
-  StateHelper.storeCommit('lastMasterFetchTime', new Date().getTime())
+  storeCommit('lastMasterFetchTime', new Date().getTime())
+}
+
+const storeCommit = (key, val) => {
+  StateHelper.storeCommit(key, val)
+  // StateHelper.setMaster(key, val)
 }
 
 
@@ -759,7 +723,7 @@ export const getLocationTxName = (tx, addPotName = true) => {
   if(!tx){
     return ''
   }
-  return '' + (tx.minor? tx.minor: tx.btxId) + (addPotName && tx.potName? '(' + tx.potName + ')': '')
+  return '' + (tx.minor? tx.minor: tx.btxId) + (addPotName && tx.pot.potName? '(' + tx.pot.potName + ')': '')
 }
 
 /**
@@ -776,91 +740,12 @@ export const getTxIdName = tx => {
 }
 
 /**
- * 設定により、複数TxのbtxIdまたはminor値を取得する。
- * @method
- * @param {Object[]} txList 
- * @return {String[]}
- */
-const getTxIdNames = txList => {
-  if(!Util.hasValue(txList)){
-    return null
-  }
-  const names = []
-  txList.forEach(tx => { // TODO: 最初からmapで書く
-    names.push(getTxIdName(tx))
-  })
-  return names.map(name => name)
-}
-
-/**
- * 複数TxのIdを取得する。
- * @method
- * @param {Object[]} txList 
- * @return {Number[]}
- */
-const getTxIds = txList => {
-  if(!Util.hasValue(txList)){
-    return null
-  }
-  const ids = []
-  txList.forEach(tx => { // TODO: 最初からmapで書く
-    ids.push(tx.txId)
-  })
-  return ids.map(name => name)
-}
-
-/**
- * 複数Txの主要プロパティを取得する。
- * @method
- * @param {Object[]} txList 
- * @return {Object[]} txId、btxIs、minorを含む
- */
-const getTxParams = txList => {
-  if(!Util.hasValue(txList)){
-    return null
-  }
-  const txParams = []
-  txList.forEach(tx => { // TODO: mapで書く
-    txParams.push({
-      txId: tx.txId,
-      btxId: tx.btxId,
-      minor: tx.minor
-    })
-  })
-  return txParams
-}
-
-/**
- * 指定したカテゴリの種類を取得する。
- * @method
- * @param {Object} category 
- * @return {String}
- */
-const getCategoryTypeName = category => {
-  const categoryTypeName = CATEGORY.getTypes(true).find(tval => tval.value === category.categoryType)
-  return categoryTypeName != null? categoryTypeName.text: null
-}
-
-/**
- * 指定した形IDの名称を取得する。
- * @method
- * @param {Number} shape 
- * @return {String}
- */
-const getShapeName = shape => {
-  const shapeName = SHAPE.getShapes().find(tval => tval.value === shape)
-  return shapeName != null? shapeName.text: null
-}
-
-/**
  * 指定したカテゴリの名称を取得する。ただし、システムカテゴリに属する場合は既定の名称となる。
  * @method
  * @param {Object} category 
  * @return {String}
  */
-export const getDispCategoryName = category => {
-  return category.systemCategoryName? i18n.tnl('label.' + category.systemCategoryName): category.categoryName
-}
+export const getDispCategoryName = category => category.systemUse? i18n.tnl('label.' + category.categoryName.toLowerCase()): category.categoryName
 
 /**
  * 指定したシステムカテゴリの背景色を取得する。
@@ -868,24 +753,21 @@ export const getDispCategoryName = category => {
  * @param {Object} category 
  * @return {String}
  */
-const getSystemUseBgColor = (category) => {
-  switch(category.categoryName) {
-  case SYSTEM_ZONE_CATEGORY_NAME.ABSENT:
-    return DISP.SYSTEM_USE.BG_COLOR.ABSENT || getCategoryDisplayBgColor(category)
-  case SYSTEM_ZONE_CATEGORY_NAME.PROHIBIT:
-    return DISP.SYSTEM_USE.BG_COLOR.PROHIBIT || getCategoryDisplayBgColor(category)
-  default:
-    return getCategoryDisplayBgColor(category)
+const getBgColor = (category) => {
+  let ret
+  if (category.systemUse == 1) {
+    switch(category.categoryName) {
+    case SYSTEM_ZONE_CATEGORY_NAME.ABSENT:
+      ret = DISP.SYSTEM_USE.BG_COLOR.ABSENT
+      break
+    case SYSTEM_ZONE_CATEGORY_NAME.PROHIBIT:
+      ret = DISP.SYSTEM_USE.BG_COLOR.PROHIBIT
+      break
+    }    
   }
-}
-
-/**
- * 指定したカテゴリの背景色を取得する。
- * @method
- * @param {Object} category 
- * @return {String}
- */
-const getCategoryDisplayBgColor = (category) => {
-  return Util.hasValue(category.display)? category.display.bgColor: null
+  if (!ret) {
+    ret = Util.v(category, 'display.bgColor')
+  }
+  return ret
 }
 

@@ -54,7 +54,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import _ from 'lodash'
@@ -68,7 +67,6 @@ import { getCharSet } from '../../sub/helper/base/CharSetHelper'
 import * as ConfigHelper from '../../sub/helper/dataproc/ConfigHelper'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 import * as SensorHelper from '../../sub/helper/domain/SensorHelper'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import alert from '../../components/parts/alert.vue'
@@ -110,11 +108,6 @@ export default {
       sortBy: null,
     }
   },
-  computed: {
-    ...mapState('app_service', [
-      'sensors'
-    ]),
-  },
   async created() {
     this.form.sensorId = Util.hasValue(this.sensorOptions)? this.sensorOptions[0].value: null
     const date = DateUtil.getDefaultDate()
@@ -136,21 +129,21 @@ export default {
       const d = new Date(senHist.sensorDt)
       senHist.sensorDt = DateUtil.formatDate(d.getTime())
 
-      let aTx = _.find(this.txs, tx => { return tx.txId == senHist.txId })
-      if (senHist.txId != null && aTx) {
-        senHist.potName = Util.getValue(aTx, 'potName', Util.getValue(aTx, ConfigHelper.includesBtxMinor('btxId')? 'btxId': 'minor', ''))
-        senHist.major = aTx.major
-        senHist.minor = aTx.minor
-        senHist.locationName = aTx.locationName
-        senHist.areaName = aTx.areaName
+      let tx = this.txIdMap[senHist.txId]
+      if (senHist.txId != null && tx) {
+        senHist.potName = Util.getValue(tx, 'pot.potName', Util.getValue(tx, ConfigHelper.includesBtxMinor('btxId')? 'btxId': 'minor', ''))
+        senHist.major = tx.major
+        senHist.minor = tx.minor
+        senHist.locationName = tx.locationName
+        senHist.areaName = tx.areaName
       }
 
-      let aExb = _.find(this.exbs, exb => { return exb.exbId == senHist.exbId })
-      if (aExb != null && aExb) {
-        senHist.deviceId = aExb.deviceId
-        senHist.deviceIdX = aExb.deviceIdX
-        senHist.locationName = aExb.locationName
-        senHist.areaName = aExb.areaName
+      let exb = this.exbIdMap[senHist.exbId]
+      if (exb != null && exb) {
+        senHist.deviceId = exb.deviceId
+        senHist.deviceIdX = exb.deviceIdX
+        senHist.locationName = exb.locationName
+        senHist.areaName = exb.areaName
       }
 
       if (senHist.sensorId == SENSOR.TEMPERATURE) {

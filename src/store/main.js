@@ -2,11 +2,15 @@ import Vue from 'vue'
 import axios from 'axios'
 
 export const state = () => ({
-  selectedArea: null,
+  selectedAreaId: null,
+  selectedGroupId: null,
+  selectedCategoryId: null,
+  selectedTxIdList: null,
+  selectedFreeWord: null,
   selectedTx: {},
   eachAreas: [],
   eachZones: [],
-  sample: 'sample', // sample
+  initDetailFilter: null,
   positions: [],
   timers: [],
   locationMRoomPlanMap: []

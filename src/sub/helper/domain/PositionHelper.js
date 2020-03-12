@@ -81,13 +81,10 @@ export const loadPosition = async (count, allShow = false, fixSize = false) => {
       // スタイルをセット
       let display = Util.getValue(pos.tx, DISP.TX.DISPLAY_PRIORITY + '.display', defaultDisplay)
       display = StyleHelper.getStyleDisplay1({...display, label}, {fixSize})
-      if (pos.transparent) {
-        display.opacity = 0.6
-      }
   
       return { ...pos, btxId: tx.btxId, deviceId: Util.v(exb, 'deviceId'), posx: pos.x, posy: pos.y,
-        label, location, exb, tx, updatetime: DateUtil.dateform(pos.positionDt), timestamp:DateUtil.dateform(pos.positionDt),
-        transparent: pos.transparent? pos.transparent: isTransparent(pos.timestamp, now),
+        label, location, exb, tx, updatetime: DateUtil.dateform(pos.positionDt), timestamp: DateUtil.dateform(pos.positionDt), // TODO: updatetimeかtimestampかどちらかに統一
+        isTransparent: isTransparent(pos.timestamp, now),
         isLost: isLost(pos.timestamp, now),
         display
       }
@@ -106,19 +103,18 @@ export const loadPosition = async (count, allShow = false, fixSize = false) => {
  * @method
  * @param {Boolean} [showAllTime = false] 検知されていないデバイスの情報も取得する
  * @param {Number} [showTxNoOwner]
- * @param {Number} [selectedCategory]
- * @param {Number} [selectedGroup]
- * @param {Number} [selectedDetail]
+ * @param {Number} [selectedCategoryId]
+ * @param {Number} [selectedGroupId]
+ * @param {Number} [selectedTxIdList]
  * @param {Number} [selectedFreWord]
  * @return {Object[]}
  */
 export const filterPositions = (positions = store.state.main.positions,
   showAllTime = false, 
   showTxNoOwner = APP.POS.SHOW_TX_NO_OWNER,
-  selectedCategory = store.state.main.selectedCategory, selectedGroup = store.state.main.selectedGroup,
-  selectedDetail = store.state.main.selectedDetail,
+  selectedCategoryId = store.state.main.selectedCategoryId, selectedGroupId = store.state.main.selectedGroupId,
+  selectedTxIdList = store.state.main.selectedTxIdList,
   selectedFreeWord = store.state.main.selectedFreeWord) => { // p, position-display, rssimap, position-list, position, ProhibitHelper
-
   const txIdMap = store.state.app_service.btxIdMap
 
   if (!showTxNoOwner) { // potの所有状態で絞込み(TX未登録やPotと紐付いていない場合は表示しない)
@@ -127,7 +123,7 @@ export const filterPositions = (positions = store.state.main.positions,
       return tx && tx.potId
     })
   }
-  return showAllTime ? positions : positionFilter(positions, selectedGroup, selectedCategory, selectedDetail, selectedFreeWord)
+  return showAllTime ? positions : positionFilter(positions, selectedGroupId, selectedCategoryId, selectedTxIdList, selectedFreeWord)
 }
 
 
@@ -167,7 +163,7 @@ const positionFilter = (positions, groupId, categoryId, txIdList, freeWord) => {
     let freeWordHit = true
     if (tx) {
       if (groupId) {
-        grpHit = groupId == tx.groupId
+        grpHit = groupId == Util.getValue(tx, 'pot.group.groupId')
       }
       if (categoryId) {
         catHit = categoryId == Util.getValue(tx, 'pot.category.categoryId')
@@ -248,7 +244,7 @@ const getTxViewType = txViewType => {
  */
 export const getDetectCount = (positions, areaId) => {
   return positions.filter(pos => (pos.detectState == DETECT_STATE.LOST || pos.detectState == DETECT_STATE.DETECTED)
-    && pos.exb.location.areaId == areaId
+    && Util.getValue(pos, 'exb.location.areaId') == areaId
   ).length
 }
 
@@ -276,7 +272,7 @@ export const isTransparent = (timestamp, now) => {
 }
 
 /**
- * 消失状態か判定する。
+ * 消失状態（未検知含む）か判定する。
  * @method
  * @param {Number} timestamp
  * @param {Number} now
@@ -347,7 +343,7 @@ export const addFixedPosition = (orgPositions, locations = [], selectedMapId = n
     pos.isFixedPosition = isFixedPosOnArea(pos.tx, selectedMapId)
 
     if (pos.isFixedPosition) { // txが場所固定されており、現在位置が場所固定ゾーンにいる場合（txの固定場所のゾーンでなくても同じエリアの固定ゾーンであれば）
-      pos.inFixedZone = pos.exb.isFixedPosZone // 今いる場所が固定場所ゾーンに入っているか
+      pos.inFixedZone = pos.exb.location.isFixedPosZone // 今いる場所が固定場所ゾーンに入っているか
       // 固定場所ゾーンにいず、かつ同じエリアにいて、検知状態の場合、フリーアドレスとしても表示
       if (!pos.inFixedZone && isInTheArea(pos, locations, selectedMapId) && pos.detectState == DETECT_STATE.DETECTED) {
         const addPos = _.cloneDeep(pos)
@@ -376,7 +372,7 @@ export const addFixedPosition = (orgPositions, locations = [], selectedMapId = n
         }
       }
       else {
-        pos.transparent = !pos.inFixedZone
+        pos.isTransparent = !pos.inFixedZone
       }
     }
   })
@@ -587,7 +583,7 @@ const calcCoordinates = (ratio, orgX, orgY, positions, viewType, txR) => {
  * @param {*} absentDisplayZone 
  */
 export const calcCoordinatesForZone = (positions, ratio, locations = [], absentDisplayZone) => {
-  return _(locations).map(location => {
+  return _(locations).map(location => { // TODO: location使っていない？ 過去のソース要比較・確認
     // 不在表示用ゾーンへ表示するTXを抽出する
     const samePos = _.sortBy(positions, position => position.label)
       .filter(position => {
@@ -648,8 +644,8 @@ const calcCoordinatesZone = (absentDisplayZone, ratio, samePos) => {
  * @param {Number} ratio
  * @return {Object[]}
  */
-export const calcCoordinatesForMultiPosition = (positions, selectedArea) => {
-  return positions.filter(pos => pos.location && pos.location.areaId == selectedArea).map(pos => ({...pos, x: pos.x, y: pos.y}))
+export const calcCoordinatesForMultiPosition = (positions, selectedAreaId) => {
+  return positions.filter(pos => pos.location && pos.location.areaId == selectedAreaId).map(pos => ({...pos, x: pos.x, y: pos.y}))
 }
 
 
@@ -659,6 +655,8 @@ export const calcCoordinatesForMultiPosition = (positions, selectedArea) => {
 
 /**
  * 位置表示のTx詳細に必要な情報を取得する。
+ * TODO: 別のHelperに移動
+ * 
  * @method
  * @param {Number} x
  * @param {Number} y
@@ -683,12 +681,12 @@ export const createTxDetailInfo = (x, y, tx, canvasScale, offset, containerRect,
     containerWidth: containerRect.width,
     containerHeight: containerRect.height,
     class: !tx.btxId ? '': 'balloon-u', // 上表示のみに固定,
-    name: Util.getValue(tx, 'potName', ''),
-    tel: Util.getValue(tx, 'extValue.tel', ''),
+    name: Util.getValue(tx, 'pot.potName', ''),
+    tel: Util.getValue(tx, 'pot.extValue.tel', ''),
     timestamp: position ? DateUtil.formatDate(new Date(position.timestamp)) : '',
     thumbnail: Util.getValue(preloadThumbnail, 'src', ''),
-    category: Util.getValue(tx, 'categoryName', ''),
-    group: Util.getValue(tx, 'groupName', ''),
+    category: Util.getValue(tx, 'pot.cateogry.categoryName', ''),
+    group: Util.getValue(tx, 'pot.group.groupName', ''),
     bgColor: display.bgColor,
     color: display.color,
     isDispRight: x + offset.x + 100 < window.innerWidth,
@@ -705,6 +703,8 @@ export const createTxDetailInfo = (x, y, tx, canvasScale, offset, containerRect,
 
 /**
  * 位置表示（全体）のTx詳細に必要な情報を取得する。
+ * TODO: 別のHelperに移動　（上のメソッドとほぼ重複、マージすること）
+ * 
  * @method
  * @param {Number} x
  * @param {Number} y
@@ -727,12 +727,12 @@ export const createTxDetailInfoOnStack = (x, y, tx, offset, preloadThumbnail) =>
     containerWidth: null,
     containerHeight: null,
     class: !tx.btxId ? '': 'balloon-u', // 上表示のみに固定,
-    name: Util.getValue(tx, 'potName', ''),
-    tel: Util.getValue(tx, 'extValue.tel', ''),
+    name: Util.getValue(tx, 'pot.potName', ''),
+    tel: Util.getValue(tx, 'pot.extValue.tel', ''),
     timestamp: position ? DateUtil.formatDate(new Date(position.timestamp)) : '',
     thumbnail: Util.getValue(preloadThumbnail, 'src', ''),
-    category: Util.getValue(tx, 'categoryName', ''),
-    group: Util.getValue(tx, 'groupName', ''),
+    category: Util.getValue(tx, 'pot.category.categoryName', ''),
+    group: Util.getValue(tx, 'pot.group.groupName', ''),
     bgColor: display.bgColor,
     color: display.color,
     isDispRight: x + offset.x + 100 < window.innerWidth,

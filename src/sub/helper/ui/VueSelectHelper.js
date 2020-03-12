@@ -29,8 +29,7 @@ export const setApp = pi18n => {
  * @return {Object} - 存在しない場合はnull
  */
 export const getVueSelectData = (selectOptions, selected, isFirst) => {
-  const ret = selectOptions.find((selectOption, idx) => isFirst && idx == 0 || selectOption.value == selected)
-  return ret? ret: null
+  return selectOptions.find((selectOption, idx) => isFirst && idx == 0 || selectOption.value == selected)
 }
 
 /**

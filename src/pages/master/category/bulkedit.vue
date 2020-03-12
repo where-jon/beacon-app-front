@@ -49,7 +49,8 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'category', 'categories'
+      'category',
+      //  'categories'
     ]),
     backPath() {
       return this.pPath

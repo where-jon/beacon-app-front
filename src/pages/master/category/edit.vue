@@ -68,7 +68,6 @@ import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
 import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
-import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
@@ -81,6 +80,13 @@ import colorPicker from '../../../components/parts/colorpicker'
 import extform from '../../../components/parts/extform.vue'
 
 export default {
+  components: {
+    breadcrumb,
+    alert,
+    colorPicker,
+    extform,
+  },
+  mixins: [commonmixin, editmixin],
   props: {
     pName: {
       type: String,
@@ -111,13 +117,6 @@ export default {
       default: () => [CATEGORY.PERSON, CATEGORY.THING, CATEGORY.ZONE, CATEGORY.OTHER],
     },
   },
-  components: {
-    breadcrumb,
-    alert,
-    colorPicker,
-    extform,
-  },
-  mixins: [commonmixin, editmixin],
   data() {
     const category = this.$store.state.app_service.category
     return {
@@ -131,10 +130,10 @@ export default {
       ]),
       defaultColor: '#000000',
       defaultBgColor: '#ffffff',
-      oldType: Util.getValue(category, 'categoryType', null),
-      oldShape: Util.getValue(category, 'display.shape', null),
-      oldColor: Util.getValue(category, 'display.color', null),
-      oldBgColor: Util.getValue(category, 'display.bgColor', null),
+      oldType: Util.getValue(category, 'categoryType'),
+      oldShape: Util.getValue(category, 'display.shape'),
+      oldColor: Util.getValue(category, 'display.color'),
+      oldBgColor: Util.getValue(category, 'display.bgColor'),
       vueSelected: {
         zoneGuards: [],
         zoneDoors: [],
@@ -143,7 +142,7 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'category', 'categories', 'zones',
+      'category',
     ]),
     backPath() {
       return this.pPath
@@ -198,16 +197,16 @@ export default {
     }
     if(Util.hasValue(this.form.zoneCategoryList)){
       this.vueSelected.zoneGuards = this.form.zoneCategoryList.filter(zoneCategory => 
-        zoneCategory.zoneType == ZONE.GUARD
+        zoneCategory.zone.zoneType == ZONE.GUARD
       ).map(zoneCategory =>
         VueSelectHelper.getVueSelectData(this.getZoneGuardOptions(), zoneCategory.zoneCategoryPK.zoneId)
-      ).sort((a, b) => Util.getValue(a, 'label', null) < Util.getValue(b, 'label', null)? -1: 1)
+      ).sort((a, b) => Util.getValue(a, 'label') < Util.getValue(b, 'label')? -1: 1)
 
       this.vueSelected.zoneDoors = this.form.zoneCategoryList.filter(zoneCategory => 
-        zoneCategory.zoneType == ZONE.DOOR
+        zoneCategory.zone.zoneType == ZONE.DOOR
       ).map(zoneCategory =>
         VueSelectHelper.getVueSelectData(this.getZoneDoorOptions(), zoneCategory.zoneCategoryPK.zoneId)
-      ).sort((a, b) => Util.getValue(a, 'label', null) < Util.getValue(b, 'label', null)? -1: 1)
+      ).sort((a, b) => Util.getValue(a, 'label') < Util.getValue(b, 'label')? -1: 1)
     }
     ValidateHelper.setCustomValidationMessage()
     VueSelectHelper.disabledAllSubmit()

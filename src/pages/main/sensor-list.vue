@@ -6,12 +6,10 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { SENSOR } from '../../sub/constant/Constants'
 import * as EXCloudHelper from '../../sub/helper/dataproc/EXCloudHelper'
 import * as PositionHelper from '../../sub/helper/domain/PositionHelper'
 import * as SensorHelper from '../../sub/helper/domain/SensorHelper'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import * as NumberUtil from '../../sub/util/NumberUtil'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
@@ -29,10 +27,11 @@ export default {
       params: {
         name: 'position-list',
         id: 'positionListId',
-        extraFilter: ['sensor', 'area', 'zone', 'zoneCategory'],
+        extraFilter: [
+          {key: 'sensor', change: (newVal) => this.sensorChange(newVal)},
+          'area', 'zone', 'zoneCategory'
+        ],
         initTotalRows: 0,
-        sensorChange: newVal => this.sensorChange(newVal),
-        showOnlyHas: ['zone', 'zoneCategory'],
         disableTableButtons: true,
         hideNormalSearchBox: true,
         fields: [],
@@ -41,14 +40,6 @@ export default {
       sensorList: [],
       selectedSensor: SENSOR.TEMPERATURE,
     }
-  },
-  computed: {
-    ...mapState('app_service', [
-      'sensors',
-      'txs',
-      'areas',
-      'exbs',
-    ]),
   },
   async created() {
   },

@@ -6,18 +6,18 @@
       </b-row>
       <b-form inline class="tenant">
         <label class="tenant-name">{{ $t('label.tenantName') }}</label>
-        <input type="text" class="form-control" maxlength="64" size="40" v-model="tenantName" />
+        <input v-model="tenantName" type="text" class="form-control" maxlength="64" size="40">
         <button class="btn btn-primary btn-large approval" :disabled="!isInputTenantName" @click="adminConsent">{{ $t('label.adminConsent') }}</button>
       </b-form>
     </div>
     <div v-if="disabled">{{ $t('message.MSTEAMS.INVALID_TENANT') }}<br />{{ $t('message.MSTEAMS.INVALID_TENANT_CONTACT') }}</div>
     <div v-if="!finishInit"><br />{{ $t('message.MSTEAMS.WAIT_A_MOMENT') }}</div>
     <div v-if="notShown">
-      <p></p>
-      <div v-html="$t('message.MSTEAMS.IF_NOT_SHOWN')"></div>
-      <div v-html="$t('message.MSTEAMS.USER_GUIDE3')"></div>
-      <button @click="signIn" class="button-windowslive">
-        <div class="button-icon"></div>
+      <p/>
+      <div v-html="$t('message.MSTEAMS.IF_NOT_SHOWN')"/>
+      <div v-html="$t('message.MSTEAMS.USER_GUIDE3')"/>
+      <button class="button-windowslive" @click="signIn">
+        <div class="button-icon"/>
         <div class="button-text">
           <span>Sign In with Microsoft</span>
         </div>
@@ -120,30 +120,30 @@ export default {
       AuthHelper.setApp(this.$router, this.$store)
       let tenantStatus = await AuthHelper.getADTenantStatus(idToken)
       if (tenantStatus == TENANT.STATUS.NOT_REGISTERED && location.search.includes('admin_consent=True')) {
-          tenantStatus = await AuthHelper.getADTenantStatus(idToken, 1, this.tenantName)
+        tenantStatus = await AuthHelper.getADTenantStatus(idToken, 1, this.tenantName)
       }
       switch (tenantStatus) {
-        case TENANT.STATUS.REGISTERED:
-          await AuthHelper.auth(idToken, 'password',
-            ()=>{
-              this.$router.push(APP.MENU.TOP_PAGE)
-            },
-            (e)=>{
-              console.error(e)
-            }
-          )
-          break
-        case TENANT.STATUS.NOT_REGISTERED:
-          this.finishInit = true
-          this.notRegistered = true
-          break
-        case TENANT.STATUS.DISABLED:
-          this.finishInit = true
-          this.disabled = true
-          break
-        default:
-          this.finishInit = true
-          this.invalidToken = true
+      case TENANT.STATUS.REGISTERED:
+        await AuthHelper.auth(idToken, 'password',
+          ()=>{
+            this.$router.push(APP.MENU.TOP_PAGE)
+          },
+          (e)=>{
+            console.error(e)
+          }
+        )
+        break
+      case TENANT.STATUS.NOT_REGISTERED:
+        this.finishInit = true
+        this.notRegistered = true
+        break
+      case TENANT.STATUS.DISABLED:
+        this.finishInit = true
+        this.disabled = true
+        break
+      default:
+        this.finishInit = true
+        this.invalidToken = true
       }
     },
     adminConsent() {
@@ -153,12 +153,12 @@ export default {
       const adminConsentUrl = MSTEAMS_APP.ADMINCONSENT_URL_BASE + '?client_id=' + MSTEAMS_APP.APP_ID + '&redirect_uri=' + MSTEAMS_APP.REDIRECT_URL
       var popupWindow = window.open(adminConsentUrl, 'Admin consent', "width=600, height=535, top= " + top + ", left=" + left)
       if (!popupWindow) {
-          console.error('window open error')
-          alert('Opening popupWindow failed.')
-          return
+        console.error('window open error')
+        alert('Opening popupWindow failed.')
+        return
       }
       if (popupWindow.focus) {
-          popupWindow.focus()
+        popupWindow.focus()
       }
     }
   }

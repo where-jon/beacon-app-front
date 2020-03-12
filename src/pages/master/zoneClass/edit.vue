@@ -72,13 +72,12 @@
 <script>
 import { mapState } from 'vuex'
 import { APP } from '../../../sub/constant/config'
-import { CATEGORY, ZONE, SYSTEM_ZONE_CATEGORY_NAME, PATTERN } from '../../../sub/constant/Constants'
+import { CATEGORY, ZONE, PATTERN } from '../../../sub/constant/Constants'
 import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
 import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
 import * as MenuHelper from '../../../sub/helper/dataproc/MenuHelper'
-import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
@@ -167,13 +166,13 @@ export default {
   watch: {
     'vueSelected.area': {
       handler: function(newVal, oldVal){
-        this.form.areaId = Util.getValue(newVal, 'value', null)
+        this.form.areaId = Util.getValue(newVal, 'value')
       },
       deep: true,
     },
     'vueSelected.category': {
       handler: function(newVal, oldVal){
-        this.form.categoryId = Util.getValue(newVal, 'value', null)
+        this.form.categoryId = Util.getValue(newVal, 'value')
       },
       deep: true,
     },
@@ -202,7 +201,7 @@ export default {
 
       const zoneCategoryList = Util.getValue(this.form, 'zoneCategoryList', [])
       const zoneCategory = zoneCategoryList.find(zoneCategory => categoryMap[zoneCategory.zoneCategoryPK.categoryId] == CATEGORY.ZONE)
-      this.form.categoryId = Util.getValue(zoneCategory, 'zoneCategoryPK.categoryId', null)
+      this.form.categoryId = Util.getValue(zoneCategory, 'zoneCategoryPK.categoryId')
       this.form.zoneCategoryList = zoneCategoryList.filter(zoneCategory => categoryMap[zoneCategory.zoneCategoryPK.categoryId] != CATEGORY.ZONE)
 
       this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaNames, this.form.areaId)
@@ -222,8 +221,8 @@ export default {
       this.$set(this.form, 'zoneCd', MasterHelper.createMasterCd('zone', this.zones, this.zone))
     },
     async onBeforeReload(){
-      this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaNames, null)
-      this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryNames, null)
+      this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaNames)
+      this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryNames)
     },
     async onSaving() {
       const zoneId = Util.hasValue(this.form.zoneId)? this.form.zoneId: -1

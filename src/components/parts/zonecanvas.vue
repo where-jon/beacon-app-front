@@ -471,10 +471,9 @@ export default {
       })
     },
     async onChangeAreaId(areaId) {
-      await StateHelper.loadAreaImage(areaId, true)
-      const areaImage = this.$store.state.app_service.areaImages.find((a) => { return a.areaId === areaId })
+      const areaImage = await StateHelper.loadAreaImage(areaId, true)
       if (areaImage) {
-        this.setupCanvas(areaImage.mapImage)
+        this.setupCanvas(areaImage)
       }
     },
     setupCanvas (mapImage) {
@@ -516,20 +515,18 @@ export default {
         return
       }
       this.zones.clear()
-      let zoneRecs = await AppServiceHelper.fetchList(`/core/zone/area/${this.areaId}`, 'id')
+      let zoneRecs = await AppServiceHelper.fetchList(`/core/zone/area/${this.areaId}`, 'id') // TODO: APIで使用していない項目があるため整理
       zoneRecs = _.filter(zoneRecs, (zone) => zone.zoneType ==  ZONE.COORDINATE)
       zoneRecs.forEach((zoneRec) => this.addZone(zoneRec))
       this.zones.setInActive()
     },
     addZone (zoneRec) {
-      const zoneCategory = zoneRec.zoneCategoryList && zoneRec.zoneCategoryList.length > 0 ? zoneRec.zoneCategoryList[0] : null
-      const categoryId = zoneCategory ? zoneCategory.zoneCategoryPK.categoryId : -1
       const zone = new Zone({
         id: zoneRec.zoneId,
         areaId: this.areaId,
         cd: zoneRec.zoneCd,
         name: zoneRec.zoneName,
-        categoryId: categoryId,
+        categoryId: zoneRec.categoryId,
         startX: zoneRec.x * this.aspectRatio,
         startY: zoneRec.y * this.aspectRatio,
         stage: this.stage,

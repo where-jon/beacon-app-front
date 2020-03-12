@@ -1,7 +1,7 @@
 // configuration for app
 // Basically using const but values are not primitive but objects or arrays because it may change from outside.
 
-import { DETECT_STATE, LOGIN_MODE, SHAPE } from './Constants'
+import { DETECT_STATE, SHAPE } from './Constants'
 
 export const DEV = { // 開発デバッグ関連
   DEBUG: 0, // デバッグモード (0:なし、1以上デバッグレベル)
@@ -12,7 +12,6 @@ export const DEV = { // 開発デバッグ関連
 }
 
 export const APP = { // 機能面に関する設定
-  LOGIN_MODE: LOGIN_MODE.APP_SERVICE, // ログインモード(なし、ローカル、AppService)
   SAAS_DOMAIN: '.saas.',
   COMMON: {
     VERSION: 'Version 1.3.2', // バージョン　this application version
@@ -260,11 +259,10 @@ export const APP = { // 機能面に関する設定
     AXIS_FILL_GAP: 2, // 滞在時間集計の横軸で0件項目を表示(0:しない,1:する,2:月日の場合検索期間すべて表示)
     UNIT_HOUR: 5 * 60 * 60, // 指定秒を軸単位の最大値が超えた場合、滞在時間集計の表示を時間単位で表示する
     UNIT_MINUTE: 20 * 60,  // 指定秒を軸単位の最大値が超えた場合、滞在時間集計の表示を分単位で表示する
-    FROM: 0,  // 滞在時間集計開始時間(時分)
-    TO: 2400,  // 滞在時間集計終了時間(時分)
     SCALE_TIMES: [5, 12, 18], // 滞在率画面グラフ目盛り時刻(時)
     OTHER_COLOR: '#404040', // 滞在率その他の色
     GRAPH_LIMIT: 0.3, // 日単位滞在分析グラフの足切り％
+    ENABLE_DISPLAY_SPECIFIED: false // 日単位滞在分析画面の表示指定ボタン表示有無
   },
   // 交流分析
   PROXIMITY: {
@@ -282,7 +280,7 @@ export const APP = { // 機能面に関する設定
     WITH: ['deviceId', 'deviceIdX'],
   },
   SENSORGRAPH: {
-    SENSOR: [1,2,3,4,5,6,7,8,9],        // グラフで利用するセンサー一覧
+    SENSOR: [1,2,3,5,6,7,8,9],        // グラフで利用するセンサー一覧
     WITH_DEVICE: true,                // 画面上でデバイスを使用するか否か
     CSV_IMMEDIATE: false,             // csvで直近値を出力するか否か
   },
@@ -307,6 +305,10 @@ export const APP = { // 機能面に関する設定
         RGB: -1,
       }
     },
+    STAY_SUM: {
+      START: 0, // 滞在時間集計開始時間(時分)
+      END: 2400, // 滞在時間集計終了時間(時分)  
+    }
   },
   ENTER: {
     AUTO_PAGE: 1, // 0:Disable, 1:Enable & Default Pause, 2:Enable && Default Start
@@ -320,6 +322,16 @@ export const APP = { // 機能面に関する設定
     AUTO_RELOAD: true, // 自動リロード
   },
 
+  // 活動実績
+  ACTIVITY: {
+    STACK_TYPE: 'zoneCategory'
+  },
+  // 会議室利用実績
+  MEETING: {
+    GROUP_BY: 'location', // サーバーでの集計単位
+    AXIS_TYPE: 'location', // 表示単位
+    MAX_NUM: 6 // 利用人数の最大値
+  },
   
   // 将来実装予定項目 START
   LOG_KEEP_TIME: 30,
@@ -344,16 +356,15 @@ export const APP = { // 機能面に関する設定
 
 
 // URL関連設定
-export const APP_SERVICE = { // used if APP.LOGIN_MODE == APP_SERVICE
+export const APP_SERVICE = {
   // BASE_URL: 'https://msteams-data.dev.exbeacon.com',
   BASE_URL: 'http://localhost:8080',
 }
 
 export const EXCLOUD = {
-  BASE_URL: 'https://nsome8q880.execute-api.ap-northeast-1.amazonaws.com/prod', // used if APP.LOGIN_MODE != APP_SERVICE
-  // BASE_URL: 'https://jfgo7xyh6h.execute-api.ap-northeast-1.amazonaws.com/prod', // used if APP.LOGIN_MODE != APP_SERVICE
+  BASE_URL: 'https://nsome8q880.execute-api.ap-northeast-1.amazonaws.com/prod', 
 
-  withCredentials: true, // false if APP.LOGIN_MODE != APP_SERVICE
+  withCredentials: true,
   // POSITION_URL: EXCLOUD.BASE_URL + "/beacon/position-kalman?_=",
   // GATEWAY_URL: EXCLOUD.BASE_URL + "/gateway/0?=",
   // TELEMETRY_URL: EXCLOUD.BASE_URL + "/telemetry/0?=",
@@ -633,62 +644,11 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     TYPE: 1, // 表示方法
     ZONE_OTHER: true // ゾーンその他を表示する
   },
+
 }
-
-// used when APP.LOGIN_MODE != APP_SERVICE with excloud old api -----------------------------------------------------
-
-// ローカルログイン認証設定
-export const LOCAL_LOGIN = { // local login md5 hash of id:pass // TODO: add Role
-  ID_PASS: ['0636c3371cd14c53cf2dae4e81fd4aff', 'd2abaa37a7c3db1137d385e1d8c15fd2']
-}
-
-export const EXB = [
-  {pos_id: 1, x: 110, y: 60},
-  {pos_id: 2, x: 101, y: 208},
-  {pos_id: 3, x: 318, y: 225},
-  {pos_id: 4, x: 551, y: 221},
-  {pos_id: 5, x: 250, y: 265},
-  {pos_id: 6, x: 300, y: 265},
-  {pos_id: 7, x: 350, y: 265},
-  {pos_id: 8, x: 400, y: 265},
-  {pos_id: 9, x: 450, y: 265},
-  {pos_id: 10, x: 500, y: 265},
-  {pos_id: 11, x: 550, y: 265},
-  {pos_id: 12, x: 500, y: 265},
-  {pos_id: 13, x: 100, y: 265},
-  {pos_id: 14, x: 150, y: 265},
-  {pos_id: 15, x: 200, y: 265},
-  {pos_id: 16, x: 250, y: 265},
-  {pos_id: 17, x: 265, y: 265},
-  {pos_id: 18, x: 350, y: 265},
-  {pos_id: 19, x: 400, y: 265},
-  {pos_id: 20, x: 450, y: 265},
-  {pos_id: 21, x: 500, y: 265},
-  {pos_id: 22, x: 550, y: 265},
-  {pos_id: 23, x: 550, y: 265},
-  {pos_id: 24, x: 600, y: 265},
-]
-
-export const Tx = [
-  {id: 1},
-  {id: 2},
-  {id: 3},
-  {id: 4},
-  {id: 5},
-  {id: 6},
-  {id: 7},
-  {id: 154},
-  {id: 156},
-  {id: 178},
-  {id: 179},
-  {id: 180},
-  {id: 181},
-  {id: 799},
-  {id: 800},
-]
 
 export const MSTEAMS_APP = {
-  IS_COOPERATION: true,
+  IS_COOPERATION: false,
   // APP_ID: 'fcfc143f-c8c8-454e-ab72-fdf2e49f862f',
   // REDIRECT_URL: 'https://xxx.saas.msteams.exbeacon.com/azlogin/adminend/',
   REDIRECT_URL: 'http://localhost:3000/azlogin/end/',

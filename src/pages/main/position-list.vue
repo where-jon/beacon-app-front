@@ -3,13 +3,12 @@
     <breadcrumb :items="items" :extra-nav-spec="extraNavSpec"
                 :reload="reload" :short-name="shortName"
     />
-    <alert v-model="showDismissibleAlert" :message="message" :fix="fixHeight" :prohibit=showDismissibleAlert :prohibit-view="isProhibitView" :alert-style="alertStyle" />
-    <m-list :params="params" :totalRows="totalRows" :list="positionList" :alert-force-hide=true :use-detail-filter="useDetailFilter" />
+    <alert v-model="showDismissibleAlert" :message="message" :fix="fixHeight" :prohibit="showDismissibleAlert" :prohibit-view="isProhibitView" :alert-style="alertStyle" />
+    <m-list :params="params" :total-rows="totalRows" :list="positionList" :alert-force-hide="true" :use-detail-filter="useDetailFilter" />
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { APP, DISP } from '../../sub/constant/config'
 import { EXTRA_NAV } from '../../sub/constant/Constants'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
@@ -17,7 +16,6 @@ import * as Util from '../../sub/util/Util'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
 import * as PositionHelper from '../../sub/helper/domain/PositionHelper'
 import * as ProhibitHelper from '../../sub/helper/domain/ProhibitHelper'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import reloadmixin from '../../components/mixin/reloadmixin.vue'
@@ -59,10 +57,6 @@ export default {
           MenuHelper.useMaster('group') && APP.POS.WITH.GROUP? 'group' : null,
           MenuHelper.useMaster('category') && APP.POS.WITH.CATEGORY? 'category' : null,
           APP.POSITION_WITH_AREA? 'area' : null]).compact().value(),
-        commonFilter: _([
-          MenuHelper.useMaster('group') && APP.POS.WITH.GROUP? 'group' : null,
-          MenuHelper.useMaster('category') && APP.POS.WITH.CATEGORY? 'category' : null,
-        ]).compact().value(),
         disableTableButtons: true,
       },
       totalRows: 0,
@@ -74,18 +68,10 @@ export default {
       prohibitDetectList : null,
       showDismissibleAlert: false,
       count: 0, // mockテスト用
-      loadStates: [],
       positionList: [],
     }
   },
   computed: {
-    ...mapState('app_service', [
-      'txs',
-      'areas',
-      'locations',
-      'prohibits',
-      'lostZones',
-    ]),
     alertStyle(){
       return {
         'font-weight': DISP.THERMOH.ALERT_WEIGHT,
@@ -100,13 +86,6 @@ export default {
       try {
         this.replace({showAlert: false})
         this.showProgress()
-        if (APP.POS.PROHIBIT_ALERT) {
-          this.loadStates.push('prohibit')
-        }
-        if (APP.POS.LOST_ALERT) {
-          this.loadStates.push('lostZones')
-        }
-        await Promise.all(this.loadStates.map(StateHelper.load))
         await PositionHelper.loadPosition(0, true)
         let positions = PositionHelper.filterPositions(undefined, true)
         Util.debug('after filter', positions)
@@ -114,41 +93,33 @@ export default {
         let prohibitCheck = false
         const minorMap = {}
 
-        if (Util.hasValue(APP.POS.PROHIBIT_ALERT)
-          && (Util.hasValue(APP.POS.PROHIBIT_GROUP_ZONE)||Util.hasValue(APP.POS.LOST_GROUP_ZONE))) {
-          ProhibitHelper.setProhibitDetect('list', this)
+        if (Util.hasValue(APP.POS.PROHIBIT_ALERT) && Util.hasValueAny(APP.POS.PROHIBIT_GROUP_ZONE, APP.POS.LOST_GROUP_ZONE)) {
+          Util.merge(this, ProhibitHelper.setProhibitDetect('list', this.stage, this.icons, this.zones))
           this.replace({showAlert: this.showDismissibleAlert})
           this.prohibitDetectList? this.prohibitDetectList.forEach((p) => minorMap[p.minor] = p) : null
         }
 
-        const locationMap = {}
-        this.locations.forEach(l => {
-          if(Util.hasValue(l.locationId)){
-            locationMap[l.locationId] = l
-          }
-        })
-
         positions = positions.filter(pos => pos.exb && pos.exb.location).map(pos => {
           prohibitCheck = minorMap[pos.minor] != null
 
-          const location = pos.exb.location? locationMap[pos.exb.location.locationId]: {}
+          const location = pos.exb.location? this.locationIdMap[pos.exb.location.locationId]: {}
           return {
             ...pos,
             // powerLevel: this.getPowerLevel(pos),
-            txId: Util.getValue(pos, 'tx.txId' , null),
-            potCd: Util.getValue(pos, 'tx.pot.potCd', null),
-            tel: Util.getValue(pos, 'tx.pot.extValue.tel', null),
-            locationName: Util.getValue(pos, 'location.locationName', null),
-            potName: Util.getValue(pos, 'tx.pot.potName', null),
-            areaName: Util.getValue(pos, 'location.area.areaName', null),
-            groupName: Util.getValue(pos, 'tx.pot.group.groupName', null),
-            categoryName: Util.getValue(pos, 'tx.pot.category.categoryName', null),
+            txId: Util.v(pos, 'tx.txId'),
+            potCd: Util.v(pos, 'tx.pot.potCd'),
+            tel: Util.v(pos, 'tx.pot.extValue.tel'),
+            locationName: Util.v(pos, 'location.locationName'),
+            potName: Util.v(pos, 'tx.pot.potName'),
+            areaName: Util.v(pos, 'location.area.areaName'),
+            groupName: Util.v(pos, 'tx.pot.group.groupName'),
+            categoryName: Util.v(pos, 'tx.pot.category.categoryName'),
             // 追加フィルタ用
-            groupId: Util.getValue(pos, 'tx.pot.groupId'),
-            categoryId: Util.getValue(pos, 'tx.pot.category.categoryId'),
-            areaId: Util.getValue(pos, 'location.areaId'),
+            groupId: Util.v(pos, 'tx.pot.group.groupId'),
+            categoryId: Util.v(pos, 'tx.pot.category.categoryId'),
+            areaId: Util.v(pos, 'location.areaId'),
             blinking : prohibitCheck? 'blinking' : null,
-            isDisableArea: Util.getValue(location, 'isAbsentZone', false),
+            isDisableArea: Util.v(location, 'isAbsentZone', false),
           }
         })
         this.totalRows = positions.length

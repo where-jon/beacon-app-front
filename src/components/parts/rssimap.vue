@@ -18,36 +18,6 @@
             </v-select>
           </span>
         </b-form-row>
-        <b-form-row v-if="useGroup" class="my-1 ml-2 ml-sm-0">
-          <label class="ml-sm-4 ml-2 mr-1">
-            {{ $t('label.group') }}
-          </label>
-          <span :title="vueSelectTitle(vueSelected.group)">
-            <v-select v-model="vueSelected.group" :options="groupOptions" class="ml-1 mr-2 vue-options" :style="vueSelectStyle">
-              <template slot="selected-option" slot-scope="option">
-                {{ vueSelectCutOn(option) }}
-              </template>
-              <template slot="no-options">
-                {{ vueSelectNoMatchingOptions }}
-              </template>
-            </v-select>
-          </span>
-        </b-form-row>
-        <b-form-row v-if="useCategory" class="my-1 ml-2 ml-sm-0">
-          <label class="ml-sm-4 ml-2 mr-1">
-            {{ $t('label.category') }}
-          </label>
-          <span :title="vueSelectTitle(vueSelected.category)">
-            <v-select v-model="vueSelected.category" :options="categoryOptionsForPot" class="ml-1 mr-2 vue-options" :style="vueSelectStyle">
-              <template slot="selected-option" slot-scope="option">
-                {{ vueSelectCutOn(option) }}
-              </template>
-              <template slot="no-options">
-                {{ vueSelectNoMatchingOptions }}
-              </template>
-            </v-select>
-          </span>
-        </b-form-row>
         <b-form-row>
           <b-form-checkbox v-model="modeRssi" class="ml-sm-4 ml-2 mr-1">
             {{ $t('label.dispRssi') }}
@@ -86,17 +56,10 @@
 <script>
 import { mapState } from 'vuex'
 import { Container, Shape, Text } from 'createjs-module'
-import { APP, DISP, EXCLOUD } from '../../sub/constant/config'
-import { CATEGORY } from '../../sub/constant/Constants'
-import * as ArrayUtil from '../../sub/util/ArrayUtil'
+import { APP, DISP } from '../../sub/constant/config'
 import * as Util from '../../sub/util/Util'
-import * as VueUtil from '../../sub/util/VueUtil'
 import * as EXCloudHelper from '../../sub/helper/dataproc/EXCloudHelper'
-import * as HttpHelper from '../../sub/helper/base/HttpHelper'
-import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
 import * as PositionHelper from '../../sub/helper/domain/PositionHelper'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
-import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import commonmixin from '../mixin/commonmixin.vue'
@@ -164,8 +127,6 @@ export default {
   data () {
     return {
       items: ViewHelper.createBreadCrumbItems('monitor', 'installation'),
-      useGroup: MenuHelper.useMaster('group') && ArrayUtil.includesIgnoreCase(APP.TX.WITH, 'group'),
-      useCategory: MenuHelper.useMaster('category') && ArrayUtil.includesIgnoreCase(APP.TX.WITH, 'category'),
       modeRssi: true,
       exbDisp: 'deviceId',
       nearest: [],
@@ -183,18 +144,13 @@ export default {
     ...mapState([
       'reload',
     ]),
-    categoryOptionsForPot() {
-      return MasterHelper.getOptionsFromState('category', false, true,
-        category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
-      )
-    },
     txRecords() {
       const btxs = this.nearest.map(n => ({label: n.btxId, value: n.btxId}))
-      if (!this.selectedGroup && !this.selectedCategory) {
+      if (!this.selectedGroupId && !this.selectedCategoryId) {
         return btxs
       }
-      const target = this.txs.filter(tx => isMatchId(this.selectedGroup, tx.group, 'groupId') &&
-      isMatchId(this.selectedCategory, tx.category, 'categoryId'))
+      const target = this.txs.filter(tx => isMatchId(this.selectedGroupId, tx.pot.group, 'groupId') &&
+      isMatchId(this.selectedCategoryId, tx.pot.category, 'categoryId'))
       return target.length > 0 ? btxs.filter(btx => target.some(t => btx.value === t.btxId)) : []
     },
   },
@@ -213,28 +169,14 @@ export default {
     },
     'vueSelected.area': {
       handler: function(newVal, oldVal){
-        this.selectedArea = Util.getValue(newVal, 'value', null)
-        this.changeArea(this.selectedArea)
-      },
-      deep: true,
-    },
-    'vueSelected.category': {
-      handler: function(newVal, oldVal){
-        this.selectedCategory = Util.getValue(newVal, 'value', null)
-        this.vueSelected.tx = null
-      },
-      deep: true,
-    },
-    'vueSelected.group': {
-      handler: function(newVal, oldVal){
-        this.selectedGroup = Util.getValue(newVal, 'value', null)
-        this.vueSelected.tx = null
+        this.selectedAreaId = Util.getValue(newVal, 'value')
+        this.changeArea(this.selectedAreaId)
       },
       deep: true,
     },
     'vueSelected.tx': {
       handler: function(newVal, oldVal){
-        this.targetTx = Util.getValue(newVal, 'value', null)
+        this.targetTx = Util.getValue(newVal, 'value')
         this.dispRssiIcons(this.targetTx)
       },
       deep: true,
@@ -370,7 +312,7 @@ export default {
       }
     },
     getExbPosition() {
-      return this.exbs.filter(exb => exb.location && exb.location.areaId === this.selectedArea && exb.location.x && exb.location.y > 0)
+      return this.exbs.filter(exb => exb.location && exb.location.areaId === this.selectedAreaId && exb.location.x && exb.location.y > 0)
     },
     async getNearest(exbs) {
       const positions = await EXCloudHelper.fetchRawPosition()

@@ -7,12 +7,6 @@
 
 <script>
 import { mapState } from 'vuex'
-import { APP } from '../../../sub/constant/config'
-import * as ArrayUtil from '../../../sub/util/ArrayUtil'
-import * as Util from '../../../sub/util/Util'
-import * as ConfigHelper from '../../../sub/helper/dataproc/ConfigHelper'
-import * as MenuHelper from '../../../sub/helper/dataproc/MenuHelper'
-import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import reloadmixin from '../../../components/mixin/reloadmixin.vue'

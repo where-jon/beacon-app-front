@@ -75,7 +75,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import { APP, DISP, APP_SERVICE } from '../../sub/constant/config'
@@ -86,7 +85,6 @@ import * as Util from '../../sub/util/Util'
 import { getCharSet } from '../../sub/helper/base/CharSetHelper'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
@@ -136,9 +134,6 @@ export default {
     }
   },
   computed: {
-    ...mapState('app_service', [
-      'txs', 'exbs'
-    ]),
     txOptions() {
       return MasterHelper.getOptionsFromState('tx',
         tx => tx.minor ? '' + tx.minor : 'txid=' + tx.txId,
@@ -176,10 +171,10 @@ export default {
       this.totalRows = 0
       this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`
       try {
-        const aTxId = (this.form.tx != null && this.form.tx.value != null)?this.form.tx.value:0
-        const aGroupId = (this.form.group != null && this.form.group.value != null)? this.form.group.value: 0
+        const txId = (this.form.tx != null && this.form.tx.value != null)?this.form.tx.value:0
+        const groupId = (this.form.group != null && this.form.group.value != null)? this.form.group.value: 0
         var fetchList = await HttpHelper.getAppService(
-          `/core/positionHistory/find/${aGroupId}/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/${this.limitViewRows}`
+          `/core/positionHistory/find/${groupId}/${txId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/${this.limitViewRows}`
         )
         if (fetchList.length == null || !fetchList.length) {
           this.message = this.$i18n.tnl('message.notFoundData', {target: this.$i18n.tnl('label.positionHistory')})
@@ -189,17 +184,17 @@ export default {
         for (var posHist of fetchList) {
           const d = new Date(posHist.positionDt)
           posHist.positionDt = DateUtil.formatDate(d.getTime())
-          const aTx = _.find(this.txs, (tx) => { return tx.txId == posHist.txId })
-          posHist.potName = Util.getValue(aTx, 'pot.potName', '')
-          posHist.major = Util.getValue(aTx, 'major', '')
-          posHist.minor = Util.getValue(aTx, 'minor', '')
-          const aExb = _.find(this.exbs, (exb) => { return exb.exbId == posHist.exbId })
-          posHist.deviceId = Util.getValue(aExb, 'deviceId', '')
-          posHist.deviceIdX = Util.getValue(aExb, 'deviceIdX', 0)
-          posHist.locationName = Util.getValue(aExb, 'locationName', '')
-          posHist.areaName = Util.getValue(aExb, 'areaName', '')
-          posHist.x = Util.getValue(aExb, 'x', '')
-          posHist.y = Util.getValue(aExb, 'y', '')
+          const tx = this.txIdMap[posHist.txId]
+          posHist.potName = Util.getValue(tx, 'pot.potName', '')
+          posHist.major = Util.getValue(tx, 'major', '')
+          posHist.minor = Util.getValue(tx, 'minor', '')
+          const exb = this.exbIdMap[posHist.exbId]
+          posHist.deviceId = Util.getValue(exb, 'deviceId', '')
+          posHist.deviceIdX = Util.getValue(exb, 'deviceIdX', 0)
+          posHist.locationName = Util.getValue(exb, 'locationName', '')
+          posHist.areaName = Util.getValue(exb, 'areaName', '')
+          posHist.x = Util.getValue(exb, 'x', '')
+          posHist.y = Util.getValue(exb, 'y', '')
           this.viewList.push(posHist)
         }
         this.totalRows = this.viewList.length
@@ -211,12 +206,12 @@ export default {
     async fetchData(payload) {
     },
     async exportCsv() {
-      const aTxId = (this.form.tx != null && this.form.tx.value != null)?this.form.tx.value:0
-      const aGroupId = (this.form.group != null && this.form.group.value != null)? this.form.group.value: 0
+      const txId = (this.form.tx != null && this.form.tx.value != null)?this.form.tx.value:0
+      const groupId = (this.form.group != null && this.form.group.value != null)? this.form.group.value: 0
       const headerLabels = this.getCsvHeaderList()
       BrowserUtil.executeFileDL(
         APP_SERVICE.BASE_URL
-        + `/core/positionHistory/csvdownload/${aGroupId}/${aTxId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/` 
+        + `/core/positionHistory/csvdownload/${groupId}/${txId}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/` 
         + getCharSet(this.$store.state.loginId)
         + `?headerLabels=${headerLabels}`
       )

@@ -5,12 +5,10 @@
 
 import axios from 'axios'
 import _ from 'lodash'
-import md5 from 'md5'
-import { APP, LOCAL_LOGIN } from '../../constant/config'
-import { LOGIN_MODE, FEATURE, KEY } from '../../constant/Constants'
+import { APP } from '../../constant/config'
+import { FEATURE, KEY } from '../../constant/Constants'
 import * as BrowserUtil from '../../util/BrowserUtil'
 import * as Util from '../../util/Util'
-import * as AppServiceHelper from '../dataproc/AppServiceHelper'
 import * as ConfigHelper from '../dataproc/ConfigHelper'
 import * as OptionHelper from '../dataproc/OptionHelper'
 import * as HttpHelper from './HttpHelper'
@@ -18,7 +16,6 @@ import * as LocaleHelper from './LocaleHelper'
 import * as LocalStorageHelper from './LocalStorageHelper'
 import * as MenuHelper from '../dataproc/MenuHelper'
 import * as MasterHelper from '../domain/MasterHelper'
-import * as StateHelper from '../dataproc/StateHelper'
 
 let router
 let store
@@ -35,7 +32,7 @@ export const setApp = (pRouter, pStore) => {
 }
 
 /**
- * ログイン認証を行う。 TODO: もはやローカルログインは使わないので削除
+ * ログイン認証を行う。
  * @method
  * @async
  * @param {String} loginId 
@@ -44,38 +41,9 @@ export const setApp = (pRouter, pStore) => {
  * @param {Function} err 認証失敗時に実行するメソッド
  */
 export const auth = async (loginId, password, success, err) => {
-  switch(APP.LOGIN_MODE) {
-  case LOGIN_MODE.APP_SERVICE:
-    await authByAppService(loginId, password, success, err)
-    break
-  case LOGIN_MODE.LOCAL:
-    await authByLocal(loginId, password, success, err)
-    break
-  case LOGIN_MODE.NO_LOGIN:
-    success()
-    break
-  }
+  await authByAppService(loginId, password, success, err)
 }
 
-/**
- * ローカルログインの認証を行う。
- * @method
- * @async
- * @param {String} loginId 
- * @param {String} password 
- * @param {Function} success 認証成功時に実行するメソッド
- * @param {Function} err 認証失敗時に実行するメソッド
- */
-export const authByLocal = async (loginId, password, success, err) => {
-  // Util.debug(md5(loginId + ":" + password)) // for create
-  if (_.includes(LOCAL_LOGIN.ID_PASS, md5(loginId + ':' + password))) {
-    await login(loginId)
-    success()
-  }
-  else {
-    err()
-  }
-}
 
 /**
  * 改訂情報を取得する。
@@ -87,36 +55,41 @@ export const getRevInfo = async () => {
   const frontRev = (await axios.get('/head.txt')).data
   const apsIndex = await HttpHelper.getAppServiceNoCrd('/', false) // pre network check
   const serviceRev = apsIndex.match(new RegExp('Head:([0-9a-zA-Z]+)'))
-  return {frontRev: frontRev, serviceRev: serviceRev && serviceRev[1]}
+  return {frontRev, serviceRev: serviceRev && serviceRev[1]}
 }
 
 /**
  * ユーザ情報を取得する。
  * @method
  * @async
- * @param {Boolean} tenantAdmin 
+ * @param {Boolean} isTenantAdmin 
  * @return {{tenant: Object, tenantFeatureList: Object[], user: Object, featureList: Object[], menu: Object[], currentRegion: Object, setting: Object[]}}
  */
-export const getUserInfo = async (tenantAdmin) => {
-  // get feature list
-  const master = await HttpHelper.getAppService('/meta/feature')
-  const masterFeatureList = master.map(m => m.path)
+export const getUserInfo = async (isTenantAdmin) => {
+  // Get feature, tenant, region, user
+  const httpInfos = [
+    {name:'masterFeatureList', url: '/meta/feature'},
+    {name:'currentTenant', url: '/meta/tenant/currentTenant'},
+    {name:'user', url: '/meta/user/currentUser'},
+    {name:'currentRegion', url: '/core/region/current'},
+  ]
+  const {masterFeatureList, currentTenant, user, currentRegion} = await HttpHelper.fetchConcurrent(httpInfos)
 
-  // get tenant feature list
-  const tenant = await HttpHelper.getAppService('/meta/tenant/currentTenant')
-  const tenantFeatureList = tenant.tenantFeatureList.map(tenantFeature => tenantFeature.feature.path)
-  Util.debug({tenantFeatureList})
+  store.commit('app_service/replaceAS', {features: masterFeatureList})
 
-  // get role feature list
-  const user = await AppServiceHelper.getCurrentUser()
+  if (user.providerUserId != null) {
+    user.role = {roleId: -1, roleName: 'isTenantAdmin'}
+  }
   Util.debug(user)
+
+  const tenantFeatureList = currentTenant.tenantFeatureList.map(tenantFeature => tenantFeature.feature.path)
+  Util.debug({tenantFeatureList})
   const featureList = _(user.role.roleFeatureList).map(roleFeature => {
     return {path: roleFeature.feature.path, mode: roleFeature.mode}
   }).sortBy(val => val.path.length * -1).value()
-  const menu = await MenuHelper.fetchNav(masterFeatureList, tenantFeatureList, featureList, user.providerUserId != null, tenantAdmin)
 
-  // get region
-  const currentRegion = await HttpHelper.getAppService('/core/region/current')
+  const menu = await MenuHelper.fetchNav(masterFeatureList.map(m => m.path), tenantFeatureList, featureList, user.providerUserId != null, isTenantAdmin)
+
   LocalStorageHelper.setLocalStorage(KEY.CURRENT.REGION, currentRegion.regionId)
 
   // get setting (again in case failed on init or reload)
@@ -125,12 +98,11 @@ export const getUserInfo = async (tenantAdmin) => {
   // get all master
   await MasterHelper.loadMaster()
 
-  return {tenant, tenantFeatureList, user, featureList, menu, currentRegion, setting}
+  return {currentTenant, tenantFeatureList, user, featureList, menu, currentRegion, setting}
 }
 
 export const storeMagicNumberList = async () => {
-  await StateHelper.load('features')
-  await StateHelper.load('sensor')
+  // await StateHelper.load('sensor')
   const retMap = OptionHelper.getMagicNumberList(store.state.app_service.features)
   Util.debug(retMap)
   await HttpHelper.putAppService('/core/region/storeMagicNumberList', retMap)
@@ -162,8 +134,6 @@ export const resetConfig = async (isTenantAdmin, setting) => {
  */
 export const authByAppService = async (loginId, password, success, err) => {
   try {
-    const revInfo = await getRevInfo()
-
     let params = new URLSearchParams()
     let tenantCd = getTenantCd(null, true)
     params.append('username', (tenantCd? tenantCd+':':'') + loginId) // username: Spring Boot Security reserved name
@@ -174,14 +144,14 @@ export const authByAppService = async (loginId, password, success, err) => {
     const regionId = LocalStorageHelper.getLocalStorage(KEY.CURRENT.REGION)
     if(Util.hasValue(regionId)){
       const regionRes = await HttpHelper.putAppService(`/core/region/current/${regionId}`)
-      if(Util.getValue(regionRes, 'status', null)) {
+      if(Util.getValue(regionRes, 'status')) {
         LocalStorageHelper.removeLocalStorage(KEY.CURRENT.REGION)
         LocalStorageHelper.removeLocalStorage(KEY.CURRENT.AREA)
       }
     }
 
-    const userInfo = await getUserInfo(data.tenantAdmin)
-    resetConfig(data.tenantAdmin, userInfo.setting)
+    const userInfo = await getUserInfo(data.isTenantAdmin)
+    resetConfig(data.isTenantAdmin, userInfo.setting)
 
     const userRegionIdList = Util.getValue(userInfo, 'user.userRegionList', []).map(val => val.userRegionPK.regionId)
     const allRegionMove = Util.getValue(userInfo, 'user.role.roleFeatureList', []).some(val => val.feature.featureName == FEATURE.NAME.ALL_REGION && val.mode != 0)
@@ -193,10 +163,15 @@ export const authByAppService = async (loginId, password, success, err) => {
       // eslint-disable-next-line require-atomic-updates
       APP.MENU.LOGIN_PAGE = APP.MENU.AZLOGIN_PAGE
     }
-    await login({loginId, role: userInfo.user.role, featureList: userInfo.featureList, tenantFeatureList: userInfo.tenantFeatureList, isAd,
-      menu: userInfo.menu, currentRegion: userInfo.currentRegion, frontRev: revInfo.frontRev, serviceRev: revInfo.serviceRev, tenantAdmin: data.tenantAdmin,
-      isProvider: userInfo.user.providerUserId != null, currentTenant: userInfo.tenant, userRegionIdList: userRegionIdList, allRegionMove: allRegionMove, apiKey: data.apiKey })
+
+    await login({loginId, ...userInfo,
+      isTenantAdmin: data.tenantAdmin, // テナント管理画面を表示するか(サーバ側も変数がisTenantAdminだがjson化時にtenantAdminになってしまうため)
+      apiKey: data.apiKey,
+      isProviderUser: userInfo.user.providerUserId != null,
+      userRegionIdList, allRegionMove: allRegionMove, isAd })
+
     success()
+
     LocaleHelper.setLocale(LocaleHelper.getLocale())
     store.commit('setLang', LocaleHelper.getLocale(BrowserUtil.getLangShort()))
 
@@ -243,21 +218,10 @@ export const switchAppService = async () => {
   try {
     const loginInfo = LocalStorageHelper.getLogin()
 
-    const revInfo = await getRevInfo()
-    const userInfo = await getUserInfo(loginInfo.tenantAdmin)
-    resetConfig(loginInfo.tenantAdmin, userInfo.setting)
+    const userInfo = await getUserInfo(loginInfo.isTenantAdmin)
+    resetConfig(loginInfo.isTenantAdmin, userInfo.setting)
 
-    loginInfo.featureList = userInfo.featureList
-    loginInfo.tenantFeatureList = userInfo.tenantFeatureList
-    loginInfo.menu = userInfo.menu
-    loginInfo.currentRegion = userInfo.currentRegion
-    loginInfo.frontRev = revInfo.frontRev
-    loginInfo.serviceRev = revInfo.serviceRev
-    loginInfo.currentTenant = userInfo.tenant
-    loginInfo.role = userInfo.user.role
-    loginInfo.featureList = userInfo.featureList
-
-    await login(loginInfo)
+    await login({...loginInfo, ...userInfo})
   } catch (e) {
     console.error(e)
   }
@@ -276,7 +240,7 @@ export const login = async (login) => {
   Util.debug({login})
   store.commit('replace', login)
   LocalStorageHelper.setLocalStorage('login', JSON.stringify({...login, dt: new Date().getTime()}))
- }
+}
 
 /**
  * 各ストレージからログイン情報を削除する。
@@ -284,9 +248,7 @@ export const login = async (login) => {
  * @async
  */
 export const logout = () => {
-  if (APP.LOGIN_MODE == LOGIN_MODE.APP_SERVICE) {
-    HttpHelper.getAppService('/logout', null, true)        
-  }
+  HttpHelper.getAppService('/logout', null, true)        
   const login = LocalStorageHelper.getLogin()
   if (login && login.isAd) {
     window.localStorage.clear()
@@ -337,7 +299,7 @@ export const getTenantCd = (def, providerOk) => { // xxx.saas.ドメインの場
   }
   if (!providerOk && tenantCd == 'provider') {
     const login = LocalStorageHelper.getLogin()
-    tenantCd = Util.getValue(login, 'currentTenant.tenantCd', null)
+    tenantCd = Util.getValue(login, 'currentTenant.tenantCd')
   }
   return tenantCd || def
 }

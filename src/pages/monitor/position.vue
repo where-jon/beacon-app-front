@@ -8,7 +8,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { APP } from '../../sub/constant/config'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as CsvUtil from '../../sub/util/CsvUtil'
@@ -17,7 +16,6 @@ import * as Util from '../../sub/util/Util'
 import { getCharSet } from '../../sub/helper/base/CharSetHelper'
 import * as DetectStateHelper from '../../sub/helper/domain/DetectStateHelper'
 import * as EXCloudHelper from '../../sub/helper/dataproc/EXCloudHelper'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import commonmixin from '../../components/mixin/commonmixin.vue'
@@ -44,9 +42,6 @@ export default {
     }
   },
   computed: {
-    ...mapState('app_service', [
-      'txs', 'exbs', 'btxIdMap', 'deviceIdMap'
-    ]),
     allCount() {
       return this.positions.length
     },
@@ -118,12 +113,12 @@ export default {
         const exb = this.deviceIdMap[e.deviceId]
         return {
           ...e,
-          name: tx != null ? tx.potName : '—',
+          name: tx != null ? tx.pot.potName : '—',
           finalReceiveLocation: Util.getValue(exb, 'location.locationName', ''),
           finalReceiveTimestamp: this.getTimestamp(e.updatetime),
           powerLevel: this.$refs.monitorTable.getPositionPowerLevelLabel ? this.$refs.monitorTable.getPositionPowerLevelLabel(e.power_level) : null,
           state: this.$refs.monitorTable.getStateLabel('tx', e.updatetime),
-          sensorIds: Util.getValue(tx, 'txSensorList', []).map(txSensor => txSensor.sensor.sensorId),
+          sensorIdList: Util.getValue(tx, 'sensorList', []).map(sensor => sensor.sensorId),
           powerLevelTimestamp: this.getTimestamp(e.power_level_timestamp),
         }
       })
@@ -131,11 +126,11 @@ export default {
     async margeSensorRecords(positions){
       const sensorHistories = await this.fetchSensorHistory()
       const ret = positions.map(position => {
-        if(!Util.hasValue(position.sensorIds)){
+        if(!Util.hasValue(position.sensorIdList)){
           return position
         }
         const sensorDataList = []
-        position.sensorIds.forEach(sensorId => {
+        position.sensorIdList.forEach(sensorId => {
           const mergeData = sensorHistories[`${sensorId}`]? sensorHistories[`${sensorId}`].find(sensorHistory => sensorHistory.btxId == position.btxId): null
           if(mergeData){
             sensorDataList.push(mergeData)
@@ -158,7 +153,7 @@ export default {
             sRet.push({
               ...sensorHistory,
               btxId: sensorHistory.btxId,
-              name: Util.getValue(tx, 'potName', ''),
+              name: Util.getValue(tx, 'pot.potName'),
               powerLevel: this.$refs.monitorTable.getPositionPowerLevelLabel(sensorHistory.power_level),
               finalReceiveTimestamp: this.getTimestamp(EXCloudHelper.getDispTime(sensorHistory)),
               state: this.$refs.monitorTable.getStateLabel('tx', EXCloudHelper.getDispTime(sensorHistory)),

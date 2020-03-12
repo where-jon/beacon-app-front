@@ -8,7 +8,7 @@
         <b-form-row class="ml-2 mb-2">
           <label v-t="'label.areaName'" class="control-label mr-2" />
           <span :title="vueSelectTitle(vueSelected.area)">
-            <v-select v-model="vueSelected.area" :options="areaNames" :clearable="false" class="mt-2 mr-2 vue-options" :style="vueSelectStyle">
+            <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="mt-2 mr-2 vue-options" :style="vueSelectStyle">
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option, true) }}
               </template>
@@ -68,7 +68,6 @@ import { mapState } from 'vuex'
 import { CATEGORY, PATTERN } from '../../../sub/constant/Constants'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
-import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import * as VueSelectHelper from '../../../sub/helper/ui/VueSelectHelper'
@@ -95,11 +94,7 @@ export default {
       appServicePath: '/core/zone',
       zoneClassPath: '/master/zoneClass',
       items: ViewHelper.createBreadCrumbItems('master', 'zoneBlock'),
-      form: Util.extract(this.$store.state.app_service.zone, ['zoneId', 'zoneCd', 'zoneName', 'areaId', 'locationZoneList.0.locationZonePK.locationId', 'zoneCategoryList.0.zoneCategoryPK.categoryId']),
-      vueSelected: {
-        area: null,
-      },
-      areaNames: [],
+      // form: Util.extract(this.$store.state.app_service.zone, ['zoneId', 'zoneCd', 'zoneName', 'areaId', 'locationZoneList.0.locationZonePK.locationId', 'zoneCategoryList.0.zoneCategoryPK.categoryId']), // TODO: 使ってなさそう。要削除
       areaId: null,
       categoryNames: [],
       categoryId: null,
@@ -118,52 +113,31 @@ export default {
     }
   },
   computed: {
-    base64 () {
-      const areaImage = this.$store.state.app_service.areaImages.find((a) => { return a.areaId === this.areaId })
-      return areaImage ? areaImage.mapImage : ''
-    },
     hasId (){
       return Util.hasValue(this.form.zoneId)
     },
     ...mapState('app_service', [
-      'zone', 'locations', 'areas', 'pageSendParam'
+      'zone',
     ]),
   },
   watch: {
     'vueSelected.area': {
       handler: function(newVal, oldVal){
-        this.areaId = Util.getValue(newVal, 'value', null)
+        this.areaId = Util.getValue(newVal, 'value')
       },
       deep: true,
     },
     'vueSelected.category': {
       handler: function(newVal, oldVal){
-        this.categoryId = Util.getValue(newVal, 'value', null)
+        this.categoryId = Util.getValue(newVal, 'value')
       },
       deep: true,
     },
   },
   created() {
-    this.initAreaNames()
     this.initCategoryNames()
   },
   methods: {
-    initAreaNames() {
-      this.areaNames = MasterHelper.getOptionsFromState('area', false, true)
-      let areaId
-      if(this.pageSendParam){
-        areaId = this.pageSendParam.areaId
-        this.vueSelected.category = VueSelectHelper.getVueSelectData(this.areaNames, this.pageSendParam.areaId)
-        this.replaceAS({pageSendParam: null})
-      }
-      else{
-        areaId = Util.getValue(this, 'areaNames.0.value')
-        this.vueSelected.category = VueSelectHelper.getVueSelectData(this.areaNames, this.areaId)
-      }
-      this.$nextTick(() => {
-        this.areaId = areaId
-      })
-    },
     async initCategoryNames() {
       this.categoryNames = MasterHelper.getOptionsFromState('category',
         category => MasterHelper.getDispCategoryName(category),
@@ -186,6 +160,7 @@ export default {
       this.zoneCd = zoneData.cd
       this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryNames, zoneData.categoryId)
       this.isEnableNameText = true
+      console.error(zoneData.categoryId, this.vueSelected.category)
     },
     unSelected () {
       this.isEnableNameText = false

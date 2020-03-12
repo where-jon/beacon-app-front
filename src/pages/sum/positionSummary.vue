@@ -25,7 +25,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import moment from 'moment'
@@ -34,7 +33,6 @@ import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as StringUtil from '../../sub/util/StringUtil'
 import { getCharSet } from '../../sub/helper/base/CharSetHelper'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as ValidateHelper from '../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
@@ -56,15 +54,6 @@ export default {
       },
       message: '',
     }
-  },
-  computed: {
-    ...mapState('app_service', [
-      'txs',
-      'exbs',
-    ]),
-    iosOrAndroid() {
-      return BrowserUtil.isAndroidOrIOS()
-    },
   },
   async created() {
     this.form.date = DEV.DEFAULT_DATE != '' ? new Date(DEV.DEFAULT_DATE) : moment().add(-1, 'days').format('YYYYMMDD')
@@ -110,9 +99,6 @@ export default {
       const txsFiltered = this.txs.filter(tx => tx.minor != null)
       txsFiltered.forEach((t) => txsMap[parseInt(t.minor)] = t)
 
-      let exbsMap = {}
-      this.exbs.forEach((e) => exbsMap[e.exbId] = e)
-
       const minorList = txsFiltered.map(tx => parseInt(tx.minor)).sort(tx => tx)
       const header = this.$i18n.tnl('label.time') + ',' + minorList.join(',')
       const searchDate = moment(param.date).format('YYYY-MM-DD')
@@ -127,7 +113,7 @@ export default {
             const tx = txsMap[minor]
             const pos = posMap[tx.txId + ':' + timestamp]
             if(pos){
-              const exb = exbsMap[pos.exb_id]
+              const exb = this.exbIdMap[pos.exb_id]
               csv.push(exb ? exb.locationName : '')
             }else{
               csv.push('')

@@ -87,7 +87,6 @@ import { PROXIMITY_STACK, PROXIMITY_FILTER_KIND, PROXIMITY_TARGET } from '../../
 import * as DateUtil from '../../sub/util/DateUtil'
 import * as Util from '../../sub/util/Util'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as ValidateHelper from '../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
@@ -133,7 +132,7 @@ export default {
   watch: {
     'vueSelected.filter': {
       handler: function(newVal, oldVal){
-        this.form.filterId = Util.getValue(newVal, 'value', null)
+        this.form.filterId = Util.getValue(newVal, 'value')
       },
       deep: true,
     },
@@ -153,7 +152,7 @@ export default {
     changefilterKind(newVal = this.form.filterKind){
       this.form.filterKind = newVal
       this.vueSelected.filter = null
-      switch (newVal) {
+      switch (newVal) { // TODO: common.mixinのOptionを使う
       case 'pot':
         this.filterIdOptions = this.pots.map(e => ({value: e.potId, label: e.potName}))
         break

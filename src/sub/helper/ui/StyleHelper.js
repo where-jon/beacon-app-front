@@ -40,7 +40,7 @@ export const getStyleDisplay1 = (val, option = {reverceColor: false, fixSize: tr
     'align-items': 'center',
     'white-space': 'nowrap',
   }
-  const label = Util.getValue(val, 'label', null)
+  const label = Util.getValue(val, 'label')
   if(option.fixSize != false){
     const fontSize = label? getInRectFontSize(label, DISP.TX.FIX_R * 2, DISP.TX.FIX_R * 2): DISP.TX.FIX_R
     style.font = getAdjustFontSize(() => fontSize * DISP.FONT_ICON_ADJUST_SCALE)

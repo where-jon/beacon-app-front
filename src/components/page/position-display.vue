@@ -12,7 +12,6 @@ import * as StringUtil from '../../sub/util/StringUtil'
 import * as Util from '../../sub/util/Util'
 import * as PositionHelper from '../../sub/helper/domain/PositionHelper'
 import * as ProhibitHelper from '../../sub/helper/domain/ProhibitHelper'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import { addLabelByKey } from '../../sub/helper/ui/ViewHelper'
 import commonmixin from '../mixin/commonmixin.vue'
 import reloadmixin from '../mixin/reloadmixin.vue'
@@ -59,22 +58,12 @@ export default {
       listName: StringUtil.single2multi(this.masterName),
       eachListName: StringUtil.concatCamel('each', StringUtil.single2multi(this.masterName)),
       prohibitDetectList : null,
-      loadStates: [],
       showDismissibleAlert: false,
       positions: [],
     }
   },
   computed: {
-    ...mapState('app_service', [
-      'txs',
-      'areas',
-      'zones',
-      'locations',
-      'locationIdMap',
-      'prohibits',
-      'lostZones',
-    ]),
-    ...mapState('main', [
+    ...mapState('main', [ // TODO: stateには定義されていない。この画面でしか使わないのであればstateに入れない
       'eachAreas',
       'eachZones',
     ]),
@@ -105,6 +94,7 @@ export default {
 
       const absentZone = _.find(this.zones, zone => zone.categoryName == SYSTEM_ZONE_CATEGORY_NAME.ABSENT_DISPLAY)
 
+      // TODO: 以下の処理要書き直し
       _.forEach(positions, pos => {
         const location = this.locationIdMap[pos.locationId]
         prohibitDetectList? prohibitDetectList.some(data => {
@@ -114,7 +104,7 @@ export default {
           }
         }): false
         pos.isDisableArea = Util.getValue(location, 'isAbsentZone', false)
-        const posMasterIds = this.displayZone? Util.getValue(pos, 'location.zoneIdList', [null]): [Util.getValue(pos, 'location.areaId', null)]
+        const posMasterIds = this.displayZone? Util.getValue(pos, 'location.zoneIdList', [null]): [Util.getValue(pos, 'location.areaId')]
         posMasterIds.forEach(posMasterId => {
           const hasMasterId = Util.hasValue(posMasterId)
           const obj = hasMasterId ? tempMasterMap[posMasterId]: tempMasterExt
@@ -122,7 +112,13 @@ export default {
             obj.positions.push(pos)
           }else if(absentZone){
             // 不在ゾーンへの登録
-            tempMasterMap[absentZone.zoneId].positions.push(pos)
+            const map = tempMasterMap[absentZone.zoneId]
+            if (map) {
+              if (!map.positions) {
+                map.positions = []
+              }
+              map.positions.push(pos)
+            }
           }
         })
       })
@@ -137,20 +133,13 @@ export default {
       try {
         this.replace({showAlert:false})
         this.showProgress()
-        if (APP.POS.PROHIBIT_ALERT) {
-          this.loadStates.push('prohibit')
-        }
-        if (APP.POS.LOST_ALERT) {
-          this.loadStates.push('lostZones')
-        }
-        await Promise.all(this.loadStates.map(StateHelper.load))
         // positionデータ取得
         await PositionHelper.loadPosition(null, true, true)
-        this.positions = PositionHelper.filterPositions(undefined, false, true, null, null, null, null)
+        this.positions = PositionHelper.filterPositions(undefined, false, true, null, null, null, null).filter(p => p.tx && p.tx.disp==1)
 
         if (Util.hasValue(APP.POS.PROHIBIT_ALERT)
           && (Util.hasValue(APP.POS.PROHIBIT_GROUP_ZONE)||Util.hasValue(APP.POS.LOST_GROUP_ZONE))) {
-          ProhibitHelper.setProhibitDetect('display', this)
+          Util.merge(this, ProhibitHelper.setProhibitDetect('display', this.stage, this.icons, this.zones))
         }
 
         this.alertData.message = this.message
@@ -158,7 +147,7 @@ export default {
         this.replace({showAlert: this.alertData.isAlert})
         // 分類checkProhibitZone
         const tempMaster = this.splitMaster(this.positions, this.prohibitDetectList)
-        this.replaceMain({[this.eachListName]: tempMaster})
+        this.replaceMain({[this.eachListName]: tempMaster}) // TODO: 意味不明、Stateに入れる必要ある？
         if (payload && payload.done) {
           payload.done()
         }

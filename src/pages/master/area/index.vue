@@ -8,9 +8,6 @@
 <script>
 import { mapState } from 'vuex'
 import { APP_SERVICE, EXCLOUD } from '../../../sub/constant/config'
-import * as Util from '../../../sub/util/Util'
-import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
-import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import commonmixin from '../../../components/mixin/commonmixin.vue'
@@ -56,7 +53,7 @@ export default {
   },
   methods: {
     async onSaved(){
-      this.$store.commit('main/replaceMain', {selectedArea: null})
+      this.$store.commit('main/replaceMain', {selectedAreaId: null})
     },
     thumbnail(row) {
       let addUrlParam = ''

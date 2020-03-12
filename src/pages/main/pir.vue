@@ -4,11 +4,11 @@
       :p-caption-list="captionList"
       :p-show-exb-sensor-ids="exbSensors"
       :p-merge-sensor-ids="mergeSensors"
-      :p-show-tx-sensor-ids="txSensors"
       p-show-m-room-status
     />
   </div>
 </template>
+      <!-- :p-show-tx-sensor-ids="txSensors" -->
 
 <script>
 import { SENSOR } from '../../sub/constant/Constants'
@@ -25,7 +25,6 @@ export default {
   },
   data() {
     return {
-      exbSensors: [SENSOR.PIR, SENSOR.THERMOPILE, SENSOR.PRESSURE, SENSOR.MAGNET]
     }
   },
   computed: {
@@ -48,22 +47,22 @@ export default {
         let name = ''
         let bgColor = ''
         switch (idx) {
-          case 0:
-            name = '予定有・利用有'
-            bgColor = DISP.PLAN.ACTUAL_IN_PLAN_BG_COLOR
-            break
-          case 1:
-            name = '予定有・利用無'
-            bgColor = DISP.PLAN.NO_ACTUAL_IN_PLAN_BG_COLOR
-            break
-          case 2:
-            name = '予定無・利用有'
-            bgColor = DISP.PLAN.ACTUAL_OUT_OF_PLAN_BG_COLOR
-            break
-          default:
-            name = '予定無・利用無'
-            bgColor = DISP.PLAN.NO_ACTUAL_NO_PLAN_BG_COLOR
-            break
+        case 0:
+          name = '予定有・利用有'
+          bgColor = DISP.PLAN.ACTUAL_IN_PLAN_BG_COLOR
+          break
+        case 1:
+          name = '予定有・利用無'
+          bgColor = DISP.PLAN.NO_ACTUAL_IN_PLAN_BG_COLOR
+          break
+        case 2:
+          name = '予定無・利用有'
+          bgColor = DISP.PLAN.ACTUAL_OUT_OF_PLAN_BG_COLOR
+          break
+        default:
+          name = '予定無・利用無'
+          bgColor = DISP.PLAN.NO_ACTUAL_NO_PLAN_BG_COLOR
+          break
         }
         const legendElement = {
           id: idx,

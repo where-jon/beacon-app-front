@@ -255,8 +255,8 @@ export const createPositionRectInfo = (pos, bgColor) => {
   let fillAlpha = 1
   if (NumberUtil.bitON(pos.tx.disp, TX.DISP.ALWAYS)) {
     // 常時表示時
-    fillAlpha = pos.isLost? DISP.TX.LOST_ALPHA: pos.transparent? DISP.TX.ALPHA: fillAlpha
-  } else if (pos.transparent) {
+    fillAlpha = pos.isLost? DISP.TX.LOST_ALPHA: pos.isTransparent? DISP.TX.ALPHA: fillAlpha
+  } else if (pos.isTransparent) {
     // 通常の離席時
     strokeAlpha = DISP.TX.ALPHA
     fillAlpha = DISP.TX.ALPHA
@@ -356,7 +356,7 @@ export const createTxBtn = (pos, shape, color, bgColor, mapScale, isAbsent = fal
   txBtn.y = pos.y
   txBtn.color = color
   txBtn.bgColor = bgColor
-  txBtn.transparent
+  // txBtn.isTransparent  // TODO: 値をセットしていない
   return txBtn
 }
 
@@ -560,10 +560,10 @@ export const createThermohIcon = (device, mapScale, stage) => {
  */
 export const createExbIcon = (exb, exbSensorIdList, mapScale, stage) => {
   let exbBtn = null
-  if (SensorHelper.match(exb.sensorIds, SENSOR.TEMPERATURE, exbSensorIdList)) {
+  if (SensorHelper.match(exb.sensorIdList, SENSOR.TEMPERATURE, exbSensorIdList)) {
     exbBtn = createThermohIcon(exb, mapScale, stage)
   }
-  else if (SensorHelper.match(exb.sensorIds, SENSOR.THERMOPILE, exbSensorIdList) && exb.count != null) {
+  else if (SensorHelper.match(exb.sensorIdList, SENSOR.THERMOPILE, exbSensorIdList) && exb.count != null) {
     // not use?
     // if (exb.count > 10) {
     //   w = DISP.THERMOPILE_L_SIZE
@@ -578,14 +578,15 @@ export const createExbIcon = (exb, exbSensorIdList, mapScale, stage) => {
     exbBtn = createCountButton(exb.count, mapScale)
     exbBtn.cursor = ''
   }
-  else if (SensorHelper.match(exb.sensorIds, SENSOR.PRESSURE, exbSensorIdList) && exb.pressVol != null) {
+  else if (SensorHelper.match(exb.sensorIdList, SENSOR.PRESSURE, exbSensorIdList) && exb.pressVol != null) {
     exbBtn = createUseStateIcon(exb.sensorId, exb.pressVol, mapScale)
     exbBtn.cursor = ''
   }
-  else if (SensorHelper.match(exb.sensorIds, SENSOR.PIR, exbSensorIdList)) {
+  else if (SensorHelper.match(exb.sensorIdList, SENSOR.PIR, exbSensorIdList)) {
     exbBtn = createUseStateIcon(exb.sensorId, exb.count, mapScale)
     exbBtn.cursor = ''
   } else {
+    let showMRoomStatus // FIXME: 定義されていないので仮にここに
     if (exb.sensorId == SENSOR.PRESSURE && exb.pressVol != null) {
       exbBtn = showMRoomStatus
         ? createMRoomUseStateIcon(exb.sensorId, exb.pressVol, mapScale, bgColor)

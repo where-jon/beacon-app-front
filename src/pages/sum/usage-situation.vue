@@ -102,7 +102,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import 'element-ui/lib/theme-chalk/index.css'
 import { CATEGORY } from '../../sub/constant/Constants'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
@@ -111,7 +110,6 @@ import * as DateUtil from '../../sub/util/DateUtil'
 import * as Util from '../../sub/util/Util'
 import * as AppServiceHelper from '../../sub/helper/dataproc/AppServiceHelper'
 import { getCharSet } from '../../sub/helper/base/CharSetHelper'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
@@ -169,10 +167,6 @@ export default {
     }
   },
   computed: {
-    ...mapState('app_service', [
-      'categories',
-      'zones',
-    ]),
     modeOptions() {
       const modeOp = []
       modeOp.push({text: this.$i18n.tnl('label.utilizationRatio'), value: 1})
@@ -206,14 +200,14 @@ export default {
   watch: {
     'vueSelected.category': {
       handler: function(newVal, oldVal){
-        this.vModelCategory = Util.getValue(newVal, 'value', null)
+        this.vModelCategory = Util.getValue(newVal, 'value')
         this.categoryChange(this.vModelCategory)
       },
       deep: true,
     },
     'vueSelected.zone': {
       handler: function(newVal, oldVal){
-        this.vModelZone = Util.getValue(newVal, 'value', null)
+        this.vModelZone = Util.getValue(newVal, 'value')
         this.zoneChange(this.vModelZone)
       },
       deep: true,

@@ -134,10 +134,10 @@ export default {
       return containerWidth <= this.selectedTx.orgLeft + this.meditagWidth
     },
     getDispItems () {
-      return APP.TXDETAIL.ITEMS.map(e => {
+      return APP.TXDETAIL.ITEMS.map(key => {
         return {
-          key: e,
-          val: StringUtil.cutOnLongByte(this.selectedTx[e], 38)
+          key,
+          val: StringUtil.cutOnLongByte(this.selectedTx[key], 38)
         }
       })
     },
@@ -153,9 +153,6 @@ export default {
       const left = !isOut ? this.selectedTx.orgLeft - DISP.TXDETAIL_DIFF : 
         this.selectedSensor.length == 0? (this.selectedTx.orgLeft - (this.descriptionWidth + imageWidth)): this.selectedTx.orgLeft + DISP.TX.R - this.meditagWidth
       return left + 'px'
-    },
-    getPopupDispItems() {
-      return APP.TXDETAIL.ITEMS.map(e => this.selectedTx[e]).filter(elem => elem)
     },
     getTop() {
       const txR = DISP.TX.R * this.selectedTx.scale

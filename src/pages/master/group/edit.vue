@@ -45,7 +45,6 @@ import * as ColorUtil from '../../../sub/util/ColorUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
 import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
-import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
@@ -78,14 +77,14 @@ export default {
       ]),
       defaultColor: '#000000',
       defaultBgColor: '#ffffff',
-      oldShape: Util.getValue(group, 'display.shape', null),
-      oldColor: Util.getValue(group, 'display.color', null),
-      oldBgColor: Util.getValue(group, 'display.bgColor', null),
+      oldShape: Util.getValue(group, 'display.shape'),
+      oldColor: Util.getValue(group, 'display.color'),
+      oldBgColor: Util.getValue(group, 'display.bgColor'),
     }
   },
   computed: {
     ...mapState('app_service', [
-      'group', 'groups',
+      'group'
     ]),
     shapes(){
       return SHAPE.getShapes()

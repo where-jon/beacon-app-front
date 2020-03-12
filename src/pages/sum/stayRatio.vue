@@ -49,7 +49,6 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import moment from 'moment'
@@ -62,7 +61,6 @@ import * as DateUtil from '../../sub/util/DateUtil'
 import * as Util from '../../sub/util/Util'
 import { getCharSet } from '../../sub/helper/base/CharSetHelper'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as StayTimeHelper from '../../sub/helper/domain/StayTimeHelper'
 import * as ValidateHelper from '../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
@@ -108,20 +106,10 @@ export default {
       totalRows: 0,
     }
   },
-  computed: {
-    ...mapState('app_service', [
-      'groups',
-      'pots',
-      'categories',
-    ]),
-    iosOrAndroid() {
-      return BrowserUtil.isAndroidOrIOS()
-    },
-  },
   watch: {
     'vueSelected.group': {
       handler: function(newVal, oldVal){
-        this.form.groupId = Util.getValue(newVal, 'value', null)
+        this.form.groupId = Util.getValue(newVal, 'value')
       },
       deep: true,
     },
@@ -242,7 +230,7 @@ export default {
       ArrayUtil.sortIgnoreCase(viewList, 'name')
 
       const searchDate = moment(this.form.date).format('YYYY-MM-DD')
-      const group = this.form.groupId? this.groups.find((val) => val.groupId == this.form.groupId): null
+      const group = this.form.groupId? this.groupIdMap[this.form.groupId]: null
       const groupName =  group? '_' + group.groupName: ''
 
       BrowserUtil.fileDL(
@@ -254,7 +242,7 @@ export default {
     getApiUrl(param) {
       const targetDate = moment(param.date).format('YYYYMMDD')
       const groupBy = param.groupId? '&groupId=' + param.groupId: ''
-      const url = '/office/stayTime/sumByDay/' + targetDate + '/zoneCategory?from=' + APP.STAY_SUM.FROM + '&to=' + APP.STAY_SUM.TO + groupBy
+      const url = '/office/stayTime/sumByDay/' + targetDate + '/zoneCategory?from=' + APP.SVC.STAY_SUM.START + '&to=' + APP.SVC.STAY_SUM.END + groupBy
       return url
     },
     updateColumnName(){
@@ -300,7 +288,7 @@ export default {
       let day = 0
       while (day <= csvDays) {
         const searchDate = moment(this.form.date).startOf('months').add(day++, 'day').format('YYYYMMDD')
-        const url = '/office/stayTime/sumByDay/' + searchDate + '/zoneCategory?from=' + APP.STAY_SUM.FROM + '&to=' + APP.STAY_SUM.TO + groupBy
+        const url = '/office/stayTime/sumByDay/' + searchDate + '/zoneCategory?from=' + APP.SVC.STAY_SUM.START + '&to=' + APP.SVC.STAY_SUM.END + groupBy
         const sumData = await HttpHelper.getAppService(url)
         if (_.isEmpty(sumData)) {
           Util.debug('searchDate: ' + searchDate)
@@ -315,7 +303,7 @@ export default {
         csvList = csvList.isEmpty? list: csvList.concat(list)
       }
 
-      const group = this.form.groupId? this.groups.find((val) => val.groupId == this.form.groupId): null
+      const group = this.form.groupId? this.groupIdMap[this.form.groupId]: null
       const groupName =  group? '_' + group.groupName: ''
       BrowserUtil.fileDL(
         moment(this.form.date).format('YYYYMM') + groupName + '_stayRatio.csv',

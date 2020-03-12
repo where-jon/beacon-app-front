@@ -18,7 +18,6 @@ import * as ChartHelper from '../ui/ChartHelper'
 import * as ConfigHelper from '../dataproc/ConfigHelper'
 import * as EXCloudHelper from '../dataproc/EXCloudHelper'
 import * as HeatmapHelper from '../ui/HeatmapHelper'
-import * as MasterHelper from '../domain/MasterHelper'
 import * as StyleHelper from '../ui/StyleHelper'
 import * as PositionHelper from './PositionHelper'
 import { addLabelByKey } from '../ui/ViewHelper'
@@ -208,7 +207,7 @@ export const availableSensorAll = () =>  _([...APP.EXB.SENSOR, ...APP.SENSOR.TX_
  * @method
  * @return {Number[]}
  */
-export const availableSensorGraph = () =>  _([...APP.SENSORGRAPH.SENSOR]).sort().value()
+export const availableSensorGraph = () =>  _(APP.SENSORGRAPH.SENSOR).sort().value()
 
 
 /**
@@ -863,7 +862,7 @@ export const getSensors = exbSensorList => {
 export const getSensorIds = exb => {
   const exbSensorList = Util.getValue(exb, 'exbSensorList', []) // TODO: 冗長
   if(Util.hasValue(exbSensorList)){
-    return exbSensorList.map(exbSensor => Util.getValue(exbSensor, 'sensor.sensorId', null)).filter(val => val)
+    return exbSensorList.map(exbSensor => Util.getValue(exbSensor, 'sensor.sensorId')).filter(val => val)
   }
   return [null]
 }
@@ -920,7 +919,7 @@ export const getMagnetGroupTypes = txList => txList.filter(val => val.groupId &&
  * @param {Object[]} categoryList
  * @return {Object[]}
  */
-export const getCategoryLegendElements = categoryList => categoryList.filter(category => !category.systemUse).map(val => ({ id: val.categoryId, name: MasterHelper.getDispCategoryName(val), ...val,}))
+export const getCategoryLegendElements = categoryList => categoryList.filter(category => !category.systemUse).map(val => ({ id: val.categoryId, name: val.categoryName, ...val,}))
 
 /**
  * グループの汎用を表示するための情報を取得する。
@@ -999,10 +998,10 @@ export const fetchSensor = async (sensorInfo) => {
  * 指定したセンサ情報をサーバから取得する。
  * @async
  * @method
- * @param {Number[]} sensorIds
+ * @param {Number[]} sensorIdList
  * @return {Object[]}
  */
-export const fetchAllSensor = async (sensorIds) => {
+export const fetchAllSensor = async (sensorIdList) => {
   const sensorInfos = [
     { id: SENSOR.TEMPERATURE},
     { id: SENSOR.PIR },
@@ -1010,7 +1009,7 @@ export const fetchAllSensor = async (sensorIds) => {
     { id: SENSOR.MEDITAG, enable: APP.SENSOR.USE_MEDITAG},
     { id: SENSOR.MAGNET, enable: APP.SENSOR.USE_MAGNET },
     { id: SENSOR.PRESSURE, enable: APP.SENSOR.USE_PRESSURE }
-  ].filter(e => sensorIds.includes(e.id)).map(e => ({...e, name: SENSOR.STRING[e.id]})) // TODO: NAMEとSTRING紛らわしい
+  ].filter(e => sensorIdList.includes(e.id)).map(e => ({...e, name: SENSOR.STRING[e.id]})) // TODO: NAMEとSTRING紛らわしい
   await Promise.all(sensorInfos.map(fetchSensor))
   return sensorInfos
 }
@@ -1139,7 +1138,7 @@ export const fetchSensorInfo = async (targetSensorIds = []) => {
     // pir: val.count >= DISP.PIR.MIN_COUNT // TODO: 元のソースにあったfilter条件。多分不要。
     // exb.sensorId == SENSOR.PRESSURE? exb.pressVol <= DISP.PRESSURE.VOL_MIN || DISP.PRESSURE.EMPTY_SHOW: exb.count > 0 || DISP.PIR.EMPTY_SHOW
     // APP.SENSOR.SHOW_MAGNET_ON_PIR) 
-    sensorMap[sensor.name] = sensorInfo.sortBy(sensor => 
+    sensorMap[sensor.name] = sensorInfo.sortBy(sensor => // MEDiTAGの場合、指定時間以内に転倒したものを先頭にソートする
       sensor.sensorId == SENSOR.MEDITAG && (new Date().getTime() - sensor.downLatest < APP.SENSOR.MEDITAG.DOWN_RED_TIME)?
         sensor.downLatest * -1
         : sensor.btxId
@@ -1169,40 +1168,41 @@ const addSensorInfo = (sensor, pos) => {
     areaId = pos.exb.areaId
     areaName = Util.getValue(pos, 'exb.location.area.areaName')
     location = pos.exb.location
-    zoneIdList = pos.exb.zoneIdList
-    zoneCategoryIdList = pos.exb.zoneCategoryIdList
+    zoneIdList = pos.exb.location.zoneIdList
+    zoneCategoryIdList = pos.exb.location.zoneCategoryIdList
   }
   else {
     location = sensor.btxId? (tx? tx.location: {}): exb? exb.location: {}
+    if (!location) location = {}
     // location = store.state.app_service.locations.find(e => e.locationId == location.locationId)
     areaId = location.areaId
     areaName = Util.getValue(location, 'area.areaName')
     zoneIdList = Util.hasValue(location.zoneIdList)? location.zoneIdList: []
     zoneCategoryIdList = Util.hasValue(location.zoneCategoryIdList)? location.zoneCategoryIdList: []      
   }
-  let potName = tx? Util.firstValue(tx.potName, ConfigHelper.includesBtxMinor('btxId')? tx.btxId: tx.minor): null
+  let potName = tx? Util.firstValue(tx.pot.potName, ConfigHelper.includesBtxMinor('btxId')? tx.btxId: tx.minor): null
   const updatetime = Util.firstValue(sensor.updatetime, sensor.timestamp)
 
   return {
     // id: sensor.sensorId,
     ...sensor,
     // sensorId: sensor? sensor.id: null,
-    label: Util.getValue(tx, 'displayName', sensor.btxId), 
+    label: Util.v(tx, 'pot.displayName', sensor.btxId), 
     ...tx,
     ...exb,
-    bg: getStressBg(sensor.stress), 
-    down: Util.getValue(sensor, 'down', 0),
-    count: Util.getValue(sensor, 'count', 0),
-    pressVol: Util.getValue(sensor, 'press_vol', 0),
+    deviceId: Util.v(exb,'deviceId', ''),
     x: location.x,
     y: location.y,
     updatetime,
+    sensorDt: DateUtil.formatDate(updatetime),
+    bg: getStressBg(sensor.stress), 
+    down: Util.v(sensor, 'down', 0),
+    count: Util.v(sensor, 'count', 0),
+    pressVol: Util.v(sensor, 'press_vol', 0),
     ambientLight: sensor.ambient_light,
     soundNoise: sensor.sound_noise,
-    sensorDt: DateUtil.formatDate(updatetime),
-    potName,
     state: getMagnetStateKey(sensor.magnet),
-    deviceId: exb && exb.deviceId? exb.deviceId: '',
+    potName,
     areaId,
     areaName,
     zoneIdList,
@@ -1215,7 +1215,7 @@ const addSensorInfo = (sensor, pos) => {
  * EXB情報にセンサ情報を付加する。
  * 
  * @method
- * @param {Number} selectedArea
+ * @param {Number} selectedSensorId
  * @param {Object} exCluodSensors
  * @return {Object[]}
  */
@@ -1224,7 +1224,7 @@ export const mergeExbWithSensor = (selectedSensorId, exCluodSensors) => {
   return _(exbs)
     .filter(exb => {
       return exb.location && exb.location.x && exb.location.y > 0
-      && exb.sensorIds.includes(selectedSensorId)
+      && exb.sensorIdList.includes(selectedSensorId)
     })
     .map(exb => {
       const sensor = {id: selectedSensorId, ...exCluodSensors.find(sensor => sensor.deviceId == exb.deviceId && (sensor.timestamp || sensor.updatetime))}

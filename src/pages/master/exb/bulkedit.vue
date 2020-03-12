@@ -34,7 +34,8 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'exb', 'exbs'
+      'exb'
+      // , 'exbs'
     ]),
   },
   methods: {

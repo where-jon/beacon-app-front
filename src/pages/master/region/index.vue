@@ -6,10 +6,8 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import * as LocalStorageHelper from '../../../sub/helper/base/LocalStorageHelper'
 import * as RegionHelper from '../../../sub/helper/domain/RegionHelper'
-import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import reloadmixin from '../../../components/mixin/reloadmixin.vue'
@@ -42,11 +40,6 @@ export default {
       },
       items: ViewHelper.createBreadCrumbItems('master', 'region'),
     }
-  },
-  computed: {
-    ...mapState('app_service', [
-      'regions',
-    ]),
   },
   methods: {
     async onSaved(param){

@@ -26,7 +26,7 @@ export const isAuthVuePage = vueComponent => {
   const fullPath = vueComponent.$route.fullPath
   let vComponent = vueComponent
   while(vComponent){
-    const key = getValue(vComponent.$vnode, 'data.key', null)
+    const key = getValue(vComponent.$vnode, 'data.key')
     if(hasValue(key) && (new RegExp(key)).test(fullPath)){
       return true
     }

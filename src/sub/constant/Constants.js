@@ -13,12 +13,6 @@ export const PLAN_TARGET_TYPE = {
   POT_PERSON: 3
 }
 
-export const LOGIN_MODE = {
-  APP_SERVICE: 0,
-  LOCAL: 1,
-  NO_LOGIN: 2
-}
-
 export const THEME = [
   {id: 1,  name: 'default', color: '#588BC1'},
   {id: 2,  name: 'earthcolor', color: '#5C7886'},
@@ -136,14 +130,14 @@ export const ROLE_FEATURE = {
     ALL: 0x01FC,
   },
   getAllAuthorizationOption(){
-    const isProvider = LocalStorageHelper.getLogin().isProvider
-    return {text: i18n.tnl('label.allAuthorization'), value: isProvider? ROLE_FEATURE.MODE.SYS_ALL: ROLE_FEATURE.MODE.ALL}
+    const isProviderUser = LocalStorageHelper.getLogin().isProviderUser
+    return {text: i18n.tnl('label.allAuthorization'), value: isProviderUser? ROLE_FEATURE.MODE.SYS_ALL: ROLE_FEATURE.MODE.ALL}
   },
   getModeOptions(){
-    const isProvider = LocalStorageHelper.getLogin().isProvider
+    const isProviderUser = LocalStorageHelper.getLogin().isProviderUser
     return [
-      isProvider? {text: i18n.tnl('label.refer'), value: ROLE_FEATURE.MODE.SYS_REFERENCE}: null,
-      isProvider? {text: i18n.tnl('label.update'), value: ROLE_FEATURE.MODE.SYS_UPDATE}: null,
+      isProviderUser? {text: i18n.tnl('label.refer'), value: ROLE_FEATURE.MODE.SYS_REFERENCE}: null,
+      isProviderUser? {text: i18n.tnl('label.update'), value: ROLE_FEATURE.MODE.SYS_UPDATE}: null,
       {text: i18n.tnl('label.listReference'), value: ROLE_FEATURE.MODE.LIST_REFERENCE},
       {text: i18n.tnl('label.detailReference'), value: ROLE_FEATURE.MODE.DETAIL_REFERENCE},
       {text: i18n.tnl('label.bulkReference'), value: ROLE_FEATURE.MODE.BULK_REFERENCE},
@@ -330,6 +324,7 @@ export const SENSOR = {
   OMR_TP_HUMAN: 10,
   OMR_TP_ENV: 11,
   LED_TYPE5: 12,
+  LED_TYPE3: 13,
   MAGNET_STATUS: {
     OFF: 0,
     ON: 4,
@@ -445,6 +440,15 @@ export const PROXIMITY_TARGET = {
       {value:'time', text: i18n.t('label.proximityTime')},
       {value:'count', text: i18n.t('label.proximityCount')},
       {value:'total', text: i18n.t('label.proximityTotal')},
+    ]
+  }
+}
+
+export const STAY_RATIO_BASE_FILTER_KIND = {
+  getOptions(){
+    return [
+      {value:null, text: ''},
+      {value:'pot', text: i18n.t('label.pot')},
     ]
   }
 }
@@ -690,6 +694,9 @@ export const SETTING = {
           MIDIUM_TYPES: SETTING.NUMBER_LIST,
           STATE_TYPES: SETTING.NUMBER_LIST,
         },
+        MAIL: {
+          PASSWORD: SETTING.PASSWORD,
+        },
         STAY_SUM: {
           SCALE_TIMES: SETTING.NUMBER_LIST,
         },
@@ -733,6 +740,11 @@ export const SETTING = {
           PROCESS: {
             LOCATION_TYPE_TO_RELEASE_TX_POT: SETTING.NUMBER,
           },
+        },
+        SVCONLY: {
+          EXCLOUD: {
+            AUTH_HEADER: SETTING.PASSWORD
+          }
         },
         BATCH: {
           POSITION: {
@@ -855,7 +867,7 @@ export const FORCE_PUSH_MENU = [
     path: '/provider/tenant/tenantFeature',
     isPush: () => {
       const login = LocalStorageHelper.getLogin()
-      return !login || !login.tenantAdmin && login.isProvider
+      return !login || !login.isTenantAdmin && login.isProviderUser
     } ,
   },
 ]
@@ -1162,6 +1174,16 @@ export const MENU = [
         icon: 'clock',
       },
       {
+        key: 'activityGraph',
+        path: 'activityGraph',
+        icon: 'clock',
+      },
+      {
+        key: 'meetingGraph',
+        path: 'meetingGraph',
+        icon: 'clock',
+      },
+      {
         key: 'proximityGraph',
         path: 'proximityGraph',
         icon: 'chart-bar',
@@ -1268,9 +1290,10 @@ export const MENU = [
   },
 ]
 
-export const SYSTEM_ZONE_CATEGORY_NAME = {
+export const SYSTEM_ZONE_CATEGORY_NAME = { // TODO: CDに変更
   ABSENT: 'ABSENT',
   PROHIBIT: 'PROHIBIT',
+  LOST: 'LOST',
   ABSENT_DISPLAY: 'ABSENT_DISPLAY',
   TOILET: 'TOILET',
   FIXED_POS: 'FIXED_POS',

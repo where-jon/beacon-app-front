@@ -76,7 +76,7 @@ export const fetchMapImage = async (path) => {
 export const getCurrentUser = async () => {
   const user = await HttpHelper.getAppService('/meta/user/currentUser')
   if (user.providerUserId != null) {
-    user.role = {roleId: -1, roleName: 'tenantAdmin'}
+    user.role = {roleId: -1, roleName: 'isTenantAdmin'}
   }
   return user
 }

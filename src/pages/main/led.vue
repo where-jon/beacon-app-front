@@ -67,10 +67,10 @@
           </b-form-radio-group>
         </b-form-group>
         <b-button v-show="isEditable" v-t="'label.start'" :variant="theme"
-                  :disabled="!deviceType" type="submit" class="my-1" @click="buttonClick(true)"
+                  :disabled="!deviceType" type="button" class="my-1" @click="buttonClick(true)"
         />
         <b-button v-show="isEditable" v-t="'label.end'" :variant="theme" 
-                  :disabled="!deviceType" type="submit" class="ml-2 my-1" @click="buttonClick(false)"
+                  :disabled="!deviceType" type="button" class="ml-2 my-1" @click="buttonClick(false)"
         />
       </b-form>
     </b-container>
@@ -78,12 +78,10 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { APP } from '../../sub/constant/config'
 import { LED_COLORS, LED_BLINK_TYPES, SENSOR } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
 import * as EXCloudHelper from '../../sub/helper/dataproc/EXCloudHelper'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import * as VueSelectHelper from '../../sub/helper/ui/VueSelectHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
@@ -121,18 +119,15 @@ export default {
     }
   },
   computed: {
-    ...mapState('app_service', [
-      'exbs',
-    ]),
     deviceType() {
       if (!this.form.deviceId) return null
-      return this.exbs.find(exb => exb.deviceId == this.form.deviceId).sensorIds.includes(SENSOR.LED_TYPE2)? 2: 5
+      return this.deviceIdMap[this.form.deviceId].sensorIdList.includes(SENSOR.LED_TYPE2)? 2: 5
     },
   },
   watch: {
     'vueSelected.deviceId': {
       handler: function(newVal, oldVal){
-        this.form.deviceId = Util.getValue(newVal, 'value', null)
+        this.form.deviceId = Util.getValue(newVal, 'value')
         this.form.colors = [2]
         this.form.blink = this.deviceType == 2? 1: 0
       },
@@ -159,7 +154,7 @@ export default {
     async fetchData(payload) {
       try {
         this.showProgress()
-        const deviceIds = _.filter(this.exbs, exb => exb.sensorIds.includes(SENSOR.LED_TYPE2) || exb.sensorIds.includes(SENSOR.LED_TYPE5))
+        const deviceIds = _.filter(this.exbs, exb => exb.sensorIdList.includes(SENSOR.LED_TYPE2) || exb.sensorIdList.includes(SENSOR.LED_TYPE5))
           .map(exb => {
             const locationName = Util.hasValue(exb.locationName)? (exb.locationName) + ' : ': ''
             const label = locationName + (exb.deviceId) + ' (0x' + exb.deviceId.toString(16) + ')'
@@ -199,23 +194,27 @@ export default {
         ['pattern' + no]: isOn? this.form.blink: 0,
       }]
     },
-    async onSaving() {
-      const entity = this.createEntity(this.lightOnCandidate)
-      Util.debug('led send: ', entity)
-      await EXCloudHelper.postLed(entity)
+    async buttonClick(bool) {
+      this.showProgress()
+      try {
+        this.lightOnCandidate = bool
+        const entity = this.createEntity(this.lightOnCandidate)
+        Util.debug('led send: ', entity)
+        await EXCloudHelper.postLed(entity)
 
-      const timerKey = 'led-' + entity[0].deviceId
-      if(APP.SENSOR.LED.AUTO_OFF_TIME > 0) {
-        if(this.lightOnCandidate) {
-          const req = this.createEntity(false)
-          this.pushTimer(timerKey, APP.SENSOR.LED.AUTO_OFF_TIME * 1000, () => EXCloudHelper.postLed(req))
-        } else {
-          this.popTimer(timerKey)
+        const timerKey = 'led-' + entity[0].deviceId
+        if(APP.SENSOR.LED.AUTO_OFF_TIME > 0) {
+          if(this.lightOnCandidate) {
+            const req = this.createEntity(false)
+            this.pushTimer(timerKey, APP.SENSOR.LED.AUTO_OFF_TIME * 1000, () => EXCloudHelper.postLed(req))
+          } else {
+            this.popTimer(timerKey)
+          }
         }
       }
-    },
-    buttonClick(bool) {
-      this.lightOnCandidate = bool
+      finally {
+        this.hideProgress()
+      }
     },
     backToList() {
       ViewHelper.disabledButtons(false)

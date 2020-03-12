@@ -26,7 +26,7 @@ export default {
         tx: null,
       },
       positionedExb: [], // p, rssimap, pir, position, thermohumidity, loc
-      oldSelectedArea: null, // p, loc, tx
+      oldSelectedAreaId: null, // p, loc, tx
       isShownMapImage: false, // p, loc, tx
       tempMapFitMobile: DISP.MAP_FIT_MOBILE, // p, loc, tx, heatmap-position
       canvasScale: 1, // p, rssimap, position, thermohumidity, heatmap-position
@@ -43,17 +43,17 @@ export default {
   computed: {
   },
   async created() {
-    const currentArea = LocalStorageHelper.getLocalStorage(KEY.CURRENT.AREA)
-    if(Util.hasValue(currentArea)) {
-      this.selectedArea = currentArea
+    const currentAreaId = LocalStorageHelper.getLocalStorage(KEY.CURRENT.AREA)
+    if(Util.hasValue(currentAreaId)) {
+      this.selectedAreaId = currentAreaId
     }
-    this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, this.selectedArea, !Util.hasValue(this.selectedArea))
-    this.selectedArea = Util.getValue(this, 'vueSelected.area.value', this.getInitAreaOption())
+    this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, this.selectedAreaId, !Util.hasValue(this.selectedAreaId))
+    this.selectedAreaId = Util.getValue(this, 'vueSelected.area.value', this.getInitAreaOption())
     this.loadComplete = true
     this.defineResizeEvent(this.$route.path)
   },
   mounted() {
-    this.oldSelectedArea = this.getInitAreaOption()
+    this.oldSelectedAreaId = this.getInitAreaOption()
     Util.debug('In showmapmixin mounted.')
     AreaMapHelper.addDblTapListener(this.$refs.map, () => {
       Util.debug('in Listener')
@@ -70,6 +70,15 @@ export default {
     }
   },
   methods: {
+    // 共通関数
+    getInitAreaOption(){ // p
+      return this.selectedAreaId? this.selectedAreaId : Util.hasValue(this.areaOptions)? this.areaOptions[0].value: null
+    },
+    getMapScale(){ // p, pir
+      return DISP.TX.R_ABSOLUTE ? this.canvasScale : 1
+    },
+
+    // リサイズイベント定義
     defineResizeEvent(path) {
       if (!StringUtil.startsWithAny(path, ['/main','/sum','/develop/installation'])) {
         return
@@ -104,22 +113,58 @@ export default {
       }
       window.addEventListener('resize', this.onResize)
     },
-    getInitAreaOption(){ // p
-      return this.selectedArea? this.selectedArea : Util.hasValue(this.areaOptions)? this.areaOptions[0].value: null
+    // モバイル対応
+    toggleMapFitMobile() { // p
+      if (this.tempMapFitMobile === 'both') {
+        this.tempMapFitMobile = 'width'
+      } else {
+        this.tempMapFitMobile = 'both'
+      }
+      if(this.icons)this.icons = []
+      Util.debug('tempMapFitMobile: ' + this.tempMapFitMobile)
     },
-    getMapScale(){ // p, pir
-      return DISP.TX.R_ABSOLUTE ? this.canvasScale : 1
+
+    // エリア変更イベントの際に呼び出す(ここがマップ表示の起点)
+    async changeArea(areaId) { // TODO: 現状もっとシンプルで良い。 analysissearch, rssimap, pir, position, thermohumiidty, loc, tx
+      if (!areaId) {
+        return
+      }
+      this.icons = {} // キャッシュをクリア
+      try {
+        await StateHelper.loadAreaImage(areaId)
+        const area = this.areaIdMap[areaId] // TODO: これ不要
+        if (StateHelper.getMapImage(area.areaId)) {
+          if(!Util.v(this, 'selectedTx.btxId')){
+            this.reset()
+          }
+          this.selectedAreaId = areaId
+          this.onChangeAreaDone && await this.onChangeAreaDone() // マップイメージがStateにロードされた場合に呼び出す
+        }
+        else {
+          Util.debug('No mapImage in changeArea.')
+          this.noImageErrorKey && this.showErrorModal({key: this.noImageErrorKey})
+          this.$nextTick(() => this.selectedAreaId = this.oldSelectedAreaId)
+        }
+      } catch (e) {
+        // マップ画像が見つからなかった(status 404)
+        if (e.message.indexOf('404') > -1) {
+          this.showErrorModal({key: this.noImageErrorKey})
+          this.initMap && this.initMap()
+        }
+      }
     },
+
+    // マップを表示する際に呼び出す TODO: 現状もっとシンプルで良い
     showMapImageDef(callback, disableErrorPopup) { // rssimap, pir, position, thermohumiidty, loc, tx, flowline
       if(VueUtil.endsWithSlashUrl(this)){
         return
       }
       if(!this.loadComplete){
         setTimeout(() => {
-          if(!VueUtil.isAuthVuePage(this)){
+          if(!VueUtil.isAuthVuePage(this)){ // 待ち状態の時ページが切り替わっていないかチェック
             return
           }
-          this.showMapImage && this.showMapImage(disableErrorPopup)
+          this.showMapImage && this.showMapImage(disableErrorPopup) // リトライ
         }, 200)
         return
       }
@@ -127,16 +172,16 @@ export default {
       if (this.isShownMapImage) {
         if (callback) {
           setTimeout(() => {
-            if(!VueUtil.isAuthVuePage(this)){
+            if(!VueUtil.isAuthVuePage(this)){ // 待ち状態の時ページが切り替わっていないかチェック
               return
             }
-            callback()
+            callback() // canvasへのdrawImageが完了するとisShownMapImage=trueになる TODO: 下でもcallbackを呼んでいる（重複）
           }, 0)
         }
         return
       }
 
-      if (!StateHelper.getMapImage(this.getInitAreaOption())) {
+      if (!StateHelper.getMapImage(this.getInitAreaOption())) { // TODO: 現状、リトライがなければ不要
         if (this.showTryCount < 10) {
           VueUtil.nextTickEx(this, () => {
             console.warn('again because no image')
@@ -146,26 +191,26 @@ export default {
         else {
           Util.debug('No mapImage in showMapImageDef.')
           if (this.$route.path.startsWith('/main') && !disableErrorPopup) {
-            this.noImageErrorKey && this.loginId && this.showErrorModal({key: this.noImageErrorKey})
+            this.noImageErrorKey && this.showErrorModal({key: this.noImageErrorKey})
           }
         }
         return
       }
-      const bg = new Image()
-      bg.src = StateHelper.getMapImage(this.getInitAreaOption())
-      bg.onload = (evt) => {
+      const bg = new Image() // イメージオブジェクト作成
+      bg.src = StateHelper.getMapImage(this.getInitAreaOption()) // base64データを設定
+      bg.onload = (evt) => { // ロード完了後イベント
         this.drawMapImage(bg)
         if (callback) {
           setTimeout(() => {
             if(!VueUtil.isAuthVuePage(this)){
               return
             }
-            callback()
+            callback() // canvasへのdrawImageが完了すると呼び出す
           }, 0)
         }
       }
     },
-    drawMapImage(bg) { // p
+    drawMapImage(bg) { // マップイメージをcanvasに描画 p
       const canvas = this.$refs.map
       if (!canvas) {
         return
@@ -218,45 +263,18 @@ export default {
 
       this.stage.update()
       this.bitmap = bitmap
-      this.oldSelectedArea = this.selectedArea
+      this.oldSelectedAreaId = this.selectedAreaId
 
       if(this.onMapLoaded){
         setTimeout(() => {
           if(!VueUtil.isAuthVuePage(this)){
             return
           }
-          this.onMapLoaded(size)
+          this.onMapLoaded(size) // canvasへの描画完了後に呼び出す
         }, 500)
       }
     },
-    async changeArea(val) { // analysissearch, rssimap, pir, position, thermohumiidty, loc, tx
-      if (!val) {
-        return
-      }
-      this.icons = {} // キャッシュをクリア
-      try {
-        await StateHelper.loadAreaImage(val, true)
-        const area = _.find(this.areas, area => area.areaId == val)
-        if (StateHelper.getMapImage(area.areaId)) {
-          if(!Util.getValue(this, 'selectedTx.btxId', null)){
-            this.reset()
-          }
-          this.selectedArea = val
-          this.onChangeAreaDone && await this.onChangeAreaDone()
-        }
-        else {
-          Util.debug('No mapImage in changeArea.')
-          this.noImageErrorKey && this.showErrorModal({key: this.noImageErrorKey})
-          this.$nextTick(() => this.selectedArea = this.oldSelectedArea)
-        }
-      } catch (e) {
-        // マップ画像が見つからなかった(status 404)
-        if (e.message.indexOf('404') > -1) {
-          this.showErrorModal({key: this.noImageErrorKey})
-          this.initMap && this.initMap()
-        }
-      }
-    },
+
     // forceUpdateRealWidth() { // rssimap, loc, tx, flowline　多分不要
     //   if (!this.realWidth) { // Due to force update computed property mapRatio
     //     this.realWidth = 1
@@ -265,15 +283,8 @@ export default {
     //     })
     //   }
     // },
-    toggleMapFitMobile() { // p
-      if (this.tempMapFitMobile === 'both') {
-        this.tempMapFitMobile = 'width'
-      } else {
-        this.tempMapFitMobile = 'both'
-      }
-      if(this.icons)this.icons = []
-      Util.debug('tempMapFitMobile: ' + this.tempMapFitMobile)
-    },
+
+    // リセットイベント TODO: ex-map以外から必要？？
     reset() { // p, pir, position
       this.isShownMapImage = false
       this.resetDetail()

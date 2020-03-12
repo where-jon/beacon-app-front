@@ -5,20 +5,18 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
 import { APP } from '../../../sub/constant/config'
-import { CATEGORY, SHAPE, BULK } from '../../../sub/constant/Constants'
-import * as ColorUtil from '../../../sub/util/ColorUtil'
+import { CATEGORY } from '../../../sub/constant/Constants'
 import * as StringUtil from '../../../sub/util/StringUtil'
-import * as Util from '../../../sub/util/Util'
 import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
-import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
-import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as StyleHelper from '../../../sub/helper/ui/StyleHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import exMaster from '../../../components/page/ex-master.vue'
 
 export default {
+  components: {
+    exMaster,
+  },
   props: {
     pName: {
       type: String,
@@ -48,9 +46,6 @@ export default {
       type: Array,
       default: () => [CATEGORY.PERSON, CATEGORY.THING, CATEGORY.ZONE, CATEGORY.OTHER],
     },
-  },
-  components: {
-    exMaster,
   },
   data() {
     return {
@@ -96,15 +91,13 @@ export default {
     },
     getCustumCsvColumns(){
       return [
-          'ID', 'categoryName', 'categoryType'
+        'ID', 'categoryName', 'categoryType'
       ].concat(this.createCustomColumn(true).map(val => val.key))
         .concat(['color', 'bgColor', 'display.shape', 'description',
           this.pShowAuth? 'guardNames': null,
           this.pShowAuth? 'doorNames': null
         ])
         .filter(val => val)
-    },
-    async Saved(){
     },
     style(row) {
       return StyleHelper.getStyleDisplay1(row)

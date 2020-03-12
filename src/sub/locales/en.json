@@ -467,6 +467,7 @@
     "person": "Person",
     "thing": "Thing",
     "zone": "Zone",
+    "linkedPerson": "Linked Person",
 
     "circle": "Circle",
     "square": "Square",
@@ -857,8 +858,6 @@
         "AXIS_FILL_GAP": "Display 0 items on the horizontal axis of stay time summary::Display 0 items on the horizontal axis of stay time summary.The possible to set up values are as follows.{SUM_AXIS_FILL_GAP}",
         "UNIT_HOUR": "Display setting for stay time summary (hour)::If the maximum value in axis units exceeds the set second, the display of stay time total is displayed in time units.",
         "UNIT_MINUTE": "Display setting for stay time summary (minute)::If the maximum value in axis units exceeds the set second, the display of stay time total is displayed in time units.",
-        "FROM": "Start time of staying time summary(hour and minute)::Set up the start of staying time summary. Setting value is「hour × 100 + minute × 1」.",
-        "TO": "End time of staying time summary(hour and minute)::Set up the end time of staying time summary. Setting value is「hour × 100 + minute × 1」.",
         "SCALE_TIMES": "Stay rate screen graph scale time (hours)::Set up time (hours) to be displayed on stay rate screen graph scale (ignore if not match).",
         "GRAPH_LIMIT": "Actual value of daily stay analysis graph (%) :: If the data time for the total time to be aggregated is less than the set percentage, it will not be displayed on the graph."
       },

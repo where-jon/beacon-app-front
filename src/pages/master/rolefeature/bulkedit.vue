@@ -75,7 +75,7 @@ export default {
     },
     async onSaved(){
       const login = LocalStorageHelper.getLogin()
-      if(Util.getValue(login, 'role.roleId', null) == this.roleFeature.roleId){
+      if(Util.getValue(login, 'role.roleId') == this.roleFeature.roleId){
         await AuthHelper.switchAppService()
       }
     }

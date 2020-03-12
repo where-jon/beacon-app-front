@@ -132,7 +132,6 @@ import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper
 import * as ImageHelper from '../../../sub/helper/base/ImageHelper'
 import * as LocalStorageHelper from '../../../sub/helper/base/LocalStorageHelper'
 import * as PotHelper from '../../../sub/helper/domain/PotHelper'
-import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
@@ -145,6 +144,13 @@ import chromeInput from '../../../components/parts/chromeinput.vue'
 import extform from '../../../components/parts/extform.vue'
 
 export default {
+  components: {
+    breadcrumb,
+    alert,
+    chromeInput,
+    extform,
+  },
+  mixins: [commonmixin, editmixin],
   props: {
     pName: {
       type: String,
@@ -163,13 +169,6 @@ export default {
       default: () => [POT_TYPE.PERSON, POT_TYPE.THING, POT_TYPE.OTHER],
     },
   },
-  components: {
-    breadcrumb,
-    alert,
-    chromeInput,
-    extform,
-  },
-  mixins: [commonmixin, editmixin],
   data() {
     return {
       name: 'pot',
@@ -223,11 +222,6 @@ export default {
     },
     ...mapState('app_service', [
       'pot',
-      'pots',
-      'groups',
-      'roles',
-      'categories',
-      'txs',
       'updatedThumbnail',
     ]),
     hasUserId(){
@@ -247,33 +241,33 @@ export default {
   watch: {
     'form.potType': function(newVal, oldVal){
       if(newVal != oldVal){
-        this.form.selectedCategory = null
+        this.form.selectedCategoryId = null
         this.vueSelected.category = null
       }
     },
     'vueSelected.txs': {
       handler: function(newVal, oldVal){
         this.vueSelected.txs.forEach((selectedTx, idx) => {
-          this.changeTx(Util.getValue(selectedTx, 'value', null), idx)
+          this.changeTx(Util.getValue(selectedTx, 'value'), idx)
         })
       },
       deep: true,
     },
     'vueSelected.category': {
       handler: function(newVal, oldVal){
-        this.form.categoryId = Util.getValue(newVal, 'value', null)
+        this.form.categoryId = Util.getValue(newVal, 'value')
       },
       deep: true,
     },
     'vueSelected.group': {
       handler: function(newVal, oldVal){
-        this.form.groupId = Util.getValue(newVal, 'value', null)
+        this.form.groupId = Util.getValue(newVal, 'value')
       },
       deep: true,
     },
     'vueSelected.role': {
       handler: function(newVal, oldVal){
-        this.userForm.roleId = Util.getValue(newVal, 'value', null)
+        this.userForm.roleId = Util.getValue(newVal, 'value')
       },
       deep: true,
     },
@@ -345,17 +339,17 @@ export default {
       }
 
       const targetPotCategory = this.form.potCategoryList.find(potCategory => {
-        return this.categoryOptions.some(option => option.value == Util.getValue(potCategory, 'category.categoryId', null))
+        return this.categoryOptions.some(option => option.value == Util.getValue(potCategory, 'category.categoryId'))
       })
       if(Util.hasValue(targetPotCategory)){
-        this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryOptions, Util.getValue(targetPotCategory, 'category.categoryId', null))
+        this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryOptions, Util.getValue(targetPotCategory, 'category.categoryId'))
       }
 
       const targetAuthPotCategories = this.form.potCategoryList.filter(potCategory => {
-        return this.authCategoryOptions.some(option => option.value == Util.getValue(potCategory, 'category.categoryId', null))
+        return this.authCategoryOptions.some(option => option.value == Util.getValue(potCategory, 'category.categoryId'))
       })
       if(Util.hasValue(targetAuthPotCategories)){
-        this.vueSelected.authCategories = targetAuthPotCategories.map(potCategory => VueSelectHelper.getVueSelectData(this.authCategoryOptions, Util.getValue(potCategory, 'category.categoryId', null))).sort((a, b) => a.label < b.label? -1: 1)
+        this.vueSelected.authCategories = targetAuthPotCategories.map(potCategory => VueSelectHelper.getVueSelectData(this.authCategoryOptions, Util.getValue(potCategory, 'category.categoryId'))).sort((a, b) => a.label < b.label? -1: 1)
       }
     },
     initPotTxList(){
@@ -371,7 +365,7 @@ export default {
       const settings = PotHelper.getSetting(this.pName)
       const maxTx = settings.MULTI_TX? settings.TX_MAX: 1
       for(let cnt = this.form.potTxList.length; cnt < maxTx; cnt++){
-        this.vueSelected.txs.push(VueSelectHelper.getVueSelectData(this.getTxOptions(cnt), null))
+        this.vueSelected.txs.push(VueSelectHelper.getVueSelectData(this.getTxOptions(cnt)))
         this.form.potTxList.push({
           potId: null,
           txId: null
@@ -405,7 +399,7 @@ export default {
         return this.showEmail
       }
       for(let cnt = 0; cnt < this.form.potTxList.length; cnt++){
-        const tx = this.txs.find((tx) => this.form.potTxList[cnt].txId == tx.txId)
+        const tx = this.txIdMap[this.form.potTxList[cnt].txId]
         if(tx && Util.hasValue(tx.txSensorList) && tx.txSensorList[0].txSensorPK.sensorId == SENSOR.BUTTON){
           this.showEmail = true
           return this.showEmail
@@ -446,7 +440,7 @@ export default {
     },
     changeTx(newVal, index){
       this.$nextTick(() => {
-        const tx = this.txs.find((tx) => newVal == tx.txId)
+        const tx = this.txIdMap[newVal]
         this.txIds[index] = tx? tx.txId: null
         this.btxIds[index] = tx? tx.btxId: null
         this.minors[index] = tx? tx.minor: null
@@ -469,7 +463,7 @@ export default {
         loginId: dummyLoginId,
         pass: USER.DUMMY.PASS,
         name: null,
-        roleId: roles.reduce((a, b) => a.roleId > b.roleId? a: b).roleId,
+        roleId: roles.reduce((a, b) => a.roleId > b.roleId? a: b).roleId, // TODO: 何をしたいのか意味不明
         email: null,
         noEncrypt: noEncrypt,
       }
@@ -482,14 +476,14 @@ export default {
       this.btxIds = this.btxIds.map(() => null)
       this.minors = this.minors.map(() => null)
 
-      this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryOptions, null)
-      this.vueSelected.group = VueSelectHelper.getVueSelectData(this.groupOptions, null)
+      this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryOptions)
+      this.vueSelected.group = VueSelectHelper.getVueSelectData(this.groupOptions)
 
       const maxRole = this.roleOptions.reduce((a, b) => a.value > b.value? a: b)
       this.userForm.roleId = maxRole? maxRole.value: null
       this.vueSelected.role = VueSelectHelper.getVueSelectData(this.roleOptions, maxRole? maxRole.value: null)
 
-      //this.form.potCd = MasterHelper.createMasterCd('pot', this.pots, this.pot)
+      this.form.potCd = MasterHelper.createMasterCd('pot', this.pots, this.pot)
       this.initPotTxList()
     },
     async onSaved(){
@@ -579,11 +573,11 @@ export default {
       return await AppServiceHelper.bulkSave(this.pAppServicePath, [entity])
     },
     getNameByteLangth(){
-      const fileElement = Util.getValue(document.getElementsByClassName('custom-file'), '0', null)
+      const fileElement = Util.getValue(document.getElementsByClassName('custom-file'), '0')
       return fileElement? (fileElement.clientWidth - 80) / 12: 0
     },
     setFileName(name){
-      const file = Util.getValue(document.getElementsByClassName('custom-file-label'), '0', null)
+      const file = Util.getValue(document.getElementsByClassName('custom-file-label'), '0')
       const param = file.textContent? 'textContent': 'innerText'
       file[param] = name? name: this.$refs.inputThumbnail.placeholder
     },
@@ -595,7 +589,7 @@ export default {
           ImageHelper.readImageView(this, e, 'thumbnail', null, null, 'thumbnail', APP.POT_THUMBNAIL_MAX)
           this.form.thumbnailTemp = this.form.thumbnail
 
-          const inputFileName = Util.getValue(e, 'target.files.0.name', null)
+          const inputFileName = Util.getValue(e, 'target.files.0.name')
           this.setFileName(inputFileName? StringUtil.cutOnLongByte(inputFileName, this.getNameByteLangth()): null)
           if(!inputFileName){
             this.clearImage(e)

@@ -15,21 +15,13 @@
               <label v-t="'label.deviceIdX'" />
               <input v-model.lazy="deviceIdX" :readonly="!isEditable" type="text" class="form-control" :required="includesDeviceType('deviceIdX')">
             </b-form-group>
-            <!-- ver0.9 リリースのため、表示フラグ欄とTX表示形式欄を非表示とする -->
-            <!--
-            <b-form-group>
-              <b-form-checkbox v-model="form.visible" value="true" unchecked-value="false" :disabled="!isEditable" :readonly="!isEditable">
-                {{ $t('label.visible') }}
-              </b-form-checkbox>
-            </b-form-group>
-            -->
             <b-form-group v-if="isShown('EXB.WITH', 'exbType')">
               <label v-t="'label.exbType'" />
               <b-form-select v-model="form.exbType" :options="exbTypeOptions" :disabled="!isEditable" :readonly="!isEditable" class="ml-3 col-4" />
             </b-form-group>
             <b-form-group v-for="(param, index) in adjustParams" :key="index">
               <label>
-                 {{ $i18n.tnl('label.' + param.key) }}
+                {{ $i18n.tnl('label.' + param.key) }}
               </label>
               <input v-model="form[param.key]" :readonly="!isEditable" type="number" :min="param.min" :max="param.max" class="form-control">
             </b-form-group>
@@ -79,14 +71,10 @@
 import { mapState } from 'vuex'
 import { APP } from '../../../sub/constant/config'
 import { EXB } from '../../../sub/constant/Constants'
-import * as ArrayUtil from '../../../sub/util/ArrayUtil'
-import * as NumberUtil from '../../../sub/util/NumberUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
 import * as ConfigHelper from '../../../sub/helper/dataproc/ConfigHelper'
-import * as MenuHelper from '../../../sub/helper/dataproc/MenuHelper'
 import * as OptionHelper from '../../../sub/helper/dataproc/OptionHelper'
-import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
@@ -95,15 +83,11 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import commonmixin from '../../../components/mixin/commonmixin.vue'
 import editmixin from '../../../components/mixin/editmixin.vue'
 import alert from '../../../components/parts/alert.vue'
-import autoAlert from '../../../components/parts/autoAlert.vue'
-import settingtxview from '../../../components/parts/settingtxview.vue'
 
 export default {
   components: {
     breadcrumb,
     alert,
-    autoAlert,
-    settingtxview,
   },
   mixins: [commonmixin, editmixin],
   data() {
@@ -141,22 +125,19 @@ export default {
     },
     ...mapState('app_service', [
       'exb',
-      'areas',
-      'locaitons',
-      'sensors',
     ]),
   },
   watch: {
     'vueSelected.area': {
       handler: function(newVal, oldVal){
-        this.form.areaId = Util.getValue(newVal, 'value', null)
+        this.form.areaId = Util.getValue(newVal, 'value')
         this.vueSelected.location = null
       },
       deep: true,
     },
     'vueSelected.location': {
       handler: function(newVal, oldVal){
-        this.form.locationId = Util.getValue(newVal, 'value', null)
+        this.form.locationId = Util.getValue(newVal, 'value')
       },
       deep: true,
     },
@@ -201,7 +182,7 @@ export default {
   },
   methods: {
     isNormalSensor(index){
-      return Util.getValue(this.form, `exbSensorList.${index && 0 <= index? index: 0}.sensorId`, null)? false: true
+      return Util.getValue(this.form, `exbSensorList.${index && 0 <= index? index: 0}.sensorId`)? false: true
     },
     includesDeviceType(name){
       return ConfigHelper.includesDeviceType(name)
@@ -265,7 +246,7 @@ export default {
       this.initExbSensorList()
       this.changeSensors()
       this.form.sensorId = null
-      this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, null)
+      this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions)
       this.vueSelected.location = null
     },
     async onSaving() {

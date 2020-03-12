@@ -4,6 +4,7 @@ import { mapState, mapMutations, mapActions } from 'vuex'
 import { CATEGORY, POT_TYPE } from '../../sub/constant/Constants'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as StringUtil from '../../sub/util/StringUtil'
+import * as Util from '../../sub/util/Util'
 import * as ConfigHelper from '../../sub/helper/dataproc/ConfigHelper'
 import * as LocaleHelper from '../../sub/helper/base/LocaleHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
@@ -11,19 +12,45 @@ import * as OptionHelper from '../../sub/helper/dataproc/OptionHelper'
 import * as ThemeHelper from '../../sub/helper/ui/ThemeHelper'
 import * as VueSelectHelper from '../../sub/helper/ui/VueSelectHelper'
 import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
+import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
+
+const exMapState = (namespace, map) => {
+  return mapState(namespace, map)
+  // let ret = {} // 実験：not work yet
+  // map.forEach(e => {
+  //   ret[e] = {
+  //     get: () => {return StateHelper.getMaster(e)},
+  //     set: (val) => {}
+  //   }
+  // })
+  // return ret
+}
 
 export default {
   computed: {
-    ...mapState('app_service', [
+    ...exMapState('app_service', [
       'exbs',
+      'exbIdMap',
+      'deviceIdMap',
       'txs',
+      'txIdMap',
+      'btxIdMap',
       'pots',
+      'potIdMap',
       'areas',
+      'areaIdMap',
       'zones',
+      'zoneIdMap',
       'categories',
+      'categoryIdMap',
       'groups',
+      'groupIdMap',
       'locations',
+      'locationIdMap',
       'sensors',
+      'sensorIdMap',
+      'roles',
+      'regions',
     ]),
     ...mapState([
       'showAlert',
@@ -31,6 +58,14 @@ export default {
     ]),
     iosOrAndroid() {
       return BrowserUtil.isAndroidOrIOS()
+    },
+    isTenantAdmin() {
+      const login = LocalStorageHelper.getLogin()
+      return login? login.isTenantAdmin: false
+    },
+    isProviderUser(){
+      const login = LocalStorageHelper.getLogin()
+      return login.isProviderUser
     },
     editable(){
       return MenuHelper.isEditable(this.$route.path)
@@ -46,6 +81,13 @@ export default {
     },
     categoryOptions() {
       return OptionHelper.getCategoryOptions(CATEGORY.POT_AVAILABLE)
+    },
+    zoneCategoryOptions() {
+      return MasterHelper.getOptionsFromState('category',
+        category => MasterHelper.getDispCategoryName(category),
+        true, 
+        category => CATEGORY.ZONE_AVAILABLE.includes(category.categoryType)
+      )
     },
     authCategoryOptions() {
       return OptionHelper.getCategoryOptions([CATEGORY.AUTH])
@@ -89,21 +131,21 @@ export default {
     filterSelectedList() {
       return ['area', 'group', 'category', 'detail', 'freeWord']
     },
-    selectedArea: {
-      get() { return this.$store.state.main.selectedArea},
-      set(val) { this.replaceMain({'selectedArea': val})},
+    selectedAreaId: {
+      get() { return this.$store.state.main.selectedAreaId},
+      set(val) { this.replaceMain({'selectedAreaId': val})},
     },
-    selectedGroup: {
-      get() { return this.$store.state.main.selectedGroup},
-      set(val) { this.replaceMain({'selectedGroup': val})},
+    selectedGroupId: {
+      get() { return this.$store.state.main.selectedGroupId},
+      set(val) { this.replaceMain({'selectedGroupId': val})},
     },
-    selectedCategory: {
-      get() { return this.$store.state.main.selectedCategory},
-      set(val) { this.replaceMain({'selectedCategory': val})},
+    selectedCategoryId: {
+      get() { return this.$store.state.main.selectedCategoryId},
+      set(val) { this.replaceMain({'selectedCategoryId': val})},
     },
-    selectedDetail: {
-      get() { return this.$store.state.main.selectedDetail},
-      set(val) { this.replaceMain({'selectedDetail': val})},
+    selectedTxIdList: {
+      get() { return this.$store.state.main.selectedTxIdList},
+      set(val) { this.replaceMain({'selectedTxIdList': val})},
     },
     selectedFreeWord: {
       get() { return this.$store.state.main.selectedFreeWord},
@@ -131,6 +173,18 @@ export default {
       'showProgress',
       'hideProgress',
     ]),
+    callParentComputed(method) {
+      const func = Util.v(this.$parent.$options.computed, method)
+      return func? func.call(this.$parent): undefined
+    },
+    callParentMethod(method, ...params) {
+      const func = Util.v(this.$parent.$options.methods, method)
+      return func? func.call(this.$parent, ...params): undefined
+    },
+    callParentMethodOrDef(method, def, ...params) {
+      const ret = this.callParentMethod(method, ...params)
+      return ret === undefined? def: ret
+    },
     vueSelectCutOn(option, required){
       return VueSelectHelper.vueSelectCutOn(option, required)
     },

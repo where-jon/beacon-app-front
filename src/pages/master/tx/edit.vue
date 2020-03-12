@@ -15,26 +15,6 @@
               <label v-t="'label.type'" />
               <b-form-select v-model="form.sensorId" :options="sensorOptionsTx" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-3 col-4" />
             </b-form-group>
-            <b-form-group v-show="isShown('TX.WITH', 'category')">
-              <b-form-row>
-                <label v-t="'label.category'" class="d-flex align-items-center" />
-                <v-select v-model="vueSelected.category" :options="categoryOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-2 vue-options-lg">
-                  <template slot="no-options">
-                    {{ vueSelectNoMatchingOptions }}
-                  </template>
-                </v-select>
-              </b-form-row>
-            </b-form-group>
-            <b-form-group v-show="isShown('TX.WITH', 'group')">
-              <b-form-row>
-                <label v-t="'label.group'" class="d-flex align-items-center" />
-                <v-select v-model="vueSelected.group" :options="groupOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 ml-2 vue-options-lg">
-                  <template slot="no-options">
-                    {{ vueSelectNoMatchingOptions }}
-                  </template>
-                </v-select>
-              </b-form-row>
-            </b-form-group>
             <b-form-group v-show="showTx('btxId')">
               <label v-t="'label.btxId'" />
               <input v-model="form.btxId" :required="showTx('btxId')" :readonly="!isEditable" type="number" min="0" max="65535" class="form-control">
@@ -104,11 +84,9 @@
 import { mapState } from 'vuex'
 import _ from 'lodash'
 import { APP } from '../../../sub/constant/config'
-import { CATEGORY, SENSOR } from '../../../sub/constant/Constants'
+import { SENSOR } from '../../../sub/constant/Constants'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
-import * as SensorHelper from '../../../sub/helper/domain/SensorHelper'
-import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
@@ -132,16 +110,11 @@ export default {
       appServicePath: '/core/tx',
       items: ViewHelper.createBreadCrumbItems('master', {text: 'masterTx', href: '/master/tx'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.tx.txId)),
       form: Util.extract(this.$store.state.app_service.tx, [
-        'txId', 'btxId', 'major', 'minor', 'potTxList.0.pot.displayName', 'mapImage', 'dispPos', 'dispPir', 'dispAlways',
+        'txId', 'btxId', 'major', 'minor', 'dispPos', 'dispPir', 'dispAlways',
         'txSensorList.0.sensor.sensorId',
         'locationId', 'location.areaId',
-        'potTxList.0.pot.potId', 'potTxList.0.pot.potCd', 'potTxList.0.pot.displayName', 'potTxList.0.pot.description',
-        'potTxList.0.pot.potCategoryList.0.category.categoryId',
-        'potTxList.0.pot.potGroupList.0.group.groupId',
       ]),
       vueSelected: {
-        category: null,
-        group: null,
         area: null,
         location: null,
       },
@@ -154,11 +127,6 @@ export default {
     isMajorRequired() {
       return APP.TX.MAJOR_REQUIRED
     },
-    categoryOptions() {
-      return MasterHelper.getOptionsFromState('category', false, true, 
-        category => CATEGORY.POT_AVAILABLE.includes(category.categoryType)
-      )
-    },
     showMinorMid() {
       return !this.showMinorHead
     },
@@ -170,44 +138,25 @@ export default {
     },
     ...mapState('app_service', [
       'tx',
-      'categories',
-      'groups',
-      'sensors',
-      'pots',
-      'potImages',
     ]),
   },
   watch: {
-    'vueSelected.category': {
-      handler: function(newVal, oldVal){
-        this.form.categoryId = Util.getValue(newVal, 'value', null)
-      },
-      deep: true,
-    },
-    'vueSelected.group': {
-      handler: function(newVal, oldVal){
-        this.form.groupId = Util.getValue(newVal, 'value', null)
-      },
-      deep: true,
-    },
     'vueSelected.area': {
       handler: function(newVal, oldVal){
-        this.form.areaId = Util.getValue(newVal, 'value', null)
+        this.form.areaId = Util.getValue(newVal, 'value')
         this.vueSelected.location = null
       },
       deep: true,
     },
     'vueSelected.location': {
       handler: function(newVal, oldVal){
-        this.form.locationId = Util.getValue(newVal, 'value', null)
+        this.form.locationId = Util.getValue(newVal, 'value')
       },
       deep: true,
     },
   },
   async mounted() {
     Util.applyDef(this.form, this.defValue)
-    this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryOptions, this.form.categoryId)
-    this.vueSelected.group = VueSelectHelper.getVueSelectData(this.groupOptions, this.form.groupId)
     this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, this.form.areaId)
     this.$nextTick(() => this.vueSelected.location = VueSelectHelper.getVueSelectData(this.getLocationOptions(), this.form.locationId))
     ValidateHelper.setCustomValidationMessage()
@@ -230,9 +179,7 @@ export default {
     },
     onBeforeReload(){
       this.form.sensorId = null
-      this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryOptions, null)
-      this.vueSelected.group = VueSelectHelper.getVueSelectData(this.groupOptions, null)
-      this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, null)
+      this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions)
       this.vueSelected.location = null
     },
     async onSaved(){
@@ -247,52 +194,15 @@ export default {
         this.form.minor = this.form.btxId
       }
       const disp = this.form.dispPos |  this.form.dispPir | this.form.dispAlways
-      const pot = await this.getRelatedPot(txId)
-      if (pot) {
-        pot.potTxList = null // potTx関連を削除
-        pot.potUserList = null // ここではpotUser関連は登録しない
-        pot.user = null
-      }
       const entity = {
         ...this.form,
         txId,
         disp,
-        potTxList: pot? [{potTxPK:{txId, potId: pot.potId}, pot}]: null,
         txSensorList: this.form.sensorId? [
           {txSensorPK: {sensorId: this.form.sensorId}}
         ]: null
       }
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
-    },
-    async getRelatedPot(txId) {
-      const randName = () =>  txId + '_' + (new Date().getTime() % 10000)
-      const relatedPot = _.find(this.pots, (pot) => pot.potId == this.form.potId)
-      const isPotForm = this.form.potId || this.form.categoryId || this.form.groupId
-          || this.form.displayName || this.form.description
-
-      let newPot = {}
-      if (!relatedPot) {
-        if (!isPotForm) {
-          return null
-        } else {
-          newPot.potId = -2
-          newPot.potCd = randName()
-          newPot.potName = randName()
-        }
-      } else {
-        newPot = _.cloneDeep(relatedPot)
-      }
-      newPot.potCd = this.form.potCd || newPot.potCd
-      newPot.displayName = this.form.displayName || newPot.displayName
-      newPot.description = this.form.description != null? this.form.description: newPot.description
-
-      newPot.potCategoryList = this.form.categoryId? [ {potCategoryPK: {categoryId: this.form.categoryId}} ]: null
-      const category = _.find(this.categories, (cat) => cat.categoryId == this.form.categoryId)
-      newPot.potType = category ? category.categoryType : CATEGORY.getTypes()[0].value
-
-      newPot.potGroupList = this.form.groupId? [ {potGroupPK: {groupId: this.form.groupId}} ]: null
-      newPot.tx = null
-      return newPot
     },
   }
 }

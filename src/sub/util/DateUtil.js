@@ -189,7 +189,7 @@ export const getSubDatetime = (datetimeFrom, datetimeTo) => {
  * @param {Number} secTime 秒
  * @return {String}
  */
-export const convertToTime = secTime => {
+export const convertToTime = (secTime) => {
   if (secTime < 0) {
     return 'hh:mm'
   }
@@ -199,7 +199,24 @@ export const convertToTime = secTime => {
   let h = hour < 10? '0' + hour: hour
   let m = min < 10? '0' + min: min
   let s = sec < 10? '0' + sec: sec
-  return h + ':' + m + ':' + s
+  return h + ':' + m + ':' + s  
+}
+
+/**
+ * 時間を「HH:mm」形式に変換する。
+ * @method
+ * @param {Number} secTime 秒
+ * @return {String}
+ */
+export const toHHmm = (secTime) => {
+  if (secTime < 0) {
+    return 'hh:mm'
+  }
+  let min = Math.floor(secTime / 60) % 60
+  let hour = Math.floor(secTime / 3600)
+  let h = hour < 10? '0' + hour: hour
+  let m = min < 10? '0' + min: min
+  return h + ':' + m
 }
 
 /**

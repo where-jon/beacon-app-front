@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { CATEGORY, ZONE } from '../../../sub/constant/Constants'
+import { CATEGORY } from '../../../sub/constant/Constants'
 import categoryEdit from '../category/edit.vue'
 
 export default {

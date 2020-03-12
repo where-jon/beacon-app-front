@@ -77,6 +77,11 @@
               <v-select :value="getZoneBlockItems()" :options="zoneBlockOptions" disabled multiple class="vue-options-multi" />
             </b-form-group>
 
+            <b-form-group>
+              <label v-t="'label.capacity'" />
+              <input v-model="form.capacity" :readonly="!isEditable" type="number" min="0" max="99999" class="form-control">
+            </b-form-group>
+
             <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
             <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="doBeforeSubmit(false)">
               {{ $i18n.tnl(`label.${isUpdate? 'update': 'register'}`) }}
@@ -92,7 +97,7 @@
 <script>
 import { mapState } from 'vuex'
 import { APP } from '../../../sub/constant/config'
-import { ZONE, PATTERN } from '../../../sub/constant/Constants'
+import { PATTERN } from '../../../sub/constant/Constants'
 import * as NumberUtil from '../../../sub/util/NumberUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
@@ -100,7 +105,6 @@ import * as ConfigHelper from '../../../sub/helper/dataproc/ConfigHelper'
 import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
 import * as MenuHelper from '../../../sub/helper/dataproc/MenuHelper'
 import * as OptionHelper from '../../../sub/helper/dataproc/OptionHelper'
-import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
@@ -133,7 +137,7 @@ export default {
       useZoneBlock: MenuHelper.isMenuEntry('/master/zoneBlock') && this.isShown('LOCATION.WITH', 'zoneBlock'),
       form: Util.extract(this.$store.state.app_service.location, [
         'locationId', 'locationCd', 'locationType', 'locationName',
-        'areaId', 'x', 'y',
+        'areaId', 'x', 'y', 'capacity',
         'txViewType', 'locationZoneList',
         'exbIds', 'txIds', 
         ...ExtValueHelper.getExtValueKeys(APP.LOCATION, true)
@@ -181,7 +185,7 @@ export default {
       return MasterHelper.getOptionsFromState('zone', false, true, zone => zone.x != null && zone.y != null)
     },
     ...mapState('app_service', [
-      'areas', 'zones', 'exbs', 'location', 'locations',
+      'location', 
     ]),
     areaWarnMessage(){
       return this.$i18n.tnl('message.resetFromTo', {
@@ -199,9 +203,9 @@ export default {
   watch: {
     'vueSelected.area': {
       handler: function(newVal, oldVal){
-        this.form.areaId = Util.getValue(newVal, 'value', null)
+        this.form.areaId = Util.getValue(newVal, 'value')
         this.vueSelected.zones = []
-        if(this.checkWarn && Util.hasValue(this.form.locationZoneList) && Util.getValue(oldVal, 'value', null) != null){
+        if(this.checkWarn && Util.hasValue(this.form.locationZoneList) && Util.getValue(oldVal, 'value') != null){
           this.showAreaWarn = true
         }
       },
@@ -242,7 +246,7 @@ export default {
     this.checkWarnOn()
     this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, this.form.areaId)
     if(!Util.hasValue(this.form.locationType)){
-      this.form.locationType = Util.getValue(this.locationTypeOptions, '0.value', null)
+      this.form.locationType = Util.v(this.locationTypeOptions, '0.value')
     }
     if(!Util.hasValue(this.form.locationCd)){
       this.form.locationCd = MasterHelper.createMasterCd('location', this.locations, this.location)
@@ -298,8 +302,8 @@ export default {
       this.txIconsVertical = param.vertical
     },
     onBeforeReload(){
-      this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions, null)
-      this.vueSelected.zone = VueSelectHelper.getVueSelectData(this.getZoneClassOptions(), null)
+      this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions)
+      this.vueSelected.zone = VueSelectHelper.getVueSelectData(this.getZoneClassOptions())
       this.checkWarnOn()
     },
     async onSaving() {
@@ -318,6 +322,7 @@ export default {
         extValue: {},
         x: this.form.x,
         y: this.form.y,
+        capacity: this.form.capacity,
         exbIdList: this.form.exbIds,
         txIdList: this.form.txIds,
       }
