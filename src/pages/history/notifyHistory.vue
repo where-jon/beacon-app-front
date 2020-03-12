@@ -103,6 +103,7 @@
               </div>
             </span>
           </template>
+
           <template slot="potNames" slot-scope="row">
             <span v-for="(val, key) in row.item.potNames" :key="key">
               {{ val }}<br>
@@ -114,11 +115,14 @@
             </span>
           </template>
 
-          <template slot="minors" slot-scope="row">
-            <span v-for="(val, key) in row.item.minors" :key="key">
-              {{ val }}<br>
-            </span>
+          <template v-if="form.notifyState !== 'TX_BATTERY_ALERT'">
+            <template slot="minors" slot-scope="row">
+              <span v-for="(val, key) in row.item.minors" :key="key">
+                {{ val }}<br>
+              </span>
+            </template>
           </template>
+
           <template slot="deviceIds" slot-scope="row">
             <span v-for="(val, key) in row.item.deviceIds" :key="key">
               {{ val }} <br>
@@ -433,13 +437,9 @@ export default {
       const tx = this.txs.find((tx) => newVal == tx.txId)
       this.txId = tx? tx.txId: null
     },
-    async display() {
-      this.container ? this.container.removeAllChildren() : null
-      await this.displayImpl()
-      this.stage ? this.stage.update() : null
-    },
-    async displayImpl(){
+    async display(){
       this.replace({showAlert: false})
+      this.showProgress()
       this.viewList = []
       this.totalRows = 0
       this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`
@@ -494,6 +494,8 @@ export default {
         this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`
       }catch (e) {
         console.error(e)
+      } finally {
+        this.hideProgress()
       }
     },
     async exportCsv() {
@@ -555,8 +557,6 @@ export default {
       }else if (aNotifyState == NOTIFY_STATE.LOST_NOTIFY) {
         return this.fields8
       }
-    },
-    async fetchData(payload) {
     },
     getCsvHeaderList() {
       return  this.getFields(this.form.notifyState).map((record) => {
