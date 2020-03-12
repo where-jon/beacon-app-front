@@ -43,7 +43,7 @@ export default {
       await this.$refs.bulkEdit.bulkSave2()
     },
     getConf() {
-      return {}
+      return {exbSensor: APP.EXB.SENSOR}
     },
     onRestruct(entity, dummyKey){
       if(Util.hasValue(entity.deviceId) || Util.hasValue(entity.deviceIdX)){
