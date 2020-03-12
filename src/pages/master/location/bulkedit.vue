@@ -51,6 +51,9 @@ export default {
     async onSaving() {
       await this.$refs.bulkEdit.bulkSave2({numberList: ['x', 'y'], nullableList: ['x', 'y']})
     },
+    getConf() {
+      return {}
+    },
     restructExb(entity, dummyKey){
       ['deviceId', 'deviceIdX'].forEach(key => {
         if(!Util.hasValue(entity[key])){

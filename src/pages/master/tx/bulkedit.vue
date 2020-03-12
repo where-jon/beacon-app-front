@@ -47,7 +47,9 @@ export default {
     },
     async onSaving() {
       await this.$refs.bulkEdit.bulkSave2()
-      // await this.$refs.bulkEdit.bulkSave({numberList: ['btxId', 'major', 'minor', 'disp', 'x', 'y'], nullableList: ['locationName', 'x', 'y', 'sensorNames']})
+    },
+    getConf() {
+      return {txSensor: APP.SENSOR.TX_SENSOR}
     },
     restructTx(entity, dummyKey){
       if(APP.TX.BTX_MINOR == 'minor'){
