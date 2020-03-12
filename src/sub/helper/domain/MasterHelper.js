@@ -300,9 +300,10 @@ const buildRelation = (masters, idmaps) => {
     case 'tx':
       list.forEach(e => {
         e.sensorList = relate(e, 'txId', idmaps.txSensor, 'sensorId', idmaps.sensor)
-        e.pot = relate(e, 'txId', idmaps.potTx_Rev, 'potId', idmaps.pot)[0] || {}
+        const pots = relate(e, 'txId', idmaps.potTx_Rev, 'potId', idmaps.pot)
+        e.pot = pots && pots.length > 0 ? pots[0] : {}
         e.location = relate(e, 'locationId', idmaps.location)
-        // Util.debug(e)
+        Util.debug('tx', e)
       })  
       break
     case 'exb':
