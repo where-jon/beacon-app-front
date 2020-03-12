@@ -210,7 +210,6 @@ export default {
         {key: 'positionDt', sortable: true, label:'dt'},
         {key: 'notifyTo', sortable: true,label:'notifyTo' },
         {key: 'minors', sortable: true,label:'minorPowerLevel'},
-        {key: 'txNames', sortable: true,label:'txName' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
       fields5: ViewHelper.addLabelByKey(this.$i18n, [  // SOSボタン押下通知
