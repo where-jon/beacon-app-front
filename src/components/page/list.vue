@@ -802,7 +802,8 @@ export default {
     },
     filterParent(originItem) {
       const zoneCategory = Util.getValue(this.params, 'parentFilter.zoneCategory')
-      if (zoneCategory && originItem.zoneCategoryIdList && !originItem.zoneCategoryIdList.includes(zoneCategory)) {
+      const categoryId = Util.getValue(originItem, 'categoryId')
+      if (zoneCategory && zoneCategory != categoryId ) {
         return false
       }
       return true
