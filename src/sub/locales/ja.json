@@ -396,6 +396,7 @@
     "systemChild": "システム設定",
 
     "region": "リージョン",
+    "regionCd": "ID",
     "regionId": "リージョンID",
     "regionName": "リージョン名",
     "meshId": "メッシュID",
