@@ -1286,6 +1286,11 @@ export const MENU = [
         path: 'serverenv',
         icon: 'cog',
       },
+      {
+        key: 'execTask',
+        path: 'execTask',
+        icon: 'upload',
+      },
     ],
   },
 ]

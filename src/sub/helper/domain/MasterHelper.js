@@ -303,7 +303,7 @@ const buildRelation = (masters, idmaps) => {
         const pots = relate(e, 'txId', idmaps.potTx_Rev, 'potId', idmaps.pot)
         e.pot = pots && pots.length > 0 ? pots[0] : {}
         e.location = relate(e, 'locationId', idmaps.location)
-        Util.debug('tx', e)
+        // Util.debug('tx', e)
       })  
       break
     case 'exb':

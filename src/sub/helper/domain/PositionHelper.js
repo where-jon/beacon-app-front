@@ -14,6 +14,7 @@ import * as EXCloudHelper from '../dataproc/EXCloudHelper'
 import * as MenuHelper from '../dataproc/MenuHelper'
 import * as StyleHelper from '../ui/StyleHelper'
 import * as DetectStateHelper from './DetectStateHelper'
+import * as SensorHelper from './SensorHelper'
 
 const iconsUnitNum = 9
 const tileLayoutIconsNum = 5
@@ -311,18 +312,17 @@ export const checkTxAllow = (pos, tx, areaId, isAbsent = false, onlyFixPos = fal
 }
 
 // ゾーンエリアに表示できる最後のTX位置で省略を表示する際に使用する
-export const zoneLastTxId = () => { return 100000001 }
+export const zoneLastTxId = () => 100000001
 
-export const isZoneLastTxId = (btxId) => { return btxId == zoneLastTxId }
+export const isZoneLastTxId = (btxId) => btxId == zoneLastTxId
 
 export const zoneLastTxData = () => { // TODO: pos_idは何に使っている？
   return { btxId: zoneLastTxId(), pos_id: 0, label: '・・・', isLost: false, }
 }
 
-export const isDoubleTx = (btxId) => { return btxId >= zoneBtxIdAddNumber }
+export const isDoubleTx = (btxId) => btxId >= zoneBtxIdAddNumber
 
-export const getDoubleDefaultTxId = (btxId) => { return btxId - zoneBtxIdAddNumber }
-
+export const getDoubleDefaultTxId = (btxId) => btxId - zoneBtxIdAddNumber
 
 // ------- 固定表示 -------
 
@@ -345,7 +345,7 @@ export const addFixedPosition = (orgPositions, locations = [], selectedMapId = n
     if (pos.isFixedPosition) { // txが場所固定されており、現在位置が場所固定ゾーンにいる場合（txの固定場所のゾーンでなくても同じエリアの固定ゾーンであれば）
       pos.inFixedZone = pos.exb.location.isFixedPosZone // 今いる場所が固定場所ゾーンに入っているか
       // 固定場所ゾーンにいず、かつ同じエリアにいて、検知状態の場合、フリーアドレスとしても表示
-      if (!pos.inFixedZone && isInTheArea(pos, locations, selectedMapId) && pos.detectState == DETECT_STATE.DETECTED) {
+      if (!pos.inFixedZone && isInTheArea(pos, locations, selectedMapId) && pos.detectState == DETECT_STATE.DETECTED && !SensorHelper.isFixedSensorTx(pos.tx)) {
         const addPos = _.cloneDeep(pos)
         addPos.isFixedPosition = false
         addPos.location = pos.exb.location
