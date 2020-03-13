@@ -36,6 +36,12 @@ export default {
   async created() {
   },
   methods: {
+    async onSaving() {
+      await this.$refs.bulkEdit.bulkSave2()
+    },
+    getConf() {
+      return {}
+    },
     onRestruct(entity, dummyKey){
       if(Util.hasValueAny(entity.shape, entity.color, entity.bgColor)){
         Util.setValue(entity, 'display.shape', entity.shape)

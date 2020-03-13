@@ -68,6 +68,12 @@ export default {
   async created() {
   },
   methods: {
+    async onSaving() {
+      await this.$refs.bulkEdit.bulkSave2()
+    },
+    getConf() {
+      return {}
+    },
     restructZone(entity, dummyKey){
       const zoneCategoryList = []
       if(Util.hasValue(entity.guardNames)){
