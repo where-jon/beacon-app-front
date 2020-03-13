@@ -83,30 +83,8 @@
             </b-form-group>
 
             <b-form-group v-if="isShownWith('user')">
-              <b-form-checkbox v-model="editShowUser" :value="true" :unchecked-value="false" @change="nextShowEmailCheck()">
-                <span v-text="$i18n.tnl('label.editUserInfo')" />
-              </b-form-checkbox>
-            </b-form-group>
-            <b-form-group v-if="showEmail">
-              <label v-t="'label.email'" />
-              <b-form-input v-model="userForm.email" type="email" maxlength="255" />
-            </b-form-group>
-            <b-form-group v-if="editShowUser">
               <label v-t="'label.loginId'" />
-              <input v-model="userForm.loginId" :title="$i18n.tnl('message.validationList', {validate: $i18n.tnl('message.loginValidationList')})" type="text" minlength="3" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control" :required="editShowUser">
-            </b-form-group>
-            <b-form-group v-if="editShowUser">
-              <label v-t="'label.role'" />
-              <v-select v-model="vueSelected.role" :options="roleOptions" :clearable="false" :required="editShowUser" class="vue-options-lg">
-                <template slot="no-options">
-                  {{ vueSelectNoMatchingOptions }}
-                </template>
-              </v-select>
-            </b-form-group>
-            <b-form-group v-if="editShowUser">
-              <label v-if="hasUserId" v-t="'label.passwordUpdate'" />
-              <label v-else v-t="'label.password'" />
-              <input v-model="userForm.pass" type="password" :minlength="userForm.pass? 3: 0" maxlength="16" pattern="^[a-zA-Z0-9_\-\/!#\$%&@]*$" class="form-control" :required="editShowUser && !hasUserId">
+              <input v-model="form.loginId" :title="$i18n.tnl('message.validationList', {validate: $i18n.tnl('message.loginValidationList')})" type="text" minlength="3" maxlength="16" pattern="^[a-zA-Z][a-zA-Z0-9_\-@\.]*$" class="form-control" readonly>
             </b-form-group>
 
             <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
@@ -125,12 +103,11 @@
 import { mapState } from 'vuex'
 import _ from 'lodash'
 import { APP, EXCLOUD, APP_SERVICE } from '../../../sub/constant/config'
-import { SENSOR, USER, POT_TYPE, TYPE_RELATION } from '../../../sub/constant/Constants'
+import { POT_TYPE, TYPE_RELATION } from '../../../sub/constant/Constants'
 import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
 import * as ImageHelper from '../../../sub/helper/base/ImageHelper'
-import * as LocalStorageHelper from '../../../sub/helper/base/LocalStorageHelper'
 import * as PotHelper from '../../../sub/helper/domain/PotHelper'
 import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
@@ -173,28 +150,18 @@ export default {
     return {
       name: 'pot',
       id: 'potId',
-      showEmail: false,
-      editShowUser: false,
       form: {
         ...Util.extract(this.$store.state.app_service.pot,
           ['potId', 'potCd', 'potName', 'potType', 'extValue.ruby',
             'displayName', 'potGroupList.0.group.groupId', 'potCategoryList.0.category.categoryId',
             'existThumbnail', 'description', ...PotHelper.getPotExtKeys(this.pName, true)])
       },
-      userForm: {
-        userId: null, loginId: null, pass: null, roleId: null, email: null,
-      },
-      oldUserForm: {
-        userId: null, loginId: null, pass: null, roleId: null, email: null,
-      },
       vueSelected: {
         group: null,
         category: null,
-        role: null,
         txs: [],
         authCategories: [],
       },
-      roleOptions: [],
       potTypeOptions: POT_TYPE.getTypes().filter(val => APP.POT.TYPES.includes(val.value) && this.pTypeList.includes(val.value)),
       txIds: Array(PotHelper.getSetting(this.pName).TX_MAX),
       btxIds: Array(PotHelper.getSetting(this.pName).TX_MAX),
@@ -224,9 +191,6 @@ export default {
       'pot',
       'updatedThumbnail',
     ]),
-    hasUserId(){
-      return Util.hasValue(this.userForm.userId)
-    },
     thumbnailSrc () {
       return this.form.existThumbnail && this.form.potId && (!this.form.thumbnail) ?
         // 登録済みのサムネイルを表示する場合(画像取得APIのURLを指定)
@@ -265,12 +229,6 @@ export default {
       },
       deep: true,
     },
-    'vueSelected.role': {
-      handler: function(newVal, oldVal){
-        this.userForm.roleId = Util.getValue(newVal, 'value')
-      },
-      deep: true,
-    },
     'vueSelected.authCategories': {
       handler: function(newVal, oldVal){
         this.form.authCategoryIdList = newVal.map(val => val.value)
@@ -289,26 +247,10 @@ export default {
   },
   async created(){
     this.initForm()
-    this.roleOptions = MasterHelper.getOptionsFromState('role', false, true)
 
     const potUser = Util.hasValue(this.pot.potUserList)? this.pot.potUserList[0]: null
     if(potUser && potUser.user){
-      this.userForm.userId = potUser.user.userId
-      this.userForm.loginId = potUser.user.loginId
-      this.userForm.roleId = potUser.user.roleId
-      this.userForm.email = potUser.user.email
-      this.oldUserForm.userId = potUser.user.userId
-      this.oldUserForm.loginId = potUser.user.loginId
-      this.oldUserForm.roleId = potUser.user.roleId
-      this.oldUserForm.email = potUser.user.email
-      this.editShowUser = true
-      this.vueSelected.role = VueSelectHelper.getVueSelectData(this.roleOptions, potUser.user.roleId)
-    }
-    else{
-      this.editShowUser = false
-      const maxRole = this.roleOptions.reduce((a, b) => a.value > b.value? a: b)
-      this.userForm.roleId = maxRole? maxRole.value: null
-      this.vueSelected.role = VueSelectHelper.getVueSelectData(this.roleOptions, maxRole? maxRole.value: null)
+      this.form.loginId = potUser.user.loginId
     }
   },
   async mounted() {
@@ -384,30 +326,6 @@ export default {
         this.form.potTxList[idx].txId = txOptions.includes(newTxId)? newTxId: null
       })
     },
-    nextShowEmailCheck(){
-      this.$nextTick(() => {
-        this.showEmailCheck()
-      })
-    },
-    showEmailCheck(){
-      if(this.editShowUser){
-        this.showEmail = true
-        return this.showEmail
-      }
-      if(!Util.hasValue(this.form.potTxList)){
-        this.showEmail = false
-        return this.showEmail
-      }
-      for(let cnt = 0; cnt < this.form.potTxList.length; cnt++){
-        const tx = this.txIdMap[this.form.potTxList[cnt].txId]
-        if(tx && Util.hasValue(tx.txSensorList) && tx.txSensorList[0].txSensorPK.sensorId == SENSOR.BUTTON){
-          this.showEmail = true
-          return this.showEmail
-        }
-      }
-      this.showEmail = false
-      return this.showEmail
-    },
     getTxOptions(index) {
       const nowTxIds = this.form.potTxList? this.form.potTxList.filter((val, idx, ary) => {
         if(!val.txId){
@@ -450,23 +368,8 @@ export default {
         else{
           this.watchIds(this.minors, 'minor')
         }
-        this.showEmailCheck()
         this.$forceUpdate()
       })
-    },
-    createDummyLoginId(ids){
-      return `d${ids.join('_')}`
-    },
-    async createDummyUser(dummyLoginId, roles, noEncrypt = USER.ENCRYPT.ON){
-      return {
-        userId: -1,
-        loginId: dummyLoginId,
-        pass: USER.DUMMY.PASS,
-        name: null,
-        roleId: roles.reduce((a, b) => a.roleId > b.roleId? a: b).roleId, // TODO: 何をしたいのか意味不明
-        email: null,
-        noEncrypt: noEncrypt,
-      }
     },
     beforeSubmit(again){
       this.doBeforeSubmit(again)
@@ -479,41 +382,11 @@ export default {
       this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryOptions)
       this.vueSelected.group = VueSelectHelper.getVueSelectData(this.groupOptions)
 
-      const maxRole = this.roleOptions.reduce((a, b) => a.value > b.value? a: b)
-      this.userForm.roleId = maxRole? maxRole.value: null
-      this.vueSelected.role = VueSelectHelper.getVueSelectData(this.roleOptions, maxRole? maxRole.value: null)
-
       this.form.potCd = MasterHelper.createMasterCd('pot', this.pots, this.pot)
       this.initPotTxList()
     },
     async onSaved(){
       this.$set(this.form, 'potCd', MasterHelper.createMasterCd('pot', this.pots, this.pot))
-    },
-    setDummyParam(dummyUser, paramName, showForm){
-      dummyUser[paramName] = showForm? this.userForm[paramName]: this.hasUserId? this.oldUserForm[paramName]: dummyUser[paramName]
-    },
-    async getUserEntity(dummyParam) {
-      if(!this.hasId && !this.editShowUser && !this.showEmail){
-        return null
-      }
-
-      const login = LocalStorageHelper.getLogin()
-      const dummyLoginId = this.createDummyLoginId([
-        login.currentRegion.regionId,
-        ...this.form.potTxList.map((potTx) => potTx.txId? potTx.txId: 0)
-      ])
-      const dummyUser = await this.createDummyUser(dummyLoginId, this.roles)
-
-      dummyUser.userId = this.userForm.userId? this.userForm.userId: dummyParam.dummyKey--
-      dummyUser.name = this.form.potName
-      this.setDummyParam(dummyUser, 'loginId', this.editShowUser)
-      this.setDummyParam(dummyUser, 'pass', this.editShowUser)
-      this.setDummyParam(dummyUser, 'roleId', this.editShowUser)
-      this.setDummyParam(dummyUser, 'email', this.showEmail)
-      if(!this.editShowUser && this.showEmail){
-        dummyUser.encrypt = USER.ENCRYPT.OFF
-      }
-      return dummyUser
     },
     async onSaving() {
       let dummyParam = {dummyKey: -1}
@@ -534,13 +407,6 @@ export default {
         }] : [],
         potCategoryList: this.form.categoryId ? [{
           potCategoryPK: {categoryId: this.form.categoryId}
-        }] : [],
-        potUserList: this.hasUserId || this.editShowUser || this.showEmail ? [{
-          potUserPK: {
-            potId: this.form.potId || dummyParam.dummyKey--,
-            userId: this.userForm.userId? this.userForm.userId: dummyParam.dummyKey--
-          },
-          user: await this.getUserEntity(dummyParam)
         }] : [],
         txId: this.form.txId,
         thumbnail: this.form.thumbnail,
