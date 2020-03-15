@@ -311,7 +311,7 @@ export default {
       const entity = {
         locationId: this.form.locationId? this.form.locationId: dummyKey--,
         locationCd: this.form.locationCd,
-        locationType: this.form.locationType,
+        locationType: Util.v(this.form, 'locationType', 0),
         areaId: this.form.areaId,
         locationName: this.form.locationName,
         txViewType: {
