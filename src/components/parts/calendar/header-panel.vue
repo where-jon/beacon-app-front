@@ -81,7 +81,7 @@ export default {
       if (this.planMode == 'normal') { 
         return (headerOpt) => moment(headerOpt.value).format('D')
       }
-      return (headerOpt) => headerOpt.label
+      return (headerOpt) => headerOpt.zoneName // TODO: これでいいか要確認
     }
   },
   mounted() {
@@ -93,17 +93,17 @@ export default {
     getDayNameColor(theme, day, isToday, isPastDay) {
       let color = ''
       if (theme) {
-          if (day === 0) {
-              color = theme.common.holiday.color
-          } else if (isPastDay) {
-              color = theme.week.pastDay.color || theme.common.dayname.color
-          } else if (day === 6) {
-              color = theme.common.saturday.color
-          } else if (isToday) {
-              color = theme.week.today.color || theme.common.today.color
-          } else {
-              color = theme.common.dayname.color
-          }
+        if (day === 0) {
+          color = theme.common.holiday.color
+        } else if (isPastDay) {
+          color = theme.week.pastDay.color || theme.common.dayname.color
+        } else if (day === 6) {
+          color = theme.common.saturday.color
+        } else if (isToday) {
+          color = theme.week.today.color || theme.common.today.color
+        } else {
+          color = theme.common.dayname.color
+        }
       }
       return color
     },
