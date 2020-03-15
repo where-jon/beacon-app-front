@@ -743,7 +743,8 @@ export const SETTING = {
         },
         SVCONLY: {
           EXCLOUD: {
-            AUTH_HEADER: SETTING.PASSWORD
+            AUTH_HEADER: SETTING.PASSWORD,
+            TX_REG: SETTING.BOOLEAN,
           }
         },
         BATCH: {

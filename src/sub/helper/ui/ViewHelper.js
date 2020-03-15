@@ -186,7 +186,7 @@ export const disabledButtons = disabled => {
  */
 export const twinkleProhibit = (createJsStage, icons, prohibitDetectList) => {
   Object.values(icons).forEach(icon => prohibitDetectList.some(tx => tx.minor == icon.btxId)? icon.visible = !icon.visible: icon.visible = true)
-  createJsStage.update()
+  // createJsStage.update() // これをするとマップ全体が点滅する。しなくてもアイコンは点滅する。
 }
 
 /**

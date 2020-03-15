@@ -38,7 +38,7 @@ export const getLostUnDetectList = (position, lostZones) => {
     position.forEach((pos) => {
       const group = groupZoneList.find(e => e.groupCd && e.groupCd == Util.v(pos, 'tx.pot.group.groupCd'))
       if (group && group.zoneCd.includes(lostZone.zoneCd)) {
-        if( pos.detectState != DETECT_STATE.DETECTED || pos.exb.zoneCd != lostZone.zoneCd) {
+        if( pos.detectState != DETECT_STATE.DETECTED || !Util.v(pos, 'exb.location.zoneList', []).some(zone => zone.zoneCd == lostZone.zoneCd)) {
           lostUnDetectList.push({
             isLost: true,
             btxId: pos.btxId,
@@ -132,7 +132,8 @@ export const setProhibitDetect = (viewName, stage, icons, zones, positions = [])
   const prohibitZones = zones.filter(zone => zone.categoryList.some(category => category.categoryCd == SYSTEM_ZONE_CATEGORY_NAME.PROHIBIT))
   const lostZones = zones.filter(zone => zone.categoryList.some(category => category.categoryCd == SYSTEM_ZONE_CATEGORY_NAME.LOST))
   const prohibitDetectList = getProhibitDetectList(positions, prohibitZones)
-  const lostUnDetectList = getLostUnDetectList(PositionHelper.filterPositions(), lostZones)
+  positions = PositionHelper.filterPositions()
+  const lostUnDetectList = getLostUnDetectList(positions, lostZones)
 
   const ret = {}
   ret.prohibitDetectList = prohibitDetectList.concat(lostUnDetectList)

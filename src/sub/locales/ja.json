@@ -316,6 +316,8 @@
     "multip": "多目的",
     "emptyToilet": "空き",
 
+    "meeting_room": "会議室",
+
     "password": "パスワード",
     "passwordCurrent": "現在のパスワード",
     "passwordUpdate": "変更パスワード",
@@ -994,7 +996,8 @@
       },
       "SVCONLY": {
         "EXCLOUD": {
-          "AUTH_HEADER": "EXCloud APIキー::EXCloudのAPIを使用する際のAPIキーを設定します。秘匿情報のため内容は表示されません。設定のみ可能です。"
+          "AUTH_HEADER": "EXCloud APIキー::EXCloudのAPIを使用する際のAPIキーを設定します。秘匿情報のため内容は表示されません。設定のみ可能です。",
+          "TX_REG": "EXCloud TX登録API使用::EXCloudのTXの登録APIを使用するか否か。"
         }
       },
       "ENTER": {
@@ -1533,6 +1536,7 @@
     "loadingFile": "ファイルを読み込んでいます。({now} / {all} 件)",
     "networkError": "サーバに接続できません。",
     "noLedDevice": "操作できるLEDデバイスがありません。",
+    "providerUserNotAllowed": "プロバイダユーザではこの機能は利用できません。",
     "totalRowsMessage": "{row}件(表示は最新{maxRows}件まで)",
     "listEmpty": "データが存在しません。",
     "uploadMax": "アップロード可能な最大ファイルサイズは{target}Mバイトです。",
