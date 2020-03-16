@@ -81,7 +81,7 @@ export default {
       if (this.planMode == 'normal') { 
         return (headerOpt) => moment(headerOpt.value).format('D')
       }
-      return (headerOpt) => headerOpt.zoneName // TODO: これでいいか要確認
+      return (headerOpt) => headerOpt.label // TODO: これでいいか要確認
     }
   },
   mounted() {

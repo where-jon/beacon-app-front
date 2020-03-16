@@ -394,6 +394,8 @@ export default {
       })
       this.headerOptsMeetingRoom = this.zones.filter(z => {
         return z.categoryList.map(cate => cate.categoryCd=='MEETING_ROOM').includes(true)
+      }).map(zone => {
+        return {value: zone.zoneId, label: zone.zoneName}
       })
       this.makeOpts()
     },
