@@ -306,7 +306,6 @@ export default {
         this.vueSelected.filter = null
         this.vueSelected.filters = []
         this.filterOpts = this.loadStates.includes(newVal) ? this.options[newVal] : []
-        console.log('!!!', this.filterOpts)
         if (!newVal) {
           this.fetchData()
         }
