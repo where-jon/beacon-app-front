@@ -144,7 +144,7 @@ export default {
   border-right: 1px solid #e5e5e5;
 }
 .tui-full-calendar-dayname-date {
-  font-size: 1.5rem;
+  font-size: 1rem;
 }
 .tui-full-calendar-dayname-name {
   /* font-weight: bold; */
