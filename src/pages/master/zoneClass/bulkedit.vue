@@ -60,6 +60,12 @@ export default {
     },
   },
   methods: {
+    async onSaving() {
+      await this.$refs.bulkEdit.bulkSave2()
+    },
+    getConf() {
+      return {}
+    },
     onRestruct(entity, dummyKey){
       const zoneType = ZONE.getOptions().filter(option => APP.ZONE.TYPES.includes(option.value)).find(option => option.text == entity.zoneType)
       if(!zoneType) {

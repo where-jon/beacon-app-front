@@ -371,7 +371,7 @@ const getGridLeftAndWidth = (headerOpts) => {
     case MAX_WIDTH_RATIO:
       const unitPx = containerPx * widthRatio / 100
       const newContainerPx= unitPx * headerOpts.length
-      document.getElementById('w-container').style.width = widthRatio == MIN_WIDTH_RATIO ? '100%' : ''
+      document.getElementById('w-container').style.width = widthRatio == MIN_WIDTH_RATIO ? `${newContainerPx}px` : ''
       document.getElementById('tg-h-g').style.width = `${newContainerPx}px`
       document.getElementById('tg-s').style.width = `${newContainerPx}px`
       document.getElementById('day-right').style.width = `${newContainerPx}px`

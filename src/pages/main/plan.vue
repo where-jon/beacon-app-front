@@ -750,7 +750,6 @@ export default {
   font-weight: bold;
 }
 .tui-full-calendar-week-container {
-  width: 100%;
   height: inherit;
   display: inline-block;
   font-size: 10px;
