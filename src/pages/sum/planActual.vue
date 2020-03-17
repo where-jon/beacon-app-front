@@ -112,23 +112,53 @@ export default {
       items: ViewHelper.createBreadCrumbItems('sumTitle', 'planActual'),
 
       indicatorTypeOpts: [
-        {value:0, label: '予約率（予約時間／就業時間）'},
-        {value:1, label: '稼働率（稼働／就業時間）'},
-        {value:2, label: '予約稼働率（利用／予約時間）'},
-        {value:3, label: '予約外利用率（予約外利用／就業時間）'},
-        {value:4, label: '空予約回数'},
+        {value:0, label: `${this.$i18n.tnl('label.reservationRate')}（${this.$i18n.tnl('label.reservationHours')}／${this.$i18n.tnl('label.workingHours')}）`},
+        {value:1, label: `${this.$i18n.tnl('label.operatingRate')}（${this.$i18n.tnl('label.operatingHours')}／${this.$i18n.tnl('label.workingHours')}）`},
+        {value:2, label: `${this.$i18n.tnl('label.reserveOperatingRate')}（${this.$i18n.tnl('label.reserveOperatingHours')}／${this.$i18n.tnl('label.reservationHours')}）`},
+        {value:3, label: `${this.$i18n.tnl('label.unreserveOperatingRate')}（${this.$i18n.tnl('label.unreserveOperatingHours')}／${this.$i18n.tnl('label.workingHours')}）`},
+        {value:4, label: `${this.$i18n.tnl('label.emptyReservationCount')}`},
       ],
       indicatorTypeFilter: null,
 
       currentPage: 1,
       perPage: 20,
       totalRows: 0,
-      tFields: [
+      tFieldsReservationRate: [
         {key: 'name', sortable: true, label: this.$i18n.tnl('label.name')},
-        {key: 'indicator', sortable: true, label: this.$i18n.tnl('label.indicator')},
+        {key: 'indicator', sortable: true, label: this.$i18n.tnl('label.reservationRate')},
         {key: 'graph', sortable: false, label: this.$i18n.tnl('label.graph'), thStyle: {height: '50px !important', width:'400px !important'} },
-        {key: 'hour', sortable: true, label: this.$i18n.tnl('label.hour')},
+        {key: 'hour', sortable: true, label: this.$i18n.tnl('label.reservationHours')},
+        {key: 'hour2', sortable: true, label: this.$i18n.tnl('label.workingHours')},
       ],
+      tFieldsOperatingRate: [
+        {key: 'name', sortable: true, label: this.$i18n.tnl('label.name')},
+        {key: 'indicator', sortable: true, label: this.$i18n.tnl('label.operatingRate')},
+        {key: 'graph', sortable: false, label: this.$i18n.tnl('label.graph'), thStyle: {height: '50px !important', width:'400px !important'} },
+        {key: 'hour', sortable: true, label: this.$i18n.tnl('label.operatingHours')},
+        {key: 'hour2', sortable: true, label: this.$i18n.tnl('label.workingHours')},
+      ],
+      tFieldsReserveOperatingRate: [
+        {key: 'name', sortable: true, label: this.$i18n.tnl('label.name')},
+        {key: 'indicator', sortable: true, label: this.$i18n.tnl('label.reserveOperatingRate')},
+        {key: 'graph', sortable: false, label: this.$i18n.tnl('label.graph'), thStyle: {height: '50px !important', width:'400px !important'} },
+        {key: 'hour', sortable: true, label: this.$i18n.tnl('label.reserveOperatingHours')},
+        {key: 'hour2', sortable: true, label: this.$i18n.tnl('label.reservationHours')},
+      ],
+      tFieldsUnreserveOperatingRate: [
+        {key: 'name', sortable: true, label: this.$i18n.tnl('label.name')},
+        {key: 'indicator', sortable: true, label: this.$i18n.tnl('label.unreserveOperatingRate')},
+        {key: 'graph', sortable: false, label: this.$i18n.tnl('label.graph'), thStyle: {height: '50px !important', width:'400px !important'} },
+        {key: 'hour', sortable: true, label: this.$i18n.tnl('label.reserveOperatingHours')},
+        {key: 'hour2', sortable: true, label: this.$i18n.tnl('label.reservationHours')},
+      ],
+      tFieldsEmptyReservationCount: [
+        {key: 'name', sortable: true, label: this.$i18n.tnl('label.name')},
+        {key: 'indicator', sortable: true, label: this.$i18n.tnl('label.emptyReservationCount')},
+        null,
+        null,
+        null,
+      ],
+      tFields: [],
       tItems: [],
 
       // カレンダー
@@ -171,6 +201,27 @@ export default {
   computed: {
   },
   watch: {
+    indicatorTypeFilter: {
+      handler: function(newVal, oldVal){
+        switch (newVal.value) {
+          case 0:
+            this.tFields = this.tFieldsReservationRate
+            break
+          case 1:
+            this.tFields = this.tFieldsOperatingRate
+            break
+          case 2:
+            this.tFields = this.tFieldsReserveOperatingRate
+            break
+          case 3:
+            this.tFields = this.tFieldsUnreserveOperatingRate
+            break
+          default:
+            this.tFields = this.tFieldsEmptyReservationCount
+        }
+      },
+      deep: false,
+    },
     'vueSelected.filterType': {
       handler: function(newVal, oldVal){
         console.log('vueSelected')
@@ -204,6 +255,7 @@ export default {
   },
   async mounted() {
     importElementUI()
+    this.tFields = this.tFieldsReservationRate
   },
   methods: {
     onChangeToggle(e) {
@@ -240,7 +292,7 @@ export default {
       try {
         const [startDt, endDt] = this.getDateRange()
         this.tItems = []
-        let uri = `${this.appServicePath}?startDt=${startDt}&endDt=${endDt}&indicatorType=${this.indicatorTypeFilter.value}&workingTimeType=range`
+        let uri = `${this.appServicePath}?startDt=${startDt}&endDt=${endDt}&indicatorType=${this.indicatorTypeFilter.value}&workingTimeType=range`//literal, range
         if (this.selectedFilter.filterType && this.selectedFilter.filterId) {
           uri = `${uri}&filterType=${this.selectedFilter.filterType}&filterId=${this.selectedFilter.filterId}`
         }
@@ -270,36 +322,41 @@ export default {
     },
     exportCsv() {
       const [startDt, endDt] = this.getDateRange()
-      let uri = `${APP_SERVICE.BASE_URL}${this.appServicePath}?}/csvdownload?charset=${getCharSet(this.$store.state.loginId)}&startDt=${startDt}&endDt=${endDt}&indicatorType=${this.indicatorTypeFilter.value}`
+      let uri = `${this.appServicePath}?}/csvdownload?charset=${getCharSet(this.$store.state.loginId)}&startDt=${startDt}&endDt=${endDt}&indicatorType=${this.indicatorTypeFilter.value}`
       if (this.selectedFilter.filterType && this.selectedFilter.filterId) {
         uri += `&filterType=${this.selectedFilter.filterType}&filterId=${this.selectedFilter.filterId}`
       }
       BrowserUtil.executeFileDL(uri)
     },
+    orgRound(value) {
+      const base = 100
+      return Math.round(value * base) / base
+    },
     loadIndicators(data) {
       const arr = data.indicators.map((e) => {
         switch (this.indicatorTypeFilter.value) {
           case 0: // 予約率（予約時間／就業時間）
-          case 1: // 稼働率（稼働／就業時間）
-          case 3: // 予約外利用率（予約外利用／就業時間）
+          case 1: // 稼働率（稼働時間／就業時間）
+          case 3: // 予約外稼働率（予約外稼働時間／就業時間）
             return { 
               name: e.targetName, 
-              indicator: e.value / data.sumOfWorkingHours * 100, 
-              hour: e.value
+              indicator: this.orgRound(e.value / data.sumOfWorkingHours * 100),
+              hour: e.value,
+              hour2: data.sumOfWorkingHours,
             }
           case 2:
-            // 予約稼働率（利用／予約時間）
+            // 予約内稼働率（予約内稼働時間／予約時間）
             return { 
               name: e.targetName, 
-              indicator: e.value / data.sumOfReservationHours * 100, 
-              hour: e.value
+              indicator: this.orgRound(e.value / e.sumOfReservationHours * 100),
+              hour: e.value,
+              hour2: e.sumOfReservationHours,
             }
           case 4:
-            // 空予約率（空予約数／予約数）
+            // 空予約数
             return { 
               name: e.targetName, 
-              indicator: e.value / e.scheduleNum * 100, 
-              hour: e.value
+              indicator: e.value,
             }
         }
       })
