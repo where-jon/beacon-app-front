@@ -48,7 +48,7 @@
             :type="datePickerType"
             :format="datePickerFormat"
             size="large"
-            style="width: 135px;"
+            style="width: 170px;"
             :placeholder="datePickerPlaceholder"
             @blur="onDatePickerBlur"
             >
@@ -111,7 +111,6 @@ export default {
       appServicePath: '/office/plans/indicators',
       items: ViewHelper.createBreadCrumbItems('sumTitle', 'planActual'),
 
-      isWeek: true,
       indicatorTypeOpts: [
         {value:0, label: '予約率（予約時間／就業時間）'},
         {value:1, label: '稼働率（稼働／就業時間）'},
@@ -133,15 +132,16 @@ export default {
       tItems: [],
 
       // カレンダー
-      today: moment().format("YYYY-MM-DD"),
       isWeek: true,
       datePickerType: 'week',
-      datePickerFormatWeek: 'week WW',
-      datePickerFormatMonth: 'MMM',
+      datePickerFormatWeek: 'yyyy-MM-dd ' + this.$t('label.week'),
+      datePickerFormatMonth: 'yyyy-MM',
       datePickerFormat: null,
       datePickerPlaceholderWeek: this.$t('label.week'),
       datePickerPlaceholderMonth: this.$t('label.month'),
       datePickerPlaceholder: null,
+      today: moment().day(1).set({hour:0,minute:0,second:0,millisecond:0}).toDate(),
+      preDate: moment().day(1).set({hour:0,minute:0,second:0,millisecond:0}).toDate(),
 
       // マスタ情報
       loadStates: ['area', 'zone', 'location', 'category', 'pot'],
@@ -171,12 +171,6 @@ export default {
   computed: {
   },
   watch: {
-    datePickerPlaceholder() {
-      return this.isWeek ? this.datePickerPlaceholderWeek : this.datePickerPlaceholderMonth
-    },
-    datePickerFormat() {
-      return this.isWeek ? this.datePickerFormatWeek : this.datePickerFormatMonth 
-    },
     'vueSelected.filterType': {
       handler: function(newVal, oldVal){
         console.log('vueSelected')
@@ -203,6 +197,8 @@ export default {
     },
   },
   async created() {
+    this.datePickerFormat = this.datePickerFormatWeek
+    this.datePickerPlaceholder = this.datePickerPlaceholderWeek
     this.indicatorTypeFilter = this.indicatorTypeOpts[0]
     this.loadMaster()
   },
@@ -212,13 +208,21 @@ export default {
   methods: {
     onChangeToggle(e) {
       this.isWeek = !this.isWeek
-      this.datePickerType = this.isWeek ? 'week' : 'month'
+      if (this.isWeek) {
+        this.datePickerType = 'week'
+        this.datePickerFormat = this.datePickerFormatWeek
+        this.datePickerPlaceholder = this.datePickerPlaceholderWeek
+      } else {
+        this.datePickerType = 'month'
+        this.datePickerFormat = this.datePickerFormatMonth
+        this.datePickerPlaceholder = this.datePickerPlaceholderMonth
+      }
     },
     onDatePickerBlur(e) {
       const picker = this.$refs.datePicker
-      if (!picker.value['getDate']) {
-        return
-      }
+      let dt = new Date(picker.value)
+      dt = this.datePickerType == 'week' ? moment(dt).day(1).toDate() : moment(dt).date(1).toDate()
+      this.preDate = dt
     },
     // マスタ
     async loadMaster() {
@@ -234,10 +238,6 @@ export default {
     },
     async fetchData() {
       try {
-        const picker = this.$refs.datePicker
-        if (!picker.value['getDate']) {
-          return
-        }
         const [startDt, endDt] = this.getDateRange()
         this.tItems = []
         let uri = `${this.appServicePath}?startDt=${startDt}&endDt=${endDt}&indicatorType=${this.indicatorTypeFilter.value}&workingTimeType=range`
@@ -269,10 +269,6 @@ export default {
       return [startDt, endDt]
     },
     exportCsv() {
-      const picker = this.$refs.datePicker
-      if (!picker.value['getDate']) {
-        return
-      }
       const [startDt, endDt] = this.getDateRange()
       let uri = `${APP_SERVICE.BASE_URL}${this.appServicePath}?}/csvdownload?charset=${getCharSet(this.$store.state.loginId)}&startDt=${startDt}&endDt=${endDt}&indicatorType=${this.indicatorTypeFilter.value}`
       if (this.selectedFilter.filterType && this.selectedFilter.filterId) {
