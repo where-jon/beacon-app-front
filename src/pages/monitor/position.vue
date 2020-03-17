@@ -78,7 +78,7 @@ export default {
       return ret
     },
     getClass(position){
-      return {undetect: DetectStateHelper.isUndetectFromDetail('tx', position.updatetime)}
+      return {undetect: DetectStateHelper.isUndetectFromDetail('tx', position.timestamp)}
     },
     async fetchSensorHistory(){
       const exCloudSensors = {}
@@ -115,9 +115,9 @@ export default {
           ...e,
           name: tx != null ? tx.pot.potName : '—',
           finalReceiveLocation: Util.getValue(exb, 'location.locationName', ''),
-          finalReceiveTimestamp: this.getTimestamp(e.updatetime),
+          finalReceiveTimestamp: this.getTimestamp(e.timestamp),
           powerLevel: this.$refs.monitorTable.getPositionPowerLevelLabel ? this.$refs.monitorTable.getPositionPowerLevelLabel(e.power_level) : null,
-          state: this.$refs.monitorTable.getStateLabel('tx', e.updatetime),
+          state: this.$refs.monitorTable.getStateLabel('tx', e.timestamp),
           sensorIdList: Util.getValue(tx, 'sensorList', []).map(sensor => sensor.sensorId),
           powerLevelTimestamp: this.getTimestamp(e.power_level_timestamp),
         }
