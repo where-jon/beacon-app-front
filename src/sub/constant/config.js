@@ -361,8 +361,9 @@ export const APP_SERVICE = {
 }
 
 export const EXCLOUD = {
-  BASE_URL: 'https://nsome8q880.execute-api.ap-northeast-1.amazonaws.com/prod', 
+  BASE_URL: 'https://excloud-evalktdv-api.azurewebsites.net/api', 
 
+  // TODO: EXCloud直はなくなったため、以下はConstantに移す
   withCredentials: true,
   // POSITION_URL: EXCLOUD.BASE_URL + "/beacon/position-kalman?_=",
   // GATEWAY_URL: EXCLOUD.BASE_URL + "/gateway/0?=",

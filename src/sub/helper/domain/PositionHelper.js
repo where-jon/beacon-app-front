@@ -402,7 +402,7 @@ export const calcScreenCoordinates = (positions, ratio, locations = [], selected
   return _(targetLocations).map(location => {
     const samePos = targetPos.filter(pos => pos.location.locationId == location.locationId)
     // console.error('samePos', samePos.map(e => e.minor))
-    const txR = location.isFixedPosZone? DISP.TX.FIX_R: DISP.TX.R
+    const txR = location.isFixedPosZone? DISP.TX.FIXED_POS.R: DISP.TX.R
     samePos.forEach(pos => pos.txR = txR)
     return calcCoordinatesWhenOverlap(location, ratio, samePos, txR)
   }).compact().flatMap(e => e).tap(Util.debug).value()
