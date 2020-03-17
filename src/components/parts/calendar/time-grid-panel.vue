@@ -3,7 +3,7 @@
   <div id="vlayout-area" class="tui-full-calendar-vlayout-area tui-full-calendar-vlayout-container">
     <div class="tui-full-calendar-timegrid-container">
       <!-- left -->
-      <div class="tui-full-calendar-timegrid-left" :style="{width: styles.leftWidth, 'font-size': styles.leftFontSize}">
+      <div id="tg-left" class="tui-full-calendar-timegrid-left" :style="{width: styles.leftWidth, 'font-size': styles.leftFontSize}">
         <div class="tui-full-calendar-timegrid-timezone" :style="{position: 'absolute', top: 0, width: '100%', left: '0%', 'border-right': styles.leftBorderRight, 'background-color': styles.displayTimezoneLabelBackgroundColor}">
           <div v-for="(timeSlot, idx) in timeSlots" :key="idx" class="tui-full-calendar-timegrid-hour" :style="{height: styles.oneHourHeight}">
             <span style="{color: 'black'}">{{ timeSlot.label }}</span>
@@ -11,15 +11,15 @@
         </div>
       </div>
       <!-- right -->
-      <div class="tui-full-calendar-timegrid-right" :style="{'margin-left': styles.leftWidth}">
-          <div class="tui-full-calendar-timegrid-h-grid">
+      <div id='tgScrl' class="tui-full-calendar-timegrid-right sync-scroll" :style="{'margin-left': styles.leftWidth}" @scroll="handleScroll">
+          <div id="tg-h-g" class="tui-full-calendar-timegrid-h-grid">
             <div v-for="(timeSlot, idx) in timeSlots" :key="idx" class="tui-full-calendar-timegrid-gridline" :style="{height: styles.oneHourHeight}">
               <div class="tui-full-calendar-timegrid-gridline-half" :style="{height: styles.halfHourHeight, 'border-bottom': styles.halfHourBorderBottomone}"></div>
             </div>
           </div>
-          <div class="tui-full-calendar-timegrid-schedules">
+          <div id="tg-s" class="tui-full-calendar-timegrid-schedules">
             <div class="tui-full-calendar-timegrid-schedules-container">
-              <div v-for="(headerOpt, idx) in headerOpts" :key="idx" class="tui-full-calendar-time-date" :data-id="headerOpt.value" :style="timeDateStyle(headerOpt.value)">
+              <div v-for="(headerOpt, idx) in headerOpts" :key="idx" :class="idx == headerOpts.length-1 ? 'tui-full-calendar-time-date-last' : 'tui-full-calendar-time-date'" :data-id="headerOpt.value" :style="timeDateStyle(headerOpt.value)">
                 <time-panel-compare v-if="doCompare" :headerId="headerOpt.value" :viewModel="viewModel">
                 </time-panel-compare>
                 <time-panel v-if="!doCompare" :isToday="today == headerOpt.value" :headerId="headerOpt.value" :viewModel="viewModel">
@@ -91,6 +91,9 @@ export default {
     this.setCalendarHeight()
   },
   methods: {
+    handleScroll(e) {
+      this.$emit('handleScroll', 'tgScrl')
+    },
     setCalendarHeight() {
       const container = document.getElementById('vlayout-area')
       if (BrowserUtil.isAndroidOrIOS()) {

@@ -218,6 +218,13 @@ export const availableSensorGraph = () =>  _(APP.SENSORGRAPH.SENSOR).sort().valu
 export const onlyOne = () => availableSensorAll().length == 1 && availableSensorAll()[0]
 
 /**
+ * TXが固定位置に置かれるセンサーを持っているかを返す
+ * 
+ * @param {*} pos 
+ */
+export const isFixedSensorTx = (tx) => !!Util.v(tx, 'sensorList', []).find(sensor => ![SENSOR.BUTTON, SENSOR.MEDITAG].includes(sensor.sensorId))
+
+/**
  * 不快指数の状態を示す文字列を取得する。
  * @method
  * @param {Number} temperature

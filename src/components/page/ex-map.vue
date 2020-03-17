@@ -638,7 +638,13 @@ export default {
       }
     },
     async fetchData(payload) { // リロードボタン押下時
-      this.onMapImageShown(payload)
+      if (!this.bitmap) {
+        this.reloadState.isLoad = false
+        this.hideProgress()
+      }
+      else {
+        this.onMapImageShown(payload)
+      }
     },
     async onMapImageShown(payload) { // canvasへのdrawImageが完了すると呼び出される
       if (!payload) payload = {}
@@ -665,8 +671,6 @@ export default {
         const alwaysTxs = this.txs.some(tx => tx.areaId == this.selectedAreaId && NumberUtil.bitON(tx.disp, TX.DISP.ALWAYS))
         await PositionHelper.loadPosition(this.count, alwaysTxs)
       }
-
-      this.stage.on('click', evt => this.resetDetail())
 
       if (Util.hasValue(this.pShowExbSensorIds)) {
         this.showExbAll()
@@ -699,6 +703,7 @@ export default {
       }
       this.replace({ showWarn: Util.hasValue(this.warnMessage) })
 
+      this.stage.on('click', evt => this.resetDetail())
       this.stage.enableMouseOver()
       this.stage.update()
 

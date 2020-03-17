@@ -131,12 +131,12 @@ export const APP = { // 機能面に関する設定
     TYPE: {
       WITH: [],
     },
-    // 拡張項目定義（サンプル）
+    // 拡張項目定義（サンプル）: デフォルトはなし
     EXT_DEF: [
-      {key: 'description', type: 'string', length: 100, showlist: true, sort: true },
-      {key: 'toilet', type: 'list', format: 'male|female|share|multip', showlist: true, sort: false},
-      {key:'led_no',type:'int',min:1,max:5,showlist:false},
-      {key:'led_device_id',type:'string',format:'^[0-9]+(,[0-9]+)*$',showlist:false},
+      // {key: 'description', type: 'string', length: 100, showlist: true, sort: true },
+      // {key: 'toilet', type: 'list', format: 'male|female|share|multip', showlist: true, sort: false},
+      // {key:'led_no',type:'int',min:1,max:5,showlist:false},
+      // {key:'led_device_id',type:'string',format:'^[0-9]+(,[0-9]+)*$',showlist:false},
     ],
   },
   // USER関連設定
@@ -147,95 +147,94 @@ export const APP = { // 機能面に関する設定
   POSITION_WITH_AREA: true, // エリアを表示
   // POT関連設定
   POT: {
-    WITH: ['thumbnail', 'category', 'user', 'ruby', 'description'],
+    WITH: ['thumbnail', 'category', 'ruby', 'description'],
     MULTI_TX: false,         // 複数Tx使用
-    CSV_USER: false,
     TX_MAX: 2,   // 所持Tx最大数
     TYPES: [1, 2, 3],   // 選択可能な種別（1人,2物,3物(その他)）
-    // 拡張項目定義（サンプル）
+    // 拡張項目定義（サンプル）: デフォルトはなし
     EXT_DEF: [
-      {key: 'post', type: 'string', showlist: true, sort: true},
-      {key: 'tel', type: 'tel', showlist: true, sort: true},
-      {key: 'mobile', type: 'tel', showlist: false, sort: false},
-      {key: 'entrydate', type: 'date', showlist: true, sort: false},
-      {key: 'salary', type: 'int', min: 0, max: 1200000, showlist: false, sort: false},
-      {key: 'score', type: 'float', default: 50, min: -100, max: 100, showlist: false, sort: false},
-      {key: 'manager', type: 'boolean', default: 'はい', checked:'はい', unchecked:' ', showlist: true, sort: false},
-      {key: 'address', type: 'string', default:'Tokyo', required: true, length:10, format: '[a-zA-Z]+', showlist: false, sort: false},
+      // {key: 'post', type: 'string', showlist: true, sort: true},
+      // {key: 'tel', type: 'tel', showlist: true, sort: true},
+      // {key: 'mobile', type: 'tel', showlist: false, sort: false},
+      // {key: 'entrydate', type: 'date', showlist: true, sort: false},
+      // {key: 'salary', type: 'int', min: 0, max: 1200000, showlist: false, sort: false},
+      // {key: 'score', type: 'float', default: 50, min: -100, max: 100, showlist: false, sort: false},
+      // {key: 'manager', type: 'boolean', default: 'はい', checked:'はい', unchecked:' ', showlist: true, sort: false},
+      // {key: 'address', type: 'string', default:'Tokyo', required: true, length:10, format: '[a-zA-Z]+', showlist: false, sort: false},
     ],
   },
   PERSON: {
     WITH: ['thumbnail', 'category', 'user', 'ruby', 'description'],
     MULTI_TX: false,         // 複数Tx使用
     TX_MAX: 2,   // 所持Tx最大数
-    // 拡張項目定義（サンプル）
+    // 拡張項目定義（サンプル）: デフォルトはなし
     EXT_DEF: [
-      {key: 'post', type: 'string', showlist: true, sort: true},
-      {key: 'tel', type: 'tel', showlist: true, sort: true},
-      {key: 'mobile', type: 'tel', showlist: false, sort: false},
-      {key: 'entrydate', type: 'date', showlist: true, sort: false},
-      {key: 'salary', type: 'int', min: 0, max: 1200000, showlist: false, sort: false},
-      {key: 'score', type: 'float', default: 50, min: -100, max: 100, showlist: false, sort: false},
-      {key: 'manager', type: 'boolean', default: 'はい', checked:'はい', unchecked:' ', showlist: true, sort: false},
-      {key: 'address', type: 'string', default:'Tokyo', required: true, length:10, format: '[a-zA-Z]+', showlist: false, sort: false},
+      // {key: 'post', type: 'string', showlist: true, sort: true},
+      // {key: 'tel', type: 'tel', showlist: true, sort: true},
+      // {key: 'mobile', type: 'tel', showlist: false, sort: false},
+      // {key: 'entrydate', type: 'date', showlist: true, sort: false},
+      // {key: 'salary', type: 'int', min: 0, max: 1200000, showlist: false, sort: false},
+      // {key: 'score', type: 'float', default: 50, min: -100, max: 100, showlist: false, sort: false},
+      // {key: 'manager', type: 'boolean', default: 'はい', checked:'はい', unchecked:' ', showlist: true, sort: false},
+      // {key: 'address', type: 'string', default:'Tokyo', required: true, length:10, format: '[a-zA-Z]+', showlist: false, sort: false},
     ],
   },
   THING: {
     WITH: ['thumbnail', 'category', 'user', 'ruby', 'description'],
     MULTI_TX: false,         // 複数Tx使用
     TX_MAX: 2,   // 所持Tx最大数
-    // 拡張項目定義（サンプル）
+    // 拡張項目定義（サンプル）: デフォルトはなし
     EXT_DEF: [
-      {key: 'post', type: 'string', showlist: true, sort: true},
-      {key: 'tel', type: 'tel', showlist: true, sort: true},
-      {key: 'mobile', type: 'tel', showlist: false, sort: false},
-      {key: 'entrydate', type: 'date', showlist: true, sort: false},
-      {key: 'salary', type: 'int', min: 0, max: 1200000, showlist: false, sort: false},
-      {key: 'score', type: 'float', default: 50, min: -100, max: 100, showlist: false, sort: false},
-      {key: 'manager', type: 'boolean', default: 'はい', checked:'はい', unchecked:' ', showlist: true, sort: false},
-      {key: 'address', type: 'string', default:'Tokyo', required: true, length:10, format: '[a-zA-Z]+', showlist: false, sort: false},
+      // {key: 'post', type: 'string', showlist: true, sort: true},
+      // {key: 'tel', type: 'tel', showlist: true, sort: true},
+      // {key: 'mobile', type: 'tel', showlist: false, sort: false},
+      // {key: 'entrydate', type: 'date', showlist: true, sort: false},
+      // {key: 'salary', type: 'int', min: 0, max: 1200000, showlist: false, sort: false},
+      // {key: 'score', type: 'float', default: 50, min: -100, max: 100, showlist: false, sort: false},
+      // {key: 'manager', type: 'boolean', default: 'はい', checked:'はい', unchecked:' ', showlist: true, sort: false},
+      // {key: 'address', type: 'string', default:'Tokyo', required: true, length:10, format: '[a-zA-Z]+', showlist: false, sort: false},
     ],
   },
   OTHER: {
     WITH: ['thumbnail', 'category', 'user', 'ruby', 'description'],
     MULTI_TX: false,         // 複数Tx使用
     TX_MAX: 2,   // 所持Tx最大数
-    // 拡張項目定義（サンプル）
+    // 拡張項目定義（サンプル）: デフォルトはなし
     EXT_DEF: [
-      {key: 'post', type: 'string', showlist: true, sort: true},
-      {key: 'tel', type: 'tel', showlist: true, sort: true},
-      {key: 'mobile', type: 'tel', showlist: false, sort: false},
-      {key: 'entrydate', type: 'date', showlist: true, sort: false},
-      {key: 'salary', type: 'int', min: 0, max: 1200000, showlist: false, sort: false},
-      {key: 'score', type: 'float', default: 50, min: -100, max: 100, showlist: false, sort: false},
-      {key: 'manager', type: 'boolean', default: 'はい', checked:'はい', unchecked:' ', showlist: true, sort: false},
-      {key: 'address', type: 'string', default:'Tokyo', required: true, length:10, format: '[a-zA-Z]+', showlist: false, sort: false},
+      // {key: 'post', type: 'string', showlist: true, sort: true},
+      // {key: 'tel', type: 'tel', showlist: true, sort: true},
+      // {key: 'mobile', type: 'tel', showlist: false, sort: false},
+      // {key: 'entrydate', type: 'date', showlist: true, sort: false},
+      // {key: 'salary', type: 'int', min: 0, max: 1200000, showlist: false, sort: false},
+      // {key: 'score', type: 'float', default: 50, min: -100, max: 100, showlist: false, sort: false},
+      // {key: 'manager', type: 'boolean', default: 'はい', checked:'はい', unchecked:' ', showlist: true, sort: false},
+      // {key: 'address', type: 'string', default:'Tokyo', required: true, length:10, format: '[a-zA-Z]+', showlist: false, sort: false},
     ],
   },
   // category
   CATEGORY: {
     TYPES: [1,2],   // 選択可能な種別（1人,2物,3ゾーン,4:権限）
     WITH: [],
-    // 拡張項目定義（サンプル）
+    // 拡張項目定義（サンプル）: デフォルトはなし
     EXT_DEF: [
-      {key: 'ruby', type: 'string', length: 20, showlist: true, sort: true },
+      // {key: 'ruby', type: 'string', length: 20, showlist: true, sort: true },
     ],
   },
   // group
   GROUP: {
     WITH: ['ruby'],
-    // 拡張項目定義（サンプル）
+    // 拡張項目定義（サンプル）: デフォルトはなし
     EXT_DEF: [
-      {key: 'ruby', type: 'string', length: 20, showlist: true, sort: true },
+      // {key: 'ruby', type: 'string', length: 20, showlist: true, sort: true },
     ],
   },
   // zone
   ZONE: {
     WITH: [],
     TYPES: [1],   // 選択可能な種別（0, 1: 通常, 2: 警戒ゾーン, 3: ドア）
-    // 拡張項目定義（サンプル）
+    // 拡張項目定義（サンプル）: デフォルトはなし
     EXT_DEF: [
-      {key: 'description', type: 'string', length: 100, showlist: true, sort: true },
+      // {key: 'description', type: 'string', length: 100, showlist: true, sort: true },
     ],
   },
   NOTIFY: {

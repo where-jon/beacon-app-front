@@ -743,7 +743,8 @@ export const SETTING = {
         },
         SVCONLY: {
           EXCLOUD: {
-            AUTH_HEADER: SETTING.PASSWORD
+            AUTH_HEADER: SETTING.PASSWORD,
+            TX_REG: SETTING.BOOLEAN,
           }
         },
         BATCH: {
@@ -1285,6 +1286,11 @@ export const MENU = [
         key: 'env',
         path: 'serverenv',
         icon: 'cog',
+      },
+      {
+        key: 'execTask',
+        path: 'execTask',
+        icon: 'upload',
       },
     ],
   },

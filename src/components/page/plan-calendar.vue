@@ -3,9 +3,9 @@
   <!-- layout -->
     <div class="tui-full-calendar-layout">
       <!-- week -->
-      <div class="tui-full-calendar-week-container">
-        <header-panel :planMode="planMode" :timeLineLeftAndWidth="viewModel.timeLineLeftAndWidth" :headerOpts="headerOpts"></header-panel>
-        <time-grid-panel :planMode="planMode" :timeSlots="timeSlots" :viewModel="viewModel" :headerOpts="headerOpts" :doCompare="doCompare"></time-grid-panel>
+      <div id="w-container" class="tui-full-calendar-week-container">
+        <header-panel :planMode="planMode" :timeLineLeftAndWidth="viewModel.timeLineLeftAndWidth" :headerOpts="headerOpts" @handleScroll="handleScroll"></header-panel>
+        <time-grid-panel :planMode="planMode" :timeSlots="timeSlots" :viewModel="viewModel" :headerOpts="headerOpts" :doCompare="doCompare" @handleScroll="handleScroll"></time-grid-panel>
       </div>
       <div>
         <schedule-detail-popup v-if="clickScheduleEvent && !doCompare" :event="clickScheduleEvent" @edit="doEdit" @delete="doDelete">
@@ -47,6 +47,8 @@ export default {
           label: null
         }
       ],
+      scrollFrom: null,
+      timeoutId: 0,
     }
   },
   mounted() {
@@ -71,7 +73,28 @@ export default {
     },
     doDelete(e) {
       this.$emit('doDelete', e)
-    }
+    },
+    handleScroll(callFrom) {
+      if(this.scrollFrom === null){
+        this.scrollFrom = callFrom;
+      }
+      if(this.scrollFrom !== callFrom) return;
+
+      if(this.timeoutId !== 0) clearTimeout(this.timeoutId);
+      this.timeoutId = setTimeout(()=>{
+        this.timeoutId = 0;
+        this.scrollFrom = null;
+      }, 100);
+      
+      const basis = document.getElementById(callFrom);
+      const scrollRatio = basis.scrollLeft / (basis.scrollWidth - basis.clientWidth);
+      const elements = document.getElementsByClassName("sync-scroll");
+      for (let i = 0; i < elements.length; i++) {
+        if(elements[i].id === callFrom) continue;
+        elements[i].scrollLeft =
+          (elements[i].scrollWidth - elements[i].clientWidth) * scrollRatio;
+      }
+    },
   }
 }
 </script>

@@ -97,6 +97,7 @@
     "locationList": "場所一覧",
     "develop": "開発用",
     "env": "環境変数",
+    "execTask": "バッチ実行",
     "detectedProhibitZone": "進入検知",
     "detectedLostZone": "持ち出し検知",
     "exbId": "EXB ID",
@@ -220,6 +221,16 @@
     "participant": "参加者",
     "registeredPerson": "登録者",
     "indicator": "指標",
+    "reservationRate": "予約率",
+    "reservationHours": "予約時間",
+    "workingHours": "就業時間",
+    "operatingRate": "稼働率",
+    "operatingHours": "稼働時間",
+    "reserveOperatingRate": "予約内稼働率",
+    "reserveOperatingHours": "予約内稼働時間",
+    "unreserveOperatingRate": "予約外稼働率",
+    "unreserveOperatingHours": "予約外稼働時間",
+    "emptyReservationCount": "空予約回数",
     "planNormalMode": "通常モード",
     "planMeetingRoomMode": "会議室モード",
     "syncWithOutlook": "outlook同期",
@@ -315,6 +326,8 @@
     "multip": "多目的",
     "emptyToilet": "空き",
 
+    "meeting_room": "会議室",
+
     "password": "パスワード",
     "passwordCurrent": "現在のパスワード",
     "passwordUpdate": "変更パスワード",
@@ -396,6 +409,7 @@
     "systemChild": "システム設定",
 
     "region": "リージョン",
+    "regionCd": "ID",
     "regionId": "リージョンID",
     "regionName": "リージョン名",
     "meshId": "メッシュID",
@@ -867,7 +881,6 @@
       "POT": {
         "WITH": "人＆物画面で使用する項目::人＆物画面で使用する項目を設定します。設定可能な値は次の通りです。★{POT}",
         "MULTI_TX": "人＆物に複数のTxを登録する::人＆物画面で複数のTxを登録可能にします。",
-        "CSV_USER": "CSVファイルにユーザー登録を含める::CSVファイルにユーザー登録を含めます。",
         "TX_MAX": "人＆物に登録するTxの最大数::人＆物画面で登録可能なTxの最大数を設定します。",
         "EXT_DEF": "人＆物拡張項目::人＆物に設定可能な拡張項目をJSON形式で定義します。"
       },
@@ -993,7 +1006,8 @@
       },
       "SVCONLY": {
         "EXCLOUD": {
-          "AUTH_HEADER": "EXCloud APIキー::EXCloudのAPIを使用する際のAPIキーを設定します。秘匿情報のため内容は表示されません。設定のみ可能です。"
+          "AUTH_HEADER": "EXCloud APIキー::EXCloudのAPIを使用する際のAPIキーを設定します。秘匿情報のため内容は表示されません。設定のみ可能です。",
+          "TX_REG": "EXCloud TX登録API使用::EXCloudのTXの登録APIを使用するか否か。"
         }
       },
       "ENTER": {
@@ -1538,6 +1552,7 @@
     "loadingFile": "ファイルを読み込んでいます。({now} / {all} 件)",
     "networkError": "サーバに接続できません。",
     "noLedDevice": "操作できるLEDデバイスがありません。",
+    "providerUserNotAllowed": "プロバイダユーザではこの機能は利用できません。",
     "totalRowsMessage": "{row}件(表示は最新{maxRows}件まで)",
     "listEmpty": "データが存在しません。",
     "uploadMax": "アップロード可能な最大ファイルサイズは{target}Mバイトです。",

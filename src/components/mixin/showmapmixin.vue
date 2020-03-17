@@ -169,17 +169,17 @@ export default {
         return
       }
       this.showTryCount++
-      if (this.isShownMapImage) {
-        if (callback) {
-          setTimeout(() => {
-            if(!VueUtil.isAuthVuePage(this)){ // 待ち状態の時ページが切り替わっていないかチェック
-              return
-            }
-            callback() // canvasへのdrawImageが完了するとisShownMapImage=trueになる TODO: 下でもcallbackを呼んでいる（重複）
-          }, 0)
-        }
-        return
-      }
+      // if (this.isShownMapImage) {
+      //   if (callback) {
+      //     setTimeout(() => {
+      //       if(!VueUtil.isAuthVuePage(this)){ // 待ち状態の時ページが切り替わっていないかチェック
+      //         return
+      //       }
+      //       callback() // canvasへのdrawImageが完了するとisShownMapImage=trueになる TODO: 下でもcallbackを呼んでいる（重複）
+      //     }, 0)
+      //   }
+      //   return
+      // }
 
       if (!StateHelper.getMapImage(this.getInitAreaOption())) { // TODO: 現状、リトライがなければ不要
         if (this.showTryCount < 10) {

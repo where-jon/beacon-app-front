@@ -1,12 +1,15 @@
 <template>
   <div class="tui-full-calendar-dayname-layout">
     <div ref="daynameContainer" class="tui-full-calendar-dayname-container">
-      <div class="tui-full-calendar-dayname-leftmargin" :style="{'margin-left': styles.marginLeft}">
-        <div v-for="(headerOpt, idx) in headerOpts" :key="idx" :class="className(headerOpt)" :style="style(headerOpt)">
-          <span class="tui-full-calendar-dayname-date-area" :style="color(headerOpt)">
-            <span class="tui-full-calendar-dayname-date">{{ date(headerOpt) }}</span>&nbsp;&nbsp;
-            <span v-if="planMode == 'normal'" class="tui-full-calendar-dayname-name">{{ headerOpt.label }}</span>
-          </span>
+      <div class="tui-full-calendar-dayname-left" :style="{width: styles.marginLeft, 'border-right': '1px solid #e5e5e5', height: styles.height}"></div>
+      <div id="hScrl" class="tui-full-calendar-dayname-leftmargin sync-scroll" :style="{'margin-left': styles.marginLeft}"  @scroll="handleScroll">
+        <div id="day-right" class="tui-full-calendar-dayname-right">
+          <div v-for="(headerOpt, idx) in headerOpts" :key="idx" :class="className(headerOpt)" :style="style(headerOpt)">
+            <span class="tui-full-calendar-dayname-date-area" :style="color(headerOpt)">
+              <span class="tui-full-calendar-dayname-date">{{ date(headerOpt) }}</span>&nbsp;&nbsp;
+              <span v-if="planMode == 'normal'" class="tui-full-calendar-dayname-name">{{ headerOpt.label }}</span>
+            </span>
+          </div>
         </div>
       </div>
     </div>
@@ -27,7 +30,7 @@ export default {
     return {
       styles: {},
       theme: null,
-      today: moment().set({hour:0,minute:0,second:0,millisecond:0})
+      today: moment().set({hour:0,minute:0,second:0,millisecond:0}),
     }
   },
   computed: {
@@ -81,7 +84,7 @@ export default {
       if (this.planMode == 'normal') { 
         return (headerOpt) => moment(headerOpt.value).format('D')
       }
-      return (headerOpt) => headerOpt.label
+      return (headerOpt) => headerOpt.label // TODO: これでいいか要確認
     }
   },
   mounted() {
@@ -90,20 +93,23 @@ export default {
     this.applyTheme()
   },
   methods: {
+    handleScroll(e) {
+      this.$emit('handleScroll', 'hScrl')
+    },
     getDayNameColor(theme, day, isToday, isPastDay) {
       let color = ''
       if (theme) {
-          if (day === 0) {
-              color = theme.common.holiday.color
-          } else if (isPastDay) {
-              color = theme.week.pastDay.color || theme.common.dayname.color
-          } else if (day === 6) {
-              color = theme.common.saturday.color
-          } else if (isToday) {
-              color = theme.week.today.color || theme.common.today.color
-          } else {
-              color = theme.common.dayname.color
-          }
+        if (day === 0) {
+          color = theme.common.holiday.color
+        } else if (isPastDay) {
+          color = theme.week.pastDay.color || theme.common.dayname.color
+        } else if (day === 6) {
+          color = theme.common.saturday.color
+        } else if (isToday) {
+          color = theme.week.today.color || theme.common.today.color
+        } else {
+          color = theme.common.dayname.color
+        }
       }
       return color
     },
@@ -144,7 +150,7 @@ export default {
   border-right: 1px solid #e5e5e5;
 }
 .tui-full-calendar-dayname-date {
-  font-size: 1.5rem;
+  font-size: 1rem;
 }
 .tui-full-calendar-dayname-name {
   /* font-weight: bold; */
