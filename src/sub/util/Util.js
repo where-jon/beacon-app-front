@@ -125,6 +125,13 @@ export const hasValueAny = (...obj) => obj.some(val => hasValue(val))
  */
 export const firstValue = (...obj) => obj.find(val => hasValue(val))
 
+/**
+ * Nullの場合デフォルト値を返す。
+ * 
+ * @param {*} obj 
+ * @param {*} def 
+ */
+export const nvl = (obj, def = '') => obj == null? def: obj
 
 /**
  * オプジェクトから階層を辿って値を取得する。
