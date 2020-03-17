@@ -201,8 +201,6 @@ export default {
   computed: {
   },
   watch: {
-<<<<<<< HEAD
-=======
     indicatorTypeFilter: {
       handler: function(newVal, oldVal){
         switch (newVal.value) {
@@ -224,7 +222,6 @@ export default {
       },
       deep: false,
     },
->>>>>>> issues/2834
     'vueSelected.filterType': {
       handler: function(newVal, oldVal){
         console.log('vueSelected')
