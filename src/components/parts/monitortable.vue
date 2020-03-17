@@ -37,21 +37,15 @@
           @sort-changed="() => {}"
         >
           <template slot="powerLevel" slot-scope="row">
-            <span  v-if="type == 'tx'" :class="getPositionPowerLevelClass(row.item.power_level)">
+            <span v-if="type == 'tx'" :class="getPositionPowerLevelClass(row.item.power_level)">
               {{ getPositionPowerLevelLabel(row.item.power_level) }}
             </span>
-            <span  v-if="type == 'exb'" :class="getPositionPowerLevelClass(row.item.power_level)">
+            <span v-if="type == 'exb'" :class="getPositionPowerLevelClass(row.item.power_level)">
               <font-awesome-icon :icon="['fas', getTelemetryPowerLevelClass(row.item.powerLevel)]" :class="getTelemetryPowerLevelClass(row.item.powerLevel, true)" />{{ row.item.powerLevel }}
             </span>
           </template>
           <template slot="state" slot-scope="row">
-            <span v-if="type == 'gw'" :class="getStateClass(type ,row.item.updated)">
-              {{ getStateLabel('gw', row.item.updated) }}
-            </span>
-            <span v-if="type == 'tx'" :class="getStateClass(type ,row.item.updatetime)">
-              {{ row.item.state }}
-            </span>
-            <span v-if="type == 'exb'" :class="getStateClass(type ,row.item.timestamp)">
+            <span :class="getStateClass(type ,row.item.timestamp)">
               {{ row.item.state }}
             </span>
           </template>
