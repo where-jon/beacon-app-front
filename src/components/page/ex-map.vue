@@ -1067,6 +1067,17 @@ export default {
       if (this.isQuantity) { // 数量ボタン押下時
         this.showQuantityTx(positions)
       } else { // 個別ボタン押下時
+        if (this.pOnlyFixTx && this.sensorMap.temperature) {
+          this.sensorMap.temperature.forEach(val => { // サンワセンサーはminorを持たずEXCloud側で測位しないため、仮想的に測位情報を作る（あとの処理で必要なものだけセット）
+            if (!positions.some(pos => pos.btxId == val.btxId)) {
+              const tx = this.txIdMap[val.txId]
+              positions.push({
+                txId: val.txId, btxId: val.btxId, isFixedPosition: true, x: tx.location.x, y: tx.location.y, 
+                location: tx.location, exb: { location: {}}, tx,
+              })
+            }
+          })
+        }
         if (Util.hasValue(this.pShowTxSensorIds)) {
           this.showNomalTx(positions)
         }
@@ -1074,7 +1085,7 @@ export default {
     },
 
     // 通常のTX表示
-    showNomalTx(positions) { 
+    showNomalTx(positions) {
       // 表示Txの画面上の座標位置の決定
       if(APP.POS.USE_MULTI_POSITIONING){
         // ３点測位はUSE_POSITION_HISTORYには非対応 TODO:要対応
