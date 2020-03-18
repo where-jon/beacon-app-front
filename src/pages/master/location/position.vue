@@ -588,7 +588,12 @@ export default {
     execDelete(){
       const formLocation = this.form.location
       formLocation.areaId = formLocation.x = formLocation.y = null
-
+      this.isChanged = true
+      this.work.locationList.forEach( location => {
+        if (location.locationId == formLocation.locationId) {
+          location.isChanged = true
+        }
+      })
       if(formLocation.locationId < 0){
         this.work.locationList = this.work.locationList.filter(location => location.locationId != formLocation.locationId)
       }
