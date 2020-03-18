@@ -256,8 +256,6 @@ export const APP = { // 機能面に関する設定
     ABSENT_LIMIT: 30 * 60,  // 滞在時間集計離席判定時間（秒）
     PARSENT_DIGIT: 100, // 在席率表示時の小数点以下桁数。なしなら1、1桁なら10、2桁なら100 …
     AXIS_FILL_GAP: 2, // 滞在時間集計の横軸で0件項目を表示(0:しない,1:する,2:月日の場合検索期間すべて表示)
-    UNIT_HOUR: 5 * 60 * 60, // 指定秒を軸単位の最大値が超えた場合、滞在時間集計の表示を時間単位で表示する
-    UNIT_MINUTE: 20 * 60,  // 指定秒を軸単位の最大値が超えた場合、滞在時間集計の表示を分単位で表示する
     SCALE_TIMES: [5, 12, 18], // 滞在率画面グラフ目盛り時刻(時)
     OTHER_COLOR: '#404040', // 滞在率その他の色
     GRAPH_LIMIT: 0.3, // 日単位滞在分析グラフの足切り％
@@ -332,13 +330,6 @@ export const APP = { // 機能面に関する設定
     MAX_NUM: 6 // 利用人数の最大値
   },
   
-  // 将来実装予定項目 START
-  LOG_KEEP_TIME: 30,
-  PASSWORD_CHANGEABLE: true,
-  PASSWORD_CHECK: false,
-  UPDATE_POSITION_EFFECT: true,
-  // 将来実装予定項目 END
-
   // その他
   SPLIT_UPLOAD_SIZE: 50 * 1024 * 1024, // 分割アップロードのサイズ閾値（Byte）
   SPLIT_UPLOAD_SIZE_IE: 10 * 1024 * 1024, // 分割アップロードのサイズ閾値（Byte）（for IE）
@@ -449,7 +440,6 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     COLOR: '#000', // 場所配置設定のアイコン表示文字色
     FONT: 'Arial', // 場所配置設定のアイコン表示フォント
     RSSI_BGCOLOR: '#76ccf7',
-    RSSI_RADIUS: 0,
     MAX_FONT_SIZE: 26, // 場所配置設定のアイコン表示最大フォントサイズ
     BGCOLOR_PATTERN: [], // 場所配置設定のアイコン表示背景色(種類別:Tx関連時)
     BGCOLOR_PATTERN_NOTX: [], // 場所配置設定のアイコン表示背景色(種類別:Tx未関連時)
@@ -627,7 +617,6 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   PLAN: {
     PLAN_COLOR: '#ffffff',
     PLAN_BG_COLOR: '#0079d6',
-    PLAN_BG_COLOR_DUP: '#ff4040',
     ACTUAL_IN_PLAN_BG_COLOR: '#1aff1a', // 予定有・利用有 green
     NO_ACTUAL_IN_PLAN_BG_COLOR: '#ffff80', // 予定有・利用無 yellow
     ACTUAL_OUT_OF_PLAN_BG_COLOR: '#ff9999', // 予定無・利用有 red
