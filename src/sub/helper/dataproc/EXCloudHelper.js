@@ -151,7 +151,7 @@ export const fetchTelemetry = async () => {
         delete val.deviceid
       }
       let timestamp = DISP.POS.EXSERVER ? val.timestamp * 1000 : val.timestamp
-      return {...val, timestamp: dateform(timestamp), ibeacon_received: dateform(val.ibeacon_received)}
+      return {...val, timestamp: timestamp, ibeacon_received: val.ibeacon_received}
     })
     .compact().value()
 }
