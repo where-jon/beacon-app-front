@@ -35,11 +35,9 @@ test('formatDate', t => {
   t.true(DateUtil.formatDate(date.getTime()) == '2020/01/01 00:00:00')
 })
 
-test('getMidnightMs', t => {
-  const midnight = new Date(DateUtil.getMidnightMs())
-  t.true(midnight.getHours() == 0 )
-  t.true(midnight.getMinutes() == 0 )
-  t.true(midnight.getSeconds() == 0 )
+test('getDateWithTimeZone', t => {
+  const date = new Date(DateUtil.getDateWithTimeZone('JST'))
+  t.true(date != '')
 })
 
 test('getDatetime', t => {

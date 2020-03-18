@@ -39,10 +39,36 @@ export const TIME_ZONE = {
     JST: 'Asia/Tokyo',
     UTC: 'Etc/UTC',
     IST: 'Asia/Kolkata',
+    EST: 'America/Indianapolis',
+    MST: 'America/Phoenix',
+    HST: 'Pacific/Honolulu',
+    ACT: 'Australia/Darwin',
+    AET: 'Australia/Sydney',
+    AGT: 'America/Argentina/Buenos_Aires',
+    ART: 'Africa/Cairo',
+    AST: 'America/Anchorage',
+    BET: 'America/Sao_Paulo',
+    BST: 'Asia/Dhaka',
+    CAT: 'Africa/Harare',
+    CNT: 'America/St_Johns',
+    CST: 'America/Chicago',
+    CTT: 'Asia/Shanghai',
+    EAT: 'Africa/Addis_Ababa',
+    ECT: 'Europe/Paris',
+    IET: 'America/Indiana/Indianapolis',
+    MIT: 'Pacific/Apia',
+    NET: 'Asia/Yerevan',
+    NST: 'Pacific/Auckland',
+    PLT: 'Asia/Karachi',
+    PNT: 'America/Phoenix',
+    PRT: 'America/Puerto_Rico',
+    PST: 'America/Los_Angeles',
+    SST: 'Pacific/Guadalcanal',
+    VST: 'Asia/Ho_Chi_Minh',
   },
   getData(tz = 'UTC') {
     const key = tz.toUpperCase()
-    return TIME_ZONE.data[key] == null? TIME_ZONE.data.UTC: TIME_ZONE.data[key]
+    return TIME_ZONE.data[key] != null? TIME_ZONE.data[key] : Object.values(TIME_ZONE.data).includes(tz) ?  tz : TIME_ZONE.data.UTC
   },
 }
 

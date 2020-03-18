@@ -6,7 +6,7 @@
 import moment from 'moment'
 import momentTz from 'moment-timezone'
 import { APP, DEV } from '../constant/config'
-import { TIME_ZONE } from '../constant/Constants'
+import { TIME_ZONE, SETTING } from '../constant/Constants'
 import { hasValue } from './Util'
 
 /**
@@ -112,12 +112,12 @@ export const isExpired = time => time != null? time < (new Date()).getTime(): fa
 export const dateform = time => time? moment(time).format('YYYY/MM/DD HH:mm:ss'): ''
 
 /**
- * タイムゾーン対応のmomentオブジェクトを取得する。
+ * タイムゾーンに対応した日付表記を取得する。
  * @method
  * @param {String} [tz = APP.COMMON.TIME_ZONE]
- * @return {Object}
+ * @return {String}
  */
-export const getDateWithTimeZone = (tz = APP.COMMON.TIME_ZONE) => momentTz.tz(TIME_ZONE.getData(tz))
+export const getDateWithTimeZone = (tz = APP.COMMON.TIME_ZONE) => momentTz.tz(TIME_ZONE.getData(tz)).format(SETTING.DATE_NOTATION)
 
 /**
  * 現在日付の午前0時を示すエポック秒を返す。
@@ -227,4 +227,9 @@ export const toHHmm = (secTime) => {
  */
 export const isAfterNextMonth = date => hasValue(date) && moment(date).isAfter(moment().endOf('months'))
 
-export const getDefaultDate = () => DEV.DEFAULT_DATE == '' ? new Date() : new Date(DEV.DEFAULT_DATE)
+/**
+ * タイムゾーンに合わせた日付を取得する。開発用のDEFAULT_DATEが設定されていれば、その日付を取得する。
+ * @method
+ * @return {Date}
+ */
+export const getDefaultDate = () => DEV.DEFAULT_DATE == '' ? new Date(getDateWithTimeZone()) : new Date(DEV.DEFAULT_DATE)
