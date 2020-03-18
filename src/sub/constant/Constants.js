@@ -74,7 +74,7 @@ export const TIME_ZONE = {
   },
   getData(tz = 'UTC') {
     const key = tz.toUpperCase()
-    return TIME_ZONE.data[key] == null? TIME_ZONE.data.UTC: TIME_ZONE.data[key]
+    return TIME_ZONE.data[key] != null? TIME_ZONE.data[key] : Object.values(TIME_ZONE.data).includes(tz) ?  tz : TIME_ZONE.data.UTC
   },
 }
 
