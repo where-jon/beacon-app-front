@@ -1250,7 +1250,12 @@ export const MENU = [
     },
     {
       key: 'systemChild',
-      path: 'appSystem',
+      path: 'systemChild',
+      icon: 'cogs',
+    },
+    {
+      key: 'systemJson',
+      path: 'systemJson',
       icon: 'cogs',
     },
     {

@@ -97,24 +97,24 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex'
-import { APP, MSTEAMS_APP } from '../../../sub/constant/config'
-import { THEME, CHAR_SET, LOCALE } from '../../../sub/constant/Constants'
-import * as ArrayUtil from '../../../sub/util/ArrayUtil'
-import { getLangShort } from '../../../sub/util/BrowserUtil'
-import * as Util from '../../../sub/util/Util'
-import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
-import * as AuthHelper from '../../../sub/helper/base/AuthHelper'
-import { getCharSet } from '../../../sub/helper/base/CharSetHelper'
-import * as LocaleHelper from '../../../sub/helper/base/LocaleHelper'
-import * as LocalStorageHelper from '../../../sub/helper/base/LocalStorageHelper'
-import { getTheme } from '../../../sub/helper/ui/ThemeHelper'
-import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
-import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
-import breadcrumb from '../../../components/layout/breadcrumb.vue'
-import pagetitle from '../../../components/layout/pagetitle.vue'
-import commonmixin from '../../../components/mixin/commonmixin.vue'
-import editmixin from '../../../components/mixin/editmixin.vue'
-import alert from '../../../components/parts/alert.vue'
+import { APP, MSTEAMS_APP } from '../../sub/constant/config'
+import { THEME, CHAR_SET, LOCALE } from '../../sub/constant/Constants'
+import * as ArrayUtil from '../../sub/util/ArrayUtil'
+import { getLangShort } from '../../sub/util/BrowserUtil'
+import * as Util from '../../sub/util/Util'
+import * as AppServiceHelper from '../../sub/helper/dataproc/AppServiceHelper'
+import * as AuthHelper from '../../sub/helper/base/AuthHelper'
+import { getCharSet } from '../../sub/helper/base/CharSetHelper'
+import * as LocaleHelper from '../../sub/helper/base/LocaleHelper'
+import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
+import { getTheme } from '../../sub/helper/ui/ThemeHelper'
+import * as ValidateHelper from '../../sub/helper/dataproc/ValidateHelper'
+import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
+import breadcrumb from '../../components/layout/breadcrumb.vue'
+import pagetitle from '../../components/layout/pagetitle.vue'
+import commonmixin from '../../components/mixin/commonmixin.vue'
+import editmixin from '../../components/mixin/editmixin.vue'
+import alert from '../../components/parts/alert.vue'
 
 export default {
   components: {
@@ -396,7 +396,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "../../../sub/constant/label.scss";
+@import "../../sub/constant/label.scss";
   h3.loginuser-profile {
     font-size: 1.2em;
     font-weight: bold;

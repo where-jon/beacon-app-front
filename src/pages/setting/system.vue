@@ -6,7 +6,7 @@
 </template>
 
 <script>
-import systemSetting from '../../../components/page/systemSetting.vue'
+import systemSetting from '../../components/page/systemSetting.vue'
 
 export default {
   components: {

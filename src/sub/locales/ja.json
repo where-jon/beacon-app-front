@@ -406,6 +406,7 @@
     "changePassword": "パスワードを変更する",
 
     "system": "システム設定(管理用)",
+    "systemJson": "システム設定(定義)",
     "systemChild": "システム設定",
 
     "region": "リージョン",
@@ -645,7 +646,9 @@
     "Setting": "設定",
     "Personal": "個人設定",
     "System": "システム設定(管理用)",
+    "SystemJson": "システム設定(管理用)",
     "SystemChild": "システム設定",
+    "targetZone": "対象ゾーン",
     "Develop": "開発用",
     "Meta": "メタ",
     "Role": "ロール",

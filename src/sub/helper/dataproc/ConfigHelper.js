@@ -9,6 +9,8 @@ import * as config from '../../constant/config'
 import { SETTING } from '../../constant/Constants'
 import * as Util from '../../util/Util'
 import * as LocalStorageHelper from '../base/LocalStorageHelper'
+import * as AuthHelper from '../base/AuthHelper'
+import * as StateHelper from '../dataproc/StateHelper'
 
 /**
  * 設定値を指定した型で保存できるように変換する。
@@ -51,6 +53,14 @@ export const loadConfigJson = async () => {
   if (configJson.data) {
     updateConfig(configJson.data)
   }
+}
+
+
+export const reloadConfig = async () => {
+  await StateHelper.load('setting', true)
+  const login = LocalStorageHelper.getLogin()
+  const userInfo = await AuthHelper.getUserInfo(login.isTenantAdmin)
+  AuthHelper.resetConfig(login.isTenantAdmin, userInfo.setting)
 }
 
 /**
