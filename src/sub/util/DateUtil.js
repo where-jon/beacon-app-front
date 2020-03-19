@@ -6,7 +6,7 @@
 import moment from 'moment'
 import momentTz from 'moment-timezone'
 import { APP, DEV } from '../constant/config'
-import { TIME_ZONE, SETTING } from '../constant/Constants'
+import { SETTING, TIME_ZONE } from '../constant/Constants'
 import { hasValue } from './Util'
 
 /**
@@ -77,7 +77,7 @@ export const formatDate = (timestamp, format = 'YYYY/MM/DD HH:mm:ss') => timesta
 /**
  * 時刻フォーマットを行う。
  * @method
- * @param {Number} time エポック秒
+ * @param {Number} time 秒　（UNIX TIMEではない）
  * @param {String} [format = 'HH:mm:ss'] 'HH','mm','ss'の自動変換に対応。
  * @return {String}
  */
@@ -85,9 +85,11 @@ export const formatTime = (time, format = 'HH:mm:ss') => {
   if(time == null || format == null){
     return ''
   }
+  time = time % (24 * 3600)
   const hour = Math.floor(time / 3600)
   const minute = Math.floor((time / 60) % 60)
   const second = time % 60
+
   const hourDigit = hour.toString().length
   const hourSliceDigit = -1 * (hourDigit < 2? 2: hourDigit)
   return format.replace(/HH/g, `00${hour}`.slice(hourSliceDigit))

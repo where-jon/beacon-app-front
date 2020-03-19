@@ -1070,7 +1070,8 @@ export default {
         if (this.pOnlyFixTx && this.sensorMap.temperature) {
           this.sensorMap.temperature.forEach(val => { // サンワセンサーはminorを持たずEXCloud側で測位しないため、仮想的に測位情報を作る（あとの処理で必要なものだけセット）
             if (!positions.some(pos => pos.btxId == val.btxId)) {
-              const tx = this.txIdMap[val.txId]
+              const tx = _.cloneDeep(this.txIdMap[val.txId])
+              tx.disp = 1
               positions.push({
                 txId: val.txId, btxId: val.btxId, isFixedPosition: true, x: tx.location.x, y: tx.location.y, 
                 location: tx.location, exb: { location: {}}, tx,
