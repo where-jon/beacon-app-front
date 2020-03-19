@@ -161,6 +161,9 @@ export const equalsAny = (target, arr) => {
   if (!target || !arr) {
     return false
   }
+  if (Array.isArray(target)) {
+    return target.some(e => arr.includes(e))
+  }
   return arr.includes(target)
 }
 

@@ -512,7 +512,10 @@ export const LED_BLINK_TYPES = {
 }
 
 export const ALERT_STATE = {
-  SCREEN: 'screen',
+  SCREEN: 'screen', // map,list,wholeすべて
+  MAP: 'map',
+  LIST: 'list',
+  WHOLE: 'whole',
   MAIL: 'mail',
   LED: 'led',
 }

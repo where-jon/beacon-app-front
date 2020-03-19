@@ -8,6 +8,7 @@ import { ALERT_STATE, DETECT_STATE, SYSTEM_ZONE_CATEGORY_NAME } from '../../cons
 import * as ViewHelper from '../ui/ViewHelper'
 import * as PositionHelper from './PositionHelper'
 import * as Util from '../../util/Util'
+import * as ArrayUtil from '../../util/ArrayUtil'
 
 let i18n
 
@@ -27,10 +28,8 @@ export const setApp = pi18n => {
  * @param {Object[]} prohibitDetectList
  * @return {String}
  */
-export const getProhibitMessage = prohibitDetectList => {
-  const isProhibitScreen = APP.POS.PROHIBIT_ALERT? APP.POS.PROHIBIT_ALERT.some(val => val == ALERT_STATE.SCREEN): false
-  const isLostScreen = APP.POS.LOST_ALERT? APP.POS.LOST_ALERT.some(val => val == ALERT_STATE.SCREEN): false
-  if ((!isProhibitScreen && !isLostScreen) || (!APP.POS.PROHIBIT_GROUP_ZONE && !APP.POS.LOST_GROUP_ZONE) || !prohibitDetectList) {
+const getProhibitMessage = prohibitDetectList => {
+  if (!Util.hasValue(prohibitDetectList)) {
     return null   // message空
   }
 
@@ -52,8 +51,8 @@ export const getProhibitMessage = prohibitDetectList => {
  * @param {Object[]} lostZones
  * @return {Object[]}
  */
-export const getLostUnDetectList = (position, lostZones) => {
-  return getDetectList(position, lostZones, APP.POS.LOST_ALERT, APP.POS.LOST_GROUP_ZONE, true)
+const getLostUnDetectList = (position, lostZones) => {
+  return getDetectList(position, lostZones, APP.POS.LOST_GROUP_ZONE, true)
 }
 
 /**
@@ -63,15 +62,11 @@ export const getLostUnDetectList = (position, lostZones) => {
  * @param {Object[]} prohibitZones
  * @return {Object[]}
  */
-export const getProhibitDetectList = (position, prohibitZones) => {
-  return getDetectList(position, prohibitZones, APP.POS.PROHIBIT_ALERT, APP.POS.PROHIBIT_GROUP_ZONE, false)
+const getProhibitDetectList = (position, prohibitZones) => {
+  return getDetectList(position, prohibitZones, APP.POS.PROHIBIT_GROUP_ZONE, false)
 }
 
-export const getDetectList = (position, zones, alert, zoneGroupSetting, isLost) => {
-  const isScreen = alert && alert.some(val => val == ALERT_STATE.SCREEN)
-  if (!isScreen || !zoneGroupSetting || zones[0] == null) {
-    return []
-  }
+const getDetectList = (position, zones, zoneGroupSetting, isLost) => {
 
   const groupZoneList = zoneGroupSetting
   let detectList = []
@@ -110,21 +105,42 @@ export const getDetectList = (position, zones, alert, zoneGroupSetting, isLost) 
  * @param {positions} positions
  */
 export const setProhibitDetect = (viewName, stage, icons, zones, positions = []) => {
-  if (positions.length == 0) {
-    positions = PositionHelper.filterPositions()
+  const showProhibitAlert = ArrayUtil.equalsAny(APP.POS.PROHIBIT_ALERT, [ALERT_STATE.SCREEN, viewName]) && Util.hasValue(APP.POS.PROHIBIT_GROUP_ZONE)
+  const showLostAlert = ArrayUtil.equalsAny(APP.POS.LOST_ALERT, [ALERT_STATE.SCREEN, viewName]) && Util.hasValue(APP.POS.LOST_GROUP_ZONE)
+
+  if (!showProhibitAlert && !showLostAlert) {
+    return {}
   }
-  const prohibitZones = zones.filter(zone => zone.categoryList.some(category => category.categoryCd == SYSTEM_ZONE_CATEGORY_NAME.PROHIBIT))
-  const lostZones = zones.filter(zone => zone.categoryList.some(category => category.categoryCd == SYSTEM_ZONE_CATEGORY_NAME.LOST))
-  const prohibitDetectList = getProhibitDetectList(positions, prohibitZones)
-  positions = PositionHelper.filterPositions()
-  const lostUnDetectList = getLostUnDetectList(positions, lostZones)
 
-  const ret = {}
-  ret.prohibitDetectList = prohibitDetectList.concat(lostUnDetectList)
-  ret.message = getProhibitMessage(ret.prohibitDetectList)
-  ret.showDismissibleAlert = Util.hasValue(ret.message)
+  let prohibitDetectList = []
+  if (showProhibitAlert) {
+    if (positions.length == 0) {
+      positions = PositionHelper.filterPositions()
+    }
+    const prohibitZones = zones.filter(zone => zone.categoryList.some(category => category.categoryCd == SYSTEM_ZONE_CATEGORY_NAME.PROHIBIT))
+    if (Util.hasValue(prohibitZones)) {
+      prohibitDetectList = getProhibitDetectList(positions, prohibitZones)  
+    }
+  }
 
-  if (viewName == 'pos') {
+  let lostUnDetectList = []
+  if (showLostAlert) {
+    positions = PositionHelper.filterPositions()
+    const lostZones = zones.filter(zone => zone.categoryList.some(category => category.categoryCd == SYSTEM_ZONE_CATEGORY_NAME.LOST))
+    if (Util.hasValue(lostZones)) {
+      lostUnDetectList = getLostUnDetectList(positions, lostZones)
+    }
+  }
+
+  prohibitDetectList = prohibitDetectList.concat(lostUnDetectList)
+  const message = getProhibitMessage(prohibitDetectList)
+  const ret = {
+    prohibitDetectList,
+    message,
+    showDismissibleAlert: Util.hasValue(message)  
+  }
+
+  if (viewName == ALERT_STATE.MAP) {
     clearInterval(ret.prohibitInterval)  // 点滅クリア
     // 禁止区域に検知されたら点滅させる
     if (ret.showDismissibleAlert) {

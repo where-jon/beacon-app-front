@@ -54,10 +54,10 @@ export const APP = { // 機能面に関する設定
     USE_MULTI_POSITIONING: false, // 多点測位を使う
     MULTI_POSITIONING_NUM: 3,     // 多点測位の点数
     // 禁止区域関連設定
-    PROHIBIT_ALERT : null,  // 文字列リストで画面かバッチに通知するか判断["screen","mail","led"]
+    PROHIBIT_ALERT : null,  // 文字列リストで画面かバッチに通知するか判断["screen","map","list","whole","mail","led"]
     PROHIBIT_GROUP_ZONE: null, // 禁止区域非許可{"groupCd":"GR1", "zoneCd":["Z1"]}のJSON配列の形
     // 重要物品関連設定
-    LOST_ALERT : null,  // 文字列リストで画面かバッチに通知するか判断["screen","mail"]
+    LOST_ALERT : null,  // 文字列リストで画面かバッチに通知するか判断["screen","map","list","whole","mail"]
     LOST_GROUP_ZONE: null, // 重要物品設定{"groupCd":"GR1", "zoneCd":["Z1"]}のJSON配列の形
     USE_LEGEND: false, // 凡例を表示
     SHOW_DETECTED_COUNT: false, // 検知数を表示

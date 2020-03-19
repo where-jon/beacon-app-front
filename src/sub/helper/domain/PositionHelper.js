@@ -70,10 +70,10 @@ export const loadPosition = async (count, allShow = false, fixSize = false) => {
   positions = _(positions).filter(pos => allShow || DEV.NOT_FILTER_TX || txIdMap[pos.txId])
     .filter(pos => allShow || Util.hasValue(pos.locationId) && locationIdMap[pos.locationId] && (txIdMap[pos.txId] && NumberUtil.bitON(txIdMap[pos.txId].disp, TX.DISP.POS)))
     .map(pos => {
-      // if (pos.minor == 605) { // 開発目的：矯正ポジション設定
+      // if (pos.minor == 603) { // 開発目的：矯正ポジション設定
       //   console.log(pos)
-      //   pos.locationId = 3
-      //   pos.exbId = 3
+      //   pos.locationId = 2
+      //   pos.exbId = 2
       // }
       let tx = txIdMap[pos.txId]
       // 固定位置の場合,txのlocation、そうではない場合exbのlocation TODO:要検討

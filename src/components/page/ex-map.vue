@@ -174,7 +174,7 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import { SENSOR, TX, POT_TYPE, SHAPE, KEY, SYSTEM_ZONE_CATEGORY_NAME } from '../../sub/constant/Constants'
+import { SENSOR, TX, POT_TYPE, SHAPE, KEY, SYSTEM_ZONE_CATEGORY_NAME, ALERT_STATE } from '../../sub/constant/Constants'
 import { APP, DISP, APP_SERVICE, EXCLOUD, MSTEAMS_APP } from '../../sub/constant/config'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
@@ -692,8 +692,8 @@ export default {
         this.reloadState.prevent = false
       }
 
-      if (this.pShowProhibit && Util.hasValue(APP.POS.PROHIBIT_GROUP_ZONE)) {
-        Util.merge(this, ProhibitHelper.setProhibitDetect('pos', this.stage, this.icons, this.zones, this.positions))
+      if (this.pShowProhibit && Util.hasValueAny(APP.POS.PROHIBIT_GROUP_ZONE, APP.POS.LOST_GROUP_ZONE)) {
+        Util.merge(this, ProhibitHelper.setProhibitDetect(ALERT_STATE.MAP, this.stage, this.icons, this.zones, this.positions))
         this.replace({ showAlert: this.showDismissibleAlert })
       }
 
@@ -1071,11 +1071,13 @@ export default {
           this.sensorMap.temperature.forEach(val => { // サンワセンサーはminorを持たずEXCloud側で測位しないため、仮想的に測位情報を作る（あとの処理で必要なものだけセット）
             if (!positions.some(pos => pos.btxId == val.btxId)) {
               const tx = _.cloneDeep(this.txIdMap[val.txId])
-              tx.disp = 1
-              positions.push({
-                txId: val.txId, btxId: val.btxId, isFixedPosition: true, x: tx.location.x, y: tx.location.y, 
-                location: tx.location, exb: { location: {}}, tx,
-              })
+              if (tx) {
+                tx.disp = 1
+                positions.push({
+                  txId: val.txId, btxId: val.btxId, isFixedPosition: true, x: tx.location.x, y: tx.location.y, 
+                  location: tx.location, exb: { location: {}}, tx,
+                })
+              }
             }
           })
         }
