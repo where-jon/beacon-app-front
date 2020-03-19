@@ -371,6 +371,10 @@ export const EXCLOUD = {
   POT_THUMBNAIL_URL: '/basic/pot/potThumbnail/{id}?_=',
 }
 
+export const EXSERVER = {
+  ENABLE: false
+}
+
 export const DISP = { // 表示系設定（表示・色・フォント・サイズ）
   MENU: {
     SHOW_NAV: true, // show nav  
@@ -622,10 +626,6 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     ACTUAL_OUT_OF_PLAN_BG_COLOR: '#ff9999', // 予定無・利用有 red
     NO_ACTUAL_NO_PLAN_BG_COLOR: '#595959', // 予定無・利用無 gray
     EDIT_PLAN_HEADER_BG_COLOR: '#0078d4',
-  },
-
-  POS: {
-    EXSERVER: false, // EXServerを使う
   },
 
   // 位置表示（全体）
