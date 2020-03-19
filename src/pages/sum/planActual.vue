@@ -92,7 +92,7 @@ import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as AppServiceHelper from '../../sub/helper/dataproc/AppServiceHelper.js'
 import * as Util from '../../sub/util/Util'
-import { CATEGORY } from '../../sub/constant/Constants'
+import { CATEGORY, POT_TYPE } from '../../sub/constant/Constants'
 import { DatePicker } from 'element-ui'
 import { importElementUI } from '../../sub/helper/ui/ViewHelper'
 import 'element-ui/lib/theme-chalk/index.css'
@@ -113,8 +113,8 @@ export default {
       items: ViewHelper.createBreadCrumbItems('sumTitle', 'planActual'),
 
       indicatorTypeOpts: [
-        {value:0, label: `${this.$i18n.tnl('label.reservationRate')}（${this.$i18n.tnl('label.reservationHours')}／${this.$i18n.tnl('label.workingHours')}）`},
-        {value:1, label: `${this.$i18n.tnl('label.operatingRate')}（${this.$i18n.tnl('label.operatingHours')}／${this.$i18n.tnl('label.workingHours')}）`},
+        {value:0, label: `${this.$i18n.tnl('label.operatingRate')}（${this.$i18n.tnl('label.operatingHours')}／${this.$i18n.tnl('label.workingHours')}）`},
+        {value:1, label: `${this.$i18n.tnl('label.reservationRate')}（${this.$i18n.tnl('label.reservationHours')}／${this.$i18n.tnl('label.workingHours')}）`},
         {value:2, label: `${this.$i18n.tnl('label.reserveOperatingRate')}（${this.$i18n.tnl('label.reserveOperatingHours')}／${this.$i18n.tnl('label.reservationHours')}）`},
         {value:3, label: `${this.$i18n.tnl('label.unreserveOperatingRate')}（${this.$i18n.tnl('label.unreserveOperatingHours')}／${this.$i18n.tnl('label.workingHours')}）`},
         {value:4, label: `${this.$i18n.tnl('label.emptyReservationCount')}`},
@@ -124,31 +124,31 @@ export default {
       currentPage: 1,
       perPage: 20,
       totalRows: 0,
-      tFieldsReservationRate: [
-        {key: 'name', sortable: true, label: this.$i18n.tnl('label.name')},
-        {key: 'indicator', sortable: true, label: this.$i18n.tnl('label.reservationRate')},
-        {key: 'graph', sortable: false, label: this.$i18n.tnl('label.graph'), thStyle: {height: '50px !important', width:'400px !important'} },
-        {key: 'hour', sortable: true, label: this.$i18n.tnl('label.reservationHours')},
-        {key: 'hour2', sortable: true, label: this.$i18n.tnl('label.workingHours')},
-      ],
       tFieldsOperatingRate: [
         {key: 'name', sortable: true, label: this.$i18n.tnl('label.name')},
         {key: 'indicator', sortable: true, label: this.$i18n.tnl('label.operatingRate')},
-        {key: 'graph', sortable: false, label: this.$i18n.tnl('label.graph'), thStyle: {height: '50px !important', width:'400px !important'} },
+        {key: 'graph', sortable: false, label: this.$i18n.tnl('label.normalGraph'), thStyle: {height: '50px !important', width:'400px !important'} },
         {key: 'hour', sortable: true, label: this.$i18n.tnl('label.operatingHours')},
+        {key: 'hour2', sortable: true, label: this.$i18n.tnl('label.workingHours')},
+      ],
+      tFieldsReservationRate: [
+        {key: 'name', sortable: true, label: this.$i18n.tnl('label.name')},
+        {key: 'indicator', sortable: true, label: this.$i18n.tnl('label.reservationRate')},
+        {key: 'graph', sortable: false, label: this.$i18n.tnl('label.normalGraph'), thStyle: {height: '50px !important', width:'400px !important'} },
+        {key: 'hour', sortable: true, label: this.$i18n.tnl('label.reservationHours')},
         {key: 'hour2', sortable: true, label: this.$i18n.tnl('label.workingHours')},
       ],
       tFieldsReserveOperatingRate: [
         {key: 'name', sortable: true, label: this.$i18n.tnl('label.name')},
         {key: 'indicator', sortable: true, label: this.$i18n.tnl('label.reserveOperatingRate')},
-        {key: 'graph', sortable: false, label: this.$i18n.tnl('label.graph'), thStyle: {height: '50px !important', width:'400px !important'} },
+        {key: 'graph', sortable: false, label: this.$i18n.tnl('label.normalGraph'), thStyle: {height: '50px !important', width:'400px !important'} },
         {key: 'hour', sortable: true, label: this.$i18n.tnl('label.reserveOperatingHours')},
         {key: 'hour2', sortable: true, label: this.$i18n.tnl('label.reservationHours')},
       ],
       tFieldsUnreserveOperatingRate: [
         {key: 'name', sortable: true, label: this.$i18n.tnl('label.name')},
         {key: 'indicator', sortable: true, label: this.$i18n.tnl('label.unreserveOperatingRate')},
-        {key: 'graph', sortable: false, label: this.$i18n.tnl('label.graph'), thStyle: {height: '50px !important', width:'400px !important'} },
+        {key: 'graph', sortable: false, label: this.$i18n.tnl('label.normalGraph'), thStyle: {height: '50px !important', width:'400px !important'} },
         {key: 'hour', sortable: true, label: this.$i18n.tnl('label.reserveOperatingHours')},
         {key: 'hour2', sortable: true, label: this.$i18n.tnl('label.reservationHours')},
       ],
@@ -175,7 +175,10 @@ export default {
       preDate: moment().day(1).set({hour:0,minute:0,second:0,millisecond:0}).toDate(),
 
       // マスタ情報
-      loadStates: ['area', 'zone', 'location', 'category', 'pot'],
+      loadStates: ['areas', 'zones', 'locations', 'categories', 'pots'],
+      areaOpts: [],
+      zoneOpts: [],
+      locationOpts: [],
       zoneCategoryOpts: [],
       potThingOpts: [],
 
@@ -185,8 +188,8 @@ export default {
         {value:'areas', text: this.$t('label.area')},
         {value:'zones', text: this.$t('label.zone')},
         {value:'locations', text: this.$t('label.location')},
-        {value:'categories', text: this.$t('label.zoneCategory')},
-        {value:'pots', text: this.$t('label.potThing')},
+        {value:'zoneCategories', text: this.$t('label.zoneCategory')},
+        {value:'potThings', text: this.$t('label.potThing')},
       ],
       filterOpts: [],
       selectedFilter: {
@@ -204,21 +207,23 @@ export default {
   watch: {
     indicatorTypeFilter: {
       handler: function(newVal, oldVal){
+        this.totalRows = 0
+        this.tItems = []
         switch (newVal.value) {
-        case 0:
-          this.tFields = this.tFieldsReservationRate
-          break
-        case 1:
-          this.tFields = this.tFieldsOperatingRate
-          break
-        case 2:
-          this.tFields = this.tFieldsReserveOperatingRate
-          break
-        case 3:
-          this.tFields = this.tFieldsUnreserveOperatingRate
-          break
-        default:
-          this.tFields = this.tFieldsEmptyReservationCount
+          case 0:
+            this.tFields = this.tFieldsOperatingRate
+            break
+          case 1:
+            this.tFields = this.tFieldsReservationRate
+            break
+          case 2:
+            this.tFields = this.tFieldsReserveOperatingRate
+            break
+          case 3:
+            this.tFields = this.tFieldsUnreserveOperatingRate
+            break
+          default:
+            this.tFields = this.tFieldsEmptyReservationCount
         }
       },
       deep: false,
@@ -229,12 +234,24 @@ export default {
         this.selectedFilter.filterType = newVal
         this.selectedFilter.filterId = null
         this.vueSelected.filter = null
-        if (newVal == 'category') {
-          this.filterOpts = this.zoneCategoryOpts
-        } else if (newVal == 'pot') {
-          this.filterOpts = this.potThingOpts
-        } else {
-          this.filterOpts = this.getOpts(newVal)
+        switch (newVal) {
+          case 'areas':
+            this.filterOpts = this.areaOpts
+            break;
+          case 'zones':
+            this.filterOpts = this.zoneOpts
+            break;
+          case 'locations':
+            this.filterOpts = this.locationOpts
+            break;
+          case 'zoneCategories':
+            this.filterOpts = this.zoneCategoryOpts
+            break;
+          case 'potThings':
+            this.filterOpts = this.potThingOpts
+            break;
+          default:
+            this.filterOpts = []
         }
       },
       deep: false,
@@ -279,12 +296,21 @@ export default {
     },
     // マスタ
     async loadMaster() {
-      await Promise.all(this.loadStates.map(state => StateHelper.load(state)))
-      this.zoneCategoryOpts = this.categories.filter(cate => cate.categoryType == CATEGORY.ZONE)
-      this.potThingOpts = this.pots.filter(pot => pot.potType == CATEGORY.THING)
-    },
-    getOpts(master) {
-      return this[master]
+      this.areaOpts = this.areas.map(area => {
+        return {value: area.areaId, label: area.areaName}
+      })
+      this.zoneOpts = this.zones.map(zone => {
+        return {value: zone.zoneId, label: zone.zoneName}
+      })
+      this.locationOpts = this.locations.map(location => {
+        return {value: location.locationId, label: location.locationName}
+      })
+      this.zoneCategoryOpts = this.categories.filter(cate => cate.categoryType == CATEGORY.ZONE).map(cate => {
+        return {value: cate.categoryId, label: cate.categoryName}
+      })
+      this.potThingOpts = this.pots.filter(pot => pot.potType == POT_TYPE.THING).map(pot => {
+        return {value: pot.potId, label: pot.potName}
+      })
     },
     onClickDisplay(e) {
       this.fetchData()
@@ -335,32 +361,47 @@ export default {
     },
     loadIndicators(data) {
       const arr = data.indicators.map((e) => {
+        let indicator = 0
+        let hour2 = 0
         switch (this.indicatorTypeFilter.value) {
-        case 0: // 予約率（予約時間／就業時間）
-        case 1: // 稼働率（稼働時間／就業時間）
-        case 3: // 予約外稼働率（予約外稼働時間／就業時間）
-          return { 
-            name: e.targetName, 
-            indicator: this.orgRound(e.value / data.sumOfWorkingHours * 100),
-            hour: e.value,
-            hour2: data.sumOfWorkingHours,
-          }
-        case 2:
-          // 予約内稼働率（予約内稼働時間／予約時間）
-          return { 
-            name: e.targetName, 
-            indicator: this.orgRound(e.value / e.sumOfReservationHours * 100),
-            hour: e.value,
-            hour2: e.sumOfReservationHours,
-          }
-        case 4:
-          // 空予約数
-          return { 
-            name: e.targetName, 
-            indicator: e.value,
-          }
+          case 0: // 稼働率（稼働時間/(就業時間*定員数)）
+          case 1: // 予約率（予約時間/(就業時間*定員数)）
+          case 3: // 予約外稼働率（予約外稼働時間/(就業時間*定員数)）
+            if (0 < data.sumOfWorkingHours) {
+              hour2 = data.sumOfWorkingHours * e.capacity
+            }
+            if (0 < e.value && 0 < hour2) {
+              indicator = this.orgRound(e.value / hour2 * 100)
+            }
+            return { 
+              name: e.targetName, 
+              indicator: indicator,
+              hour: e.value,
+              hour2: hour2,
+            }
+          case 2:
+            // 予約内稼働率（予約内稼働時間/(予約時間*定員数)）
+            if (0 < e.sumOfReservationHours) {
+              hour2 = e.sumOfReservationHours * e.capacity
+            }
+            if (0 < e.value && 0 < hour2) {
+              indicator = this.orgRound(e.value / hour2 * 100)
+            }
+            return { 
+              name: e.targetName, 
+              indicator: indicator,
+              hour: e.value,
+              hour2: hour2,
+            }
+          default:
+            // 空予約数
+            return { 
+              name: e.targetName, 
+              indicator: e.value,
+            }
         }
       })
+      console.log('!!!')
       this.totalRows = arr.length
       this.tItems = arr
     },
@@ -371,7 +412,7 @@ export default {
 .progress{
     margin-bottom: 0px;
     height: 28px;
-    width: 440px!important;
+    width: 370px!important;
     border-radius: 0px;
     span {
       margin-left: 5px;
