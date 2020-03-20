@@ -177,7 +177,7 @@
     "exbNotify": "EXB状態アラート",
     "txBatteryNotify": "TX電池状態アラート",
     "prohibitNotify": "進入禁止アラート",
-    "lostNotify": "重要物品持ち出しアラート",
+    "lostNotify": "重要物品持出アラート",
     "userRegNotify": "ユーザ登録通知",
     "sosNotify": "SOSボタン押下通知",
 
@@ -822,9 +822,10 @@
         "MOVING_AVERAGE_TIME": "移動平均時間::サーバが位置情報を集計する時に使用する移動平均時間を設定します。",
         "USE_MULTI_POSITIONING": "多点測位を使用する::多点測位を使用します。",
         "MULTI_POSITIONING_NUM": "多点測位の点数::多点測位の点数を設定します。",
-        "PROHIBIT_ALERT" : "禁止区域アラートを使用::禁止区域アラートを通知する方法を設定します。設定可能な値は次の通りです。{PROHIBIT_ALERT}",
-        "PROHIBIT_GROUP_ZONE": "禁止区域侵入不可グループ設定::禁止区域に侵入できないグループCDと対応するゾーンCDを設定します。",
-        "LOST_ALERT" : "重要物品持ち出し検知アラートを使用::重要物品持ち出し検知アラートを通知する方法を設定します。設定可能な値は次の通りです。{LOST_ALERT}",
+        "PROHIBIT_ALERT" : "進入禁止アラートを使用::禁止区域アラートを通知する方法を設定します。設定可能な値は次の通りです。{PROHIBIT_ALERT}",
+        "PROHIBIT_GROUP_ZONE": "進入禁止グループ設定::禁止区域に侵入できないグループCDと対応するゾーンCDを設定します。",
+        "LOST_ALERT" : "重要物品持出検知アラートを使用::重要物品持ち出し検知アラートを通知する方法を設定します。設定可能な値は次の通りです。{LOST_ALERT}",
+        "LOST_ALERT_TIME" : "重要物品持出検知アラート閾値::重要物品持ち出し検知アラート発生の条件を指定します。指定ゾーンから移動してから閾値（ミリ秒）を超えた場合に通知します。",
         "LOST_GROUP_ZONE": "重要物品グループ設定::重要物品として扱うグループCDと対応するゾーンCDを設定します。",
         "USE_LEGEND": "凡例を使用する::位置表示(地図)画面で凡例を表示します。★",
         "SHOW_DETECTED_COUNT": "検知数を表示する::位置表示(地図)画面でデバイスの検知数を表示します。★",
@@ -1727,7 +1728,7 @@
     "resetFromTo": "{from}が変更されたため、{to}が未選択状態になりました。",
     "underDegree": "℃未満",
     "overDegree": "℃以上",
-    "lostDetected": "<持出禁止> {time} {potCd}「{potName}」が所定の場所（{locationName}）に戻されていません。",
+    "lostDetected": "<持出禁止> {time} {potCd}「{potName}」が所定の場所に戻されていません。",
     "prohibitDetected": "<進入禁止> {time} {groupName}（{potName}）が、{zoneName}に立ち入りました。",
 
     "MSTEAMS": {

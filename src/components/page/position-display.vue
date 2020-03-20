@@ -129,6 +129,11 @@ export default {
       }
       return ret
     },
+    async loadProhibitDetect() {
+      if (Util.hasValueAny(APP.POS.PROHIBIT_GROUP_ZONE, APP.POS.LOST_GROUP_ZONE)) {
+        Util.merge(this, await ProhibitHelper.loadProhibitDetect(ALERT_STATE.WHOLE, this.stage, this.icons, this.zones))
+      }
+    },
     async fetchData(payload) {
       try {
         this.replace({showAlert:false})
@@ -137,9 +142,7 @@ export default {
         await PositionHelper.loadPosition(null, true, true)
         this.positions = PositionHelper.filterPositions(undefined, false, true, null, null, null, null).filter(p => p.tx && p.tx.disp==1)
 
-        if (Util.hasValueAny(APP.POS.PROHIBIT_GROUP_ZONE, APP.POS.LOST_GROUP_ZONE)) {
-          Util.merge(this, ProhibitHelper.setProhibitDetect(ALERT_STATE.WHOLE, this.stage, this.icons, this.zones))
-        }
+        this.loadProhibitDetect()
 
         this.alertData.message = this.message
         this.alertData.isAlert = this.showDismissibleAlert ? true: false

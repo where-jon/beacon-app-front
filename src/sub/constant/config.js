@@ -58,6 +58,7 @@ export const APP = { // 機能面に関する設定
     PROHIBIT_GROUP_ZONE: null, // 禁止区域非許可{"groupCd":"GR1", "zoneCd":["Z1"]}のJSON配列の形
     // 重要物品関連設定
     LOST_ALERT : null,  // 文字列リストで画面かバッチに通知するか判断["screen","map","list","whole","mail"]
+    LOST_ALERT_TIME: 0, // 所定の場所から移動されて、指定ミリ秒経過後にアラートを出す（0の場合すぐに出す）
     LOST_GROUP_ZONE: null, // 重要物品設定{"groupCd":"GR1", "zoneCd":["Z1"]}のJSON配列の形
     USE_LEGEND: false, // 凡例を表示
     SHOW_DETECTED_COUNT: false, // 検知数を表示

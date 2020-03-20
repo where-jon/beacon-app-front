@@ -692,10 +692,7 @@ export default {
         this.reloadState.prevent = false
       }
 
-      if (this.pShowProhibit && Util.hasValueAny(APP.POS.PROHIBIT_GROUP_ZONE, APP.POS.LOST_GROUP_ZONE)) {
-        Util.merge(this, ProhibitHelper.setProhibitDetect(ALERT_STATE.MAP, this.stage, this.icons, this.zones, this.positions))
-        this.replace({ showAlert: this.showDismissibleAlert })
-      }
+      this.loadProhibitDetect() // 非同期実行
 
       this.addTick()
       if (this.sensorMap.temperature) {
@@ -727,6 +724,12 @@ export default {
       this.isShowRight = false
       this.isShowBottom = false
       this.keepExbPosition = true
+    },
+    async loadProhibitDetect() {
+      if (this.pShowProhibit && Util.hasValueAny(APP.POS.PROHIBIT_GROUP_ZONE, APP.POS.LOST_GROUP_ZONE)) {
+        Util.merge(this, await ProhibitHelper.loadProhibitDetect(ALERT_STATE.MAP, this.stage, this.icons, this.zones, this.positions))
+        this.replace({ showAlert: this.showDismissibleAlert })
+      }
     },
 
 
