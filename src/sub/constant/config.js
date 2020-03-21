@@ -135,7 +135,7 @@ export const APP = { // 機能面に関する設定
     // 拡張項目定義（サンプル）: デフォルトはなし
     EXT_DEF: [
       // {key: 'description', type: 'string', length: 100, showlist: true, sort: true },
-      // {key: 'toilet', type: 'list', format: 'male|female|share|multip', showlist: true, sort: false},
+      // {key: 'toilet', type: 'list', format: 'male|female|multip', showlist: true, sort: false},
       // {key:'led_no',type:'int',min:1,max:5,showlist:false},
       // {key:'led_device_id',type:'string',format:'^[0-9]+(,[0-9]+)*$',showlist:false},
     ],

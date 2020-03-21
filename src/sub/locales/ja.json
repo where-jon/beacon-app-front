@@ -322,9 +322,9 @@
     "toilet": "トイレ",
     "male": "男子",
     "female": "女子",
-    "share": "共用",
     "multip": "多目的",
-    "emptyToilet": "空き",
+    "empty": "空",
+    "occupy": "満",
 
     "meeting_room": "会議室",
 

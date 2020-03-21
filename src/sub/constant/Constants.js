@@ -232,7 +232,6 @@ export const LOCATION = {
     TOILET: {
       MALE: 'male',
       FEMALE: 'female',
-      SHARE: 'share',
       MULTIP: 'multip',    
     }
   }
