@@ -62,6 +62,7 @@ export const APP = { // 機能面に関する設定
     LOST_GROUP_ZONE: null, // 重要物品設定{"groupCd":"GR1", "zoneCd":["Z1"]}のJSON配列の形
     USE_LEGEND: false, // 凡例を表示
     SHOW_DETECTED_COUNT: false, // 検知数を表示
+    SHOW_TOILET: false, // トイレ情報を表示
     SHOW_TX_NO_OWNER: true, // POTと紐付いていないタグを表示する
 
     WITH: {

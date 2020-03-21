@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <breadcrumb :items="items" reload :auto-reload="autoReload" />
-    <toiletview :data-list="dataList" :show-area="showArea" />
+    <toiletview :data-list="dataList" :show-area="true" />
   </div>
 </template>
 
@@ -22,7 +22,6 @@ export default {
   data() {
     return {
       reload: false,
-      showArea: true, // 全エリアが対象
       dataList: [],
     }
   },

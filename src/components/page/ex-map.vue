@@ -157,6 +157,10 @@
       <txdetail :selected-tx="selectedTx" :selected-sensor="selectedSensor" :is-show-modal="isShowModal()" @resetDetail="resetDetail" />
     </div>
 
+    <div v-if="pShowToilet && !isResponsiveMode" v-drag class="lightbox">
+      <toiletview :show-area="false" :data-list="toiletDataList" :small="true" addClass="table-borderless" />
+    </div>
+
     <b-modal v-model="isShownChart" :title="chartTitle" size="lg" header-bg-variant="light" hide-footer>
       <b-container fluid style="height:350px;">
         <b-row class="mb-1">
@@ -174,6 +178,7 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
+import drag from '@branu-jp/v-drag'
 import { SENSOR, TX, POT_TYPE, SHAPE, KEY, SYSTEM_ZONE_CATEGORY_NAME, ALERT_STATE } from '../../sub/constant/Constants'
 import { APP, DISP, APP_SERVICE, EXCLOUD, MSTEAMS_APP } from '../../sub/constant/config'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
@@ -195,6 +200,7 @@ import * as OptionHelper from '../../sub/helper/dataproc/OptionHelper'
 import * as PositionHelper from '../../sub/helper/domain/PositionHelper'
 import * as ProhibitHelper from '../../sub/helper/domain/ProhibitHelper'
 import * as SensorHelper from '../../sub/helper/domain/SensorHelper'
+import * as ToiletHelper from '../../sub/helper/domain/ToiletHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as StyleHelper from '../../sub/helper/ui/StyleHelper'
 import * as TooltipHelper from '../../sub/helper/domain/TooltipHelper'
@@ -210,6 +216,7 @@ import detailFilter from '../../components/parts/detailFilter.vue'
 import meditag from '../../components/parts/meditag.vue'
 import ToolTip from '../../components/parts/toolTip.vue'
 import txdetail from '../../components/parts/txdetail.vue'
+import toiletview from '../../components/parts/toiletview.vue'
 
 export default {
   components: {
@@ -220,6 +227,10 @@ export default {
     meditag,
     ToolTip,
     txdetail,
+    toiletview,
+  },
+  directives: {
+    drag
   },
   mixins: [commonmixin, reloadmixin, showmapmixin],
   props: {
@@ -260,6 +271,11 @@ export default {
     },
     // 検知数を表示
     pShowDetected: {
+      type: Boolean,
+      default: false,
+    },
+    // トイレ情報を表示
+    pShowToilet: {
       type: Boolean,
       default: false,
     },
@@ -402,6 +418,8 @@ export default {
       prohibitInterval: null,
       lostInterval: null,
       absentZonePosition: null, // 不在表示ゾーン
+      // トイレ
+      toiletDataList: [],
       // センサー
       sensorMap: {},
       // 温湿度
@@ -693,6 +711,7 @@ export default {
       }
 
       this.loadProhibitDetect() // 非同期実行
+      this.showToilet() // 非同期実行
 
       this.addTick()
       if (this.sensorMap.temperature) {
@@ -729,6 +748,11 @@ export default {
       if (this.pShowProhibit && Util.hasValueAny(APP.POS.PROHIBIT_GROUP_ZONE, APP.POS.LOST_GROUP_ZONE)) {
         Util.merge(this, await ProhibitHelper.loadProhibitDetect(ALERT_STATE.MAP, this.stage, this.icons, this.zones, this.positions))
         this.replace({ showAlert: this.showDismissibleAlert })
+      }
+    },
+    async showToilet() { // トイレを表示する
+      if (this.pShowToilet) {
+        this.toiletDataList = await ToiletHelper.fetchData()
       }
     },
 
@@ -1449,6 +1473,23 @@ $right-pane-left-px: $right-pane-left * 1px;
   color: #fff;
   background-color: #6c757d !important;
   line-height: 1 !important;
+}
+
+.lightbox {
+  height: 140px;
+  width: 500px;
+  padding: 5px;
+  background-color: white;
+  border: 1px solid #6c757d;
+  position: absolute;
+  top: 200px;
+  right: 100px;
+  z-index: 10;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  -ms-overflow-x: auto;
+  -ms-overflow-y: auto;
+  -ms-overflow-style:none;
 }
 
 </style>

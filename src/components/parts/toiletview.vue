@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-table :items="dataList" :fields="dataFieldList" stacked="md" striped hover>
+    <b-table :items="dataList" :fields="dataFieldList" stacked="md" striped hover :bordered="false" :small="small" :class="addClass">
       <template slot="HEAD_male">
         <div style="float:left">
           <label v-t="'label.male'" /><img src="~/assets/icon/male.svg" class="iconHeader">
@@ -17,13 +17,13 @@
         </div>
       </template>
       <template slot="male" slot-scope="row">
-        <div><span v-t="row.item.male.iconLabel" class="availBox" :class="row.item.male.iconClass" /><span class="count" v-t="row.item.male.count"/></div>
+        <div><span v-t="row.item.male.iconLabel" class="availBox" :class="row.item.male.iconClass" /><span v-t="row.item.male.count" class="count"/></div>
       </template>
       <template slot="female" slot-scope="row">
-        <div><span v-t="row.item.female.iconLabel" class="availBox" :class="row.item.female.iconClass" /><span class="count" v-t="row.item.female.count"/></div>
+        <div><span v-t="row.item.female.iconLabel" class="availBox" :class="row.item.female.iconClass" /><span v-t="row.item.female.count" class="count"/></div>
       </template>
       <template slot="multip" slot-scope="row">
-        <div><span v-t="row.item.multip.iconLabel" class="availBox" :class="row.item.multip.iconClass" /><span class="count" v-t="row.item.multip.count"/></div>
+        <div><span v-t="row.item.multip.iconLabel" class="availBox" :class="row.item.multip.iconClass" /><span v-t="row.item.multip.count" class="count"/></div>
       </template>
     </b-table>
   </div>
@@ -44,6 +44,14 @@ export default {
     showArea: {
       type: Boolean,
       required: true,
+    },
+    addClass: {
+      type: String,
+      default: '',
+    },
+    small: {
+      type: Boolean,
+      default: false,
     },
   },
   data() {
