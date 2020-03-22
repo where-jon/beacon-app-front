@@ -1046,12 +1046,12 @@ export default {
       const tx = this.btxIdMap[btxId]
 
       // サムネイル表示無しの設定になっているか？
-      const isNoThumbnail = APP.TXDETAIL.NO_UNREGIST_THUMB && !tx.existThumbnail // TODO: 逆にしたほうがわかりやすい
+      const isNoThumbnail = APP.TXDETAIL.NO_UNREGIST_THUMB && !Util.v(tx, 'pot.existThumbnail') // TODO: 逆にしたほうがわかりやすい
       if (!isNoThumbnail) {
         // サムネイル表示あり
         this.preloadThumbnail.onload = () => this.setupSelectedTx(tx, x, y, true)
         this.preloadThumbnail.src = null // iOSでonloadが一度しか呼ばれないので対策
-        this.preloadThumbnail.src = tx.existThumbnail? this.thumbnailUrl.replace('{id}', tx.potId): '/default.png'
+        this.preloadThumbnail.src = Util.v(tx, 'pot.existThumbnail')? this.thumbnailUrl.replace('{id}', tx.pot.potId): '/default.png'
       } else {
         // サムネイル表示無し
         this.setupSelectedTx(tx, x, y, false)
