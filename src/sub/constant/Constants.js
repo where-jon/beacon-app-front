@@ -965,6 +965,11 @@ export const MENU = [
       icon: 'building',
     },
     {
+      key: 'guestAccess',
+      path: 'guest-access',
+      icon: 'user-tag',
+    },
+    {
       key: 'enterTable',
       path: 'enter-table',
       icon: 'table',

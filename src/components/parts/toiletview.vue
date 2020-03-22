@@ -17,13 +17,13 @@
         </div>
       </template>
       <template slot="male" slot-scope="row">
-        <div><span v-t="row.item.male.iconLabel" class="availBox" :class="row.item.male.iconClass" /><span v-t="row.item.male.count" class="count"/></div>
+        <div><span v-t="row.item.male.iconLabel" class="availBox" :class="row.item.male.iconClass" /><span class="count">{{ row.item.male.count }}</span></div>
       </template>
       <template slot="female" slot-scope="row">
-        <div><span v-t="row.item.female.iconLabel" class="availBox" :class="row.item.female.iconClass" /><span v-t="row.item.female.count" class="count"/></div>
+        <div><span v-t="row.item.female.iconLabel" class="availBox" :class="row.item.female.iconClass" /><span class="count">{{ row.item.female.count }}</span></div>
       </template>
       <template slot="multip" slot-scope="row">
-        <div><span v-t="row.item.multip.iconLabel" class="availBox" :class="row.item.multip.iconClass" /><span v-t="row.item.multip.count" class="count"/></div>
+        <div><span v-t="row.item.multip.iconLabel" class="availBox" :class="row.item.multip.iconClass" /><span class="count">{{ row.item.multip.count }}</span></div>
       </template>
     </b-table>
   </div>

@@ -124,9 +124,9 @@ const addDetectList = (detectList, isLost, pos, zone) => {
  * @param {zones} zones
  * @param {positions} positions
  */
-export const loadProhibitDetect = async (viewName, stage, icons, zones, positions = []) => {
-  const showProhibitAlert = ArrayUtil.equalsAny(APP.POS.PROHIBIT_ALERT, [ALERT_STATE.SCREEN, viewName]) && Util.hasValue(APP.POS.PROHIBIT_GROUP_ZONE)
-  const showLostAlert = ArrayUtil.equalsAny(APP.POS.LOST_ALERT, [ALERT_STATE.SCREEN, viewName]) && Util.hasValue(APP.POS.LOST_GROUP_ZONE)
+export const loadProhibitDetect = async (viewName, stage, icons, zones, positions = [], pShowProhibit = true, pShowLost = true) => {
+  const showProhibitAlert = pShowProhibit && ArrayUtil.equalsAny(APP.POS.PROHIBIT_ALERT, [ALERT_STATE.SCREEN, viewName]) && Util.hasValue(APP.POS.PROHIBIT_GROUP_ZONE)
+  const showLostAlert = pShowLost && ArrayUtil.equalsAny(APP.POS.LOST_ALERT, [ALERT_STATE.SCREEN, viewName]) && Util.hasValue(APP.POS.LOST_GROUP_ZONE)
 
   if (!showProhibitAlert && !showLostAlert) {
     return {}
@@ -166,7 +166,7 @@ export const loadProhibitDetect = async (viewName, stage, icons, zones, position
     clearInterval(ret.prohibitInterval)  // 点滅クリア
     // 禁止区域に検知されたら点滅させる
     if (ret.showDismissibleAlert) {
-      ret.prohibitInterval = setInterval(() => ViewHelper.twinkleProhibit(stage, icons, ret.prohibitDetectList), DISP.PROHIBIT_TWINKLE_TIME)
+      ret.prohibitInterval = setInterval(() => ViewHelper.twinkleProhibit(stage, icons, ret.prohibitDetectList), DISP.PROHIBIT.TWINKLE_TIME)
     }
   }
   return ret

@@ -601,7 +601,12 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   },
 
   // 禁止区域関連設定
-  PROHIBIT_TWINKLE_TIME: 1500, // 点滅間隔(ミリ秒)
+  PROHIBIT: {
+    TWINKLE_TIME: 1500, // 点滅間隔(ミリ秒)
+    FONT_COLOR: 'black',
+    FONT_SIZE: 26,
+    BG_COLOR: 'rgba(255,0,0,0.5)',
+  },
   // システム設定カテゴリ
   SYSTEM_USE: {
     BG_COLOR: {

@@ -177,6 +177,7 @@
 <script>
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
+import { Container, Shape, Text } from 'createjs-module'
 import 'element-ui/lib/theme-chalk/index.css'
 import drag from '@branu-jp/v-drag'
 import { SENSOR, TX, POT_TYPE, SHAPE, KEY, SYSTEM_ZONE_CATEGORY_NAME, ALERT_STATE } from '../../sub/constant/Constants'
@@ -276,6 +277,11 @@ export default {
     },
     // トイレ情報を表示
     pShowToilet: {
+      type: Boolean,
+      default: false,
+    },
+    // 進入禁止ゾーン区画を表示
+    pShowZone: {
       type: Boolean,
       default: false,
     },
@@ -691,6 +697,10 @@ export default {
         await PositionHelper.loadPosition(this.count, alwaysTxs)
       }
 
+      if (this.pShowZone) {
+        this.showZone() // 進入禁止ゾーンを表示する
+      }
+
       if (Util.hasValue(this.pShowExbSensorIds)) {
         this.showExbAll()
       }
@@ -746,8 +756,8 @@ export default {
       this.keepExbPosition = true
     },
     async loadProhibitDetect() {
-      if (this.pShowProhibit && Util.hasValueAny(APP.POS.PROHIBIT_GROUP_ZONE, APP.POS.LOST_GROUP_ZONE)) {
-        Util.merge(this, await ProhibitHelper.loadProhibitDetect(ALERT_STATE.MAP, this.stage, this.icons, this.zones, this.positions))
+      if ((this.pShowProhibit || this.pShowLost) && Util.hasValueAny(APP.POS.PROHIBIT_GROUP_ZONE, APP.POS.LOST_GROUP_ZONE)) {
+        Util.merge(this, await ProhibitHelper.loadProhibitDetect(ALERT_STATE.MAP, this.stage, this.icons, this.zones, this.positions, this.pShowProhibit, this.pShowLost))
         this.replace({ showAlert: this.showDismissibleAlert })
       }
     },
@@ -760,6 +770,30 @@ export default {
         else {
           this.toiletTop = DomUtil.getRect('#map').top - 60
         }
+      }
+    },
+    showZone() { // ソーン区画を表示する（現在進入禁止のみ表示）
+      if (!this.stage.children.some(e => e.name == 'zoneCon') || this.zoneCon.areaId != this.selectedAreaId) {
+        this.zoneCon = new Container()
+        this.zoneCon.name = 'zoneCon'
+        this.zoneCon.areaId = this.selectedAreaId
+
+        const zoneList = this.zones.filter(zone => zone.areaId == this.selectedAreaId && zone.categoryList.some(category => category.categoryName == SYSTEM_ZONE_CATEGORY_NAME.PROHIBIT))
+        zoneList.forEach(zone => {
+          const shape = new Shape()
+          shape.graphics.beginFill(DISP.PROHIBIT.BG_COLOR).drawRect(zone.x, zone.y, zone.w, zone.h) 
+          const label = new Text(zone.zoneName)
+          label.set({
+            font: DISP.PROHIBIT.FONT_SIZE + 'px Arial',
+            color: DISP.PROHIBIT.FONT_COLOR,
+            textAlign: 'left',
+            textBaseline: 'top',
+            x: zone.x + 7,
+            y: zone.y + 7
+          })
+          this.zoneCon.addChild(shape, label)
+        })
+        this.stage.addChild(this.zoneCon)
       }
     },
 

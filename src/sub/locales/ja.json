@@ -326,6 +326,8 @@
     "empty": "空",
     "occupy": "満",
 
+    "guestAccess": "来客アクセス管理",
+
     "meeting_room": "会議室",
 
     "password": "パスワード",
@@ -1158,7 +1160,12 @@
       "TXSENSOR_POPUP_SIZE": "Txセンサ表示ポップアップの高さ",
       "TXMEDITAG_POPUP_SIZE": "TxMEDiTAG表示ポップアップの高さ",
       "INSTALLATION.FONT_SIZE": "設置支援画面のRSSIアイコンのテキストサイズ",
-      "PROHIBIT_TWINKLE_TIME": "禁止区域検知時の点滅間隔::点滅間隔をミリ秒で設定する。",
+      "PROHIBIT": {        
+        "TWINKLE_TIME": "禁止区域検知時の点滅間隔::点滅間隔をミリ秒で設定する。",
+        "FONT_COLOR": "禁止区域表示の文字色。",
+        "FONT_SIZE": "禁止区域表示の文字サイズ",
+        "BG_COLOR": "禁止区域表示の際の背景色::アルファ値を含めて設定する"
+      },
       "MENU": {
         "SHOW_NAV": "上部メニューを表示する::画面上部にメニューを表示します。",
         "SHOW_SIDEBAR": "サイドメニューを表示する::画面左部にメニューを表示します。",
