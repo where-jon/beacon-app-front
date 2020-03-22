@@ -118,7 +118,8 @@ export const loadPosition = async (count, allShow = false, fixSize = false) => {
 export const filterPositions = (positions = store.state.main.positions,
   showAllTime = false, 
   showTxNoOwner = APP.POS.SHOW_TX_NO_OWNER,
-  selectedCategoryId = store.state.main.selectedCategoryId, selectedGroupId = store.state.main.selectedGroupId,
+  selectedCategoryId = store.state.main.selectedCategoryId,
+  selectedGroupId = store.state.main.selectedGroupId,
   selectedTxIdList = store.state.main.selectedTxIdList,
   selectedFreeWord = store.state.main.selectedFreeWord) => { // p, position-display, rssimap, position-list, position, ProhibitHelper
   const txIdMap = store.state.app_service.btxIdMap

@@ -285,6 +285,11 @@ export default {
       type: Boolean,
       default: false,
     },
+    // ゲストグループのみを表示
+    pShowOnlyGuest: {
+      type: Boolean,
+      default: false,
+    },
     // installation : 設置支援
     pInstallation: {
       type: Boolean,
@@ -1126,11 +1131,17 @@ export default {
       }
 
       let positions = this.$store.state.main.positions
-      if (!this.pInstallation) {
+      if (!this.pInstallation && !this.pShowOnlyGuest) {
         positions = PositionHelper.addFixedPosition(positions, this.locations, this.selectedAreaId) // 固定位置追加
       }
       // 表示Txのフィルタリング
-      positions = this.pDisabledFilter? PositionHelper.filterPositions(positions, false, undefined, null, null, null): PositionHelper.filterPositions(positions)
+      if (this.pShowOnlyGuest) {
+        this.selectedGroupId = Util.v(this.groups.find(group => group.groupCd == APP.POS.GUEST_GROUP_CD), 'groupId', -1)
+      }
+
+      positions = this.pDisabledFilter?
+        PositionHelper.filterPositions(positions, false, undefined, null, null, null):
+        PositionHelper.filterPositions(positions)
 
       if (this.isQuantity) { // 数量ボタン押下時
         this.showQuantityTx(positions)

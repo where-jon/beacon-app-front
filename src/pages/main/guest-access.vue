@@ -5,6 +5,7 @@
       :p-show-tx-sensor-ids="[null]"
       p-show-detail
       :p-show-prohibit="true"
+      :p-show-only-guest="true"
       :p-show-lost="false"
       p-split-auto-reload
       :p-show-zone="true"
