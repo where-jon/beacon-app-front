@@ -534,12 +534,6 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     ABSENT_BGCOLOR: 'rgb(255,153,153)', // 退場者の背景色 
     ENTER_BGCOLOR: 'rgb(217,217,217)', // 入場者の背景色
   },
-  TOILET: {
-    DISPLAY_MODE: 0, // 表示モード 0:数値, 1:アイコン
-    BASE_FONT_SIZE: 24, // 基準フォントサイズ
-    BASE_MARK_R: 16, // 基準空室アイコンサイズ
-    MARK_COLUMN_NUM: 5, // アイコン表示最大列
-  },
 
   FONT_ICON_ADJUST_SCALE: 1.0, // アイコン内テキストのフォントサイズ係数
   IS_SCALE_ICON_TEXT: false, // アイコン内のテキストを自動スケールさせる

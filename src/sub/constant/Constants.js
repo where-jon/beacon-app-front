@@ -848,9 +848,6 @@ export const SETTING = {
         MEDITAG: {
           STRESS_BG: SETTING.STRING_LIST,
         },
-        TOILET: {
-          DISPLAY_MODE: SETTING.NUMBER,
-        }
       },
       DEV: {
         SIMULATION: SETTING.NUMBER,

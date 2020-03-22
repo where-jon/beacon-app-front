@@ -127,11 +127,11 @@
     </b-row>
 
     <!-- 個別/数量 -->
-    <b-row v-if="pQuantity && !isMsTeams" class="mt-2">
+    <b-row v-if="pQuantity && !isMsTeams" id="quantityToggle" class="mt-2">
       <b-form>
         <b-form-row class="ml-sm-4 ml-2 mr-1">
           <b-button-group>
-            <b-button v-t="'label.individualTx'" :variant="theme" :class="isQuantity? 'mb-2': 'mb-2 legend-button-active'" @click="changeIconsIndividual"/> 
+            <b-button v-t="'label.individualTx'" :variant="theme" :class="isQuantity? 'mb-2': 'mb-2 legend-button-active'" @click="changeIconsIndividual" /> 
             <b-button v-t="'label.quantity'" :variant="theme" :class="isQuantity? 'mb-2 legend-button-active': 'mb-2'" @click="changeIconsQuantity" /> 
           </b-button-group>
         </b-form-row>
@@ -157,8 +157,8 @@
       <txdetail :selected-tx="selectedTx" :selected-sensor="selectedSensor" :is-show-modal="isShowModal()" @resetDetail="resetDetail" />
     </div>
 
-    <div v-if="pShowToilet && !isResponsiveMode" v-drag class="lightbox">
-      <toiletview :show-area="false" :data-list="toiletDataList" :small="true" addClass="table-borderless" />
+    <div v-if="pShowToilet && !isResponsiveMode" v-drag class="lightbox" :style="{top: toiletTop + 'px'}">
+      <toiletview :show-area="false" :data-list="toiletDataList" :small="true" addClass="table-borderless" /><!-- :add-classだと動作しない -->
     </div>
 
     <b-modal v-model="isShownChart" :title="chartTitle" size="lg" header-bg-variant="light" hide-footer>
@@ -420,6 +420,7 @@ export default {
       absentZonePosition: null, // 不在表示ゾーン
       // トイレ
       toiletDataList: [],
+      toiletTop: 200,
       // センサー
       sensorMap: {},
       // 温湿度
@@ -753,6 +754,12 @@ export default {
     async showToilet() { // トイレを表示する
       if (this.pShowToilet) {
         this.toiletDataList = await ToiletHelper.fetchData()
+        if (this.pQuantity) {
+          this.toiletTop = DomUtil.getRect('#quantityToggle').top - 70
+        }
+        else {
+          this.toiletTop = DomUtil.getRect('#map').top - 60
+        }
       }
     },
 
