@@ -116,7 +116,7 @@ export const hasValue = obj => obj != null && obj.length !== 0
  * @param {String|Array} obj lengthプロパティが存在するオブジェクト全般
  * @return {Boolean}
  */
-export const hasValueAny = (...obj) => obj.some(val => hasValue(val))
+export const hasValueAny = (...obj) => obj && obj.some(val => hasValue(val))
 
 /**
  * 値が存在する最初の値を返す。
@@ -125,6 +125,13 @@ export const hasValueAny = (...obj) => obj.some(val => hasValue(val))
  */
 export const firstValue = (...obj) => obj.find(val => hasValue(val))
 
+/**
+ * Nullの場合デフォルト値を返す。
+ * 
+ * @param {*} obj 
+ * @param {*} def 
+ */
+export const nvl = (obj, def = '') => obj == null? def: obj
 
 /**
  * オプジェクトから階層を辿って値を取得する。

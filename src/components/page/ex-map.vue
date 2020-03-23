@@ -174,7 +174,7 @@
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import { SENSOR, TX, POT_TYPE, SHAPE, KEY, SYSTEM_ZONE_CATEGORY_NAME } from '../../sub/constant/Constants'
+import { SENSOR, TX, POT_TYPE, SHAPE, KEY, SYSTEM_ZONE_CATEGORY_NAME, ALERT_STATE } from '../../sub/constant/Constants'
 import { APP, DISP, APP_SERVICE, EXCLOUD, MSTEAMS_APP } from '../../sub/constant/config'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
@@ -638,7 +638,13 @@ export default {
       }
     },
     async fetchData(payload) { // リロードボタン押下時
-      this.onMapImageShown(payload)
+      if (!this.bitmap) {
+        this.reloadState.isLoad = false
+        this.hideProgress()
+      }
+      else {
+        this.onMapImageShown(payload)
+      }
     },
     async onMapImageShown(payload) { // canvasへのdrawImageが完了すると呼び出される
       if (!payload) payload = {}
@@ -666,8 +672,6 @@ export default {
         await PositionHelper.loadPosition(this.count, alwaysTxs)
       }
 
-      this.stage.on('click', evt => this.resetDetail())
-
       if (Util.hasValue(this.pShowExbSensorIds)) {
         this.showExbAll()
       }
@@ -688,8 +692,8 @@ export default {
         this.reloadState.prevent = false
       }
 
-      if (this.pShowProhibit && Util.hasValue(APP.POS.PROHIBIT_GROUP_ZONE)) {
-        Util.merge(this, ProhibitHelper.setProhibitDetect('pos', this.stage, this.icons, this.zones, this.positions))
+      if (this.pShowProhibit && Util.hasValueAny(APP.POS.PROHIBIT_GROUP_ZONE, APP.POS.LOST_GROUP_ZONE)) {
+        Util.merge(this, ProhibitHelper.setProhibitDetect(ALERT_STATE.MAP, this.stage, this.icons, this.zones, this.positions))
         this.replace({ showAlert: this.showDismissibleAlert })
       }
 
@@ -699,6 +703,7 @@ export default {
       }
       this.replace({ showWarn: Util.hasValue(this.warnMessage) })
 
+      this.stage.on('click', evt => this.resetDetail())
       this.stage.enableMouseOver()
       this.stage.update()
 
@@ -1062,6 +1067,20 @@ export default {
       if (this.isQuantity) { // 数量ボタン押下時
         this.showQuantityTx(positions)
       } else { // 個別ボタン押下時
+        if (this.pOnlyFixTx && this.sensorMap.temperature) {
+          this.sensorMap.temperature.forEach(val => { // サンワセンサーはminorを持たずEXCloud側で測位しないため、仮想的に測位情報を作る（あとの処理で必要なものだけセット）
+            if (!positions.some(pos => pos.btxId == val.btxId)) {
+              const tx = _.cloneDeep(this.txIdMap[val.txId])
+              if (tx) {
+                tx.disp = 1
+                positions.push({
+                  txId: val.txId, btxId: val.btxId, isFixedPosition: true, x: tx.location.x, y: tx.location.y, 
+                  location: tx.location, exb: { location: {}}, tx,
+                })
+              }
+            }
+          })
+        }
         if (Util.hasValue(this.pShowTxSensorIds)) {
           this.showNomalTx(positions)
         }
@@ -1069,7 +1088,7 @@ export default {
     },
 
     // 通常のTX表示
-    showNomalTx(positions) { 
+    showNomalTx(positions) {
       // 表示Txの画面上の座標位置の決定
       if(APP.POS.USE_MULTI_POSITIONING){
         // ３点測位はUSE_POSITION_HISTORYには非対応 TODO:要対応

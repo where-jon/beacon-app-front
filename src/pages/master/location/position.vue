@@ -324,12 +324,36 @@ export default {
       }
       this.stage.update()
     },
-    refleshLocationList(){
+    // アイコン内の全情報を最新化：フェッチ、詳細ポップアップ確定、削除後
+    refleshDeviceLocationList(deviceList){
+      const locationMap = {}
+      deviceList.forEach(device => {
+        if(Util.hasValue(device.locationId)){
+          if(!locationMap[device.locationId]){
+            locationMap[device.locationId] = []
+          }
+          locationMap[device.locationId].push(device)
+        }
+      })
+      return locationMap
+    },
+    refleshLocationList(changedLocationId){
+      const locationExbMap = this.refleshDeviceLocationList(this.work.exbList)
+      const locationTxMap = this.refleshDeviceLocationList(this.work.txList)
       this.work.locationList.forEach(location => {
-        const exbNum = location.exbList.length
-        location.deviceId = Util.getValue(location.exbList, '0.deviceId', '') + (1 < exbNum? '+': '')
-        location.deviceIdX = Util.getValue(location.exbList, '0.deviceIdX', '') + (1 < exbNum? '+': '')
+        const exbList = Util.nvl(locationExbMap[location.locationId], [])
+        const exbNum = exbList.length
+        location.exbList = exbList
+        location.deviceId = Util.getValue(exbList, '0.deviceId', '') + (1 < exbNum? '+': '')
+        location.deviceIdX = Util.getValue(exbList, '0.deviceIdX', '') + (1 < exbNum? '+': '')
+
+        const txList = Util.nvl(locationTxMap[location.locationId], [])
+        location.txList = txList
         location.txName = MasterHelper.getLocationTxName(Util.v(location.txList, '0'), false) + (1 < location.txList.length? '+': '')
+
+        if (changedLocationId && changedLocationId == location.locationId) {
+          location.isChanged = true
+        }
       })
       this.changeLocationDisp(this.form.locationDisp)
     },
@@ -405,16 +429,20 @@ export default {
       const offsetY = (DISP.EXB_LOC.SIZE.H / 2 + this.ICON_ARROW_HEIGHT) / this.canvasScale
       const locationButton = IconHelper.createLocationIcon(location, this.form.locationDisp, this.DISPLAY_NAME_BYTE_LENGTH, DISP.EXB_LOC, this.canvasScale)
       locationButton.on('pressmove', evt => {
+        location.pressMove = true
         location.popEvent = false
         evt.currentTarget.set({ x: evt.stageX, y: evt.stageY })
         this.stage.update()
       })
 
       locationButton.on('pressup', evt => {
-        location.x = evt.stageX
-        location.y = evt.stageY + offsetY
-        this.isChanged = true
-        location.isChanged = true
+        if (location.pressMove) {
+          location.x = evt.stageX
+          location.y = evt.stageY + offsetY
+          this.isChanged = true
+          location.isChanged = true
+        }
+        location.pressMove = false
       })
 
       locationButton.on('dblclick', evt => this.showEditPopup(locationButton.location))
@@ -499,8 +527,8 @@ export default {
       return this.createTxLocation(masterId, x, y)
     },
     showLocationOnMap(val, x = 50, y = 40) {
-      const masterId = Util.v(val, 'value')
-      if (masterId == null) {
+      const masterId = Util.v(val, 'value', '')
+      if (masterId === null) {
         return
       }
       const location = this.createNewLocation(masterId, x, y)
@@ -534,6 +562,7 @@ export default {
     onUpdate(form){
       this.form.location.locationCd = form.locationCd
       this.form.location.locationName = form.locationName
+      this.isChanged = true
 
       this.work.exbList.forEach(exb => {
         if(exb.locationId == form.locationId && !form.exbIdList.includes(exb.exbId)){
@@ -551,7 +580,7 @@ export default {
           tx.locationId = form.locationId
         }
       })
-      this.refleshLocationList()
+      this.refleshLocationList(form.locationId)
     },
     onDelete() {
       this.$root.$emit('bv::show::modal', 'modalDeleteConfirm')
@@ -559,7 +588,12 @@ export default {
     execDelete(){
       const formLocation = this.form.location
       formLocation.areaId = formLocation.x = formLocation.y = null
-
+      this.isChanged = true
+      this.work.locationList.forEach( location => {
+        if (location.locationId == formLocation.locationId) {
+          location.isChanged = true
+        }
+      })
       if(formLocation.locationId < 0){
         this.work.locationList = this.work.locationList.filter(location => location.locationId != formLocation.locationId)
       }

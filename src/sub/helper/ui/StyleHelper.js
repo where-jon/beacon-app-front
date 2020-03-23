@@ -41,18 +41,11 @@ export const getStyleDisplay1 = (val, option = {reverceColor: false, fixSize: tr
     'white-space': 'nowrap',
   }
   const label = Util.getValue(val, 'label')
-  if(option.fixSize != false){
-    const fontSize = label? getInRectFontSize(label, DISP.TX.FIX_R * 2, DISP.TX.FIX_R * 2): DISP.TX.FIX_R
-    style.font = getAdjustFontSize(() => fontSize * DISP.FONT_ICON_ADJUST_SCALE)
-    style.width = (DISP.TX.FIX_R * 2) + 'px'
-    style.height = (DISP.TX.FIX_R * 2) + 'px'
-  }
-  else{
-    const fontSize = label? getInRectFontSize(label, DISP.TX.R * 2, DISP.TX.R * 2): DISP.TX.R
-    style.font = getAdjustFontSize(() => fontSize * DISP.FONT_ICON_ADJUST_SCALE)
-    style.width = (DISP.TX.R * 2) + 'px'
-    style.height = (DISP.TX.R * 2) + 'px'
-  }
+  let r = option.fixSize != false? DISP.TX.FIX_R: DISP.TX.R
+  const fontSize = label? getInRectFontSize(label, r * 2, r * 2): r
+  style.font = getAdjustFontSize(() => fontSize * DISP.FONT_ICON_ADJUST_SCALE)
+  style.width = (r * 2) + 'px'
+  style.height = (r * 2) + 'px'
   return style
 }
 

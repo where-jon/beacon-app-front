@@ -14,6 +14,7 @@ import * as EXCloudHelper from '../dataproc/EXCloudHelper'
 import * as MenuHelper from '../dataproc/MenuHelper'
 import * as StyleHelper from '../ui/StyleHelper'
 import * as DetectStateHelper from './DetectStateHelper'
+import * as SensorHelper from './SensorHelper'
 
 const iconsUnitNum = 9
 const tileLayoutIconsNum = 5
@@ -69,11 +70,16 @@ export const loadPosition = async (count, allShow = false, fixSize = false) => {
   positions = _(positions).filter(pos => allShow || DEV.NOT_FILTER_TX || txIdMap[pos.txId])
     .filter(pos => allShow || Util.hasValue(pos.locationId) && locationIdMap[pos.locationId] && (txIdMap[pos.txId] && NumberUtil.bitON(txIdMap[pos.txId].disp, TX.DISP.POS)))
     .map(pos => {
+      // if (pos.minor == 603) { // 開発目的：矯正ポジション設定
+      //   console.log(pos)
+      //   pos.locationId = 2
+      //   pos.exbId = 2
+      // }
       let tx = txIdMap[pos.txId]
       // 固定位置の場合,txのlocation、そうではない場合exbのlocation TODO:要検討
       let location = tx.location && 0 < tx.location.x * tx.location.y? tx.location: locationIdMap[pos.locationId]
       let exb = exbIdMap[pos.exbId]
-      let label = tx.displayName? tx.displayName: tx.btxId
+      let label = Util.firstValue(Util.v(tx, 'pot.displayName', tx.minor), tx.btxId)
 
       // 検知状態の設定
       setDetectState(pos)
@@ -84,8 +90,8 @@ export const loadPosition = async (count, allShow = false, fixSize = false) => {
   
       return { ...pos, btxId: tx.btxId, deviceId: Util.v(exb, 'deviceId'), posx: pos.x, posy: pos.y,
         label, location, exb, tx, updatetime: DateUtil.dateform(pos.positionDt), timestamp: DateUtil.dateform(pos.positionDt), // TODO: updatetimeかtimestampかどちらかに統一
-        isTransparent: isTransparent(pos.timestamp, now),
-        isLost: isLost(pos.timestamp, now),
+        isTransparent: isTransparent(pos.positionDt, now),
+        isLost: isLost(pos.positionDt, now),
         display
       }
     }).compact().value()
@@ -212,7 +218,7 @@ export const isFixedPosOnArea = (tx, areaId) => hasTxLocation(tx) && tx.location
 export const isInTheArea = (pos, locations, selectedMapId) => {
   const targetLocations = locations.filter(location => location.areaId != null && (selectedMapId == null || selectedMapId == location.areaId))
   return pos.exb.location && _.some(targetLocations, location => pos.exb.location.locationId == location.locationId)
-    && pos.timestamp && (new Date(pos.timestamp) > new Date().getTime() - APP.POS.LOST_TIME)
+    && pos.timestamp && (new Date(pos.timestamp).getTime() > new Date().getTime() - APP.POS.LOST_TIME)
 }
 
 /**
@@ -311,18 +317,17 @@ export const checkTxAllow = (pos, tx, areaId, isAbsent = false, onlyFixPos = fal
 }
 
 // ゾーンエリアに表示できる最後のTX位置で省略を表示する際に使用する
-export const zoneLastTxId = () => { return 100000001 }
+export const zoneLastTxId = () => 100000001
 
-export const isZoneLastTxId = (btxId) => { return btxId == zoneLastTxId }
+export const isZoneLastTxId = (btxId) => btxId == zoneLastTxId
 
 export const zoneLastTxData = () => { // TODO: pos_idは何に使っている？
   return { btxId: zoneLastTxId(), pos_id: 0, label: '・・・', isLost: false, }
 }
 
-export const isDoubleTx = (btxId) => { return btxId >= zoneBtxIdAddNumber }
+export const isDoubleTx = (btxId) => btxId >= zoneBtxIdAddNumber
 
-export const getDoubleDefaultTxId = (btxId) => { return btxId - zoneBtxIdAddNumber }
-
+export const getDoubleDefaultTxId = (btxId) => btxId - zoneBtxIdAddNumber
 
 // ------- 固定表示 -------
 
@@ -345,7 +350,7 @@ export const addFixedPosition = (orgPositions, locations = [], selectedMapId = n
     if (pos.isFixedPosition) { // txが場所固定されており、現在位置が場所固定ゾーンにいる場合（txの固定場所のゾーンでなくても同じエリアの固定ゾーンであれば）
       pos.inFixedZone = pos.exb.location.isFixedPosZone // 今いる場所が固定場所ゾーンに入っているか
       // 固定場所ゾーンにいず、かつ同じエリアにいて、検知状態の場合、フリーアドレスとしても表示
-      if (!pos.inFixedZone && isInTheArea(pos, locations, selectedMapId) && pos.detectState == DETECT_STATE.DETECTED) {
+      if (!pos.inFixedZone && isInTheArea(pos, locations, selectedMapId) && pos.detectState == DETECT_STATE.DETECTED && !SensorHelper.isFixedSensorTx(pos.tx)) {
         const addPos = _.cloneDeep(pos)
         addPos.isFixedPosition = false
         addPos.location = pos.exb.location
@@ -402,7 +407,7 @@ export const calcScreenCoordinates = (positions, ratio, locations = [], selected
   return _(targetLocations).map(location => {
     const samePos = targetPos.filter(pos => pos.location.locationId == location.locationId)
     // console.error('samePos', samePos.map(e => e.minor))
-    const txR = location.isFixedPosZone? DISP.TX.FIXED_POS.R: DISP.TX.R
+    const txR = (location.isFixedPosZone && DISP.TX.FIXED_POS.APPLY_COLOR)? DISP.TX.FIXED_POS.R: DISP.TX.R
     samePos.forEach(pos => pos.txR = txR)
     return calcCoordinatesWhenOverlap(location, ratio, samePos, txR)
   }).compact().flatMap(e => e).tap(Util.debug).value()

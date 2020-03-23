@@ -351,16 +351,47 @@ export function getLastRowInColumn(arr2d, col) {
   return false;
 }
 
+const MIN_WIDTH_RATIO = 14
+const MAX_WIDTH_RATIO = 33
+
+let containerPx = 0
+
 const getGridLeftAndWidth = (headerOpts) => {
+  if (containerPx == 0) {
+    const leftPx = document.getElementById('tg-left').style.width.split('px')[0]
+    containerPx = document.getElementById('vlayout-area').getBoundingClientRect().width - leftPx
+  }
+  
   let accumulatedWidth = 0
-  const width = 100 / headerOpts.length
+  let widthRatio = 100 / headerOpts.length
+  widthRatio = widthRatio < MIN_WIDTH_RATIO ? MIN_WIDTH_RATIO : MAX_WIDTH_RATIO < widthRatio ? MAX_WIDTH_RATIO : widthRatio
+
+  switch (widthRatio) {
+    case MIN_WIDTH_RATIO:
+    case MAX_WIDTH_RATIO:
+      const unitPx = containerPx * widthRatio / 100
+      const newContainerPx= unitPx * headerOpts.length
+      document.getElementById('w-container').style.width = widthRatio == MIN_WIDTH_RATIO ? '100%' : ''
+      document.getElementById('tg-h-g').style.width = `${newContainerPx}px`
+      document.getElementById('tg-s').style.width = `${newContainerPx}px`
+      document.getElementById('day-right').style.width = `${newContainerPx}px`
+      widthRatio = unitPx / newContainerPx * 100
+      break
+    default:
+      document.getElementById('tg-h-g').style.width = `100%`
+      document.getElementById('tg-s').style.width = `100%`
+      document.getElementById('day-right').style.width = `100%`
+      document.getElementById('w-container').style.width = `100%`
+      containerPx = 0
+  }
+
   const leftAndWidthMap = {}
   headerOpts.forEach(opt => {
     leftAndWidthMap[opt.value] = {
-        width: width,
+        width: widthRatio,
         left: accumulatedWidth
     }
-    accumulatedWidth += width
+    accumulatedWidth += widthRatio
   })
   return leftAndWidthMap
 }

@@ -56,15 +56,15 @@
       <b-form inline>
         <b-form-row class="my-1 ml-2 ml-sm-0 mr-2">
           <div class="ml-sm-4 ml-2" @click="onClickNavi">
-              <b-button :variant="theme" data-action="move-today">{{ $t('label.today') }}</b-button>
-              <b-button :variant="theme" data-action="move-prev">&lt;</b-button>
-              <b-button :variant="theme" data-action="move-next">&gt;</b-button>
+            <b-button :variant="theme" data-action="move-today">{{ $t('label.today') }}</b-button>
+            <b-button :variant="theme" data-action="move-prev">&lt;</b-button>
+            <b-button :variant="theme" data-action="move-next">&gt;</b-button>
           </div>
         </b-form-row>
         <b-form-row class="my-1 ml-2 ml-sm-0">
           <date-picker
-            ref="datePicker"
             v-show="true"
+            ref="datePicker"
             v-model="today"
             :type="datePickerType"
             :format="datePickerFormat"
@@ -72,12 +72,11 @@
             style="width: 170px;"
             :placeholder="datePickerPlaceholder"
             @blur="onDatePickerBlur"
-            >
-          </date-picker>
+          />
         </b-form-row>
         <b-form-row v-if="planMode == 'meetingRoom' && doCompare" class="my-1 ml-2 ml-sm-0">
           <label class="ml-sm-4 ml-2 mr-2">
-            {{ '判例' }}
+            {{ '凡例' }}
           </label>
           <ul class="list-group list-group-horizontal">
             <li class="list-group-item actual-in-plan">予定有・利用有</li>
@@ -87,20 +86,17 @@
         </b-form-row>
       </b-form>
     </b-row>
-    <plan-calendar :name="name" :id="id" :appServicePath="appServicePath" :planMode="planMode" :currentUser="currentUser" :headerOpts="headerOpts" :viewModel="viewModel" :dragHandler="dragHandler" :clickScheduleEvent="clickScheduleEvent" :mgViewModel="mgViewModel" :doCompare="doCompare" @doEdit="doEdit" @doDelete="onDeleteSchedule">
-    </plan-calendar>
+    <plan-calendar :id="id" :name="name" :appServicePath="appServicePath" :planMode="planMode" :currentUser="currentUser" :headerOpts="headerOpts" :viewModel="viewModel" :dragHandler="dragHandler" :clickScheduleEvent="clickScheduleEvent" :mgViewModel="mgViewModel" :doCompare="doCompare" @doEdit="doEdit" @doDelete="onDeleteSchedule"/>
     <div>
-      <b-modal id="editPlanModal" v-model="showEdit" 
-        hide-footer
-        :title="$t('label.schedule')"
-        header-class="editPlanHeader"
-      >
-      <edit-plan :name="name" :id="id" :appServicePath="appServicePath" :currentUser="currentUser" :plan="targetPlan" :zoneOpts="zoneOpts" :locationOpts="locationOpts" :potPersonOpts="filterPotPersonOpts" :potThingOpts="potThingOpts" :vueSelected="editVueSelected" @doneSave="onEditSave" @delete="onEditDelete"/>
+      <b-modal id="editPlanModal" v-model="showEdit" hide-footer :title="$t('label.schedule')" header-class="editPlanHeader">
+        <edit-plan :id="id" :name="name" :appServicePath="appServicePath" :currentUser="currentUser" :plan="targetPlan" :zoneOpts="zoneOpts" :locationOpts="locationOpts" :potPersonOpts="filterPotPersonOpts" :potThingOpts="potThingOpts" :vueSelected="editVueSelected" @doneSave="onEditSave" @delete="onEditDelete"/>
       </b-modal>
     </div>
   </div>
 </template>
 <script>
+// FIXME: 日本語リテラルはすべてja.jsonから取るようにする
+
 import moment from 'moment'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import commonmixin from '../../components/mixin/commonmixin.vue'
@@ -108,14 +104,12 @@ import editPlan from '../../components/page/edit-plan.vue'
 import planCalendar from '../../components/page/plan-calendar.vue'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as AppServiceHelper from '../../sub/helper/dataproc/AppServiceHelper.js'
 import * as LocaleHelper from '../../sub/helper/base/LocaleHelper'
-import * as Util from '../../sub/util/Util'
+import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
 import { CATEGORY, UPDATE_ONLY_NN } from '../../sub/constant/Constants'
 import { DISP } from '../../sub/constant/config'
 import '../../sub/constant/tui/css/tui-calendar.css'
-// import '../../sub/constant/tui/css/icons.css'
 import * as app from '../../sub/calendar/calendar'
 import { domevent } from '../../sub/calendar/common/domevent'
 import { domutil } from '../../sub/calendar/common/domutil'
@@ -125,14 +119,13 @@ import { TimeClick } from '../../sub/calendar/handler/time/click'
 import { TimeCreation } from '../../sub/calendar/handler/time/creation'
 import { TimeMove } from '../../sub/calendar/handler/time/move'
 import { TimeResize } from '../../sub/calendar/handler/time/resize'
-import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import {getLogin} from '../../sub/helper/base/LocalStorageHelper'
 
 export default {
-  mixins: [commonmixin],
   components: {
     editPlan, breadcrumb, DatePicker, planCalendar
   },
+  mixins: [commonmixin],
   data () {
     return {
       name: 'plan',
@@ -244,18 +237,18 @@ export default {
     }
   },
   computed: {
-    zoneOpts() {
+    zoneOpts() { // TODO: commonmixinのを使う
       return this.options['zones']
     },
-    locationOpts() {
+    locationOpts() { // TODO: commonmixinのを使う
       return this.options['locations']
     },
     cssVars() {
       return {
-      '--editPlanHeaderBgColor': DISP.PLAN.EDIT_PLAN_HEADER_BG_COLOR,
-      '--actualInPlanBgColor': DISP.PLAN.ACTUAL_IN_PLAN_BG_COLOR,
-      '--noActualBgColor': DISP.PLAN.NO_ACTUAL_IN_PLAN_BG_COLOR,
-      '--actualOutOfPlanBgColor': DISP.PLAN.ACTUAL_OUT_OF_PLAN_BG_COLOR,
+        '--editPlanHeaderBgColor': DISP.PLAN.EDIT_PLAN_HEADER_BG_COLOR,
+        '--actualInPlanBgColor': DISP.PLAN.ACTUAL_IN_PLAN_BG_COLOR,
+        '--noActualBgColor': DISP.PLAN.NO_ACTUAL_IN_PLAN_BG_COLOR,
+        '--actualOutOfPlanBgColor': DISP.PLAN.ACTUAL_OUT_OF_PLAN_BG_COLOR,
       }
     },
     filterPotPersonOpts() {
@@ -264,9 +257,9 @@ export default {
         : this.targetPlan.userId == null || this.targetPlan.userId == this.currentUser.userId ? true : false
       return doFilter
         ? this.potPersonOpts.filter(opt => {
-            const potId = opt.value
-            return !this.currentUserPotIds.includes(potId)
-          })
+          const potId = opt.value
+          return !this.currentUserPotIds.includes(potId)
+        })
         : this.potPersonOpts
     },
   },
@@ -313,7 +306,6 @@ export default {
         this.vueSelected.filter = null
         this.vueSelected.filters = []
         this.filterOpts = this.loadStates.includes(newVal) ? this.options[newVal] : []
-        console.log('!!!', this.filterOpts)
         if (!newVal) {
           this.fetchData()
         }
@@ -361,7 +353,11 @@ export default {
     }
   },
   async mounted() {
-    domevent.on(document.body, 'mousedown', this.onMouseDown, this);
+    if (LocalStorageHelper.getLogin().isProviderUser) {
+      this.showErrorModal({key: 'providerUserNotAllowed'})
+      return
+    }
+    domevent.on(document.body, 'mousedown', this.onMouseDown, this)
     if (!this.currentUser) {
       this.currentUser = await AppServiceHelper.getCurrentUser()
       if (this.currentUser.isAd) {
@@ -382,14 +378,13 @@ export default {
         const target = (mouseDownEvent.target || mouseDownEvent.srcElement)
         const popupLayer = domutil.closest(target, '.tui-full-calendar-floating-layer')
         if (popupLayer) {
-            return;
+          return;
         }
         this.clickScheduleEvent = null
       }
     },
     // マスタ
     async loadMaster() {
-      // await this.loadStates.map(state => StateHelper.load(state))
       this.potPersonOpts = this.pots.filter(pot => pot.potType == CATEGORY.PERSON).map(pot => {
         return {value: pot.potId, label: pot.potName}
       })
@@ -398,11 +393,13 @@ export default {
       })
       this.headerOptsMeetingRoom = this.zones.filter(z => {
         return z.categoryList.map(cate => cate.categoryCd=='MEETING_ROOM').includes(true)
+      }).map(zone => {
+        return {value: zone.zoneId, label: zone.zoneName}
       })
       this.makeOpts()
     },
     async makeOpts() {
-      this.loadStates.forEach( st => {
+      this.loadStates.forEach( st => { // TODO: commonmixinのを使う
         this.options[st] = this[st].map( e => {
           switch (st) {
           case 'areas': 
@@ -426,18 +423,18 @@ export default {
       const picker = this.$refs.datePicker
       let dt = new Date(picker.value)
       switch (action) {
-        case 'move-prev':
-          dt = this.planMode == 'normal' ? moment(dt).day(-6).toDate() : moment(dt).add(-1, 'd').toDate()
-          break
-        case 'move-next':
-          dt = this.planMode == 'normal' ? moment(dt).day(8).toDate() : moment(dt).add(1, 'd').toDate()
-          break
-        case 'move-today':
-          dt = this.planMode == 'normal' ? moment().day(1) : moment()
-          dt = dt.set({hour:0,minute:0,second:0,millisecond:0}).toDate()
-          break
-        default:
-          return;
+      case 'move-prev':
+        dt = this.planMode == 'normal' ? moment(dt).day(-6).toDate() : moment(dt).add(-1, 'd').toDate()
+        break
+      case 'move-next':
+        dt = this.planMode == 'normal' ? moment(dt).day(8).toDate() : moment(dt).add(1, 'd').toDate()
+        break
+      case 'move-today':
+        dt = this.planMode == 'normal' ? moment().day(1) : moment()
+        dt = dt.set({hour:0,minute:0,second:0,millisecond:0}).toDate()
+        break
+      default:
+        return
       }
       if (this.planMode == 'normal') {
         this.headerOptsWeekSchedule = this.getNormalHeader(moment(dt).day(0).toDate())
@@ -463,8 +460,8 @@ export default {
     getNormalHeader(date) {
       if (LocaleHelper.getSystemLocale() == 'ja') {
         moment.updateLocale('ja', {
-            weekdays: ["日曜日","月曜日","火曜日","水曜日","木曜日","金曜日","土曜日"],
-            weekdaysShort: ["日","月","火","水","木","金","土"],
+          weekdays: ["日曜日","月曜日","火曜日","水曜日","木曜日","金曜日","土曜日"], // FIXME: locatlから取る。
+          weekdaysShort: ["日","月","火","水","木","金","土"],
         }) 
       }
       const sunday = moment(date).day(0)
@@ -786,18 +783,21 @@ export default {
   border: none;
   cursor: pointer;
 }
+.list-group-item {
+  line-height: 10px;
+}
 .actual-in-plan {
   background-color: var(--actualInPlanBgColor);
-  color: white;
+  color: black;
 }
 
 .no-actual {
   background-color: var(--noActualBgColor);
-  color: white;
+  color: black;
 }
 
 .actual-out-of-plan {
   background-color: var(--actualOutOfPlanBgColor);
-  color: white;
+  color: black;
 }
 </style>

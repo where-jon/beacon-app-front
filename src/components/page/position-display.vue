@@ -6,7 +6,7 @@
 
 <script>
 import { APP, DISP } from '../../sub/constant/config'
-import { SYSTEM_ZONE_CATEGORY_NAME } from '../../sub/constant/Constants'
+import { SYSTEM_ZONE_CATEGORY_NAME, ALERT_STATE } from '../../sub/constant/Constants'
 import { mapState } from 'vuex'
 import * as StringUtil from '../../sub/util/StringUtil'
 import * as Util from '../../sub/util/Util'
@@ -137,9 +137,8 @@ export default {
         await PositionHelper.loadPosition(null, true, true)
         this.positions = PositionHelper.filterPositions(undefined, false, true, null, null, null, null).filter(p => p.tx && p.tx.disp==1)
 
-        if (Util.hasValue(APP.POS.PROHIBIT_ALERT)
-          && (Util.hasValue(APP.POS.PROHIBIT_GROUP_ZONE)||Util.hasValue(APP.POS.LOST_GROUP_ZONE))) {
-          Util.merge(this, ProhibitHelper.setProhibitDetect('display', this.stage, this.icons, this.zones))
+        if (Util.hasValueAny(APP.POS.PROHIBIT_GROUP_ZONE, APP.POS.LOST_GROUP_ZONE)) {
+          Util.merge(this, ProhibitHelper.setProhibitDetect(ALERT_STATE.WHOLE, this.stage, this.icons, this.zones))
         }
 
         this.alertData.message = this.message

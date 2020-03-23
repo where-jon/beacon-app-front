@@ -57,12 +57,13 @@ import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 import { getCharSet } from '../../sub/helper/base/CharSetHelper'
 import { DatePicker } from 'element-ui'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
-import {POT_TYPE} from '../../sub/constant/Constants'
+import {POT_TYPE, SETTING} from '../../sub/constant/Constants'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import commonmixin from '../../components/mixin/commonmixin.vue'
 import 'element-ui/lib/theme-chalk/index.css'
 import moment from 'moment'
 import { APP, DISP, APP_SERVICE } from '../../sub/constant/config'
+import * as DateUtil from '../../sub/util/DateUtil'
 
 export default {
   mixins: [commonmixin],
@@ -106,7 +107,7 @@ export default {
   mounted() {
     ViewHelper.importElementUI()
     this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.tItems.length, maxRows: this.rowlimit})}`
-    const now = moment()
+    const now = moment(DateUtil.getDefaultDate(),SETTING.DATE_NOTATION)
     this.form.datetimeFrom = now.set({hour:0,minute:0,second:0,millisecond:0}).toDate()
     this.form.datetimeTo = now.set({hour:23,minute:59,second:59,millisecond:999}).toDate()
   },

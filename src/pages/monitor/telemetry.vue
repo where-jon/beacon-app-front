@@ -11,6 +11,7 @@
 import { APP, DISP } from '../../sub/constant/config'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as CsvUtil from '../../sub/util/CsvUtil'
+import * as DateUtil from '../../sub/util/DateUtil'
 import * as Util from '../../sub/util/Util'
 import { getCharSet } from '../../sub/helper/base/CharSetHelper'
 import * as ConfigHelper from '../../sub/helper/dataproc/ConfigHelper'
@@ -54,7 +55,7 @@ export default {
           ConfigHelper.includesDeviceType('deviceIdX')? { key: 'deviceIdX' ,sortable: true, tdClass: 'action-rowdata' }: null,
           { key: 'name', label: 'locationName' ,sortable: true, tdClass: 'action-rowdata'},
           APP.TELEMETRY.WITH_POWER_LEVEL? { key: 'powerLevel' ,sortable: true, tdClass: 'action-rowdata' }: null,
-          { key: 'timestamp', label: 'finalReceiveTimestamp' ,sortable: true, tdClass: 'action-rowdata'},
+          { key: 'finalReceiveTimestamp' ,sortable: true, tdClass: 'action-rowdata'},
           { key: 'state' },
         ].filter((val) => val))
     },
@@ -64,7 +65,7 @@ export default {
         deviceIdX: ConfigHelper.includesDeviceType('deviceIdX')? 'deviceId(HEX)': null,
         name: 'finalRevceivePlace',
         powerLevel: 'powerLevel',
-        timestamp: 'timestamp',
+        finalReceiveTimestamp: 'finalReceiveTimestamp',
         state: 'state'
       }
     },
@@ -94,6 +95,14 @@ export default {
     getTdClass (index, val, key) {
       const tdClass = key === this.label_powerLevel ? 'powerlevel' : ''
       return tdClass + ' ' + ((key === this.label_state || key === this.label_timestamp) ? 'exb-state' : '')
+    },
+    getTimestamp(timestamp) {
+      if (timestamp) {
+        try {
+          return DateUtil.formatDate(timestamp)
+        } catch (e) {}
+      }
+      return this.$i18n.tnl('label.undetect')
     },
     download() {
       const records = this.telemetrys.map(e => {
@@ -130,12 +139,12 @@ export default {
           map[deviceId] = e.location.locationName
         }
       })
-
       return telemetrys.map((e) => {
         const name = map[e.deviceId]
         const ret = {
           name: name != null ? name : 'ー',
           powerLevel:e.power_level * 2,
+          finalReceiveTimestamp: this.getTimestamp(e.timestamp),
           timestamp: e.timestamp,
           state: this.$refs.monitorTable.getStateLabel('exb', e.timestamp)
         }

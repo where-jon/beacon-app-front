@@ -4,16 +4,16 @@
     <b-row class="mt-2">
       <b-form inline @submit.prevent>
         <b-form-row class="my-1 ml-2 ml-sm-0">
-            <label class="ml-sm-4 ml-2 mr-2">
-              {{ $t('label.mode') }}
-            </label>
-            <span :title="indicatorTypeFilter.label">
-            <v-select v-model="indicatorTypeFilter" :options="indicatorTypeOpts" :clearable="false" style="width: 350px;">
+          <label class="ml-sm-4 ml-2 mr-2">
+            {{ $t('label.mode') }}
+          </label>
+          <span :title="indicatorTypeFilter.label">
+            <v-select v-model="indicatorTypeFilter" :options="indicatorTypeOpts" :clearable="false" style="width: 400px;">
               <template slot="no-options">
                 {{ vueSelectNoMatchingOptions }}
               </template>
             </v-select>
-            </span>
+          </span>
         </b-form-row>
       </b-form>
     </b-row>
@@ -36,23 +36,24 @@
           </span>
         </b-form-row>
         <b-form-row class="my-1 ml-2 ml-sm-0">
-          <toggle-button class="mr-2 mt-2" :value="isWeek"
-          :color="{checked: '#66cdaa', unchecked: '#87cefa', disabled: '#cccccc'}"
-          :sync="true"
-          :labels="{checked: $t('label.week'), unchecked: $t('label.month')}"
-          @change="onChangeToggle"/>
+          <toggle-button
+            class="mr-2 mt-2" :value="isWeek"
+            :color="{checked: '#66cdaa', unchecked: '#87cefa', disabled: '#cccccc'}"
+            :sync="true"
+            :labels="{checked: $t('label.week'), unchecked: $t('label.month')}"
+            @change="onChangeToggle"
+          />
           <date-picker
-            ref="datePicker"
             v-show="true"
+            ref="datePicker"
             v-model="today"
             :type="datePickerType"
             :format="datePickerFormat"
             size="large"
-            style="width: 135px;"
+            style="width: 170px;"
             :placeholder="datePickerPlaceholder"
             @blur="onDatePickerBlur"
-            >
-          </date-picker>
+          />
         </b-form-row>
       </b-form>
     </b-row>
@@ -68,9 +69,9 @@
       <b-table sticky-header :items="tItems" :fields="tFields" :current-page="currentPage" :per-page="perPage" :sort-compare="defaultSortCompare" stacked="md" hover outlined>
         <template slot="graph" slot-scope="row">
           <div class="progress">
-              <div class="progress-bar" :style="{width: row.item.indicator <= 100 ? row.item.indicator +'%' : '100%'}">  
-                  <span>{{ row.item.indicator }}%</span>
-              </div>
+            <div class="progress-bar" :style="{width: row.item.indicator <= 100 ? row.item.indicator +'%' : '100%'}">  
+              <span>{{ row.item.indicator }}%</span>
+            </div>
           </div>
         </template>
       </b-table>
@@ -100,10 +101,10 @@ import { getCharSet } from '../../sub/helper/base/CharSetHelper'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 
 export default {
-  mixins: [commonmixin],
   components: {
     breadcrumb, DatePicker, ToggleButton
   },
+  mixins: [commonmixin],
   data () {
     return {
       name: 'planActual',
@@ -111,37 +112,67 @@ export default {
       appServicePath: '/office/plans/indicators',
       items: ViewHelper.createBreadCrumbItems('sumTitle', 'planActual'),
 
-      isWeek: true,
       indicatorTypeOpts: [
-        {value:0, label: '予約率（予約時間／就業時間）'},
-        {value:1, label: '稼働率（稼働／就業時間）'},
-        {value:2, label: '予約稼働率（利用／予約時間）'},
-        {value:3, label: '予約外利用率（予約外利用／就業時間）'},
-        {value:4, label: '空予約回数'},
+        {value:0, label: `${this.$i18n.tnl('label.reservationRate')}（${this.$i18n.tnl('label.reservationHours')}／${this.$i18n.tnl('label.workingHours')}）`},
+        {value:1, label: `${this.$i18n.tnl('label.operatingRate')}（${this.$i18n.tnl('label.operatingHours')}／${this.$i18n.tnl('label.workingHours')}）`},
+        {value:2, label: `${this.$i18n.tnl('label.reserveOperatingRate')}（${this.$i18n.tnl('label.reserveOperatingHours')}／${this.$i18n.tnl('label.reservationHours')}）`},
+        {value:3, label: `${this.$i18n.tnl('label.unreserveOperatingRate')}（${this.$i18n.tnl('label.unreserveOperatingHours')}／${this.$i18n.tnl('label.workingHours')}）`},
+        {value:4, label: `${this.$i18n.tnl('label.emptyReservationCount')}`},
       ],
       indicatorTypeFilter: null,
 
       currentPage: 1,
       perPage: 20,
       totalRows: 0,
-      tFields: [
+      tFieldsReservationRate: [
         {key: 'name', sortable: true, label: this.$i18n.tnl('label.name')},
-        {key: 'indicator', sortable: true, label: this.$i18n.tnl('label.indicator')},
+        {key: 'indicator', sortable: true, label: this.$i18n.tnl('label.reservationRate')},
         {key: 'graph', sortable: false, label: this.$i18n.tnl('label.graph'), thStyle: {height: '50px !important', width:'400px !important'} },
-        {key: 'hour', sortable: true, label: this.$i18n.tnl('label.hour')},
+        {key: 'hour', sortable: true, label: this.$i18n.tnl('label.reservationHours')},
+        {key: 'hour2', sortable: true, label: this.$i18n.tnl('label.workingHours')},
       ],
+      tFieldsOperatingRate: [
+        {key: 'name', sortable: true, label: this.$i18n.tnl('label.name')},
+        {key: 'indicator', sortable: true, label: this.$i18n.tnl('label.operatingRate')},
+        {key: 'graph', sortable: false, label: this.$i18n.tnl('label.graph'), thStyle: {height: '50px !important', width:'400px !important'} },
+        {key: 'hour', sortable: true, label: this.$i18n.tnl('label.operatingHours')},
+        {key: 'hour2', sortable: true, label: this.$i18n.tnl('label.workingHours')},
+      ],
+      tFieldsReserveOperatingRate: [
+        {key: 'name', sortable: true, label: this.$i18n.tnl('label.name')},
+        {key: 'indicator', sortable: true, label: this.$i18n.tnl('label.reserveOperatingRate')},
+        {key: 'graph', sortable: false, label: this.$i18n.tnl('label.graph'), thStyle: {height: '50px !important', width:'400px !important'} },
+        {key: 'hour', sortable: true, label: this.$i18n.tnl('label.reserveOperatingHours')},
+        {key: 'hour2', sortable: true, label: this.$i18n.tnl('label.reservationHours')},
+      ],
+      tFieldsUnreserveOperatingRate: [
+        {key: 'name', sortable: true, label: this.$i18n.tnl('label.name')},
+        {key: 'indicator', sortable: true, label: this.$i18n.tnl('label.unreserveOperatingRate')},
+        {key: 'graph', sortable: false, label: this.$i18n.tnl('label.graph'), thStyle: {height: '50px !important', width:'400px !important'} },
+        {key: 'hour', sortable: true, label: this.$i18n.tnl('label.reserveOperatingHours')},
+        {key: 'hour2', sortable: true, label: this.$i18n.tnl('label.reservationHours')},
+      ],
+      tFieldsEmptyReservationCount: [
+        {key: 'name', sortable: true, label: this.$i18n.tnl('label.name')},
+        {key: 'indicator', sortable: true, label: this.$i18n.tnl('label.emptyReservationCount')},
+        null,
+        null,
+        null,
+      ],
+      tFields: [],
       tItems: [],
 
       // カレンダー
-      today: moment().format("YYYY-MM-DD"),
       isWeek: true,
       datePickerType: 'week',
-      datePickerFormatWeek: 'week WW',
-      datePickerFormatMonth: 'MMM',
+      datePickerFormatWeek: 'yyyy-MM-dd ' + this.$t('label.week'),
+      datePickerFormatMonth: 'yyyy-MM',
       datePickerFormat: null,
       datePickerPlaceholderWeek: this.$t('label.week'),
       datePickerPlaceholderMonth: this.$t('label.month'),
       datePickerPlaceholder: null,
+      today: moment().day(1).set({hour:0,minute:0,second:0,millisecond:0}).toDate(),
+      preDate: moment().day(1).set({hour:0,minute:0,second:0,millisecond:0}).toDate(),
 
       // マスタ情報
       loadStates: ['area', 'zone', 'location', 'category', 'pot'],
@@ -171,11 +202,26 @@ export default {
   computed: {
   },
   watch: {
-    datePickerPlaceholder() {
-      return this.isWeek ? this.datePickerPlaceholderWeek : this.datePickerPlaceholderMonth
-    },
-    datePickerFormat() {
-      return this.isWeek ? this.datePickerFormatWeek : this.datePickerFormatMonth 
+    indicatorTypeFilter: {
+      handler: function(newVal, oldVal){
+        switch (newVal.value) {
+        case 0:
+          this.tFields = this.tFieldsReservationRate
+          break
+        case 1:
+          this.tFields = this.tFieldsOperatingRate
+          break
+        case 2:
+          this.tFields = this.tFieldsReserveOperatingRate
+          break
+        case 3:
+          this.tFields = this.tFieldsUnreserveOperatingRate
+          break
+        default:
+          this.tFields = this.tFieldsEmptyReservationCount
+        }
+      },
+      deep: false,
     },
     'vueSelected.filterType': {
       handler: function(newVal, oldVal){
@@ -203,22 +249,33 @@ export default {
     },
   },
   async created() {
+    this.datePickerFormat = this.datePickerFormatWeek
+    this.datePickerPlaceholder = this.datePickerPlaceholderWeek
     this.indicatorTypeFilter = this.indicatorTypeOpts[0]
     this.loadMaster()
   },
   async mounted() {
     importElementUI()
+    this.tFields = this.tFieldsReservationRate
   },
   methods: {
     onChangeToggle(e) {
       this.isWeek = !this.isWeek
-      this.datePickerType = this.isWeek ? 'week' : 'month'
+      if (this.isWeek) {
+        this.datePickerType = 'week'
+        this.datePickerFormat = this.datePickerFormatWeek
+        this.datePickerPlaceholder = this.datePickerPlaceholderWeek
+      } else {
+        this.datePickerType = 'month'
+        this.datePickerFormat = this.datePickerFormatMonth
+        this.datePickerPlaceholder = this.datePickerPlaceholderMonth
+      }
     },
     onDatePickerBlur(e) {
       const picker = this.$refs.datePicker
-      if (!picker.value['getDate']) {
-        return
-      }
+      let dt = new Date(picker.value)
+      dt = this.datePickerType == 'week' ? moment(dt).day(1).toDate() : moment(dt).date(1).toDate()
+      this.preDate = dt
     },
     // マスタ
     async loadMaster() {
@@ -234,13 +291,9 @@ export default {
     },
     async fetchData() {
       try {
-        const picker = this.$refs.datePicker
-        if (!picker.value['getDate']) {
-          return
-        }
         const [startDt, endDt] = this.getDateRange()
         this.tItems = []
-        let uri = `${this.appServicePath}?startDt=${startDt}&endDt=${endDt}&indicatorType=${this.indicatorTypeFilter.value}&workingTimeType=range`
+        let uri = `${this.appServicePath}?startDt=${startDt}&endDt=${endDt}&indicatorType=${this.indicatorTypeFilter.value}&workingTimeType=range`//literal, range
         if (this.selectedFilter.filterType && this.selectedFilter.filterId) {
           uri = `${uri}&filterType=${this.selectedFilter.filterType}&filterId=${this.selectedFilter.filterId}`
         }
@@ -269,42 +322,43 @@ export default {
       return [startDt, endDt]
     },
     exportCsv() {
-      const picker = this.$refs.datePicker
-      if (!picker.value['getDate']) {
-        return
-      }
       const [startDt, endDt] = this.getDateRange()
-      let uri = `${APP_SERVICE.BASE_URL}${this.appServicePath}?}/csvdownload?charset=${getCharSet(this.$store.state.loginId)}&startDt=${startDt}&endDt=${endDt}&indicatorType=${this.indicatorTypeFilter.value}`
+      let uri = `${this.appServicePath}?}/csvdownload?charset=${getCharSet(this.$store.state.loginId)}&startDt=${startDt}&endDt=${endDt}&indicatorType=${this.indicatorTypeFilter.value}`
       if (this.selectedFilter.filterType && this.selectedFilter.filterId) {
         uri += `&filterType=${this.selectedFilter.filterType}&filterId=${this.selectedFilter.filterId}`
       }
       BrowserUtil.executeFileDL(uri)
     },
+    orgRound(value) {
+      const base = 100
+      return Math.round(value * base) / base
+    },
     loadIndicators(data) {
       const arr = data.indicators.map((e) => {
         switch (this.indicatorTypeFilter.value) {
-          case 0: // 予約率（予約時間／就業時間）
-          case 1: // 稼働率（稼働／就業時間）
-          case 3: // 予約外利用率（予約外利用／就業時間）
-            return { 
-              name: e.targetName, 
-              indicator: e.value / data.sumOfWorkingHours * 100, 
-              hour: e.value
-            }
-          case 2:
-            // 予約稼働率（利用／予約時間）
-            return { 
-              name: e.targetName, 
-              indicator: e.value / data.sumOfReservationHours * 100, 
-              hour: e.value
-            }
-          case 4:
-            // 空予約率（空予約数／予約数）
-            return { 
-              name: e.targetName, 
-              indicator: e.value / e.scheduleNum * 100, 
-              hour: e.value
-            }
+        case 0: // 予約率（予約時間／就業時間）
+        case 1: // 稼働率（稼働時間／就業時間）
+        case 3: // 予約外稼働率（予約外稼働時間／就業時間）
+          return { 
+            name: e.targetName, 
+            indicator: this.orgRound(e.value / data.sumOfWorkingHours * 100),
+            hour: e.value,
+            hour2: data.sumOfWorkingHours,
+          }
+        case 2:
+          // 予約内稼働率（予約内稼働時間／予約時間）
+          return { 
+            name: e.targetName, 
+            indicator: this.orgRound(e.value / e.sumOfReservationHours * 100),
+            hour: e.value,
+            hour2: e.sumOfReservationHours,
+          }
+        case 4:
+          // 空予約数
+          return { 
+            name: e.targetName, 
+            indicator: e.value,
+          }
         }
       })
       this.totalRows = arr.length
@@ -313,12 +367,16 @@ export default {
   }
 }
 </script>
-<style>
+<style lang="scss">
 .progress{
     margin-bottom: 0px;
-    /* height: 30px; */
+    height: 28px;
     width: 440px!important;
     border-radius: 0px;
+    span {
+      margin-left: 5px;
+      text-align: left;
+    }
 }
 .progress-bar{
     background-color: #A8C0DE;

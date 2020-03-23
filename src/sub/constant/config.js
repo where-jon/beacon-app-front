@@ -54,10 +54,10 @@ export const APP = { // 機能面に関する設定
     USE_MULTI_POSITIONING: false, // 多点測位を使う
     MULTI_POSITIONING_NUM: 3,     // 多点測位の点数
     // 禁止区域関連設定
-    PROHIBIT_ALERT : null,  // 文字列リストで画面かバッチに通知するか判断["screen","mail","led"]
+    PROHIBIT_ALERT : null,  // 文字列リストで画面かバッチに通知するか判断["screen","map","list","whole","mail","led"]
     PROHIBIT_GROUP_ZONE: null, // 禁止区域非許可{"groupCd":"GR1", "zoneCd":["Z1"]}のJSON配列の形
     // 重要物品関連設定
-    LOST_ALERT : null,  // 文字列リストで画面かバッチに通知するか判断["screen","mail"]
+    LOST_ALERT : null,  // 文字列リストで画面かバッチに通知するか判断["screen","map","list","whole","mail"]
     LOST_GROUP_ZONE: null, // 重要物品設定{"groupCd":"GR1", "zoneCd":["Z1"]}のJSON配列の形
     USE_LEGEND: false, // 凡例を表示
     SHOW_DETECTED_COUNT: false, // 検知数を表示
@@ -131,12 +131,12 @@ export const APP = { // 機能面に関する設定
     TYPE: {
       WITH: [],
     },
-    // 拡張項目定義（サンプル）
+    // 拡張項目定義（サンプル）: デフォルトはなし
     EXT_DEF: [
-      {key: 'description', type: 'string', length: 100, showlist: true, sort: true },
-      {key: 'toilet', type: 'list', format: 'male|female|share|multip', showlist: true, sort: false},
-      {key:'led_no',type:'int',min:1,max:5,showlist:false},
-      {key:'led_device_id',type:'string',format:'^[0-9]+(,[0-9]+)*$',showlist:false},
+      // {key: 'description', type: 'string', length: 100, showlist: true, sort: true },
+      // {key: 'toilet', type: 'list', format: 'male|female|share|multip', showlist: true, sort: false},
+      // {key:'led_no',type:'int',min:1,max:5,showlist:false},
+      // {key:'led_device_id',type:'string',format:'^[0-9]+(,[0-9]+)*$',showlist:false},
     ],
   },
   // USER関連設定
@@ -147,95 +147,94 @@ export const APP = { // 機能面に関する設定
   POSITION_WITH_AREA: true, // エリアを表示
   // POT関連設定
   POT: {
-    WITH: ['thumbnail', 'category', 'user', 'ruby', 'description'],
+    WITH: ['thumbnail', 'category', 'ruby', 'description'],
     MULTI_TX: false,         // 複数Tx使用
-    CSV_USER: false,
     TX_MAX: 2,   // 所持Tx最大数
     TYPES: [1, 2, 3],   // 選択可能な種別（1人,2物,3物(その他)）
-    // 拡張項目定義（サンプル）
+    // 拡張項目定義（サンプル）: デフォルトはなし
     EXT_DEF: [
-      {key: 'post', type: 'string', showlist: true, sort: true},
-      {key: 'tel', type: 'tel', showlist: true, sort: true},
-      {key: 'mobile', type: 'tel', showlist: false, sort: false},
-      {key: 'entrydate', type: 'date', showlist: true, sort: false},
-      {key: 'salary', type: 'int', min: 0, max: 1200000, showlist: false, sort: false},
-      {key: 'score', type: 'float', default: 50, min: -100, max: 100, showlist: false, sort: false},
-      {key: 'manager', type: 'boolean', default: 'はい', checked:'はい', unchecked:' ', showlist: true, sort: false},
-      {key: 'address', type: 'string', default:'Tokyo', required: true, length:10, format: '[a-zA-Z]+', showlist: false, sort: false},
+      // {key: 'post', type: 'string', showlist: true, sort: true},
+      // {key: 'tel', type: 'tel', showlist: true, sort: true},
+      // {key: 'mobile', type: 'tel', showlist: false, sort: false},
+      // {key: 'entrydate', type: 'date', showlist: true, sort: false},
+      // {key: 'salary', type: 'int', min: 0, max: 1200000, showlist: false, sort: false},
+      // {key: 'score', type: 'float', default: 50, min: -100, max: 100, showlist: false, sort: false},
+      // {key: 'manager', type: 'boolean', default: 'はい', checked:'はい', unchecked:' ', showlist: true, sort: false},
+      // {key: 'address', type: 'string', default:'Tokyo', required: true, length:10, format: '[a-zA-Z]+', showlist: false, sort: false},
     ],
   },
   PERSON: {
     WITH: ['thumbnail', 'category', 'user', 'ruby', 'description'],
     MULTI_TX: false,         // 複数Tx使用
     TX_MAX: 2,   // 所持Tx最大数
-    // 拡張項目定義（サンプル）
+    // 拡張項目定義（サンプル）: デフォルトはなし
     EXT_DEF: [
-      {key: 'post', type: 'string', showlist: true, sort: true},
-      {key: 'tel', type: 'tel', showlist: true, sort: true},
-      {key: 'mobile', type: 'tel', showlist: false, sort: false},
-      {key: 'entrydate', type: 'date', showlist: true, sort: false},
-      {key: 'salary', type: 'int', min: 0, max: 1200000, showlist: false, sort: false},
-      {key: 'score', type: 'float', default: 50, min: -100, max: 100, showlist: false, sort: false},
-      {key: 'manager', type: 'boolean', default: 'はい', checked:'はい', unchecked:' ', showlist: true, sort: false},
-      {key: 'address', type: 'string', default:'Tokyo', required: true, length:10, format: '[a-zA-Z]+', showlist: false, sort: false},
+      // {key: 'post', type: 'string', showlist: true, sort: true},
+      // {key: 'tel', type: 'tel', showlist: true, sort: true},
+      // {key: 'mobile', type: 'tel', showlist: false, sort: false},
+      // {key: 'entrydate', type: 'date', showlist: true, sort: false},
+      // {key: 'salary', type: 'int', min: 0, max: 1200000, showlist: false, sort: false},
+      // {key: 'score', type: 'float', default: 50, min: -100, max: 100, showlist: false, sort: false},
+      // {key: 'manager', type: 'boolean', default: 'はい', checked:'はい', unchecked:' ', showlist: true, sort: false},
+      // {key: 'address', type: 'string', default:'Tokyo', required: true, length:10, format: '[a-zA-Z]+', showlist: false, sort: false},
     ],
   },
   THING: {
     WITH: ['thumbnail', 'category', 'user', 'ruby', 'description'],
     MULTI_TX: false,         // 複数Tx使用
     TX_MAX: 2,   // 所持Tx最大数
-    // 拡張項目定義（サンプル）
+    // 拡張項目定義（サンプル）: デフォルトはなし
     EXT_DEF: [
-      {key: 'post', type: 'string', showlist: true, sort: true},
-      {key: 'tel', type: 'tel', showlist: true, sort: true},
-      {key: 'mobile', type: 'tel', showlist: false, sort: false},
-      {key: 'entrydate', type: 'date', showlist: true, sort: false},
-      {key: 'salary', type: 'int', min: 0, max: 1200000, showlist: false, sort: false},
-      {key: 'score', type: 'float', default: 50, min: -100, max: 100, showlist: false, sort: false},
-      {key: 'manager', type: 'boolean', default: 'はい', checked:'はい', unchecked:' ', showlist: true, sort: false},
-      {key: 'address', type: 'string', default:'Tokyo', required: true, length:10, format: '[a-zA-Z]+', showlist: false, sort: false},
+      // {key: 'post', type: 'string', showlist: true, sort: true},
+      // {key: 'tel', type: 'tel', showlist: true, sort: true},
+      // {key: 'mobile', type: 'tel', showlist: false, sort: false},
+      // {key: 'entrydate', type: 'date', showlist: true, sort: false},
+      // {key: 'salary', type: 'int', min: 0, max: 1200000, showlist: false, sort: false},
+      // {key: 'score', type: 'float', default: 50, min: -100, max: 100, showlist: false, sort: false},
+      // {key: 'manager', type: 'boolean', default: 'はい', checked:'はい', unchecked:' ', showlist: true, sort: false},
+      // {key: 'address', type: 'string', default:'Tokyo', required: true, length:10, format: '[a-zA-Z]+', showlist: false, sort: false},
     ],
   },
   OTHER: {
     WITH: ['thumbnail', 'category', 'user', 'ruby', 'description'],
     MULTI_TX: false,         // 複数Tx使用
     TX_MAX: 2,   // 所持Tx最大数
-    // 拡張項目定義（サンプル）
+    // 拡張項目定義（サンプル）: デフォルトはなし
     EXT_DEF: [
-      {key: 'post', type: 'string', showlist: true, sort: true},
-      {key: 'tel', type: 'tel', showlist: true, sort: true},
-      {key: 'mobile', type: 'tel', showlist: false, sort: false},
-      {key: 'entrydate', type: 'date', showlist: true, sort: false},
-      {key: 'salary', type: 'int', min: 0, max: 1200000, showlist: false, sort: false},
-      {key: 'score', type: 'float', default: 50, min: -100, max: 100, showlist: false, sort: false},
-      {key: 'manager', type: 'boolean', default: 'はい', checked:'はい', unchecked:' ', showlist: true, sort: false},
-      {key: 'address', type: 'string', default:'Tokyo', required: true, length:10, format: '[a-zA-Z]+', showlist: false, sort: false},
+      // {key: 'post', type: 'string', showlist: true, sort: true},
+      // {key: 'tel', type: 'tel', showlist: true, sort: true},
+      // {key: 'mobile', type: 'tel', showlist: false, sort: false},
+      // {key: 'entrydate', type: 'date', showlist: true, sort: false},
+      // {key: 'salary', type: 'int', min: 0, max: 1200000, showlist: false, sort: false},
+      // {key: 'score', type: 'float', default: 50, min: -100, max: 100, showlist: false, sort: false},
+      // {key: 'manager', type: 'boolean', default: 'はい', checked:'はい', unchecked:' ', showlist: true, sort: false},
+      // {key: 'address', type: 'string', default:'Tokyo', required: true, length:10, format: '[a-zA-Z]+', showlist: false, sort: false},
     ],
   },
   // category
   CATEGORY: {
     TYPES: [1,2],   // 選択可能な種別（1人,2物,3ゾーン,4:権限）
     WITH: [],
-    // 拡張項目定義（サンプル）
+    // 拡張項目定義（サンプル）: デフォルトはなし
     EXT_DEF: [
-      {key: 'ruby', type: 'string', length: 20, showlist: true, sort: true },
+      // {key: 'ruby', type: 'string', length: 20, showlist: true, sort: true },
     ],
   },
   // group
   GROUP: {
     WITH: ['ruby'],
-    // 拡張項目定義（サンプル）
+    // 拡張項目定義（サンプル）: デフォルトはなし
     EXT_DEF: [
-      {key: 'ruby', type: 'string', length: 20, showlist: true, sort: true },
+      // {key: 'ruby', type: 'string', length: 20, showlist: true, sort: true },
     ],
   },
   // zone
   ZONE: {
     WITH: [],
     TYPES: [1],   // 選択可能な種別（0, 1: 通常, 2: 警戒ゾーン, 3: ドア）
-    // 拡張項目定義（サンプル）
+    // 拡張項目定義（サンプル）: デフォルトはなし
     EXT_DEF: [
-      {key: 'description', type: 'string', length: 100, showlist: true, sort: true },
+      // {key: 'description', type: 'string', length: 100, showlist: true, sort: true },
     ],
   },
   NOTIFY: {
@@ -257,8 +256,6 @@ export const APP = { // 機能面に関する設定
     ABSENT_LIMIT: 30 * 60,  // 滞在時間集計離席判定時間（秒）
     PARSENT_DIGIT: 100, // 在席率表示時の小数点以下桁数。なしなら1、1桁なら10、2桁なら100 …
     AXIS_FILL_GAP: 2, // 滞在時間集計の横軸で0件項目を表示(0:しない,1:する,2:月日の場合検索期間すべて表示)
-    UNIT_HOUR: 5 * 60 * 60, // 指定秒を軸単位の最大値が超えた場合、滞在時間集計の表示を時間単位で表示する
-    UNIT_MINUTE: 20 * 60,  // 指定秒を軸単位の最大値が超えた場合、滞在時間集計の表示を分単位で表示する
     SCALE_TIMES: [5, 12, 18], // 滞在率画面グラフ目盛り時刻(時)
     OTHER_COLOR: '#404040', // 滞在率その他の色
     GRAPH_LIMIT: 0.3, // 日単位滞在分析グラフの足切り％
@@ -333,13 +330,6 @@ export const APP = { // 機能面に関する設定
     MAX_NUM: 6 // 利用人数の最大値
   },
   
-  // 将来実装予定項目 START
-  LOG_KEEP_TIME: 30,
-  PASSWORD_CHANGEABLE: true,
-  PASSWORD_CHECK: false,
-  UPDATE_POSITION_EFFECT: true,
-  // 将来実装予定項目 END
-
   // その他
   SPLIT_UPLOAD_SIZE: 50 * 1024 * 1024, // 分割アップロードのサイズ閾値（Byte）
   SPLIT_UPLOAD_SIZE_IE: 10 * 1024 * 1024, // 分割アップロードのサイズ閾値（Byte）（for IE）
@@ -362,8 +352,9 @@ export const APP_SERVICE = {
 }
 
 export const EXCLOUD = {
-  BASE_URL: 'https://nsome8q880.execute-api.ap-northeast-1.amazonaws.com/prod', 
+  BASE_URL: 'https://excloud-evalktdv-api.azurewebsites.net/api', 
 
+  // TODO: EXCloud直はなくなったため、以下はConstantに移す
   withCredentials: true,
   // POSITION_URL: EXCLOUD.BASE_URL + "/beacon/position-kalman?_=",
   // GATEWAY_URL: EXCLOUD.BASE_URL + "/gateway/0?=",
@@ -449,7 +440,6 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     COLOR: '#000', // 場所配置設定のアイコン表示文字色
     FONT: 'Arial', // 場所配置設定のアイコン表示フォント
     RSSI_BGCOLOR: '#76ccf7',
-    RSSI_RADIUS: 0,
     MAX_FONT_SIZE: 26, // 場所配置設定のアイコン表示最大フォントサイズ
     BGCOLOR_PATTERN: [], // 場所配置設定のアイコン表示背景色(種類別:Tx関連時)
     BGCOLOR_PATTERN_NOTX: [], // 場所配置設定のアイコン表示背景色(種類別:Tx未関連時)
@@ -627,7 +617,6 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   PLAN: {
     PLAN_COLOR: '#ffffff',
     PLAN_BG_COLOR: '#0079d6',
-    PLAN_BG_COLOR_DUP: '#ff4040',
     ACTUAL_IN_PLAN_BG_COLOR: '#1aff1a', // 予定有・利用有 green
     NO_ACTUAL_IN_PLAN_BG_COLOR: '#ffff80', // 予定有・利用無 yellow
     ACTUAL_OUT_OF_PLAN_BG_COLOR: '#ff9999', // 予定無・利用有 red
