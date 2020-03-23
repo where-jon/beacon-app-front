@@ -18,6 +18,7 @@
       :p-use-plugin-filter="useDetailFilter"
       :p-installation="isInstallation"
       :p-quantity="!isInstallation"
+      :p-show-toilet="showToilet"
       @rssi="rssiFunc"
     />
   </div>
@@ -69,6 +70,9 @@ export default {
     },
     showDetected(){
       return APP.POS.SHOW_DETECTED_COUNT
+    },
+    showToilet(){
+      return APP.POS.SHOW_TOILET
     },
     showProhibit(){
       return Util.hasValue(APP.POS.PROHIBIT_ALERT)

@@ -70,11 +70,16 @@ export const loadPosition = async (count, allShow = false, fixSize = false) => {
   positions = _(positions).filter(pos => allShow || DEV.NOT_FILTER_TX || txIdMap[pos.txId])
     .filter(pos => allShow || Util.hasValue(pos.locationId) && locationIdMap[pos.locationId] && (txIdMap[pos.txId] && NumberUtil.bitON(txIdMap[pos.txId].disp, TX.DISP.POS)))
     .map(pos => {
+      // if (pos.minor == 603) { // 開発目的：矯正ポジション設定
+      //   console.log(pos)
+      //   pos.locationId = 2
+      //   pos.exbId = 2
+      // }
       let tx = txIdMap[pos.txId]
       // 固定位置の場合,txのlocation、そうではない場合exbのlocation TODO:要検討
       let location = tx.location && 0 < tx.location.x * tx.location.y? tx.location: locationIdMap[pos.locationId]
       let exb = exbIdMap[pos.exbId]
-      let label = tx.displayName? tx.displayName: tx.btxId
+      let label = Util.firstValue(Util.v(tx, 'pot.displayName', tx.minor), tx.btxId)
 
       // 検知状態の設定
       setDetectState(pos)
@@ -85,8 +90,8 @@ export const loadPosition = async (count, allShow = false, fixSize = false) => {
   
       return { ...pos, btxId: tx.btxId, deviceId: Util.v(exb, 'deviceId'), posx: pos.x, posy: pos.y,
         label, location, exb, tx, updatetime: DateUtil.dateform(pos.positionDt), timestamp: DateUtil.dateform(pos.positionDt), // TODO: updatetimeかtimestampかどちらかに統一
-        isTransparent: isTransparent(pos.timestamp, now),
-        isLost: isLost(pos.timestamp, now),
+        isTransparent: isTransparent(pos.positionDt, now),
+        isLost: isLost(pos.positionDt, now),
         display
       }
     }).compact().value()
@@ -113,7 +118,8 @@ export const loadPosition = async (count, allShow = false, fixSize = false) => {
 export const filterPositions = (positions = store.state.main.positions,
   showAllTime = false, 
   showTxNoOwner = APP.POS.SHOW_TX_NO_OWNER,
-  selectedCategoryId = store.state.main.selectedCategoryId, selectedGroupId = store.state.main.selectedGroupId,
+  selectedCategoryId = store.state.main.selectedCategoryId,
+  selectedGroupId = store.state.main.selectedGroupId,
   selectedTxIdList = store.state.main.selectedTxIdList,
   selectedFreeWord = store.state.main.selectedFreeWord) => { // p, position-display, rssimap, position-list, position, ProhibitHelper
   const txIdMap = store.state.app_service.btxIdMap
@@ -213,7 +219,7 @@ export const isFixedPosOnArea = (tx, areaId) => hasTxLocation(tx) && tx.location
 export const isInTheArea = (pos, locations, selectedMapId) => {
   const targetLocations = locations.filter(location => location.areaId != null && (selectedMapId == null || selectedMapId == location.areaId))
   return pos.exb.location && _.some(targetLocations, location => pos.exb.location.locationId == location.locationId)
-    && pos.timestamp && (new Date(pos.timestamp) > new Date().getTime() - APP.POS.LOST_TIME)
+    && pos.timestamp && (new Date(pos.timestamp).getTime() > new Date().getTime() - APP.POS.LOST_TIME)
 }
 
 /**
@@ -402,7 +408,7 @@ export const calcScreenCoordinates = (positions, ratio, locations = [], selected
   return _(targetLocations).map(location => {
     const samePos = targetPos.filter(pos => pos.location.locationId == location.locationId)
     // console.error('samePos', samePos.map(e => e.minor))
-    const txR = location.isFixedPosZone? DISP.TX.FIXED_POS.R: DISP.TX.R
+    const txR = (location.isFixedPosZone && DISP.TX.FIXED_POS.APPLY_COLOR)? DISP.TX.FIXED_POS.R: DISP.TX.R
     samePos.forEach(pos => pos.txR = txR)
     return calcCoordinatesWhenOverlap(location, ratio, samePos, txR)
   }).compact().flatMap(e => e).tap(Util.debug).value()

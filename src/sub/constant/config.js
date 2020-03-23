@@ -54,14 +54,17 @@ export const APP = { // 機能面に関する設定
     USE_MULTI_POSITIONING: false, // 多点測位を使う
     MULTI_POSITIONING_NUM: 3,     // 多点測位の点数
     // 禁止区域関連設定
-    PROHIBIT_ALERT : null,  // 文字列リストで画面かバッチに通知するか判断["screen","mail","led"]
+    PROHIBIT_ALERT : null,  // 文字列リストで画面かバッチに通知するか判断["screen","map","list","whole","mail","led"]
     PROHIBIT_GROUP_ZONE: null, // 禁止区域非許可{"groupCd":"GR1", "zoneCd":["Z1"]}のJSON配列の形
     // 重要物品関連設定
-    LOST_ALERT : null,  // 文字列リストで画面かバッチに通知するか判断["screen","mail"]
+    LOST_ALERT : null,  // 文字列リストで画面かバッチに通知するか判断["screen","map","list","whole","mail"]
+    LOST_ALERT_TIME: 0, // 所定の場所から移動されて、指定ミリ秒経過後にアラートを出す（0の場合すぐに出す）
     LOST_GROUP_ZONE: null, // 重要物品設定{"groupCd":"GR1", "zoneCd":["Z1"]}のJSON配列の形
     USE_LEGEND: false, // 凡例を表示
     SHOW_DETECTED_COUNT: false, // 検知数を表示
+    SHOW_TOILET: false, // トイレ情報を表示
     SHOW_TX_NO_OWNER: true, // POTと紐付いていないタグを表示する
+    GUEST_GROUP_CD: 'GUEST', // ゲスト（来客）のグループコード
 
     WITH: {
       CATEGORY: true, // 位置表示(地図)にカテゴリを表示
@@ -120,7 +123,7 @@ export const APP = { // 機能面に関する設定
   // EXB関連設定
   EXB: {
     WITH: [],
-    SENSOR: [1,2,3,4,8], // EXBのタイプに設定可能なセンサーID
+    SENSOR: [1,2,3,4,8,9,10,11,12,13], // EXBのタイプに設定可能なセンサーID
     DEVICEID_TYPE: 'deviceId',
     MULTI_SENSOR: true,
     SENSOR_MAX: 2,   // センサー種類最大数
@@ -134,7 +137,7 @@ export const APP = { // 機能面に関する設定
     // 拡張項目定義（サンプル）: デフォルトはなし
     EXT_DEF: [
       // {key: 'description', type: 'string', length: 100, showlist: true, sort: true },
-      // {key: 'toilet', type: 'list', format: 'male|female|share|multip', showlist: true, sort: false},
+      // {key: 'toilet', type: 'list', format: 'male|female|multip', showlist: true, sort: false},
       // {key:'led_no',type:'int',min:1,max:5,showlist:false},
       // {key:'led_device_id',type:'string',format:'^[0-9]+(,[0-9]+)*$',showlist:false},
     ],
@@ -536,12 +539,6 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     ABSENT_BGCOLOR: 'rgb(255,153,153)', // 退場者の背景色 
     ENTER_BGCOLOR: 'rgb(217,217,217)', // 入場者の背景色
   },
-  TOILET: {
-    DISPLAY_MODE: 0, // 表示モード 0:数値, 1:アイコン
-    BASE_FONT_SIZE: 24, // 基準フォントサイズ
-    BASE_MARK_R: 16, // 基準空室アイコンサイズ
-    MARK_COLUMN_NUM: 5, // アイコン表示最大列
-  },
 
   FONT_ICON_ADJUST_SCALE: 1.0, // アイコン内テキストのフォントサイズ係数
   IS_SCALE_ICON_TEXT: false, // アイコン内のテキストを自動スケールさせる
@@ -609,7 +606,12 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   },
 
   // 禁止区域関連設定
-  PROHIBIT_TWINKLE_TIME: 1500, // 点滅間隔(ミリ秒)
+  PROHIBIT: {
+    TWINKLE_TIME: 1500, // 点滅間隔(ミリ秒)
+    FONT_COLOR: 'black',
+    FONT_SIZE: 26,
+    BG_COLOR: 'rgba(255,0,0,0.5)',
+  },
   // システム設定カテゴリ
   SYSTEM_USE: {
     BG_COLOR: {

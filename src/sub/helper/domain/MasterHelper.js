@@ -54,7 +54,7 @@ export const loadMaster = async () => {
   buildRelation(masters, idmaps)
 
   console.log('add', new Date())
-  addInfo(masters)
+  addInfo(masters, idmaps)
 
   console.log('commit', new Date())
   storeCommitAll(masters, idmaps)
@@ -148,6 +148,9 @@ const buildMasters = (data) => {
     case 'notify_template_id':
       currentMaster = 'template'
       break
+    case 'lob_id':
+      currentMaster = 'lob'
+      break
     case 'zone_id':
       if (row[1] == 'category_id') {
         currentMaster = 'zoneCategory'
@@ -216,6 +219,16 @@ const buildMasters = (data) => {
             }
             idmaps['exbLocation_Rev'][row[2]].push(row[0])
           }
+        }
+        if (currentMaster == 'lob') { // lobの場合、kind_refIdをキーにしたオブジェクトを作る
+          if (!idmaps[currentMaster + '_Val']) {
+            idmaps[currentMaster + '_Val'] = {}
+          }
+          const key = row[1] + '_' + row[2]
+          if (!idmaps[currentMaster + '_Val'][key]) {
+            idmaps[currentMaster + '_Val'][key] = []
+          }
+          idmaps[currentMaster + '_Val'][key].push(obj)
         }
         idmaps[currentMaster][row[0]] = obj // プライマリキー(1列名)をキーにしてidmapを作成
       }
@@ -387,8 +400,9 @@ const relate = (e, relateId, relationMap, targetId, targetMap) => {
  * TODO: これは極力排除。使う箇所でエンティティをたどるようにする。未使用の項目を削除する。→済：問題なければコメントアウト箇所削除
  * 
  * @param {*} masters 
+ * @param {*} idmaps 
  */
-const addInfo = (masters) => {
+const addInfo = (masters, idmaps) => {
   Object.keys(masters).forEach(key => {
     const list = masters[key]
     switch(key) {
@@ -412,6 +426,7 @@ const addInfo = (masters) => {
           groupId: Util.v(pot, 'group.groupId'),
           categoryId: Util.v(pot, 'category.categoryId'),
           authCategoryNames: Util.v(pot, 'authCategoryList', []).map(v => v.categoryName), // TODO: categoryListからfilterして取り出す
+          existThumbnail: !!idmaps.lob_Val['pot_thumbnail_' + pot.potId], // Lob情報よりサムネイルが存在するかをチェック
         })
         Util.merge(pot, pot.extValue)
       })

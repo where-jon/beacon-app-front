@@ -127,11 +127,11 @@
     </b-row>
 
     <!-- 個別/数量 -->
-    <b-row v-if="pQuantity && !isMsTeams" class="mt-2">
+    <b-row v-if="pQuantity && !isMsTeams" id="quantityToggle" class="mt-2">
       <b-form>
         <b-form-row class="ml-sm-4 ml-2 mr-1">
           <b-button-group>
-            <b-button v-t="'label.individualTx'" :variant="theme" :class="isQuantity? 'mb-2': 'mb-2 legend-button-active'" @click="changeIconsIndividual"/> 
+            <b-button v-t="'label.individualTx'" :variant="theme" :class="isQuantity? 'mb-2': 'mb-2 legend-button-active'" @click="changeIconsIndividual" /> 
             <b-button v-t="'label.quantity'" :variant="theme" :class="isQuantity? 'mb-2 legend-button-active': 'mb-2'" @click="changeIconsQuantity" /> 
           </b-button-group>
         </b-form-row>
@@ -157,6 +157,10 @@
       <txdetail :selected-tx="selectedTx" :selected-sensor="selectedSensor" :is-show-modal="isShowModal()" @resetDetail="resetDetail" />
     </div>
 
+    <div v-if="pShowToilet && !isResponsiveMode" v-drag class="lightbox" :style="{top: toiletTop + 'px'}">
+      <toiletview :show-area="false" :data-list="toiletDataList" :small="true" addClass="table-borderless" /><!-- :add-classだと動作しない -->
+    </div>
+
     <b-modal v-model="isShownChart" :title="chartTitle" size="lg" header-bg-variant="light" hide-footer>
       <b-container fluid style="height:350px;">
         <b-row class="mb-1">
@@ -173,8 +177,10 @@
 <script>
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
+import { Container, Shape, Text } from 'createjs-module'
 import 'element-ui/lib/theme-chalk/index.css'
-import { SENSOR, TX, POT_TYPE, SHAPE, KEY, SYSTEM_ZONE_CATEGORY_NAME } from '../../sub/constant/Constants'
+import drag from '@branu-jp/v-drag'
+import { SENSOR, TX, POT_TYPE, SHAPE, KEY, SYSTEM_ZONE_CATEGORY_NAME, ALERT_STATE } from '../../sub/constant/Constants'
 import { APP, DISP, APP_SERVICE, EXCLOUD, MSTEAMS_APP } from '../../sub/constant/config'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
@@ -195,6 +201,7 @@ import * as OptionHelper from '../../sub/helper/dataproc/OptionHelper'
 import * as PositionHelper from '../../sub/helper/domain/PositionHelper'
 import * as ProhibitHelper from '../../sub/helper/domain/ProhibitHelper'
 import * as SensorHelper from '../../sub/helper/domain/SensorHelper'
+import * as ToiletHelper from '../../sub/helper/domain/ToiletHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as StyleHelper from '../../sub/helper/ui/StyleHelper'
 import * as TooltipHelper from '../../sub/helper/domain/TooltipHelper'
@@ -210,6 +217,7 @@ import detailFilter from '../../components/parts/detailFilter.vue'
 import meditag from '../../components/parts/meditag.vue'
 import ToolTip from '../../components/parts/toolTip.vue'
 import txdetail from '../../components/parts/txdetail.vue'
+import toiletview from '../../components/parts/toiletview.vue'
 
 export default {
   components: {
@@ -220,6 +228,10 @@ export default {
     meditag,
     ToolTip,
     txdetail,
+    toiletview,
+  },
+  directives: {
+    drag
   },
   mixins: [commonmixin, reloadmixin, showmapmixin],
   props: {
@@ -260,6 +272,21 @@ export default {
     },
     // 検知数を表示
     pShowDetected: {
+      type: Boolean,
+      default: false,
+    },
+    // トイレ情報を表示
+    pShowToilet: {
+      type: Boolean,
+      default: false,
+    },
+    // 進入禁止ゾーン区画を表示
+    pShowZone: {
+      type: Boolean,
+      default: false,
+    },
+    // ゲストグループのみを表示
+    pShowOnlyGuest: {
       type: Boolean,
       default: false,
     },
@@ -402,6 +429,9 @@ export default {
       prohibitInterval: null,
       lostInterval: null,
       absentZonePosition: null, // 不在表示ゾーン
+      // トイレ
+      toiletDataList: [],
+      toiletTop: 200,
       // センサー
       sensorMap: {},
       // 温湿度
@@ -672,6 +702,10 @@ export default {
         await PositionHelper.loadPosition(this.count, alwaysTxs)
       }
 
+      if (this.pShowZone) {
+        this.showZone() // 進入禁止ゾーンを表示する
+      }
+
       if (Util.hasValue(this.pShowExbSensorIds)) {
         this.showExbAll()
       }
@@ -692,10 +726,8 @@ export default {
         this.reloadState.prevent = false
       }
 
-      if (this.pShowProhibit && Util.hasValue(APP.POS.PROHIBIT_GROUP_ZONE)) {
-        Util.merge(this, ProhibitHelper.setProhibitDetect('pos', this.stage, this.icons, this.zones, this.positions))
-        this.replace({ showAlert: this.showDismissibleAlert })
-      }
+      this.loadProhibitDetect() // 非同期実行
+      this.showToilet() // 非同期実行
 
       this.addTick()
       if (this.sensorMap.temperature) {
@@ -727,6 +759,47 @@ export default {
       this.isShowRight = false
       this.isShowBottom = false
       this.keepExbPosition = true
+    },
+    async loadProhibitDetect() {
+      if ((this.pShowProhibit || this.pShowLost) && Util.hasValueAny(APP.POS.PROHIBIT_GROUP_ZONE, APP.POS.LOST_GROUP_ZONE)) {
+        Util.merge(this, await ProhibitHelper.loadProhibitDetect(ALERT_STATE.MAP, this.stage, this.icons, this.zones, this.positions, this.pShowProhibit, this.pShowLost))
+        this.replace({ showAlert: this.showDismissibleAlert })
+      }
+    },
+    async showToilet() { // トイレを表示する
+      if (this.pShowToilet) {
+        this.toiletDataList = await ToiletHelper.fetchData()
+        if (this.pQuantity) {
+          this.toiletTop = DomUtil.getRect('#quantityToggle').top - 70
+        }
+        else {
+          this.toiletTop = DomUtil.getRect('#map').top - 60
+        }
+      }
+    },
+    showZone() { // ソーン区画を表示する（現在進入禁止のみ表示）
+      if (!this.stage.children.some(e => e.name == 'zoneCon') || this.zoneCon.areaId != this.selectedAreaId) {
+        this.zoneCon = new Container()
+        this.zoneCon.name = 'zoneCon'
+        this.zoneCon.areaId = this.selectedAreaId
+
+        const zoneList = this.zones.filter(zone => zone.areaId == this.selectedAreaId && zone.categoryList.some(category => category.categoryName == SYSTEM_ZONE_CATEGORY_NAME.PROHIBIT))
+        zoneList.forEach(zone => {
+          const shape = new Shape()
+          shape.graphics.beginFill(DISP.PROHIBIT.BG_COLOR).drawRect(zone.x, zone.y, zone.w, zone.h) 
+          const label = new Text(zone.zoneName)
+          label.set({
+            font: DISP.PROHIBIT.FONT_SIZE + 'px Arial',
+            color: DISP.PROHIBIT.FONT_COLOR,
+            textAlign: 'left',
+            textBaseline: 'top',
+            x: zone.x + 7,
+            y: zone.y + 7
+          })
+          this.zoneCon.addChild(shape, label)
+        })
+        this.stage.addChild(this.zoneCon)
+      }
     },
 
 
@@ -973,12 +1046,12 @@ export default {
       const tx = this.btxIdMap[btxId]
 
       // サムネイル表示無しの設定になっているか？
-      const isNoThumbnail = APP.TXDETAIL.NO_UNREGIST_THUMB && !tx.existThumbnail // TODO: 逆にしたほうがわかりやすい
+      const isNoThumbnail = APP.TXDETAIL.NO_UNREGIST_THUMB && !Util.v(tx, 'pot.existThumbnail') // TODO: 逆にしたほうがわかりやすい
       if (!isNoThumbnail) {
         // サムネイル表示あり
         this.preloadThumbnail.onload = () => this.setupSelectedTx(tx, x, y, true)
         this.preloadThumbnail.src = null // iOSでonloadが一度しか呼ばれないので対策
-        this.preloadThumbnail.src = tx.existThumbnail? this.thumbnailUrl.replace('{id}', tx.potId): '/default.png'
+        this.preloadThumbnail.src = Util.v(tx, 'pot.existThumbnail')? this.thumbnailUrl.replace('{id}', tx.pot.potId): '/default.png'
       } else {
         // サムネイル表示無し
         this.setupSelectedTx(tx, x, y, false)
@@ -1058,11 +1131,17 @@ export default {
       }
 
       let positions = this.$store.state.main.positions
-      if (!this.pInstallation) {
+      if (!this.pInstallation && !this.pShowOnlyGuest) {
         positions = PositionHelper.addFixedPosition(positions, this.locations, this.selectedAreaId) // 固定位置追加
       }
       // 表示Txのフィルタリング
-      positions = this.pDisabledFilter? PositionHelper.filterPositions(positions, false, undefined, null, null, null): PositionHelper.filterPositions(positions)
+      if (this.pShowOnlyGuest) {
+        this.selectedGroupId = Util.v(this.groups.find(group => group.groupCd == APP.POS.GUEST_GROUP_CD), 'groupId', -1)
+      }
+
+      positions = this.pDisabledFilter?
+        PositionHelper.filterPositions(positions, false, undefined, null, null, null):
+        PositionHelper.filterPositions(positions)
 
       if (this.isQuantity) { // 数量ボタン押下時
         this.showQuantityTx(positions)
@@ -1070,11 +1149,14 @@ export default {
         if (this.pOnlyFixTx && this.sensorMap.temperature) {
           this.sensorMap.temperature.forEach(val => { // サンワセンサーはminorを持たずEXCloud側で測位しないため、仮想的に測位情報を作る（あとの処理で必要なものだけセット）
             if (!positions.some(pos => pos.btxId == val.btxId)) {
-              const tx = this.txIdMap[val.txId]
-              positions.push({
-                txId: val.txId, btxId: val.btxId, isFixedPosition: true, x: tx.location.x, y: tx.location.y, 
-                location: tx.location, exb: { location: {}}, tx,
-              })
+              const tx = _.cloneDeep(this.txIdMap[val.txId])
+              if (tx) {
+                tx.disp = 1
+                positions.push({
+                  txId: val.txId, btxId: val.btxId, isFixedPosition: true, x: tx.location.x, y: tx.location.y, 
+                  location: tx.location, exb: { location: {}}, tx,
+                })
+              }
             }
           })
         }
@@ -1443,6 +1525,23 @@ $right-pane-left-px: $right-pane-left * 1px;
   color: #fff;
   background-color: #6c757d !important;
   line-height: 1 !important;
+}
+
+.lightbox {
+  height: 140px;
+  width: 500px;
+  padding: 5px;
+  background-color: white;
+  border: 1px solid #6c757d;
+  position: absolute;
+  top: 200px;
+  right: 100px;
+  z-index: 10;
+  overflow-x: scroll;
+  overflow-y: scroll;
+  -ms-overflow-x: auto;
+  -ms-overflow-y: auto;
+  -ms-overflow-style:none;
 }
 
 </style>

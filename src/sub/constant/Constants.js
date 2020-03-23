@@ -232,7 +232,6 @@ export const LOCATION = {
     TOILET: {
       MALE: 'male',
       FEMALE: 'female',
-      SHARE: 'share',
       MULTIP: 'multip',    
     }
   }
@@ -512,7 +511,10 @@ export const LED_BLINK_TYPES = {
 }
 
 export const ALERT_STATE = {
-  SCREEN: 'screen',
+  SCREEN: 'screen', // map,list,wholeすべて
+  MAP: 'map',
+  LIST: 'list',
+  WHOLE: 'whole',
   MAIL: 'mail',
   LED: 'led',
 }
@@ -656,6 +658,7 @@ export const SETTING = {
           PROHIBIT_GROUP_ZONE: SETTING.JSON,
           PROHIBIT_ALERT: SETTING.STRING_LIST,
           LOST_ALERT: SETTING.STRING_LIST,
+          LOST_ALERT_TIME: SETTING.NUMBER,
           LOST_GROUP_ZONE: SETTING.JSON,
           PROHIBIT: {
             DUPLICATE_MAIL_TIME: SETTING.NUMBER,
@@ -960,6 +963,11 @@ export const MENU = [
       key: 'positionStack',
       path: 'position-stack',
       icon: 'building',
+    },
+    {
+      key: 'guestAccess',
+      path: 'guest-access',
+      icon: 'user-tag',
     },
     {
       key: 'enterTable',

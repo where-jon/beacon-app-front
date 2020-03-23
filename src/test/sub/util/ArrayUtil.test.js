@@ -31,6 +31,8 @@ test('arrayBuffer2str', t => {
 test('equalsAny', t => {
   t.true(ArrayUtil.equalsAny('b', ['a','b','c']))
   t.true(!ArrayUtil.equalsAny('r', ['a','b','c']))
+  t.true(ArrayUtil.equalsAny(['r', 'a', 't'], ['a','b','c']))
+  t.true(!ArrayUtil.equalsAny(['r', 's', 't'], ['a','b','c']))
 })
 
 test('getEntityFromIds', t => {

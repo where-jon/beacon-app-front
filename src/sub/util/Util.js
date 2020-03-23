@@ -116,7 +116,7 @@ export const hasValue = obj => obj != null && obj.length !== 0
  * @param {String|Array} obj lengthプロパティが存在するオブジェクト全般
  * @return {Boolean}
  */
-export const hasValueAny = (...obj) => obj.some(val => hasValue(val))
+export const hasValueAny = (...obj) => obj && obj.some(val => hasValue(val))
 
 /**
  * 値が存在する最初の値を返す。
