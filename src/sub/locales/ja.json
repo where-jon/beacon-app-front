@@ -1326,6 +1326,12 @@
         "ABSENT_BGCOLOR": "[入退場表]退場者の背景色::[入退場表]退場者の背景色を色名、HEXまたはRGBで指定します。",
         "ENTER_BGCOLOR": "[入退場表]入場者の背景色::[入退場表]入場者の背景色を色名、HEXまたはRGBで指定します。"
       },
+      "TOILET": {
+        "DISPLAY_MODE": "トイレ表示モード::トイレ満空表示画面に表示される空き状態の表示方法を設定します。設定可能な値は次の通りです。{TOILET_DISPLAY}",
+        "BASE_FONT_SIZE": "トイレアイコンの基準フォントサイズ",
+        "BASE_MARK_R": "トイレアイコンの基準空室アイコンサイズ",
+        "MARK_COLUMN_NUM": "トイレアイコンの表示最大列"        
+      },
       "POS": {
         "EXSERVER": "EXServerを使用する::EXServerを使用します。"
       },
@@ -1360,9 +1366,9 @@
       "BASE_URL": "EXCloudのURL::EXCloudのURLを設定します。"
     },
     "EXSERVER": {
+      "ENABLE": "EXServerの有効化::EXServerを有効化します。",
       "BASE_URL": "EXServerのURL::EXServerのURLを設定します。",
       "MULTI_API": "EXServer3点測位API::EXServerの３点測位APIを利用します。",
-      "TIME_RANGE": "EXServer取得時間範囲::EXServerから取得する時間の範囲を指定します。",
       "MAX_DEVICES": "EXServerデバイス数::EXServerにて同時に測位するEXBの数を指定します。"
     },
     "OPTIONS": {
