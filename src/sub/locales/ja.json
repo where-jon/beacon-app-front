@@ -480,7 +480,11 @@
     "stay": "滞在",
     "absence": "不在",
     "graph": "滞在率グラフ",
-
+    "stayRatioAbsent1Time": "離席1時間",
+    "stayRatioAbsent1Ratio": "離席1率",
+    "stayRatioAbsent2Time": "離席2時間",
+    "stayRatioAbsent2Ratio": "離席2率",
+    
     "positionSummary": "位置情報",
 
     "processSum": "工程管理",
@@ -758,7 +762,17 @@
     "dummy": "",
     "plan": "予定",
     "planActual": "予実比較",
-    "actual": "実績"
+    "actual": "実績",
+
+    "startDt": "開始時間",
+    "endDt": "終了時間",
+    "receivedtime": "受信時間",
+    "potCategoryType": "種別",
+    "posId": "位置ID",
+    "planId": "予定ID",
+    "planDetailId": "予定詳細ID",
+    "basetime": "基準時間"
+    
   },
   "config": {
     "APP": {
@@ -1502,7 +1516,8 @@
         "locationName": "locationName::場所名",
         "areaName": "areaName::エリア名",
         "x": "x::X座標",
-        "y": "y::Y座標"
+        "y": "y::Y座標",
+        "txName": "Tx名"
       },
       "POS_LIST": {
         "tel": "tel::電話番号",

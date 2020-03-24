@@ -121,7 +121,8 @@ export default {
       csvFields: [],
       bulkFields: [],
       helpBaseKeys: ['overview','notes'],  // 表示対象の説明文のKey(メニュー以外)を追加　helpBaseDescriptionに説明文追加
-      introduction: 'introduction'
+      introduction: 'introduction',
+      hasAdditionalDescriptionKeys: ['positionList','category','stayRatioBase','stayTime','positionSummary'],  // ヘルプの説明分に追加する画面のkeyリスト
     }
   },
   computed: {
@@ -169,8 +170,8 @@ export default {
       return '#'+ groupKey + '_' + pageKey
     },
     getHelpAdditionalDescription(key, option){
-      const ret = this.$i18n.tnl('helpAdditionalDescription.' + key, option)
-      return ret != 'helpAdditionalDescription.' + key ? ret : null
+      // i18nに存在しないkeyを渡すと警告が表示されるため、概要以外の説明を表示する場合はhasAdditionalDescriptionKeysに存在するもののみ必要なヘルプのみ表示する
+      return this.hasAdditionalDescriptionKeys.includes(key) ? this.$i18n.t('helpAdditionalDescription.' + key,'')  : null
     },
     // b-tableに表示する項目
     getCsvItems(key){
