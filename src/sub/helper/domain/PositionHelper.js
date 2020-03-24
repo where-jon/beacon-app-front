@@ -262,6 +262,7 @@ export const getDetectCount = (positions, areaId) => {
  */
 export const setDetectState = (pos) => {
   pos.detectState = DetectStateHelper.getState('tx', pos.positionDt)
+  // pos.detectState = pos.txId % 5; if (pos.detectState == 3) pos.detectState =1 // For test
   pos.state = DetectStateHelper.getLabel(pos.detectState)
   pos.isUnDetect = DetectStateHelper.isUndetect(pos.detectState)
   pos.noSelectedTx = (pos.detectState != DETECT_STATE.DETECTED)

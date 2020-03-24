@@ -758,7 +758,7 @@ export default {
       const extra = this.filter.extra
       for (let item of this.params.extraFilter) {
         const key = (typeof item === 'string')? item: item.key
-        if (!extra[key]) {
+        if (!Util.hasValue(extra[key])) {
           continue
         }
         switch (key) {
