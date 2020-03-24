@@ -116,6 +116,7 @@
     "power-poor": "Replace",
     "noneDirect": "Non-directional",
     "direct": "Directivity",
+    "powerLevelTimestamp": "Battery level notification time",
     
     "tx": "Tx",
     "txId": "TxID",
@@ -144,6 +145,7 @@
     "txViewType": "TX display format",
     "txIconColumns": "Horizontal",
     "txIconLines": "Vertical",
+    "locationHasTx": "(Tx Location)",
 
     "map": "Map",
     "areaId": "Area ID",
@@ -188,6 +190,8 @@
     "led_type2": "LED(Type2)",
     "led_type5": "LED(Type5)",
     "led_type3": "LED(Type3)",
+    "ambientLight":"Brightness",
+    "soundNoise":"Noise",
     "meditag": "MEDiTAG",
     "magnet": "Magnet",
     "omr-env": "Environmental sensor",
@@ -200,6 +204,10 @@
     "zoneCd": "ID",
     "zoneName": "Zone name",
     "zoneType": "Zone type",
+    "zoneGuard": "Warning zone",
+    "zoneDoor": "Locking room",
+    "led_device_id": "LED device ID",
+    "led_no": "LED No",
 
     "today": "today",
     "week": "week",
@@ -289,6 +297,21 @@
     "positionStackShort": "Detected",
     "positionStackType": "Type",
 
+    "enterTable": "Entrance / exit table",
+    "personCount": "People",
+    "enter": "Current number of visitors",
+    "today_enter": "Today enter",
+    "total_enter": "Total enter",
+    "elapsed_time": "Records of no accidents",
+
+    "toiletStatus": "Toilet status",
+    "toilet": "Toilet",
+    "male": "Male",
+    "female": "Female",
+    "share": "Share",
+    "multip": "Multipurpose",
+    "empty": "Empty",
+
     "password": "Password",
     "passwordCurrent": "Current password",
     "passwordUpdate": "Update password",
@@ -309,6 +332,8 @@
     "parentCategoryId": " Parent category ID ",
     "shape": "Shape ",
     "shapeName": "Shape",
+    "categoryAuth": "Authority management",
+    "authCategoryName": "Authority name",
 
     "group": "Group",
     "groupId": "Group ID",
@@ -363,7 +388,8 @@
     "personal": "Personal settings",
     "changeProfilePassword": "Change password",
     "changePassword": "Change password",
-  
+
+    "system": "System setting (for administration)",
     "systemChild": "System settings",
 
     "region": "Region",
@@ -414,6 +440,7 @@
     "utilizationRatioP": "Utilization ratio [%]",
     "utilizationTime": "Utilization time [H]",
     "numUsers": "Number of users",
+    "numUsersGraph": "User graph",
     "numOfUsers": "Number of users (Average)",
     "zoneCategoryName": "Category",
     "sumYearMonth": "Year and month",
@@ -427,6 +454,8 @@
     "stayRatio": "Stay ratio",
     "stayRatioGp": "Daily Stay Analysis(GP)",
     "stayRatioBase": "Daily Stay Analysis",
+    "activityGraph": "Results of Activities",
+    "meetingGraph": "Meeting room use record",
     "absent1Ratio": "Absent1 Ratio",
     "absent2Ratio": "Absent2 Ratio",
     "lostRatio": "Absent Ratio",
@@ -467,6 +496,7 @@
     "person": "Person",
     "thing": "Thing",
     "zone": "Zone",
+    "auth": "Authentication",
     "linkedPerson": "Linked Person",
 
     "circle": "Circle",
@@ -508,6 +538,7 @@
     "number": "Number",
     "numberList": "Number list",
     "boolean": "Boolean value",
+    "datetime": "Date and time",
 
     "---------------- Added at 1.1 ---------------":"",
 
@@ -564,10 +595,12 @@
     "masterPot": "Person or Thing",
     "masterPotPerson": "Person",
     "masterPotThing": "Thing",
+    "masterPotOther": "Thing(Other)",
     "masterCategory": "Category",
     "masterCategoryPerson": "Person category",
     "masterCategoryThing": "Thing category",
     "masterCategoryZone": "Zone category",
+    "masterCategoryAuth": "Authority management",
     "masterGroup": "Group",
     "masterUser": "User",
     "masterRole": "Role",
@@ -594,6 +627,7 @@
     "SensorHistoryExc": "Sensor History",
     "Setting": "Setting",
     "Personal": "Personal Setting",
+    "System": "System setting(for administration)",
     "SystemChild": "System Setting",
     "Develop": "Developer",
     "Meta": "Meta",
@@ -711,6 +745,7 @@
     "APP": {
       "COMMON": {
         "VERSION": "Version information::Set up the version information.",
+        "TIME_ZONE": "Time Zone::Set up the time zone to determine midnight.",
         "AUTO_RELOAD": "Automatic reload interval::Set up the automatic reload interval in milliseconds.★"
       },
       "SYS": {
@@ -783,6 +818,9 @@
         "USE_PRESSURE": "Use pressure sensor:: Use pressure sensor.★",
         "SHOW_MAGNET_ON_PIR": "Use magnet sensor on Usage screen::Use magnet sensor on Usage screen",
         "MAGNET_ON_IS_USED": "Display setting of magnet sensor::If set up to TRUE, [USE] is displayed when the sensor is ON.If set up to FALSE,[USE] is display with the sensor OFF.",
+        "LED": {
+          "AUTO_OFF_TIME": "LED auto turn off time::Set up the time from turning on the LED until turning off automatically in seconds. If 0 is specified, the light does not turn off automatically."
+        },
         "USE_HUMIDITY_ALERT": "Usehumidity alerts on Temperature & Humidity screen::Use Humidity alerts on Temperature & Humidity screen.",
         "USE_THERMOH_HEATMAP": "Use Heatmap on Temperature & Humidity::Heatmap can be switched on Temperature & Humidity screen.",
         "USE_THERMOH_TOOLTIP": "Use Tooltip on Temperature & Humidity::Allow Tooltips to display inforamation of device on which the cursor is placed on the Temperature & Humidity.",
@@ -796,6 +834,13 @@
       },
       "POS_LIST": {
         "WITH": "Item to be displayed on position display (list)::Set the display item to position display (list). The possible to set up values are as follows.★{POS_LIST}"
+      },
+      "POS_STACK": {
+        "USE_POPUP": "Items to switch to popup in Position (Whole)::When you click the Tx icon in the Position (Whole), it will be set to switch to the popup. When this setting is true, popup display is enabled.",
+        "ADJUST_POPUP": {
+          "X": "Items to adjust the horizontal position of the popup::Adjust the horizontal position of the Tx popup in the Position (Whole). Adjust the position to the right with plus and to the left with minus.",
+          "Y": "Items to adjust the vertical position of the popup::Adjust the Tx popup vertical position of the Position (Whole). Adjust the position downwards with plus and upwards with minus."
+        }
       },
       "TX": {
         "WITH": "Item used on Tx screen::Set up the item used on Tx screen. The possible values are as follows.★{TX}",
@@ -812,7 +857,8 @@
         "WITH": "Items used in the location layout screen::Set up the items used in the location layout screen. Possible to set up values ​​are ★{LOCATION}",
         "TYPE": {
           "WITH": "Location type choices::Set up location type choices. Numeric value and string like「1:work,2:wip,3:qa,4:storage」Set the values ​​separated by colons. The explanation about the setting value is {LOCATION_TYPE}"
-        }
+        },
+        "EXT_DEF": "Location extension item::Define the extension items that can be set for the location in JSON format."
       },
       "USER": {
         "WITH": "Items used on the user screen::Set up the items used on the user screen. The possible to set up values are as follows. ★{USER}"
@@ -836,7 +882,18 @@
         "EXT_DEF": "Expansion Item :: Defines the extension items that can be set for the object in JSON format."
       },
       "CATEGORY": {
-        "TYPES": "Types that can be selected on the category details screen :: Set up the types that can be used on the category details screen. Possible to set up values ​​are{CATEGORY_TYPES}"
+        "TYPES": "Types that can be selected on the category details screen :: Set up the types that can be used on the category details screen. Possible to set up values ​​are{CATEGORY_TYPES}",
+        "WITH": "Items used on the category screen::Set up the items to be used on the category screen.",
+        "EXT_DEF": "Category extension item::Define the extension items that can be set for the category in JSON format."
+      },
+      "GROUP": {
+        "WITH": "Items used on the group screen::Set up the items to be used on the group screen.",
+        "EXT_DEF": "Group extension item::Define the extension items that can be set for the group in JSON format."
+      },
+      "ZONE": {
+        "TYPES": "Type that can be selected on the Zone (class) detail screen::Set up the types that can be used on the Zone (class) detail screen. The values that can be set are as follows.{ZONE_TYPES}",
+        "WITH": "Items used on the Zone (class) screen::Set the items to be used on the zone (classification) screen.",
+        "EXT_DEF": "Zone extension items::Define the extension items that can be set in the zone in JSON format."
       },
       "SETTING": {
         "DISABLED_THEME": "Do not set theme color :: Disable theme color setting in personal settings screen"
@@ -856,6 +913,7 @@
         "ABSENT_LIMIT": "Staying time count absent decision time::Set up absent decision time when counting stay time in seconds。",
         "PARSENT_DIGIT": "Number of decimal places when showing presence ratio::Set up the number of decimal places when showing presence ratio.The possible to set up values are as follows.{SUM_PARSENT_DIGIT}\n※ If you set the power of 10, it will be the digit of the exponent.",
         "AXIS_FILL_GAP": "Display 0 items on the horizontal axis of stay time summary::Display 0 items on the horizontal axis of stay time summary.The possible to set up values are as follows.{SUM_AXIS_FILL_GAP}",
+        "ENABLE_DISPLAY_SPECIFIED": "Whether or not to display the display button on the daily stay analysis screen::Set up the display control of the display specification button that can switch the display of the zone category and area.",
         "UNIT_HOUR": "Display setting for stay time summary (hour)::If the maximum value in axis units exceeds the set second, the display of stay time total is displayed in time units.",
         "UNIT_MINUTE": "Display setting for stay time summary (minute)::If the maximum value in axis units exceeds the set second, the display of stay time total is displayed in time units.",
         "SCALE_TIMES": "Stay rate screen graph scale time (hours)::Set up time (hours) to be displayed on stay rate screen graph scale (ignore if not match).",
@@ -871,6 +929,7 @@
         "WITH": "Item use with sensor history and sensor currentlist screen::Set up the item use with sensor history and sensor currentlist screen. The possible to set up values are as follows. ★{SENSOR_LIST}"
       },
       "SENSORGRAPH": {
+        "SENSOR": "Sensor type::Set up the type of sensor. The values that can be set are as follows.★{SENSOR_NONE}{SENSOR}",
         "WITH_DEVICE": "Using selection devices in the sensor grap::Using the selection device in sensor graph. ",
         "CSV_IMMEDIATE": "Output latest value to csv of sensor graph screen::Include the latest value information to csv downloaded on the sensor graph screen."
       },
@@ -880,6 +939,14 @@
       "TXDETAIL": {
         "ITEMS": "Item to be displayed deatail pop-up of the position(map)screen.::Set up the item to be displayed deatail pop-up of the positioning(map)screen.The possible to set up values are as follows.★{TXDETAIL}",
         "NO_UNREGIST_THUMB": "Does not show unregistered thumbnails in the details popup of the position (map) screen::When the thumbnail is not registered in the selected Tx on the position (map) screen, set the thumbnail to not be displayed in the details pop-up."
+      },
+      "ACTIVITY": {
+        "STACK_TYPE": "Aggregation method of activity results::Specify the aggregation method of activity results.(location zoneCategory)"
+      },
+      "MEETING": {
+        "GROUP_BY": "Aggregation unit of meeting room use results::Specify the total unit of the meeting room use results.(EXB location)",
+        "AXIS_TYPE": "Display unit of meeting room use results::Specify the display unit of the meeting room.(EXB location zone)",
+        "MAX_NUM": "Maximum value of meeting room usage total"
       },
       "SVC": {
         "SLACK_CHANNEL": "Slack Channel name::Set up the Slack channel name for sending notification information.",
@@ -910,7 +977,24 @@
         },
         "AD": {
           "GROUP_NAMES": "Only groups that match the regular expression string specified here will be synchronized from Active Directory.::Applies only when using Active Directory."
+        },
+        "TOILET": {
+          "LED": {
+            "ENABLE": "Toilet LED lighting function::Use the toilet LED lighting function.",
+            "RGB": "Toilet LED lighting color::Specify the color when the toilet LED is lit."
+          }
+        },
+        "GUARD_TIME": "Last received date and time setting (minutes)::Make settings so that the last reception date and time in each security zone has passed the specified minutes in the security target acquisition API."
+      },
+      "SVCONLY": {
+        "EXCLOUD": {
+          "AUTH_HEADER": "EXCloud API key::Set up the API key when using EXCloud API. The content is not displayed because it is confidential information. Only setting is possible."
         }
+      },
+      "ENTER": {
+        "AUTO_PAGE": "Automatic transition of pager of entrance table::Automatic transition when paged. The values that can be set are as follows.{ENTER_AUTO_PAGE}",
+        "START_TIME": "Start date and time of no accidents and no violations in the Entrance / Exit table::Specify the start date and time of no accident and no violation in UNIX TIME (millisecond).",
+        "AUTO_PAGER_MSEC": "[Entrance / Exit table]Automatic pager update interval (ms)::[Entrance / Exit table]Specify the automatic pager update interval (milliseconds)."
       },
       "BATCH": {
         "POSITION": {
@@ -934,6 +1018,15 @@
         "SENSOR_8": {
           "INTERVAL": "Execution interval of pressure sensor::Set up execution interval of pressure sensor in milliseconds."
         },
+        "SENSOR_9": {
+          "INTERVAL": "Environment sensor batch execution interval::Set up the execution interval of the environment sensor batch in milliseconds."
+        },
+        "SENSOR_10": {
+          "INTERVAL": "Execution interval of thermopile motion sensor batch::Set up the execution interval of the thermopile human sensor batch in milliseconds."
+        },
+        "SENSOR_11": {
+          "INTERVAL": "Execution interval of thermopile environment sensor batch::Set up the execution interval of the thermopile environment sensor batch in milliseconds."
+        },
         "MONITOR": {
           "INTERVAL": "Execution interval of monitor batch::Set up execution interval of monitor batch in milliseconds."
         },
@@ -946,6 +1039,9 @@
         "PROXIMITY": {
           "CRON": "Time for Cron to do transactional analysis::Set up the time for Cron to do transcational analysis. Set in time Cron format time.<br>APP.SVC.STAY_SUM.REAL_TIME：Can not be used togthere with transactional analysis<br>APP.BATCH.PROXIMITY.CRON：When setting, turn off regular batch processing of stay time."
         },
+        "ENTER_COUNT": {
+          "CRON": "Time for Cron to calculate the number of visitors::Set up the time for Cron to calculate the number of visitors. Set up the time in Cron format."
+        },
         "LOST_ZONE": {
           "INTERVAL": "Important component take-out detection alert batch execution interval :: Set up the execution interval of the important component take-out detection alert batch in milliseconds."
         },
@@ -955,6 +1051,12 @@
         "AD_SYNC": {
           "CRON": "AD synchronous batch processing time specification :: Synchronize with Active Directory at the specified time."
         }
+      },
+      "MANAGE": {
+        "SETTING_CATEGORY": "System settings to be published::Set up the category to be displayed on the system setting screen for customers."
+      },
+      "TOILET": {
+        "AUTO_RELOAD": "Perform automatic reload on the toilet full vacancy display screen::Automatic reloading is performed on the toilet vacancy display screen."
       }
     },
     "DISP": {
@@ -962,6 +1064,7 @@
         "SHOW_NAV": "Display Top menu::Display menu at the top of the screen.",
         "SHOW_SIDEBAR": "Display side menu.:: Display menu on the left of the screen.",
         "SHOW_LOGO": "Display Logo::Display logo on the upper left of the screen. If false, display application name.",
+        "SHOW_HELP": "Display help::Displays help in the menu at the top right of the screen.",
         "THEME": "Default theme::Set up the default theme color. The possible to set up values are as follows.{THEME}"
       },
       "TX": {
@@ -997,7 +1100,13 @@
         "SIZE": {
           "W": "Icon size (width)on Location setting screen::Set up the width of the icon displayed on the location setting screen.",
           "H": "Icon size (height) on Location setting screen::Set up the height of the icon displayed on the location setting screen."
-        }
+        },
+        "BGCOLOR_DEFAULT": "Icon background color of place layout setting screen (Tx related)::Set up the default background color of the icon associated with Tx displayed on the place setting screen. Set with a color code including #.",
+        "BGCOLOR_DEFAULT_NOTX": "Icon background color of the location arrangement setting screen (when Tx is not related)::Set up the default background color of the icons that are not associated with Tx displayed on the location setting screen. Set up with a color code including #.",
+        "COLOR": "Set up the font color of the icons displayed on the location setting screen. Set up with a color code including #.",
+        "MAX_FONT_SIZE": "Icon maximum font of location arrangement setting screen::Set up the maximum font size of the icons displayed on the location setting screen.",
+        "BGCOLOR_PATTERN": "Icon background color of place layout setting screen (Tx related)::Set up the background color of the icon associated with Tx displayed on the place setting screen. It can be specified for each location type and sensor type. Set up a color code that includes a value indicating the location type and #, separated by a colon, such as [1: # FFFFFF, 2: # FFFFFF, pir: # FFFFFF, magnet: #FFFFFF]. The following values can be set for the type of sensor.{SENSOR_TYPE}",
+        "BGCOLOR_PATTERN_NOTX": "Icon background color of the location arrangement setting screen (Tx is not related)::Set up the background color of the icons that are not associated with Tx and displayed on the location setting screen. It can be specified for each location type and sensor type. Set up a color code that includes a value indicating the location type and #, separated by a colon, such as [1: # FFFFFF, 2: # FFFFFF, pir: # FFFFFF, magnet: #FFFFFF]. The following values can be set for the type of sensor.{SENSOR_TYPE}"
       },
       "THERMOH": {
         "TOOLTIP_ITEMS": {
@@ -1062,6 +1171,19 @@
         "BG_COLOR": {
           "ABSENT": "Background color (absent area) color code::Set up the background color of the system setting category (absent area)",
           "PROHIBIT": "Background color (prohibit area) color code:: Sets up the background color of the system setting category (prohibit area)."
+        },
+        "ENTER": {
+          "COL_CNT": "[Entrance / exit table]Number of display columns::[Entrance / exit table]Specify the number of display columns.",
+          "LOST_COLOR": "[Entrance / exit table]Lost character color::[Entrance / exit table]Specify the text color of the lost person by color name, HEX or RGB.",
+          "ABSENT_BGCOLOR": "Entrance / exit table]Leaver background color::[Entrance / exit table]Specify the exit color as a color name, HEX or RGB.",
+          "ENTER_BGCOLOR": "[Entrance / exit table]Visitor background color::[Entrance / exit table]Specify the background color of the visitors in color name, HEX or RGB."
+        },
+        "TOILET": {
+          "DISPLAY_MODE": "Toilet display mode::Set up the display method of the empty state displayed on the toilet full / empty display screen. The values that can be set are as follows.{TOILET_DISPLAY}"
+        },
+        "POS_STACK": {
+          "TYPE": "How to display Position (Whole)::Specify how to display Position (Whole). (1: Area 2: Zone)",
+          "ZONE_OTHER": "Zone other display::Display the zone and others in Position(Whole)."
         }
       },
       "POS": {
@@ -1076,7 +1198,12 @@
     "EXCLOUD": {
       "BASE_URL": "EXCloud URL::Set up EXCloud URL."
     },
-
+    "EXSERVER": {
+      "BASE_URL": "EXServerのURL::Set the EXServer URL.",
+      "MULTI_API": "EXServer 3-point positioning API::Use EXServer's three-point positioning API.",
+      "TIME_RANGE": "EXServer acquisition time range::Specify the time range to be obtained from EXServer.",
+      "MAX_DEVICES": "EXServer devices::Specify the number of EXBs to measure simultaneously on EXServer."
+    },
     "OPTIONS": {
       "KEY_CATEGORY": {
         "COMMON": "Common",
@@ -1084,6 +1211,7 @@
         "MENU": "Menu",
         "POS": "Position",
         "POS_LIST": "Position List",
+        "POS_STACK": "Overall position display",
         "SENSOR": "Sensor",
         "THERMOH": "ThermoHumidity",
         "PIR": "PIR",
@@ -1099,7 +1227,10 @@
         "POT": "People or Things",
         "PERSON": "Person",
         "THING": "Thing",
+        "OTHER": "Thing(other)",
         "CATEGORY": "Category",
+        "GROUP": "Group",
+        "ZONE": "Zone",
         "NOTIFY": "Notification",
         "GATEWAY": "Gateway",
         "TX_MON": "Monitor Tx",
@@ -1109,10 +1240,13 @@
         "POSITION_HISTORY": "Position History",
         "SENSORGRAPH": "Sensor Graph",
         "STAY_SUM": "Stay time summary",
+        "ACTIVITY": "Results of Activities",
+        "MEETING": "Meeting room use record",
         "HISTORY_EXC": "History of EXCloud",
         "SVC": "Server",
         "BATCH": "Batch",
         "SIMULATION": "For Demostration",
+        "MANAGE": "For administration",
         "OTHER_CATEGORY": "Others",
         "MAIL": "Mail"
       },
@@ -1129,12 +1263,19 @@
         "5": "5::MEDiTAG",
         "6": "6::Magnet",
         "7": "7::Button",
-        "8": "8::Pressure"
+        "8": "8::Pressure",
+        "9": "9::Environmental sensor"
       },
       "CATEGORY_TYPES": {
         "1": "1::People",
         "2": "2::Things",
-        "3": "3::Zone"
+        "3": "3::Zone",
+        "5": "5::Thing(other)"
+      },
+      "ZONE_TYPES": {
+        "1": "1::Normal",
+        "2": "2::Warning zone",
+        "3": "3::Locking room"
       },
       "NOTIFY_MIDIUM": {
         "0": "0::Mail",
@@ -1236,7 +1377,8 @@
         "group": "group::Group",
         "category": "category::Category",
         "description": "description::Description",
-        "user": "user::User registration features"
+        "user": "user::User registration features",
+        "auth": "auth::Authentication"
       },
       "TX_MON": {
         "btxId": "btxId::btxId",
@@ -1276,6 +1418,35 @@
       "COLOR_TYPE": {
         "category": "category::Category",
         "group": "group::Group"
+      },
+      "SENSOR_TYPE": {
+        "thermohumidity": "thermohumidity::Humidity",
+        "pir": "pir::Human sensor",
+        "thermopile": "thermopile::thermopile",
+        "led_type2": "led(Type2)::LED(Type2)",
+        "led_type5": "led(Type5)::LED(Type5)",
+        "led_type3": "led(Type5)::LED(Type3)",
+        "meditag": "meditag::MEDiTAG",
+        "magnet": "magnet::Magnet",
+        "button": "button::Button",
+        "pressure": "pressure::Pressure sensor"
+      },
+      "ENTER_AUTO_PAGE": {
+        "0": "0::Invalid",
+        "1": "1::Valid（Default OFF）",
+        "2": "2::Valid（Default ON）"
+      },
+      "TOILET_DISPLAY": {
+        "0": "0::Display with numbers",
+        "1": "1::Display with icon"
+      },
+      "SMTP_AUTH": {
+        "true": "true::Do user authentication",
+        "false": "false::Do not perform user authentication"
+      },
+      "SMTP_STARTTLS": {
+        "true": "true::Encrypt",
+        "false": "false::Do not encrypt"
       }
     }
   },
@@ -1297,6 +1468,7 @@
     "noMapImage": "Map image is not registered.",
     "deleteConfirm": "Are you sure you want to delete {target}?",
     "completeDeleteConfirm": "Are you sure to delete {target} completely?",
+    "exitConfirm": "{target}Are you sure you want to be forced out?",
     "completed": "{target} completed.",
     "failed": "{target} failed. ({code})",
     "overLength": "Please enter a string within {length} for {target}.",
