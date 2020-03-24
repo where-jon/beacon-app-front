@@ -116,6 +116,7 @@
 import { mapState } from 'vuex'
 import { APP, DISP } from '../../sub/constant/config'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
+import * as StringUtil from '../../sub/util/StringUtil'
 import * as AuthHelper from '../../sub/helper/base/AuthHelper'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 import * as ImageHelper from '../../sub/helper/base/ImageHelper'
@@ -216,7 +217,7 @@ export default {
     },
     openHelp() {
       const path = _.filter(this.$route.path.split('/'), (path) => Boolean(path))
-      const lastPath = path? path[path.length - 1]: ''
+      const lastPath = path? StringUtil.kebab2camel(path[path.length - 1]): ''
       if (path && this.useLastUrl(lastPath)) {
         this.fromPageUrl = '#' + lastPath
       } else {
