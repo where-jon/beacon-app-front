@@ -1057,8 +1057,7 @@
       },
       "TOILET": {
         "AUTO_RELOAD": "Perform automatic reload on the toilet full vacancy display screen::Automatic reloading is performed on the toilet vacancy display screen."
-      },
-
+      }
     },
     "DISP": {
       "MENU": {
@@ -1172,6 +1171,19 @@
         "BG_COLOR": {
           "ABSENT": "Background color (absent area) color code::Set up the background color of the system setting category (absent area)",
           "PROHIBIT": "Background color (prohibit area) color code:: Sets up the background color of the system setting category (prohibit area)."
+        },
+        "ENTER": {
+          "COL_CNT": "[Entrance / exit table]Number of display columns::[Entrance / exit table]Specify the number of display columns.",
+          "LOST_COLOR": "[Entrance / exit table]Lost character color::[Entrance / exit table]Specify the text color of the lost person by color name, HEX or RGB.",
+          "ABSENT_BGCOLOR": "Entrance / exit table]Leaver background color::[Entrance / exit table]Specify the exit color as a color name, HEX or RGB.",
+          "ENTER_BGCOLOR": "[Entrance / exit table]Visitor background color::[Entrance / exit table]Specify the background color of the visitors in color name, HEX or RGB."
+        },
+        "TOILET": {
+          "DISPLAY_MODE": "Toilet display mode::Set up the display method of the empty state displayed on the toilet full / empty display screen. The values that can be set are as follows.{TOILET_DISPLAY}"
+        },
+        "POS_STACK": {
+          "TYPE": "How to display Position (Whole)::Specify how to display Position (Whole). (1: Area 2: Zone)",
+          "ZONE_OTHER": "Zone other display::Display the zone and others in Position(Whole)."
         }
       },
       "POS": {
@@ -1186,7 +1198,12 @@
     "EXCLOUD": {
       "BASE_URL": "EXCloud URL::Set up EXCloud URL."
     },
-
+    "EXSERVER": {
+      "BASE_URL": "EXServerのURL::Set the EXServer URL.",
+      "MULTI_API": "EXServer 3-point positioning API::Use EXServer's three-point positioning API.",
+      "TIME_RANGE": "EXServer acquisition time range::Specify the time range to be obtained from EXServer.",
+      "MAX_DEVICES": "EXServer devices::Specify the number of EXBs to measure simultaneously on EXServer."
+    },
     "OPTIONS": {
       "KEY_CATEGORY": {
         "COMMON": "Common",
@@ -1194,6 +1211,7 @@
         "MENU": "Menu",
         "POS": "Position",
         "POS_LIST": "Position List",
+        "POS_STACK": "Overall position display",
         "SENSOR": "Sensor",
         "THERMOH": "ThermoHumidity",
         "PIR": "PIR",
@@ -1209,7 +1227,10 @@
         "POT": "People or Things",
         "PERSON": "Person",
         "THING": "Thing",
+        "OTHER": "Thing(other)",
         "CATEGORY": "Category",
+        "GROUP": "Group",
+        "ZONE": "Zone",
         "NOTIFY": "Notification",
         "GATEWAY": "Gateway",
         "TX_MON": "Monitor Tx",
@@ -1219,10 +1240,13 @@
         "POSITION_HISTORY": "Position History",
         "SENSORGRAPH": "Sensor Graph",
         "STAY_SUM": "Stay time summary",
+        "ACTIVITY": "Results of Activities",
+        "MEETING": "Meeting room use record",
         "HISTORY_EXC": "History of EXCloud",
         "SVC": "Server",
         "BATCH": "Batch",
         "SIMULATION": "For Demostration",
+        "MANAGE": "For administration",
         "OTHER_CATEGORY": "Others",
         "MAIL": "Mail"
       },
@@ -1239,12 +1263,19 @@
         "5": "5::MEDiTAG",
         "6": "6::Magnet",
         "7": "7::Button",
-        "8": "8::Pressure"
+        "8": "8::Pressure",
+        "9": "9::Environmental sensor"
       },
       "CATEGORY_TYPES": {
         "1": "1::People",
         "2": "2::Things",
-        "3": "3::Zone"
+        "3": "3::Zone",
+        "5": "5::Thing(other)"
+      },
+      "ZONE_TYPES": {
+        "1": "1::Normal",
+        "2": "2::Warning zone",
+        "3": "3::Locking room"
       },
       "NOTIFY_MIDIUM": {
         "0": "0::Mail",
@@ -1346,7 +1377,8 @@
         "group": "group::Group",
         "category": "category::Category",
         "description": "description::Description",
-        "user": "user::User registration features"
+        "user": "user::User registration features",
+        "auth": "auth::Authentication"
       },
       "TX_MON": {
         "btxId": "btxId::btxId",
@@ -1386,6 +1418,35 @@
       "COLOR_TYPE": {
         "category": "category::Category",
         "group": "group::Group"
+      },
+      "SENSOR_TYPE": {
+        "thermohumidity": "thermohumidity::Humidity",
+        "pir": "pir::Human sensor",
+        "thermopile": "thermopile::thermopile",
+        "led_type2": "led(Type2)::LED(Type2)",
+        "led_type5": "led(Type5)::LED(Type5)",
+        "led_type3": "led(Type5)::LED(Type3)",
+        "meditag": "meditag::MEDiTAG",
+        "magnet": "magnet::Magnet",
+        "button": "button::Button",
+        "pressure": "pressure::Pressure sensor"
+      },
+      "ENTER_AUTO_PAGE": {
+        "0": "0::Invalid",
+        "1": "1::Valid（Default OFF）",
+        "2": "2::Valid（Default ON）"
+      },
+      "TOILET_DISPLAY": {
+        "0": "0::Display with numbers",
+        "1": "1::Display with icon"
+      },
+      "SMTP_AUTH": {
+        "true": "true::Do user authentication",
+        "false": "false::Do not perform user authentication"
+      },
+      "SMTP_STARTTLS": {
+        "true": "true::Encrypt",
+        "false": "false::Do not encrypt"
       }
     }
   },
@@ -1407,6 +1468,7 @@
     "noMapImage": "Map image is not registered.",
     "deleteConfirm": "Are you sure you want to delete {target}?",
     "completeDeleteConfirm": "Are you sure to delete {target} completely?",
+    "exitConfirm": "{target}Are you sure you want to be forced out?",
     "completed": "{target} completed.",
     "failed": "{target} failed. ({code})",
     "overLength": "Please enter a string within {length} for {target}.",
