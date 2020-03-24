@@ -447,13 +447,13 @@
   height: 100%;
   margin-left: -1px;
   box-sizing: content-box;
-}
-.tui-full-calendar-time-date-last {
+}  
+.tui-full-calendar-time-date:last-child {
   border-right: none;
   margin: 0;
 }
-.tui-full-calendar-time-date-last .tui-full-calendar-time-schedule,
-.tui-full-calendar-time-date-last .tui-full-calendar-time-guide-creation {
+.tui-full-calendar-time-date:last-child .tui-full-calendar-time-schedule,
+.tui-full-calendar-time-date:last-child .tui-full-calendar-time-guide-creation {
   left: 0px;
 }
 .tui-full-calendar-time-date-schedule-block-wrap {

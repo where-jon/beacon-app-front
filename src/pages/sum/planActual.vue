@@ -149,8 +149,8 @@ export default {
         {key: 'name', sortable: true, label: this.$i18n.tnl('label.name')},
         {key: 'indicator', sortable: true, label: this.$i18n.tnl('label.unreserveOperatingRate')},
         {key: 'graph', sortable: false, label: this.$i18n.tnl('label.normalGraph'), thStyle: {height: '50px !important', width:'400px !important'} },
-        {key: 'hour', sortable: true, label: this.$i18n.tnl('label.reserveOperatingHours')},
-        {key: 'hour2', sortable: true, label: this.$i18n.tnl('label.reservationHours')},
+        {key: 'hour', sortable: true, label: this.$i18n.tnl('label.unreserveOperatingHours')},
+        {key: 'hour2', sortable: true, label: this.$i18n.tnl('label.workingHours')},
       ],
       tFieldsEmptyReservationCount: [
         {key: 'name', sortable: true, label: this.$i18n.tnl('label.name')},
@@ -401,7 +401,6 @@ export default {
             }
         }
       })
-      console.log('!!!')
       this.totalRows = arr.length
       this.tItems = arr
     },
