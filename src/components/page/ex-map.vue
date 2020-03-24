@@ -157,7 +157,7 @@
       <txdetail :selected-tx="selectedTx" :selected-sensor="selectedSensor" :is-show-modal="isShowModal()" @resetDetail="resetDetail" />
     </div>
 
-    <div v-if="pShowToilet && !isResponsiveMode" v-drag class="lightbox" :style="{top: toiletTop + 'px'}">
+    <div v-if="pShowToilet && !isResponsiveMode" v-drag class="lightbox" :style="{top: toiletTop + 'px', height: toiletHeight + 'px'}">
       <toiletview :show-area="false" :data-list="toiletDataList" :small="true" addClass="table-borderless" /><!-- :add-classだと動作しない -->
     </div>
 
@@ -432,6 +432,7 @@ export default {
       // トイレ
       toiletDataList: [],
       toiletTop: 200,
+      toiletHeight: 130,
       // センサー
       sensorMap: {},
       // 温湿度
@@ -769,6 +770,9 @@ export default {
     async showToilet() { // トイレを表示する
       if (this.pShowToilet) {
         this.toiletDataList = await ToiletHelper.fetchData()
+        if (this.toiletDataList.length < 2) {
+          this.toiletHeight = 90
+        }
         if (this.pQuantity) {
           this.toiletTop = DomUtil.getRect('#quantityToggle').top - 70
         }
@@ -1542,6 +1546,7 @@ $right-pane-left-px: $right-pane-left * 1px;
   -ms-overflow-x: auto;
   -ms-overflow-y: auto;
   -ms-overflow-style:none;
+  box-shadow: 8px 8px 8px rgba(0,0,0,0.4);
 }
 
 </style>

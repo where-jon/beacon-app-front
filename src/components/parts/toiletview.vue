@@ -3,17 +3,17 @@
     <b-table :items="dataList" :fields="dataFieldList" stacked="md" striped hover :bordered="false" :small="small" :class="addClass">
       <template slot="HEAD_male">
         <div style="float:left">
-          <label v-t="'label.male'" /><img src="~/assets/icon/male.svg" class="iconHeader">
+          <label v-t="'label.male'" /><img src="~/assets/icon/male.svg" :class="iconHeader">
         </div>
       </template>
       <template slot="HEAD_female">
         <div style="float:left">
-          <label v-t="'label.female'" /><img src="~/assets/icon/female.svg" class="iconHeader">
+          <label v-t="'label.female'" /><img src="~/assets/icon/female.svg" :class="iconHeader">
         </div>
       </template>
       <template slot="HEAD_multip">
         <div style="float:left">
-          <label v-t="'label.multip'" /><img src="~/assets/icon/multip.svg" class="iconHeader">
+          <label v-t="'label.multip'" /><img src="~/assets/icon/multip.svg" :class="iconHeader">
         </div>
       </template>
       <template slot="male" slot-scope="row">
@@ -48,6 +48,10 @@ export default {
     addClass: {
       type: String,
       default: '',
+    },
+    iconHeader: {
+      type: String,
+      default: 'iconHeaderSmall',
     },
     small: {
       type: Boolean,
@@ -85,7 +89,13 @@ table {
   white-space: nowrap !important;
 }
 
-.iconHeader {
+.iconHeaderSmall {
+  width: 20px;
+  height: 20px;
+  margin-left: 10px;
+}
+
+.iconHeaderLarge {
   width: 40px;
   height: 40px;
   margin-left: 10px;

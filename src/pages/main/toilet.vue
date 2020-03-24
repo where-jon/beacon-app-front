@@ -1,7 +1,7 @@
 <template>
   <div class="container-fluid">
     <breadcrumb :items="items" reload :auto-reload="autoReload" />
-    <toiletview :data-list="dataList" :show-area="true" />
+    <toiletview :data-list="dataList" :show-area="true" icon-header="iconHeaderLarge" />
   </div>
 </template>
 
