@@ -769,7 +769,7 @@ export default {
     },
     async showToilet() { // トイレを表示する
       if (this.pShowToilet) {
-        this.toiletDataList = await ToiletHelper.fetchData()
+        this.toiletDataList = await ToiletHelper.fetchData(this.selectedAreaId)
         if (this.toiletDataList.length < 2) {
           this.toiletHeight = 90
         }
