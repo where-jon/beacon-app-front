@@ -23,7 +23,7 @@
           <div class="list-group mt-3">
             <b>{{ getLabel(menuGroup.key) }}</b>
           </div>
-          <a v-for="page in menuGroup.pages" :key="page.key" :href="createInternalLink(menuGroup.key, page.key)" class="list-group-item list-group-item-action">
+          <a v-for="page in menuGroup.pages" :key="page.key" :href="createInternalLink(menuGroup.base, page.path)" class="list-group-item list-group-item-action">
             {{ getLabel(page.key) }}
           </a>
         </div>
@@ -61,7 +61,7 @@
       </div>
       <!-- ヘルプ本文：画面 -->
       <div v-for="(menuGroup, key) in this.$store.state.menu" :key="key">
-        <div v-for="page in menuGroup.pages" :id="menuGroup.key + '_' + page.key" :key="page.key">
+        <div v-for="page in menuGroup.pages" :id="createId(menuGroup.base, page.path)" :key="page.key">
           <hr>
           <!-- ヘッダー -->
           <div class="helpLabelHeader">
@@ -108,6 +108,7 @@
 import Vue from 'vue'
 import { mapState } from 'vuex'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
+import * as StringUtil from '../../sub/util/StringUtil'
 
 export default {
   props: {
@@ -167,7 +168,10 @@ export default {
       return this.$i18n.tnl('config.' + key, option)
     },
     createInternalLink(groupKey, pageKey){
-      return '#'+ groupKey + '_' + pageKey
+      return '#'+ groupKey.replace('/','_') + StringUtil.kebab2camel(pageKey) 
+    },
+    createId(groupKey, pageKey){
+      return groupKey.replace('/','_') + StringUtil.kebab2camel(pageKey)
     },
     getHelpAdditionalDescription(key, option){
       // i18nに存在しないkeyを渡すと警告が表示されるため、概要以外の説明を表示する場合はhasAdditionalDescriptionKeysに存在するもののみ必要なヘルプのみ表示する

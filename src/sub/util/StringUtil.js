@@ -88,6 +88,14 @@ export const concatCamel = (...strs) => strs.filter(val => val).map((str, idx) =
 export const snake2camel = str => str.replace(/_./g, (s) => s.charAt(1).toUpperCase())
 
 /**
+ * ケバブケースをキャメルケースにした文字列を取得する。
+ * @method
+ * @param {String} str ケバブケースの文字列
+ * @return {String}
+ */
+export const kebab2camel = str => str.replace(/-./g, (s) => s.charAt(1).toUpperCase())
+
+/**
  * スネークケースにした文字列を取得する。
  * @method
  * @param {String} str キャメルケースの文字列
