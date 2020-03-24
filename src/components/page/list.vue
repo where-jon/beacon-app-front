@@ -903,7 +903,6 @@ export default {
       const tx = item.tx
       const selectedTx = {
         btxId: tx.btxId,
-        thumbnail: tx.thumbnail,
       }
       const selectedAreaId = Util.getValue(item, 'exb.location.areaId')
       const txOk = await this.callParentMethod('checkDetectedTx', tx)

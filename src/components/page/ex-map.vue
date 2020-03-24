@@ -699,7 +699,7 @@ export default {
       this.sensorMap = await SensorHelper.fetchSensorInfo(this.pMergeSensorIds)
 
       if (Util.hasValue(this.pShowTxSensorIds) && !payload.disabledPosition){
-        const alwaysTxs = this.txs.some(tx => tx.areaId == this.selectedAreaId && NumberUtil.bitON(tx.disp, TX.DISP.ALWAYS))
+        const alwaysTxs = this.txs.some(tx => Util.v(tx, 'location.areaId') == this.selectedAreaId && NumberUtil.bitON(tx.disp, TX.DISP.ALWAYS))
         await PositionHelper.loadPosition(this.count, alwaysTxs)
       }
 
@@ -828,7 +828,7 @@ export default {
         }
 
         // 固定座席の場合、TXが保持している位置に集計 → 変更：同じゾーンにいれば、固定座席位置、そうでない場合はフリー位置で集計
-        this.incDetectCount(pos.location.locationId, pos.tx.potType)
+        this.incDetectCount(pos.location.locationId, Util.v(pos, 'tx.pot.potType'))
       })
 
       _.filter(this.locations, location => location.areaId == this.selectedAreaId && location.x != null && location.y != null)
@@ -1050,7 +1050,7 @@ export default {
       const tx = this.btxIdMap[btxId]
 
       // サムネイル表示無しの設定になっているか？
-      const isNoThumbnail = APP.TXDETAIL.NO_UNREGIST_THUMB && !Util.v(tx, 'pot.existThumbnail') // TODO: 逆にしたほうがわかりやすい
+      const isNoThumbnail = APP.TXDETAIL.NO_UNREGIST_THUMB && !Util.v(tx, 'pot.existThumbnail')
       if (!isNoThumbnail) {
         // サムネイル表示あり
         this.preloadThumbnail.onload = () => this.setupSelectedTx(tx, x, y, true)
@@ -1199,7 +1199,7 @@ export default {
         return
       }
       if (temperature) {
-        pos.tx = Util.merge(Util.merge({}, pos.tx), temperature, ['areaId', 'areaName', 'x', 'y'])
+        pos.tx = Util.merge(Util.merge({}, pos.tx), temperature, ['areaId', 'areaName', 'x', 'y']) // TODO: 本来こういう付加情報はtxに直接つけるべきではない。
       }
 
       // フリーアドレスTXが不在エリア検知の場合は以降処理を行わない
@@ -1369,13 +1369,16 @@ export default {
         this.exbCon = ViewHelper.addContainerOnStage(this.stage, this.bitmap.width, this.bitmap.height)
       }
       this.exbCon.removeAllChildren()
-      _.forEach(this.sensorMap, exbList => exbList.forEach(exb => exb.exbId && exb.areaId == this.selectedAreaId? this.showExb(exb): null))
+      _(this.sensorMap).forEach(sensorList => sensorList.forEach(sensor => {
+        if (sensor.exbId && sensor.areaId == this.selectedAreaId) {
+          this.showExb(sensor)
+        }
+      }))
       this.keepExbPosition = false
       //　表示条件：マグネットセンサ、固定位置登録＆同一エリア、PIR画面表示設定
       if(SensorHelper.match(this.pShowExbSensorIds, SENSOR.MAGNET) && APP.SENSOR.SHOW_MAGNET_ON_PIR){
-        _(this.txs).filter(tx => tx.sensorId == SENSOR.MAGNET && tx.location && tx.location.x * tx.location.y > 0
-          && tx.location.areaId == this.selectedAreaId && NumberUtil.bitON(tx.disp, TX.DISP.PIR))
-          .forEach(tx => this.showExbTx(tx))
+        _(this.txs).filter(tx => tx.sensorId == SENSOR.MAGNET && PositionHelper.isFixedPosOnArea(tx, this.selectedAreaId) && NumberUtil.bitON(tx.disp, TX.DISP.PIR))
+          .forEach(tx => this.showMagnet(tx))
       }
     },
     showExb(exb, bgColor = null) {
@@ -1383,7 +1386,7 @@ export default {
       if(!icon){
         return
       }
-      if(SensorHelper.match(this.pMergeSensorIds, SENSOR.TEMPERATURE, exb.sensorId)){
+      if(SensorHelper.match(this.pMergeSensorIds, SENSOR.TEMPERATURE, exb.sensorIdList)) {
         icon.on('mouseover', this.iconMouseOver)
         icon.on('mouseout', this.iconMouseOut)
         icon.on('click', async evt => this.showChart(exb, await SensorHelper.getTodayThermoHumidityInfo(exb.exbId, true)))
@@ -1391,7 +1394,7 @@ export default {
       this.exbIcons.push({ button: icon, device: exb, config: icon.iconInfo, sign: -1 })
       this.exbCon.addChild(icon)
     },
-    showExbTx(tx) { // TODO: メソッド名がおかしい。マグネットセンサTX専用ならそうすべき
+    showMagnet(tx) { // TXマグネットセンサ表示　（同じ場所に複数TXがあると、あとのもので上書きされてい表示される。複数TXはトイレ表示用途）
       const icon = IconHelper.createExbIconForMagnet(tx, this.sensorMap.magnet, this.getMapScale())
       if(icon){
         this.exbCon.addChild(icon)

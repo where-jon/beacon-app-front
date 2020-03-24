@@ -981,6 +981,7 @@ export const createTxLegends = (txList, categoryList, groupList) => {
  * @method
  * @param {Number[]} sensorIdList
  * @param {Number} targetSensorId
+ * @param {Number} or {Number[]} checkId
  * @return {Boolean}
  */
 export const match = (sensorIdList, targetSensorId, checkId) => {
@@ -1158,6 +1159,7 @@ export const fetchSensorInfo = async (targetSensorIds = []) => {
 
 /**
  * センサ情報にTX,EXB,POS情報を付加する
+ * TODO: これは混乱を招くため、極力付加情報はなくす。exbやtxを展開しているのはセンサー情報とごちゃまぜになるので良くない。
  * 
  * @param {}} sensor 
  * @param {*} txMap 

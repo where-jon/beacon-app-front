@@ -88,7 +88,7 @@ export const loadPosition = async (count, allShow = false, fixSize = false) => {
       let display = Util.getValue(pos.tx, DISP.TX.DISPLAY_PRIORITY + '.display', defaultDisplay)
       display = StyleHelper.getStyleDisplay1({...display, label}, {fixSize})
   
-      return { ...pos, btxId: tx.btxId, deviceId: Util.v(exb, 'deviceId'), posx: pos.x, posy: pos.y,
+      return { ...pos, btxId: tx.btxId, deviceId: exb.deviceId, posx: pos.x, posy: pos.y,
         label, location, exb, tx, updatetime: DateUtil.dateform(pos.positionDt), timestamp: DateUtil.dateform(pos.positionDt), // TODO: updatetimeかtimestampかどちらかに統一
         isTransparent: isTransparent(pos.positionDt, now),
         isLost: isLost(pos.positionDt, now),
@@ -142,7 +142,7 @@ const positionFilterFreeWord = (pos, freeWord) => {
     'tx.pot.potName',
     ArrayUtil.includesIgnoreCase(APP.POS_LIST.WITH, 'tel')? 'tx.pot.extValue.tel': null,
     MenuHelper.useMaster('category') && APP.POS.WITH.CATEGORY? 'tx.pot.category.categoryName': null,
-    MenuHelper.useMaster('group') && APP.POS.WITH.GROUP? 'tx.pot.groupName': null,
+    MenuHelper.useMaster('group') && APP.POS.WITH.GROUP? 'tx.pot.group.groupName': null,
     'state',
     APP.POSITION_WITH_AREA? 'location.area.areaName': null,
     'location.locationName',
@@ -698,10 +698,11 @@ export const createTxDetailInfo = (x, y, tx, canvasScale, offset, containerRect,
     color: display.color,
     isDispRight: x + offset.x + 100 < window.innerWidth,
   }
-  if(tx.extValue){
-    Object.keys(tx.extValue).forEach( key => { 
+  const extValue = Util.v(tx, 'pot.extValue')
+  if(extValue){
+    Object.keys(extValue).forEach( key => { 
       if(!ret[key]){ // 既にあるキーは書き換えない
-        ret[key] = i18n.tnl('label.' + key) + ':' + tx.extValue[key] 
+        ret[key] = i18n.tnl('label.' + key) + ':' + extValue[key] 
       }
     } )
   }
@@ -744,10 +745,11 @@ export const createTxDetailInfoOnStack = (x, y, tx, offset, preloadThumbnail) =>
     color: display.color,
     isDispRight: x + offset.x + 100 < window.innerWidth,
   }
-  if(tx.extValue){
-    Object.keys(tx.extValue).forEach( key => { 
+  const extValue = Util.v(tx, 'pot.extValue')
+  if(extValue){
+    Object.keys(extValue).forEach( key => { 
       if(!ret[key]){ // 既にあるキーは書き換えない
-        ret[key] = i18n.tnl('label.' + key) + ':' + tx.extValue[key] 
+        ret[key] = i18n.tnl('label.' + key) + ':' + extValue[key] 
       }
     } )
   }

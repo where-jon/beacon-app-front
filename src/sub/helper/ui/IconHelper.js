@@ -458,8 +458,8 @@ export const createExbIconForMagnet = (tx, magnetSensorList, mapScale) => {
  * @param {Object} exb
  * @return {Object}
  */
-export const createDiscomfortIcon = (stage, exb, mapScale) => {
-  const discomfort = SensorHelper.getDiscomfort(exb.temperature, exb.humidity)
+export const createDiscomfortIcon = (stage, device, mapScale) => {
+  const discomfort = SensorHelper.getDiscomfort(device.temperature, device.humidity)
   const bitmap = discomfort == DISCOMFORT.COLD? cold: discomfort == DISCOMFORT.COMFORT? comfort: hot
   const icon = new Bitmap(bitmap)
   icon.image.onload = () => {
@@ -557,7 +557,7 @@ export const createExbIcon = (exb, exbSensorIdList, mapScale, stage) => {
   if (SensorHelper.match(exb.sensorIdList, SENSOR.TEMPERATURE, exbSensorIdList)) {
     exbBtn = createThermohIcon(exb, mapScale, stage)
   }
-  else if (SensorHelper.match(exb.sensorIdList, SENSOR.THERMOPILE, exbSensorIdList) && exb.count != null) {
+  else if (SensorHelper.match(exb.sensorIdList, SENSOR.THERMOPILE, exbSensorIdList) && exb.count != null) { 
     // not use?
     // if (exb.count > 10) {
     //   w = DISP.THERMOPILE_L_SIZE
@@ -580,7 +580,7 @@ export const createExbIcon = (exb, exbSensorIdList, mapScale, stage) => {
     exbBtn = createUseStateIcon(exb.sensorId, exb.count, mapScale)
     exbBtn.cursor = ''
   } else {
-    let showMRoomStatus // FIXME: 定義されていないので仮にここに
+    let showMRoomStatus, bgColor // FIXME: 定義されていないので仮にここに
     if (exb.sensorId == SENSOR.PRESSURE && exb.pressVol != null) {
       exbBtn = showMRoomStatus
         ? createMRoomUseStateIcon(exb.sensorId, exb.pressVol, mapScale, bgColor)
