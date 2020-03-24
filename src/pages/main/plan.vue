@@ -42,9 +42,9 @@
             </v-select>
           </span>
         </b-form-row>
-        <b-form-row v-if="planMode == 'normal' && currentUser && currentUser.role.roleName == 'SYS_ADMIN'" class="my-1 ml-2 ml-sm-0">
+        <!-- <b-form-row v-if="planMode == 'normal' && currentUser && currentUser.role.roleName == 'SYS_ADMIN'" class="my-1 ml-2 ml-sm-0">
           <b-button class="ml-sm-4 ml-2 mr-1" :variant="theme" @click="onClickSync">{{ $t('label.syncWithOutlook') }}</b-button>
-        </b-form-row>
+        </b-form-row> -->
         <b-form-row v-if="planMode == 'meetingRoom'" class="my-1 ml-2 ml-sm-0">
           <b-form-checkbox v-model="doCompare">
             {{ $t('label.planActual') }}

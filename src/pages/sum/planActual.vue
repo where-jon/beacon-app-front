@@ -319,7 +319,7 @@ export default {
       try {
         const [startDt, endDt] = this.getDateRange()
         this.tItems = []
-        let uri = `${this.appServicePath}?startDt=${startDt}&endDt=${endDt}&indicatorType=${this.indicatorTypeFilter.value}&workingTimeType=range`//literal, range
+        let uri = `${this.appServicePath}?startDt=${startDt}&endDt=${endDt}&indicatorType=${this.indicatorTypeFilter.value}`
         if (this.selectedFilter.filterType && this.selectedFilter.filterId) {
           uri = `${uri}&filterType=${this.selectedFilter.filterType}&filterId=${this.selectedFilter.filterId}`
         }
