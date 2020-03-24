@@ -1855,7 +1855,8 @@
     "meetingGraph": "会議室利用実績を表示する画面です。",
     "systemJson": "禁止区域侵入不可、もしくは重要物品の対象グループ設定を表示し、編集を行う画面です。",
     "execTask": "パラメータをセットしてバッチを実行する画面です。",
-
+    "guestAccess": "来客アクセスを表示する画面です。",
+    
     "dummy": ""
   },
   "helpAdditionalDescription": {
