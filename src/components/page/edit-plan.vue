@@ -209,7 +209,7 @@ export default {
         this.isZoneDuplicate = false
         this.plan.zoneId = newVal == null ? null : newVal.value
         if (this.plan.zoneId) {
-          this.isDuplicate('zone', this.plan.zoneId, (v) => this.isZoneDuplicate = v)
+          this.isDuplicate('zones', this.plan.zoneId, (v) => this.isZoneDuplicate = v)
         }
       },
       deep: false,
@@ -219,7 +219,7 @@ export default {
         this.isLocationDuplicate = false
         this.plan.locationId = newVal == null ? null : newVal.value
         if (this.plan.locationId) {
-          this.isDuplicate('location', this.plan.locationId, (v) => this.isLocationDuplicate = v)
+          this.isDuplicate('locations', this.plan.locationId, (v) => this.isLocationDuplicate = v)
         }
       },
       deep: false,
@@ -229,7 +229,7 @@ export default {
         this.isPotThingDuplicate = false
         this.plan.potThingId = newVal == null ? null : newVal.value
         if (this.plan.potThingId) {
-          this.isDuplicate('pot', this.plan.potThingId, (v) => this.isPotThingDuplicate = v)
+          this.isDuplicate('pots', this.plan.potThingId, (v) => this.isPotThingDuplicate = v)
         }
       },
       deep: false,
@@ -239,7 +239,7 @@ export default {
         this.isPotPersonDuplicate = false
         this.plan.potPersonIds = newVal.map(e => e.value)
         this.plan.potPersonIds.map(id => {
-          this.isDuplicate('pot', id, (v) => {
+          this.isDuplicate('pots', id, (v) => {
             if (!this.isPotPersonDuplicate) this.isPotPersonDuplicate = v
           })
         })
@@ -308,7 +308,7 @@ export default {
       const data = await HttpHelper.getAppService(`${this.appServicePath}?startDt=${sDt}&endDt=${eDt}&filterType=${filterType}&filterId=${filterId}&isDuplicate=true`)
       if (Array.isArray(data)) {
         const self = this
-        callback(data.filter((e) => e.planId != self.plan.planId).length > 0)
+        callback(data[0].plans.filter(e => e.planId != self.plan.planId).length > 0)
       }
     },
     async onSaving() {

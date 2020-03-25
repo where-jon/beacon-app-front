@@ -180,7 +180,6 @@ export default {
       preDate: moment().day(1).set({hour:0,minute:0,second:0,millisecond:0}).toDate(),
 
       // マスタ情報
-      loadStates: ['areas', 'zones', 'locations', 'categories', 'pots'],
       areaOpts: [],
       zoneOpts: [],
       locationOpts: [],

@@ -30,7 +30,7 @@
         </b-form-row>
         <b-form-row class="my-1 ml-5 ml-sm-5">
           <b-button v-t="'label.display'" :variant="theme" class="mx-1" @click="display" />
-          <b-button v-if="!iosOrAndroid && bulkReferenceable" v-t="'label.download'" :variant="theme" class="mx-1" @click="exportCsv" />
+          <b-button v-if="!iosOrAndroid && bulkReferenceable" v-t="'label.download'" :variant="theme" class="mx-1" :disabled="!tItems || tItems.length == 0" @click="exportCsv" />
         </b-form-row>
       </b-form>
     </b-row>
