@@ -36,9 +36,9 @@
     "info": "INFO",
 
     "---------------- App common ---------------":"",
-    "login": "Signin",
-    "logout": "Signout",
-    "loginId": "Signin ID",
+    "login": "Login",
+    "logout": "Logout",
+    "loginId": "Login ID",
     "user": "User",
     "userId": "User ID",
     "id": "ID",
