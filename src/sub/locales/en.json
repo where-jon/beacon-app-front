@@ -310,7 +310,8 @@
     "female": "Female",
     "share": "Share",
     "multip": "Multipurpose",
-    "empty": "Empty",
+    "empty": "｜",
+    "occupy": "ー",
 
     "password": "Password",
     "passwordCurrent": "Current password",
