@@ -196,7 +196,8 @@ export default {
         return areaId == exb.areaId && (exb.x >= width || exb.y >= height)
       })
       const txError = _.some(this.txs, tx => {
-        return tx.areaId && tx.x && tx.y && tx.areaId == areaId && (tx.x >= width || tx.y >= height)
+        const location = tx.location
+        return location && location.areaId && location.x && location.y && location.areaId == areaId && (location.x >= width || location.y >= height)
       })
       const zoneErrors = _.filter(this.zones, zone => {
         return zone.areaId && zone.x && zone.y && zone.areaId == areaId && ((zone.x + zone.w) >= width || (zone.y + zone.h) >= height)

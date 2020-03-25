@@ -108,7 +108,6 @@ export default {
   watch: {
     'vueSelected.exbIdList': {
       handler: function(newVal, oldVal){
-        console.error(newVal, oldVal)
         this.form.exbIdList = newVal.map(val => val.value)
       },
       deep: true,

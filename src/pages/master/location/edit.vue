@@ -18,7 +18,7 @@
             </b-form-group>
             <b-form-group v-if="showLocationTypeOptions">
               <label v-t="'label.locationType'" />
-              <b-form-select v-model="form.locationType" :options="locationTypeOptions" :disabled="!isEditable" :readonly="!isEditable" :required="showLocationTypeOptions" />
+              <b-form-select v-model="form.locationType" :options="locationTypeOptions" :disabled="!isEditable" :readonly="!isEditable" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.area'" />
@@ -159,7 +159,7 @@ export default {
     areaOptions() {
       return MasterHelper.getOptionsFromState('area', false, true)
     },
-    showLocationTypeOptions(){
+    showLocationTypeOptions(){ // 一旦場所タイプは必須にはしない
       return 0 < APP.LOCATION.TYPE.WITH.length
     },
     locationTypeOptions(){

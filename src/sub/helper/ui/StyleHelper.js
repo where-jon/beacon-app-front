@@ -115,7 +115,7 @@ export const inLabel = (iconRadius, font, useLabel) => {
  * @return {{color: String, bgColor: String, shape: Number}}
  */
 export const getPositionDisplay = tx => {
-  const display = tx.display? tx.display: Util.getValue(tx, DISP.TX.DISPLAY_PRIORITY + '.display', {})
+  const display = tx.display? tx.display: Util.v(tx, 'pot.' + DISP.TX.DISPLAY_PRIORITY + '.display', {})
   return {
     color: StringUtil.addPrefix(display.color || DISP.TX.COLOR, '#'),
     bgColor: StringUtil.addPrefix(display.bgColor || DISP.TX.BGCOLOR, '#'),

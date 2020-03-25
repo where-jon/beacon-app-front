@@ -10,7 +10,7 @@
 
 <script>
 import { APP, DISP } from '../../sub/constant/config'
-import { EXTRA_NAV } from '../../sub/constant/Constants'
+import { EXTRA_NAV, ALERT_STATE } from '../../sub/constant/Constants'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as Util from '../../sub/util/Util'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
@@ -90,17 +90,11 @@ export default {
         let positions = PositionHelper.filterPositions(undefined, true)
         Util.debug('after filter', positions)
 
-        let prohibitCheck = false
         const minorMap = {}
-
-        if (Util.hasValue(APP.POS.PROHIBIT_ALERT) && Util.hasValueAny(APP.POS.PROHIBIT_GROUP_ZONE, APP.POS.LOST_GROUP_ZONE)) {
-          Util.merge(this, ProhibitHelper.setProhibitDetect('list', this.stage, this.icons, this.zones))
-          this.replace({showAlert: this.showDismissibleAlert})
-          this.prohibitDetectList? this.prohibitDetectList.forEach((p) => minorMap[p.minor] = p) : null
-        }
+        await this.loadProhibitDetect(minorMap) // 非同期が望ましいが、一覧のblinkingのため、同期で取得（持出検知に閾値を設定している場合性能劣化）
 
         positions = positions.filter(pos => pos.exb && pos.exb.location).map(pos => {
-          prohibitCheck = minorMap[pos.minor] != null
+          let prohibitCheck = minorMap[pos.minor] != null
 
           const location = pos.exb.location? this.locationIdMap[pos.exb.location.locationId]: {}
           return {
@@ -132,6 +126,13 @@ export default {
         console.error(e)
       }
       this.hideProgress()
+    },
+    async loadProhibitDetect(minorMap) {
+      if (Util.hasValueAny(APP.POS.PROHIBIT_GROUP_ZONE, APP.POS.LOST_GROUP_ZONE)) {
+        Util.merge(this, await ProhibitHelper.loadProhibitDetect(ALERT_STATE.LIST, this.stage, this.icons, this.zones))
+        this.replace({showAlert: this.showDismissibleAlert})
+        this.prohibitDetectList? this.prohibitDetectList.forEach((p) => minorMap[p.minor] = p) : null
+      }
     },
     // getPowerLevel(position){
     //   const batteryOpts = BATTERY_STATE.getTypes()

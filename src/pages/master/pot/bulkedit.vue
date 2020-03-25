@@ -51,7 +51,7 @@ export default {
   computed: {
     ...mapState('app_service', [
       'pot', 'potImages',
-      // 'pots', 'categories', 'groups', 'txs'
+      'pots', 'categories', 'groups', 'txs'
     ]),
     backPath() {
       return this.pPath

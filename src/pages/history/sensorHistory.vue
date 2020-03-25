@@ -134,8 +134,8 @@ export default {
         senHist.potName = Util.getValue(tx, 'pot.potName', Util.getValue(tx, ConfigHelper.includesBtxMinor('btxId')? 'btxId': 'minor', ''))
         senHist.major = tx.major
         senHist.minor = tx.minor
-        senHist.locationName = tx.locationName
-        senHist.areaName = tx.areaName
+        senHist.locationName = Util.v(tx, 'location.locationName')
+        senHist.areaName = Util.v(tx, 'location.area.areaName')
       }
 
       let exb = this.exbIdMap[senHist.exbId]

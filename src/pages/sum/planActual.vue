@@ -4,16 +4,16 @@
     <b-row class="mt-2">
       <b-form inline @submit.prevent>
         <b-form-row class="my-1 ml-2 ml-sm-0">
-            <label class="ml-sm-4 ml-2 mr-2">
-              {{ $t('label.mode') }}
-            </label>
-            <span :title="indicatorTypeFilter.label">
-            <v-select v-model="indicatorTypeFilter" :options="indicatorTypeOpts" :clearable="false" style="width: 350px;">
+          <label class="ml-sm-4 ml-2 mr-2">
+            {{ $t('label.mode') }}
+          </label>
+          <span :title="indicatorTypeFilter.label">
+            <v-select v-model="indicatorTypeFilter" :options="indicatorTypeOpts" :clearable="false" style="width: 400px;">
               <template slot="no-options">
                 {{ vueSelectNoMatchingOptions }}
               </template>
             </v-select>
-            </span>
+          </span>
         </b-form-row>
       </b-form>
     </b-row>
@@ -36,14 +36,16 @@
           </span>
         </b-form-row>
         <b-form-row class="my-1 ml-2 ml-sm-0">
-          <toggle-button class="mr-2 mt-2" :value="isWeek"
-          :color="{checked: '#66cdaa', unchecked: '#87cefa', disabled: '#cccccc'}"
-          :sync="true"
-          :labels="{checked: $t('label.week'), unchecked: $t('label.month')}"
-          @change="onChangeToggle"/>
+          <toggle-button
+            class="mr-2 mt-2" :value="isWeek"
+            :color="{checked: '#66cdaa', unchecked: '#87cefa', disabled: '#cccccc'}"
+            :sync="true"
+            :labels="{checked: $t('label.week'), unchecked: $t('label.month')}"
+            @change="onChangeToggle"
+          />
           <date-picker
-            ref="datePicker"
             v-show="true"
+            ref="datePicker"
             v-model="today"
             :type="datePickerType"
             :format="datePickerFormat"
@@ -51,8 +53,7 @@
             style="width: 170px;"
             :placeholder="datePickerPlaceholder"
             @blur="onDatePickerBlur"
-            >
-          </date-picker>
+          />
         </b-form-row>
       </b-form>
     </b-row>
@@ -68,9 +69,9 @@
       <b-table sticky-header :items="tItems" :fields="tFields" :current-page="currentPage" :per-page="perPage" :sort-compare="defaultSortCompare" stacked="md" hover outlined>
         <template slot="graph" slot-scope="row">
           <div class="progress">
-              <div class="progress-bar" :style="{width: row.item.indicator <= 100 ? row.item.indicator +'%' : '100%'}">  
-                  <span>{{ row.item.indicator }}%</span>
-              </div>
+            <div class="progress-bar" :style="{width: row.item.indicator <= 100 ? row.item.indicator +'%' : '100%'}">  
+              <span>{{ row.item.indicator }}%</span>
+            </div>
           </div>
         </template>
       </b-table>
@@ -100,10 +101,10 @@ import { getCharSet } from '../../sub/helper/base/CharSetHelper'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 
 export default {
-  mixins: [commonmixin],
   components: {
     breadcrumb, DatePicker, ToggleButton
   },
+  mixins: [commonmixin],
   data () {
     return {
       name: 'planActual',
@@ -204,20 +205,20 @@ export default {
     indicatorTypeFilter: {
       handler: function(newVal, oldVal){
         switch (newVal.value) {
-          case 0:
-            this.tFields = this.tFieldsReservationRate
-            break
-          case 1:
-            this.tFields = this.tFieldsOperatingRate
-            break
-          case 2:
-            this.tFields = this.tFieldsReserveOperatingRate
-            break
-          case 3:
-            this.tFields = this.tFieldsUnreserveOperatingRate
-            break
-          default:
-            this.tFields = this.tFieldsEmptyReservationCount
+        case 0:
+          this.tFields = this.tFieldsReservationRate
+          break
+        case 1:
+          this.tFields = this.tFieldsOperatingRate
+          break
+        case 2:
+          this.tFields = this.tFieldsReserveOperatingRate
+          break
+        case 3:
+          this.tFields = this.tFieldsUnreserveOperatingRate
+          break
+        default:
+          this.tFields = this.tFieldsEmptyReservationCount
         }
       },
       deep: false,
@@ -335,29 +336,29 @@ export default {
     loadIndicators(data) {
       const arr = data.indicators.map((e) => {
         switch (this.indicatorTypeFilter.value) {
-          case 0: // 予約率（予約時間／就業時間）
-          case 1: // 稼働率（稼働時間／就業時間）
-          case 3: // 予約外稼働率（予約外稼働時間／就業時間）
-            return { 
-              name: e.targetName, 
-              indicator: this.orgRound(e.value / data.sumOfWorkingHours * 100),
-              hour: e.value,
-              hour2: data.sumOfWorkingHours,
-            }
-          case 2:
-            // 予約内稼働率（予約内稼働時間／予約時間）
-            return { 
-              name: e.targetName, 
-              indicator: this.orgRound(e.value / e.sumOfReservationHours * 100),
-              hour: e.value,
-              hour2: e.sumOfReservationHours,
-            }
-          case 4:
-            // 空予約数
-            return { 
-              name: e.targetName, 
-              indicator: e.value,
-            }
+        case 0: // 予約率（予約時間／就業時間）
+        case 1: // 稼働率（稼働時間／就業時間）
+        case 3: // 予約外稼働率（予約外稼働時間／就業時間）
+          return { 
+            name: e.targetName, 
+            indicator: this.orgRound(e.value / data.sumOfWorkingHours * 100),
+            hour: e.value,
+            hour2: data.sumOfWorkingHours,
+          }
+        case 2:
+          // 予約内稼働率（予約内稼働時間／予約時間）
+          return { 
+            name: e.targetName, 
+            indicator: this.orgRound(e.value / e.sumOfReservationHours * 100),
+            hour: e.value,
+            hour2: e.sumOfReservationHours,
+          }
+        case 4:
+          // 空予約数
+          return { 
+            name: e.targetName, 
+            indicator: e.value,
+          }
         }
       })
       this.totalRows = arr.length
@@ -366,12 +367,16 @@ export default {
   }
 }
 </script>
-<style>
+<style lang="scss">
 .progress{
     margin-bottom: 0px;
-    /* height: 30px; */
+    height: 28px;
     width: 440px!important;
     border-radius: 0px;
+    span {
+      margin-left: 5px;
+      text-align: left;
+    }
 }
 .progress-bar{
     background-color: #A8C0DE;

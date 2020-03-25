@@ -230,7 +230,7 @@ export default {
       this.$nextTick(() => this.$forceUpdate())
     },
     initExbSensorList(){
-      this.form.exbSensorList = this.exb.exbSensorList? this.exb.exbSensorList.map((val, idx) => {
+      this.form.exbSensorList = this.exb.exbSensorList? this.exb.exbSensorList.map((val, idx) => { // TODO: master取得と形式を合わせ、sensorListにしたい
         return APP.EXB.MULTI_SENSOR && idx < APP.EXB.SENSOR_MAX || !APP.EXB.MULTI_SENSOR && idx == 0? {
           exbId: null,
           sensorId: val.exbSensorPK.sensorId,

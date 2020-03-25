@@ -162,7 +162,7 @@ import { PATTERN, TENANT_STATE } from '../../../sub/constant/Constants'
 import * as DateUtil from '../../../sub/util/DateUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
-import * as AuthHelper from '../../../sub/helper/base/AuthHelper'
+import * as ConfigHelper from '../../../sub/helper/dataproc/ConfigHelper'
 import * as FeatureHelper from '../../../sub/helper/domain/FeatureHelper'
 import * as HttpHelper from '../../../sub/helper/base/HttpHelper'
 import * as LocalStorageHelper from '../../../sub/helper/base/LocalStorageHelper'
@@ -327,12 +327,6 @@ export default {
         return false
       })
     },
-    async applyConfig() {
-      await StateHelper.load('setting', true)
-      const login = LocalStorageHelper.getLogin()
-      const userInfo = await AuthHelper.getUserInfo(login.isTenantAdmin)
-      AuthHelper.resetConfig(login.isTenantAdmin, userInfo.setting)
-    },
     async onSaved(){
       this.featureList.forEach(feature => {
         feature.checked = false
@@ -344,7 +338,7 @@ export default {
       this.$store.commit('replace', login)
       LocalStorageHelper.setLocalStorage('login', JSON.stringify(login))
       if(this.targetTenantId == login.currentTenant.tenantId){
-        await this.applyConfig()
+        await ConfigHelper.reloadConfig()
       }
       this.targetTenantId = null
       this.settingList = []
