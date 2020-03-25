@@ -207,19 +207,25 @@ export default {
       }
       toTime = Math.min(toTime, end)
 
+      
+
       // 1日の場合
       if(fromDate == toDate){
         console.log('oneDay')
-        return toTime - fromTime
+        return this.raunding(toTime - fromTime)
       }
       // 2日以上の場合
       let total = 0
       total += end - fromTime
       total += toTime - start
       total += (toDate - fromDate - 1) * (end - start)
-      //console.log('total', total)
-      return total
+      return this.raunding(total)
     },
+    raunding(sec){
+      // コマ時間に揃える
+      const interval = APP.POSITION_SUMMARY_INTERVAL * 60
+      return Math.floor(sec / interval) * interval + interval
+    }
   }
 }
 </script>
