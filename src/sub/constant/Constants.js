@@ -763,6 +763,8 @@ export const SETTING = {
             EXCLOUD_RAWLOG_DIR: SETTING.STRING,
             BLANK_RANGE: SETTING.NUMBER,
             MIN_RANGE: SETTING.NUMBER,
+            REAL_TIME: SETTING.BOOLEAN,
+            PATTERN: SETTING.NUMBER_LIST,
           },
           WORKLOAD: {
             PAUSE_TIMEOUT: SETTING.NUMBER,
