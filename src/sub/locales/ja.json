@@ -482,6 +482,8 @@
     "stay": "滞在",
     "absence": "不在",
     "graph": "滞在率グラフ",
+    "normalGraph": "グラフ",
+
     "stayRatioAbsent1Time": "離席1時間",
     "stayRatioAbsent1Ratio": "離席1率",
     "stayRatioAbsent2Time": "離席2時間",

@@ -5,7 +5,7 @@
       <!-- week -->
       <div id="w-container" class="tui-full-calendar-week-container">
         <header-panel :planMode="planMode" :timeLineLeftAndWidth="viewModel.timeLineLeftAndWidth" :headerOpts="headerOpts" @handleScroll="handleScroll"></header-panel>
-        <time-grid-panel :planMode="planMode" :timeSlots="timeSlots" :viewModel="viewModel" :headerOpts="headerOpts" :doCompare="doCompare" @handleScroll="handleScroll"></time-grid-panel>
+        <time-grid-panel :planMode="planMode" :timeSlots="timeSlots" :viewModel="viewModel" :headerOpts="headerOpts" :doCompare="doCompare" :holidays="holidays" :working="working" @handleScroll="handleScroll"></time-grid-panel>
       </div>
       <div>
         <schedule-detail-popup v-if="clickScheduleEvent && !doCompare" :event="clickScheduleEvent" @edit="doEdit" @delete="doDelete">
@@ -38,6 +38,8 @@ export default {
     dragHandler: null,
     clickScheduleEvent: null,
     doCompare: null,
+    holidays: null,
+    working: null,
   },
   data () {
     return {

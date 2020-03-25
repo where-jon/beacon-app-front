@@ -42,9 +42,9 @@
             </v-select>
           </span>
         </b-form-row>
-        <b-form-row v-if="planMode == 'normal' && currentUser && currentUser.role.roleName == 'SYS_ADMIN'" class="my-1 ml-2 ml-sm-0">
+        <!-- <b-form-row v-if="planMode == 'normal' && currentUser && currentUser.role.roleName == 'SYS_ADMIN'" class="my-1 ml-2 ml-sm-0">
           <b-button class="ml-sm-4 ml-2 mr-1" :variant="theme" @click="onClickSync">{{ $t('label.syncWithOutlook') }}</b-button>
-        </b-form-row>
+        </b-form-row> -->
         <b-form-row v-if="planMode == 'meetingRoom'" class="my-1 ml-2 ml-sm-0">
           <b-form-checkbox v-model="doCompare">
             {{ $t('label.planActual') }}
@@ -86,7 +86,7 @@
         </b-form-row>
       </b-form>
     </b-row>
-    <plan-calendar :id="id" :name="name" :appServicePath="appServicePath" :planMode="planMode" :currentUser="currentUser" :headerOpts="headerOpts" :viewModel="viewModel" :dragHandler="dragHandler" :clickScheduleEvent="clickScheduleEvent" :mgViewModel="mgViewModel" :doCompare="doCompare" @doEdit="doEdit" @doDelete="onDeleteSchedule"/>
+    <plan-calendar :id="id" :name="name" :appServicePath="appServicePath" :planMode="planMode" :currentUser="currentUser" :headerOpts="headerOpts" :viewModel="viewModel" :dragHandler="dragHandler" :clickScheduleEvent="clickScheduleEvent" :doCompare="doCompare" :holidays="holidays" :working="working" @doEdit="doEdit" @doDelete="onDeleteSchedule"/>
     <div>
       <b-modal id="editPlanModal" v-model="showEdit" hide-footer :title="$t('label.schedule')" header-class="editPlanHeader">
         <edit-plan :id="id" :name="name" :appServicePath="appServicePath" :currentUser="currentUser" :plan="targetPlan" :zoneOpts="zoneOpts" :locationOpts="locationOpts" :potPersonOpts="filterPotPersonOpts" :potThingOpts="potThingOpts" :vueSelected="editVueSelected" @doneSave="onEditSave" @delete="onEditDelete"/>
@@ -135,8 +135,6 @@ export default {
       currentUser: null,
       currentUserPotIds: [],
 
-      moveGuideHandler: null,
-      mgViewModel: null,
       clickScheduleEvent: null,
 
       planMode: 'normal',
@@ -159,6 +157,8 @@ export default {
       today: moment().day(1).set({hour:0,minute:0,second:0,millisecond:0}).toDate(),
       preDate: moment().day(1).set({hour:0,minute:0,second:0,millisecond:0}).toDate(),
       doFetchData: false,
+      holidays: [],
+      working: {},
 
       // 会議室モード
       headerOpts: [],
@@ -501,6 +501,8 @@ export default {
           this.destoryHandlers()
           const dupMessage = this.$t('label.duplicateSchedule')
           const result = app.loadTimeLine(this.planMode, data, this.currentUser, dupMessage, this.headerOpts, this.doCompare, this.currentUserPotIds)
+          this.holidays = data.length > 0 ? data[0].holidays : []
+          this.working = data.length > 0 && data[0].workingStart ? this.workingTime(data[0].workingStart, data[0].workingEnd) : {}
           this.planMap = result[0]
           this.viewModel = result[1]
           this.dragHandler = new Drag({distance: 10}, document.getElementById('calendar-layout'))
@@ -509,6 +511,17 @@ export default {
       }
       catch(err) {
         console.error(err)
+      }
+    },
+    workingTime(start, end) {
+      const stHour = parseInt(start.substring(0, 2))
+      const stMin = parseInt(start.substring(2, 4))
+      const enHour = parseInt(end.substring(0, 2))
+      const enMin = parseInt(end.substring(2, 4))
+
+      return {
+        start: stHour * 3600000 + stMin * 60000,
+        end: enHour * 3600000 + enMin * 60000
       }
     },
     destoryHandlers() {
