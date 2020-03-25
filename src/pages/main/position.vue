@@ -17,7 +17,7 @@
       p-split-auto-reload
       :p-use-plugin-filter="useDetailFilter"
       :p-installation="isInstallation"
-      :p-quantity="!isInstallation"
+      :p-quantity="!isInstallation && showQuantity"
       :p-show-toilet="showToilet"
       @rssi="rssiFunc"
     />
@@ -55,6 +55,9 @@ export default {
     },
     showMeditagList(){
       return APP.SENSOR.USE_MEDITAG
+    },
+    showQuantity() {
+      return APP.POS.SHOW_QUANTITY
     },
     filterList(){
       return [APP.POS.WITH.GROUP? 'group': null, APP.POS.WITH.CATEGORY? 'category': null].filter(val => val)
