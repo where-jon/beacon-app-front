@@ -7,7 +7,9 @@ import { APP, DISP } from '../../constant/config'
 import { ALERT_STATE, DETECT_STATE, SYSTEM_ZONE_CATEGORY_NAME } from '../../constant/Constants'
 import * as ViewHelper from '../ui/ViewHelper'
 import * as PositionHelper from './PositionHelper'
+import * as HttpHelper from './../base/HttpHelper'
 import * as Util from '../../util/Util'
+import * as ArrayUtil from '../../util/ArrayUtil'
 
 let i18n
 
@@ -20,41 +22,6 @@ export const setApp = pi18n => {
   i18n = pi18n
 }
 
-/**
- * 重要物品指定区域の検知情報を取得する。
- * @method
- * @param {Object[]} position
- * @param {Object[]} lostZones
- * @return {Object[]}
- */
-export const getLostUnDetectList = (position, lostZones) => {
-  const isScreen = APP.POS.LOST_ALERT && APP.POS.LOST_ALERT.some(val => val == ALERT_STATE.SCREEN)
-  if (!isScreen || !APP.POS.LOST_GROUP_ZONE || lostZones[0] == null) {
-    return []
-  }
-  const groupZoneList = APP.POS.LOST_GROUP_ZONE
-  let lostUnDetectList = []
-  lostZones.forEach((lostZone) => {
-    position.forEach((pos) => {
-      const group = groupZoneList.find(e => e.groupCd && e.groupCd == Util.v(pos, 'tx.pot.group.groupCd'))
-      if (group && group.zoneCd.includes(lostZone.zoneCd)) {
-        if( pos.detectState != DETECT_STATE.DETECTED || !Util.v(pos, 'exb.location.zoneList', []).some(zone => zone.zoneCd == lostZone.zoneCd)) {
-          lostUnDetectList.push({
-            isLost: true,
-            btxId: pos.btxId,
-            minor: pos.minor,
-            potName: pos.tx.pot.potName,
-            areaName: pos.exb.areaName,
-            locationName: pos.exb.locationName,
-            zoneName: lostZone.zoneName,
-            lastDetectedTime: pos.timestamp
-          })
-        }
-      }
-    })
-  })
-  return lostUnDetectList
-}
 
 /**
  * 禁止区域のアラートメッセージを作成する。
@@ -62,60 +29,92 @@ export const getLostUnDetectList = (position, lostZones) => {
  * @param {Object[]} prohibitDetectList
  * @return {String}
  */
-export const getProhibitMessage = prohibitDetectList => {
-  const isProhibitScreen = APP.POS.PROHIBIT_ALERT? APP.POS.PROHIBIT_ALERT.some(val => val == ALERT_STATE.SCREEN): false
-  const isLostScreen = APP.POS.LOST_ALERT? APP.POS.LOST_ALERT.some(val => val == ALERT_STATE.SCREEN): false
-  if ((!isProhibitScreen && !isLostScreen) || (!APP.POS.PROHIBIT_GROUP_ZONE && !APP.POS.LOST_GROUP_ZONE) || !prohibitDetectList) {
-    return ''   // message空
+const getProhibitMessage = prohibitDetectList => {
+  if (!Util.hasValue(prohibitDetectList)) {
+    return null   // message空
   }
-  const prohibitTitle = i18n.tnl('label.detectedProhibitZone')
-  const lostTitle = i18n.tnl('label.detectedLostZone')
-  const labelArea = i18n.tnl('label.Area')
-  const labelPotName = i18n.tnl('label.potName')
-  const labelTime = i18n.tnl('label.finalReceiveTimestamp')
-  const labelFinalLocation = i18n.tnl('label.finalReceiveLocation')
-  const labelZone =  i18n.tnl('label.zoneName')
-  const labelToBeZone =  i18n.tnl('label.toBeZone')
 
-  return prohibitDetectList.map(data => data.isLost
-    ? `<${lostTitle} [${labelPotName}] ${data.potName} [${labelToBeZone}] ${data.zoneName} [${labelFinalLocation}] ${data.locationName} [${labelTime}] ${data.lastDetectedTime}>`
-    :`<${prohibitTitle} [${labelPotName}] ${data.potName} [${labelArea}] ${data.areaName} [${labelZone}] ${data.zoneName}>` ).join(' ')
+  return prohibitDetectList.map(data => {
+    const messageTemplate = i18n.tnl('message.' + (data.isLost? 'lostDetected': 'prohibitDetected'))
+    let message = messageTemplate.split('{time}').join(data.lastDetectedTime)
+    const keys = ['groupName','potCd','potName','locationName','zoneName','areaName']
+    keys.forEach(key => {
+      message = message.split('{' + key + '}').join(data[key])
+    })
+    return message
+  })
 }
 
 /**
- * 禁止区域の検知情報を取得する。
- * @method
- * @param {Object[]} position
- * @param {Object[]} prohibitZones
- * @return {Object[]}
+ * 持出禁止ゾーンから所定時間を超えているか否か。
+ * 閾値が設定されていない（＝最終測位日時配列が空）の場合true
+ * 最終測位日時配列に対象TXがない=一度も検知されていない、orかなり前(5h)に検知の場合true
+ * 
+ * @param {*} lastDetectedOnLostZone 
+ * @param {*} txId 
  */
-export const getProhibitDetectList = (position, prohibitZones) => {
-  const isScreen = APP.POS.PROHIBIT_ALERT? APP.POS.PROHIBIT_ALERT.some(val => val == ALERT_STATE.SCREEN): false
-  if (!isScreen || !APP.POS.PROHIBIT_GROUP_ZONE || prohibitZones[0] == null) {
-    return []
+const isLostOverAlertTime = (lastDetectedOnLostZone, txId) => {
+  if (!lastDetectedOnLostZone) {
+    return true
+  }
+  const lastDt = lastDetectedOnLostZone.find(e => e.txId == txId)
+  if (!lastDt) {
+    return true
   }
 
-  const groupZoneList = APP.POS.PROHIBIT_GROUP_ZONE
+  return new Date().getTime() - lastDt.positionDt > APP.POS.LOST_ALERT_TIME
+}
+
+/**
+ * 検知（進入禁止）・未検知（持出禁止）となるリストを返す
+ * 
+ * @param {*} position 測位情報
+ * @param {*} zones 進入禁止あるいは持出禁止ゾーン
+ * @param {*} groupZoneList グループごとの対象ゾーン（設定から）
+ * @param {*} isLost true:持出禁止、false:進入禁止
+ */
+const getDetectList = async (position, zones, groupZoneList, isLost) => {
+  let lastDetectedOnLostZone
+  if (isLost && APP.POS.LOST_ALERT_TIME > 0) {
+    // 持出禁止ゾーンでの最終測位日時{txId, potId, 最終測位日時}の配列を返す。
+    lastDetectedOnLostZone = await HttpHelper.getAppService('/core/zone/lastDtInLostZone?_=' + new Date().getTime())
+    console.error({lastDetectedOnLostZone})
+  }
   let detectList = []
-  const detectPosition  = position.filter(pos => pos.exb && pos.detectState == DETECT_STATE.DETECTED)
-  prohibitZones.forEach(prohibitZone => {
-    detectPosition.forEach(pos => {
+  zones.forEach(zone => {
+    position.forEach(pos => {
       const group = groupZoneList.find(e => e.groupCd && e.groupCd == Util.v(pos, 'tx.pot.group.groupCd'))
-      if (group && group.zoneCd.includes(prohibitZone.zoneCd)) {
-        if (Util.v(pos, 'exb.location.zoneList', []).some(zone => zone.zoneCd == prohibitZone.zoneCd)) {
-          detectList.push({
-            btxId: pos.btxId,
-            minor: pos.minor,
-            potName: Util.v(pos, 'tx.pot.potName'),
-            areaName: Util.v(pos, 'exb.areaName'),
-            zoneName: prohibitZone.zoneName,
-            lastDetectedTime: pos.timestamp
-          })
+      if (group && group.zoneCd.includes(zone.zoneCd)) {
+        const isInTheZone = (pos.detectState == DETECT_STATE.DETECTED) && Util.v(pos, 'exb.location.zoneList', []).some(curZone => curZone.zoneCd == zone.zoneCd)
+        if (isLost && !isInTheZone && isLostOverAlertTime(lastDetectedOnLostZone, pos.txId)
+          || !isLost && isInTheZone) {
+          addDetectList(detectList, isLost, pos, zone)
         }
       }
     })
   })
   return detectList
+}
+
+const addDetectList = (detectList, isLost, pos, zone) => {
+  if (detectList.some(e => e.btxId == pos.btxId)) {
+    return 
+  }
+  const detect = {
+    isLost,
+    btxId: pos.btxId,
+    minor: pos.minor,
+    potCd: Util.v(pos, 'tx.pot.potCd'),
+    potName: Util.v(pos, 'tx.pot.potName'),
+    groupName: Util.v(pos, 'tx.pot.group.groupName'),
+    categoryName: Util.v(pos, 'tx.pot.category.categoryName'),
+    areaName: Util.v(pos, 'exb.areaName'),
+    locationName: Util.v(pos, 'exb.locationName'),
+    zoneName: zone.zoneName,
+    lastDetectedTime: pos.timestamp.substring(11, 16),
+    lastDetectedDateTime: pos.timestamp
+  }
+  detectList.push(detect)
 }
 
 /**
@@ -125,26 +124,49 @@ export const getProhibitDetectList = (position, prohibitZones) => {
  * @param {zones} zones
  * @param {positions} positions
  */
-export const setProhibitDetect = (viewName, stage, icons, zones, positions = []) => {
-  if (positions.length == 0) {
-    positions = PositionHelper.filterPositions()
+export const loadProhibitDetect = async (viewName, stage, icons, zones, positions = [], pShowProhibit = true, pShowLost = true) => {
+  const showProhibitAlert = pShowProhibit && ArrayUtil.equalsAny(APP.POS.PROHIBIT_ALERT, [ALERT_STATE.SCREEN, viewName]) && Util.hasValue(APP.POS.PROHIBIT_GROUP_ZONE)
+  const showLostAlert = pShowLost && ArrayUtil.equalsAny(APP.POS.LOST_ALERT, [ALERT_STATE.SCREEN, viewName]) && Util.hasValue(APP.POS.LOST_GROUP_ZONE)
+
+  if (!showProhibitAlert && !showLostAlert) {
+    return {}
   }
-  const prohibitZones = zones.filter(zone => zone.categoryList.some(category => category.categoryCd == SYSTEM_ZONE_CATEGORY_NAME.PROHIBIT))
-  const lostZones = zones.filter(zone => zone.categoryList.some(category => category.categoryCd == SYSTEM_ZONE_CATEGORY_NAME.LOST))
-  const prohibitDetectList = getProhibitDetectList(positions, prohibitZones)
-  positions = PositionHelper.filterPositions()
-  const lostUnDetectList = getLostUnDetectList(positions, lostZones)
 
-  const ret = {}
-  ret.prohibitDetectList = prohibitDetectList.concat(lostUnDetectList)
-  ret.message = getProhibitMessage(ret.prohibitDetectList)
-  ret.showDismissibleAlert = !!ret.message
+  let prohibitDetectList = []
+  if (showProhibitAlert) {
+    if (positions.length == 0) {
+      positions = PositionHelper.filterPositions()
+    }
+    const prohibitZones = zones.filter(zone => zone.categoryList.some(category => category.categoryCd == SYSTEM_ZONE_CATEGORY_NAME.PROHIBIT))
+    if (Util.hasValue(prohibitZones)) {
+      // 禁止区域の検知情報を取得する。
+      prohibitDetectList = await getDetectList(positions, prohibitZones, APP.POS.PROHIBIT_GROUP_ZONE, false)  
+    }
+  }
 
-  if (viewName == 'pos') {
+  let lostUnDetectList = []
+  if (showLostAlert) {
+    positions = PositionHelper.filterPositions()
+    const lostZones = zones.filter(zone => zone.categoryList.some(category => category.categoryCd == SYSTEM_ZONE_CATEGORY_NAME.LOST))
+    if (Util.hasValue(lostZones)) {
+      // 重要物品指定区域の検知情報を取得する。
+      lostUnDetectList = await getDetectList(positions, lostZones, APP.POS.LOST_GROUP_ZONE, true)
+    }
+  }
+
+  prohibitDetectList = prohibitDetectList.concat(lostUnDetectList)
+  const message = getProhibitMessage(prohibitDetectList)
+  const ret = {
+    prohibitDetectList,
+    message,
+    showDismissibleAlert: Util.hasValue(message)  
+  }
+
+  if (viewName == ALERT_STATE.MAP) {
     clearInterval(ret.prohibitInterval)  // 点滅クリア
     // 禁止区域に検知されたら点滅させる
     if (ret.showDismissibleAlert) {
-      ret.prohibitInterval = setInterval(() => ViewHelper.twinkleProhibit(stage, icons, ret.prohibitDetectList), DISP.PROHIBIT_TWINKLE_TIME)
+      ret.prohibitInterval = setInterval(() => ViewHelper.twinkleProhibit(stage, icons, ret.prohibitDetectList), DISP.PROHIBIT.TWINKLE_TIME)
     }
   }
   return ret

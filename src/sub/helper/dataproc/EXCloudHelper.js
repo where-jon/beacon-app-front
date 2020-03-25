@@ -7,7 +7,7 @@
 
 import _ from 'lodash'
 import * as mock from '../../../assets/mock/mock'
-import { DEV, DISP, EXCLOUD, APP_SERVICE } from '../../constant/config'
+import { DEV, EXSERVER, EXCLOUD, APP_SERVICE } from '../../constant/config'
 import * as DateUtil from '../../util/DateUtil'
 import * as HttpHelper from '../base/HttpHelper'
 
@@ -126,7 +126,7 @@ export const fetchGateway = async () => {
         val.deviceId = val.deviceid
         delete val.deviceid
       }
-      if(DISP.POS.EXSERVER){
+      if(EXSERVER.ENABLE){
         return {...val, updated: dateform(val.timestamp * 1000)}
       }else{
         return {...val, updated: dateform(val.timestamp)}
@@ -150,7 +150,7 @@ export const fetchTelemetry = async () => {
         val.deviceId = val.deviceid
         delete val.deviceid
       }
-      let timestamp = DISP.POS.EXSERVER ? val.timestamp * 1000 : val.timestamp
+      let timestamp = EXSERVER.ENABLE ? val.timestamp * 1000 : val.timestamp
       return {...val, timestamp: timestamp, ibeacon_received: val.ibeacon_received}
     })
     .compact().value()

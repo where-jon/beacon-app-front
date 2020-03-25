@@ -70,11 +70,16 @@ export const loadPosition = async (count, allShow = false, fixSize = false) => {
   positions = _(positions).filter(pos => allShow || DEV.NOT_FILTER_TX || txIdMap[pos.txId])
     .filter(pos => allShow || Util.hasValue(pos.locationId) && locationIdMap[pos.locationId] && (txIdMap[pos.txId] && NumberUtil.bitON(txIdMap[pos.txId].disp, TX.DISP.POS)))
     .map(pos => {
+      // if (pos.minor == 603) { // 開発目的：矯正ポジション設定
+      //   console.log(pos)
+      //   pos.locationId = 2
+      //   pos.exbId = 2
+      // }
       let tx = txIdMap[pos.txId]
       // 固定位置の場合,txのlocation、そうではない場合exbのlocation TODO:要検討
       let location = tx.location && 0 < tx.location.x * tx.location.y? tx.location: locationIdMap[pos.locationId]
       let exb = exbIdMap[pos.exbId]
-      let label = tx.displayName? tx.displayName: tx.btxId
+      let label = Util.firstValue(Util.v(tx, 'pot.displayName', tx.minor), tx.btxId)
 
       // 検知状態の設定
       setDetectState(pos)
@@ -85,8 +90,8 @@ export const loadPosition = async (count, allShow = false, fixSize = false) => {
   
       return { ...pos, btxId: tx.btxId, deviceId: Util.v(exb, 'deviceId'), posx: pos.x, posy: pos.y,
         label, location, exb, tx, updatetime: DateUtil.dateform(pos.positionDt), timestamp: DateUtil.dateform(pos.positionDt), // TODO: updatetimeかtimestampかどちらかに統一
-        isTransparent: isTransparent(pos.timestamp, now),
-        isLost: isLost(pos.timestamp, now),
+        isTransparent: isTransparent(pos.positionDt, now),
+        isLost: isLost(pos.positionDt, now),
         display
       }
     }).compact().value()
@@ -113,7 +118,8 @@ export const loadPosition = async (count, allShow = false, fixSize = false) => {
 export const filterPositions = (positions = store.state.main.positions,
   showAllTime = false, 
   showTxNoOwner = APP.POS.SHOW_TX_NO_OWNER,
-  selectedCategoryId = store.state.main.selectedCategoryId, selectedGroupId = store.state.main.selectedGroupId,
+  selectedCategoryId = store.state.main.selectedCategoryId,
+  selectedGroupId = store.state.main.selectedGroupId,
   selectedTxIdList = store.state.main.selectedTxIdList,
   selectedFreeWord = store.state.main.selectedFreeWord) => { // p, position-display, rssimap, position-list, position, ProhibitHelper
   const txIdMap = store.state.app_service.btxIdMap
@@ -136,7 +142,7 @@ const positionFilterFreeWord = (pos, freeWord) => {
     'tx.pot.potName',
     ArrayUtil.includesIgnoreCase(APP.POS_LIST.WITH, 'tel')? 'tx.pot.extValue.tel': null,
     MenuHelper.useMaster('category') && APP.POS.WITH.CATEGORY? 'tx.pot.category.categoryName': null,
-    MenuHelper.useMaster('group') && APP.POS.WITH.GROUP? 'tx.pot.groupName': null,
+    MenuHelper.useMaster('group') && APP.POS.WITH.GROUP? 'tx.pot.group.groupName': null,
     'state',
     APP.POSITION_WITH_AREA? 'location.area.areaName': null,
     'location.locationName',
@@ -213,7 +219,7 @@ export const isFixedPosOnArea = (tx, areaId) => hasTxLocation(tx) && tx.location
 export const isInTheArea = (pos, locations, selectedMapId) => {
   const targetLocations = locations.filter(location => location.areaId != null && (selectedMapId == null || selectedMapId == location.areaId))
   return pos.exb.location && _.some(targetLocations, location => pos.exb.location.locationId == location.locationId)
-    && pos.timestamp && (new Date(pos.timestamp) > new Date().getTime() - APP.POS.LOST_TIME)
+    && pos.timestamp && (new Date(pos.timestamp).getTime() > new Date().getTime() - APP.POS.LOST_TIME)
 }
 
 /**
@@ -256,6 +262,7 @@ export const getDetectCount = (positions, areaId) => {
  */
 export const setDetectState = (pos) => {
   pos.detectState = DetectStateHelper.getState('tx', pos.positionDt)
+  // pos.detectState = pos.txId % 5; if (pos.detectState == 3) pos.detectState =1 // For test
   pos.state = DetectStateHelper.getLabel(pos.detectState)
   pos.isUnDetect = DetectStateHelper.isUndetect(pos.detectState)
   pos.noSelectedTx = (pos.detectState != DETECT_STATE.DETECTED)
@@ -402,7 +409,7 @@ export const calcScreenCoordinates = (positions, ratio, locations = [], selected
   return _(targetLocations).map(location => {
     const samePos = targetPos.filter(pos => pos.location.locationId == location.locationId)
     // console.error('samePos', samePos.map(e => e.minor))
-    const txR = location.isFixedPosZone? DISP.TX.FIXED_POS.R: DISP.TX.R
+    const txR = (location.isFixedPosZone && DISP.TX.FIXED_POS.APPLY_COLOR)? DISP.TX.FIXED_POS.R: DISP.TX.R
     samePos.forEach(pos => pos.txR = txR)
     return calcCoordinatesWhenOverlap(location, ratio, samePos, txR)
   }).compact().flatMap(e => e).tap(Util.debug).value()
@@ -691,10 +698,11 @@ export const createTxDetailInfo = (x, y, tx, canvasScale, offset, containerRect,
     color: display.color,
     isDispRight: x + offset.x + 100 < window.innerWidth,
   }
-  if(tx.extValue){
-    Object.keys(tx.extValue).forEach( key => { 
+  const extValue = Util.v(tx, 'pot.extValue')
+  if(extValue){
+    Object.keys(extValue).forEach( key => { 
       if(!ret[key]){ // 既にあるキーは書き換えない
-        ret[key] = i18n.tnl('label.' + key) + ':' + tx.extValue[key] 
+        ret[key] = i18n.tnl('label.' + key) + ':' + extValue[key] 
       }
     } )
   }
@@ -737,10 +745,11 @@ export const createTxDetailInfoOnStack = (x, y, tx, offset, preloadThumbnail) =>
     color: display.color,
     isDispRight: x + offset.x + 100 < window.innerWidth,
   }
-  if(tx.extValue){
-    Object.keys(tx.extValue).forEach( key => { 
+  const extValue = Util.v(tx, 'pot.extValue')
+  if(extValue){
+    Object.keys(extValue).forEach( key => { 
       if(!ret[key]){ // 既にあるキーは書き換えない
-        ret[key] = i18n.tnl('label.' + key) + ':' + tx.extValue[key] 
+        ret[key] = i18n.tnl('label.' + key) + ':' + extValue[key] 
       }
     } )
   }

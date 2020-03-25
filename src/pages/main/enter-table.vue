@@ -222,6 +222,9 @@ export default {
       }
     },
     startAutoPager() { // 自動ページ遷移を開始する
+      if (this.timer) {
+        clearTimeout(this.timer)
+      }
       this.timer = setTimeout(async () =>{
         if (this.currentPage == this.totalPages) {
           this.currentPage = 0

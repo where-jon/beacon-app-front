@@ -50,7 +50,7 @@ export default {
     async fetchData(payload) {
       try {
         this.showProgress()
-        await StateHelper.load('tenant')
+        await StateHelper.load('tenant',true) // 第２引数：強制取得する（true）
         if (payload && payload.done) {
           payload.done()
         }

@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { APP, DISP } from '../../sub/constant/config'
+import { APP, DISP, EXSERVER } from '../../sub/constant/config'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as CsvUtil from '../../sub/util/CsvUtil'
 import * as DateUtil from '../../sub/util/DateUtil'
@@ -134,7 +134,7 @@ export default {
     async makeTelemetryRecords(telemetrys) {
       const map = {}
       this.exbs.forEach((e) => {
-        const deviceId = DISP.POS.EXSERVER ? e.deviceId.toString() : e.deviceId.toString(16)
+        const deviceId = EXSERVER.ENABLE ? e.deviceId.toString() : e.deviceId.toString(16)
         if(Util.hasValue(e.location)){
           map[deviceId] = e.location.locationName
         }
@@ -149,7 +149,7 @@ export default {
           state: this.$refs.monitorTable.getStateLabel('exb', e.timestamp)
         }
 
-        const deviceId = DISP.POS.EXSERVER ? e.deviceId : parseInt(e.deviceId, 16)
+        const deviceId = EXSERVER.ENABLE ? e.deviceId : parseInt(e.deviceId, 16)
 
         if(ConfigHelper.includesDeviceType('deviceId')){
           ret.deviceId = deviceId

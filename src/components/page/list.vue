@@ -758,7 +758,7 @@ export default {
       const extra = this.filter.extra
       for (let item of this.params.extraFilter) {
         const key = (typeof item === 'string')? item: item.key
-        if (!extra[key]) {
+        if (!Util.hasValue(extra[key])) {
           continue
         }
         switch (key) {
@@ -903,7 +903,6 @@ export default {
       const tx = item.tx
       const selectedTx = {
         btxId: tx.btxId,
-        thumbnail: tx.thumbnail,
       }
       const selectedAreaId = Util.getValue(item, 'exb.location.areaId')
       const txOk = await this.callParentMethod('checkDetectedTx', tx)
@@ -949,14 +948,14 @@ export default {
         return
       }
       // サムネイル非表示設定確認
-      const isNoThumbnail = APP.TXDETAIL.NO_UNREGIST_THUMB? !tx.existThumbnail: false
+      const isNoThumbnail = APP.TXDETAIL.NO_UNREGIST_THUMB && !Util.v(tx, 'pot.existThumbnail')
       if (isNoThumbnail) {
         this.setupSelectedTx(tx, x, y, false)
       } else {
         this.preloadThumbnail.onload = () => this.setupSelectedTx(tx, x, y, true)
         this.preloadThumbnail.src = null // iOSでonloadが一度しか呼ばれないので対策
 
-        this.preloadThumbnail.src = tx.existThumbnail? this.thumbnailUrl.replace('{id}', tx.potId): '/default.png'
+        this.preloadThumbnail.src = Util.v(tx, 'pot.existThumbnail')? this.thumbnailUrl.replace('{id}', tx.pot.potId): '/default.png'
       }
     },
     txOnClick(evt,tx){

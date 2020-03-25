@@ -59,6 +59,9 @@ export default {
     iosOrAndroid() {
       return BrowserUtil.isAndroidOrIOS()
     },
+    isResponsiveMode() {
+      return BrowserUtil.isResponsiveMode()
+    },
     isTenantAdmin() {
       const login = LocalStorageHelper.getLogin()
       return login? login.isTenantAdmin: false

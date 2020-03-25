@@ -8,6 +8,7 @@ import * as LocalStorageHelper from '../sub/helper/base/LocalStorageHelper'
 import * as MenuHelper from '../sub/helper/dataproc/MenuHelper'
 import * as StateHelper from '../sub/helper/dataproc/StateHelper'
 import * as MasterHelper from '../sub/helper/domain/MasterHelper'
+import * as ToiletHelper from '../sub/helper/domain/ToiletHelper'
 import * as OptionHelper from '../sub/helper/dataproc/OptionHelper'
 import * as BrowserUtil from '../sub/util/BrowserUtil'
 import * as AnalysisHelper from '../sub/helper/domain/AnalysisHelper'
@@ -149,6 +150,7 @@ const setContextToHelper = (context) => {
   StateHelper.setApp(context.app.store, context.app.i18n)
   SensorHelper.setApp(context.app.store, context.app.i18n)
   PositionHelper.setApp(context.app.store, context.app.i18n)
+  ToiletHelper.setApp(context.app.store, context.app.i18n)
   ViewHelper.setApp(context.app.i18n)
   HttpHelper.setApp(context)
   IconHelper.setApp(context.app.i18n)
