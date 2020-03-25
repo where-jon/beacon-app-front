@@ -61,16 +61,18 @@
       <b-form inline @submit.prevent>
         <b-form-row class="ml-3 ml-sm-3">
           <b-button v-t="'label.display'" :variant="theme" class="mx-1" @click="onClickDisplay" />
-          <b-button v-if="!iosOrAndroid && bulkReferenceable" v-t="'label.download'" :variant="theme" class="mx-1" @click="exportCsv" />
+          <b-button v-if="!iosOrAndroid && bulkReferenceable" v-t="'label.download'" :variant="theme" :disabled="!tItems || tItems.length == 0" class="ml-2" @click="exportCsv" />
         </b-form-row>
       </b-form>
     </b-row>
     <div>
-      <b-table sticky-header :items="tItems" :fields="tFields" :current-page="currentPage" :per-page="perPage" :sort-compare="defaultSortCompare" stacked="md" hover outlined>
+      <b-table :items="tItems" :fields="tFields" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy"  :sort-compare="defaultSortCompare" stacked="md" striped hover outlined>
         <template slot="graph" slot-scope="row">
-          <div class="progress">
-            <div class="progress-bar" :style="{width: row.item.indicator <= 100 ? row.item.indicator +'%' : '100%'}">  
-              <span>{{ row.item.indicator }}%</span>
+          <div style="position: relative;">
+            <div v-for="(bar, index) in row.item.graph" :key="index" :class="bar.name? 'stay-bar': 'lost-bar'" :style="bar.style">
+              <span class="graph-arrow-box">
+                {{ bar.ratio }}%
+              </span>&nbsp;
             </div>
           </div>
         </template>
@@ -99,6 +101,8 @@ import 'element-ui/lib/theme-chalk/index.css'
 import { ToggleButton } from 'vue-js-toggle-button'
 import { getCharSet } from '../../sub/helper/base/CharSetHelper'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
+import * as ColorUtil from '../../sub/util/ColorUtil'
+import { APP_SERVICE } from '../../sub/constant/config'
 
 export default {
   components: {
@@ -111,6 +115,7 @@ export default {
       id: 'planActualId',
       appServicePath: '/office/plans/indicators',
       items: ViewHelper.createBreadCrumbItems('sumTitle', 'planActual'),
+      sortBy: 'name',
 
       indicatorTypeOpts: [
         {value:0, label: `${this.$i18n.tnl('label.operatingRate')}（${this.$i18n.tnl('label.operatingHours')}／${this.$i18n.tnl('label.workingHours')}）`},
@@ -349,7 +354,7 @@ export default {
     },
     exportCsv() {
       const [startDt, endDt] = this.getDateRange()
-      let uri = `${this.appServicePath}?}/csvdownload?charset=${getCharSet(this.$store.state.loginId)}&startDt=${startDt}&endDt=${endDt}&indicatorType=${this.indicatorTypeFilter.value}`
+      let uri = `${APP_SERVICE.BASE_URL}${this.appServicePath}/csvdownload?charset=${getCharSet(this.$store.state.loginId)}&startDt=${startDt}&endDt=${endDt}&indicatorType=${this.indicatorTypeFilter.value}`
       if (this.selectedFilter.filterType && this.selectedFilter.filterId) {
         uri += `&filterType=${this.selectedFilter.filterType}&filterId=${this.selectedFilter.filterId}`
       }
@@ -360,9 +365,11 @@ export default {
       return Math.round(value * base) / base
     },
     loadIndicators(data) {
+      const color = ColorUtil.getStackColor(1)
       const arr = data.indicators.map((e) => {
-        let indicator = 0
+        let per = 0
         let hour2 = 0
+        const graph = []
         switch (this.indicatorTypeFilter.value) {
           case 0: // 稼働率（稼働時間/(就業時間*定員数)）
           case 1: // 予約率（予約時間/(就業時間*定員数)）
@@ -371,13 +378,24 @@ export default {
               hour2 = data.sumOfWorkingHours * e.capacity
             }
             if (0 < e.value && 0 < hour2) {
-              indicator = this.orgRound(e.value / hour2 * 100)
+              per = this.orgRound(e.value / hour2 * 100)
             }
-            return { 
+            graph.push({
+              name: 1, 
+              style: `width: ${per}% !important; background: ${color};`,
+              ratio: per
+            })
+            graph.push({
+              name: 0,
+              style: `width: ${100-per}% !important; background: gray;`,
+              ratio: 100-per
+            })
+            return {
               name: e.targetName, 
-              indicator: indicator,
+              indicator: per,
               hour: e.value,
               hour2: hour2,
+              graph: graph
             }
           case 2:
             // 予約内稼働率（予約内稼働時間/(予約時間*定員数)）
@@ -385,13 +403,24 @@ export default {
               hour2 = e.sumOfReservationHours * e.capacity
             }
             if (0 < e.value && 0 < hour2) {
-              indicator = this.orgRound(e.value / hour2 * 100)
+              per = this.orgRound(e.value / hour2 * 100)
             }
-            return { 
+            graph.push({
+              name: 1, 
+              style: `width: ${per}% !important; background: ${color};`,
+              ratio: per
+            })
+            graph.push({
+              name: 0,
+              style: `width: ${100-per}% !important; background: gray;`,
+              ratio: 100-per
+            })
+            return {
               name: e.targetName, 
-              indicator: indicator,
+              indicator: per,
               hour: e.value,
               hour2: hour2,
+              graph: graph
             }
           default:
             // 空予約数
@@ -408,23 +437,33 @@ export default {
 }
 </script>
 <style lang="scss">
-.progress{
-    margin-bottom: 0px;
-    height: 28px;
-    width: 370px!important;
-    border-radius: 0px;
-    span {
-      margin-left: 5px;
-      text-align: left;
-    }
+.stay-bar {
+  position: relative;
+  display: inline-block;
+  cursor: default;
+  box-sizing:border-box;
 }
-.progress-bar{
-    background-color: #A8C0DE;
-    color :#333;
-    text-align: right;
+.lost-bar {
+  position: relative;
+  display: inline-block;
+  background: #ccc;
+  cursor: default;
+  box-sizing:border-box;
 }
-.vue-options-lg-aa {
-  margin-left: 0px;
-  width: 100% !important;
+.graph-arrow-box {
+  display: none;
+  position: absolute;
+  top: 100%;
+  padding: 8px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;  
+  border-radius: 5px;
+  background: #333;
+  color: #fff;
+  white-space: nowrap;
+  z-index: 5;
+}
+.stay-bar:hover .graph-arrow-box, .lost-bar:hover .graph-arrow-box {
+  display: block;
 }
 </style>
