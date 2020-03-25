@@ -160,7 +160,7 @@
         <b-form-group>
           <b-form-row class="mb-3">
             <b-button v-t="'label.display'" type="submit" :variant="theme" @click="display" />
-            <b-dropdown v-if="!isIosOrAndroid && bulkReferenceable" :variant="theme" :text="$t('label.download')" class="ml-2">
+            <b-dropdown v-if="!iosOrAndroid && bulkReferenceable" :variant="theme" :text="$t('label.download')" class="ml-2">
               <b-dropdown-item @click="downloadDay('sum')">
                 {{ $t('label.sum') + $t('label.download') }}
               </b-dropdown-item>

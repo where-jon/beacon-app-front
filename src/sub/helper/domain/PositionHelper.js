@@ -88,7 +88,7 @@ export const loadPosition = async (count, allShow = false, fixSize = false) => {
       let display = Util.getValue(pos.tx, DISP.TX.DISPLAY_PRIORITY + '.display', defaultDisplay)
       display = StyleHelper.getStyleDisplay1({...display, label}, {fixSize})
   
-      return { ...pos, btxId: tx.btxId, deviceId: exb.deviceId, posx: pos.x, posy: pos.y,
+      return { ...pos, btxId: tx.btxId, deviceId: Util.v(exb, 'deviceId'), posx: pos.x, posy: pos.y,
         label, location, exb, tx, updatetime: DateUtil.dateform(pos.positionDt), timestamp: DateUtil.dateform(pos.positionDt), // TODO: updatetimeかtimestampかどちらかに統一
         isTransparent: isTransparent(pos.positionDt, now),
         isLost: isLost(pos.positionDt, now),
