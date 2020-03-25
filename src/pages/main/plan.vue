@@ -24,7 +24,7 @@
           </label>
           <b-form-select v-model="vueSelected.filterType" :options="filterTypeOpts" class="ml-2 inputSelect" />
           <span :title="vueSelectTitle(vueSelected.filter)">
-            <v-select v-if="vueSelected.filterType == 'potPerson'" v-model="vueSelected.filters" :options="potPersonOpts" multiple :close-on-select="false" class="vue-options-multi">
+            <v-select v-if="vueSelected.filterType == 'potPersons'" v-model="vueSelected.filters" :options="potPersonOpts" multiple :close-on-select="false" class="vue-options-multi">
               <template slot="selected-option" slot-scope="option">
                 {{ vueSelectCutOn(option) }}
               </template>
@@ -95,7 +95,6 @@
   </div>
 </template>
 <script>
-// FIXME: 日本語リテラルはすべてja.jsonから取るようにする
 
 import moment from 'moment'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
@@ -176,8 +175,12 @@ export default {
       resizeHandler: null,
 
       // マスタ情報
-      loadStates: ['areas', 'zones', 'locations', 'groups', 'categories', 'pots'],
-      options: [],
+      areaOpts: [],
+      zoneOpts: [],
+      locationOpts: [],
+      groupOpts: [],
+      categoryOpts: [],
+      potOpts: [],
       potPersonOpts: [],
       potThingOpts: [],
 
@@ -190,7 +193,7 @@ export default {
         {value:'groups', text: this.$t('label.group')},
         {value:'categories', text: this.$t('label.category')},
         {value:'pots', text: this.$t('label.pot')},
-        {value:'potPerson', text: this.$t('label.potPerson')},
+        {value:'potPersons', text: this.$t('label.potPerson')},
       ],
       mRoomFilterTypeOpts: [
         {value:'areas', text: this.$t('label.area')},
@@ -237,12 +240,6 @@ export default {
     }
   },
   computed: {
-    zoneOpts() { // TODO: commonmixinのを使う
-      return this.options['zones']
-    },
-    locationOpts() { // TODO: commonmixinのを使う
-      return this.options['locations']
-    },
     cssVars() {
       return {
         '--editPlanHeaderBgColor': DISP.PLAN.EDIT_PLAN_HEADER_BG_COLOR,
@@ -305,7 +302,28 @@ export default {
         this.selectedFilter.filterIds = []
         this.vueSelected.filter = null
         this.vueSelected.filters = []
-        this.filterOpts = this.loadStates.includes(newVal) ? this.options[newVal] : []
+        switch (newVal) {
+          case 'areas':
+            this.filterOpts = this.areaOpts
+            break;
+          case 'zones':
+            this.filterOpts = this.zoneOpts
+            break;
+          case 'locations':
+            this.filterOpts = this.locationOpts
+            break;
+          case 'groups':
+            this.filterOpts = this.groupOpts
+            break;
+          case 'categories':
+            this.filterOpts = this.categoryOpts
+            break;
+          case 'pots':
+            this.filterOpts = this.potOpts
+            break;
+          default:
+            this.filterOpts = []
+        }
         if (!newVal) {
           this.fetchData()
         }
@@ -385,6 +403,24 @@ export default {
     },
     // マスタ
     async loadMaster() {
+      this.areaOpts = this.areas.map(area => {
+        return {value: area.areaId, label: area.areaName}
+      })
+      this.zoneOpts = this.zones.map(zone => {
+        return {value: zone.zoneId, label: zone.zoneName}
+      })
+      this.locationOpts = this.locations.map(location => {
+        return {value: location.locationId, label: location.locationName}
+      })
+      this.groupOpts = this.groups.map(e => {
+        return {value: e.groupId, label: e.groupName}
+      })
+      this.categoryOpts = this.categories.map(cate => {
+        return {value: cate.categoryId, label: cate.categoryName}
+      })
+      this.potOpts = this.pots.map(e => {
+        return {value: e.potId, label: e.potName}
+      })
       this.potPersonOpts = this.pots.filter(pot => pot.potType == CATEGORY.PERSON).map(pot => {
         return {value: pot.potId, label: pot.potName}
       })
@@ -395,27 +431,6 @@ export default {
         return z.categoryList.map(cate => cate.categoryCd=='MEETING_ROOM').includes(true)
       }).map(zone => {
         return {value: zone.zoneId, label: zone.zoneName}
-      })
-      this.makeOpts()
-    },
-    async makeOpts() {
-      this.loadStates.forEach( st => { // TODO: commonmixinのを使う
-        this.options[st] = this[st].map( e => {
-          switch (st) {
-          case 'areas': 
-            return {value: e.areaId, label: e.areaName}
-          case 'zones': 
-            return {value: e.zoneId, label: e.zoneName}
-          case 'locations': 
-            return {value: e.locationId, label: e.locationName}
-          case 'groups': 
-            return {value: e.groupId, label: e.groupName}
-          case 'categories': 
-            return {value: e.categoryId, label: e.categoryName}
-          case 'pots': 
-            return {value: e.potId, label: e.potName}
-          }
-        })
       })
     },
     onClickNavi(e) {
@@ -460,8 +475,8 @@ export default {
     getNormalHeader(date) {
       if (LocaleHelper.getSystemLocale() == 'ja') {
         moment.updateLocale('ja', {
-          weekdays: ["日曜日","月曜日","火曜日","水曜日","木曜日","金曜日","土曜日"], // FIXME: locatlから取る。
-          weekdaysShort: ["日","月","火","水","木","金","土"],
+          weekdays: [this.$t('label.sunday'),this.$t('label.monday'),this.$t('label.tuesday'),this.$t('label.wednesday'),this.$t('label.thursday'),this.$t('label.friday'),this.$t('label.saturday')],
+          weekdaysShort: [this.$t('label.sun'),this.$t('label.mon'),this.$t('label.tue'),this.$t('label.wed'),this.$t('label.thu'),this.$t('label.fri'),this.$t('label.sat')],
         }) 
       }
       const sunday = moment(date).day(0)
