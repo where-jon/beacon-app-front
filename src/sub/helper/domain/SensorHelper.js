@@ -998,7 +998,11 @@ export const match = (sensorIdList, targetSensorId, checkId) => {
  */
 export const fetchSensor = async (sensorInfo) => {
   if (sensorInfo.enable !== false) {
-    sensorInfo.data =  await EXCloudHelper.fetchSensor(sensorInfo.id)
+    try {
+      sensorInfo.data =  await EXCloudHelper.fetchSensor(sensorInfo.id)      
+    } catch (e) {
+      console.error(e)      
+    }
   }
 }
 
@@ -1134,8 +1138,8 @@ export const fetchSensorInfo = async (targetSensorIds = []) => {
   const sensorInfos = await fetchAllSensor(targetSensorIds)
 
   const sensorMap = {}
-  sensorInfos.forEach(sensor => {
-    let sensorInfo = _(sensor.data).filter(sensor => {      
+  sensorInfos.forEach(sensorInfo => {
+    let sensorData = _(sensorInfo.data).filter(sensor => {      
       const tx = btxIdMap[sensor.btxId]
       const exb = deviceIdMap[sensor.deviceId]
       const hasTime = sensor.timestamp || sensor.updatetime // 日時がないのは除外
@@ -1146,7 +1150,7 @@ export const fetchSensorInfo = async (targetSensorIds = []) => {
     // pir: val.count >= DISP.PIR.MIN_COUNT // TODO: 元のソースにあったfilter条件。多分不要。
     // exb.sensorId == SENSOR.PRESSURE? exb.pressVol <= DISP.PRESSURE.VOL_MIN || DISP.PRESSURE.EMPTY_SHOW: exb.count > 0 || DISP.PIR.EMPTY_SHOW
     // APP.SENSOR.SHOW_MAGNET_ON_PIR) 
-    sensorMap[sensor.name] = sensorInfo.sortBy(sensor => // MEDiTAGの場合、指定時間以内に転倒したものを先頭にソートする
+    sensorMap[sensorData.name] = sensorData.sortBy(sensor => // MEDiTAGの場合、指定時間以内に転倒したものを先頭にソートする
       sensor.sensorId == SENSOR.MEDITAG && (new Date().getTime() - sensor.downLatest < APP.SENSOR.MEDITAG.DOWN_RED_TIME)?
         sensor.downLatest * -1
         : sensor.btxId
@@ -1259,9 +1263,9 @@ export const mergeTxWithSensorAndPosition = (selectedSensor, exCluodSensors, pos
     .map(tx => {
       const pos = positions.find(pos => pos.txId == tx.txId)
       const sensor = exCluodSensors.find(sensor => sensor.btxId == tx.btxId && (sensor.timestamp || sensor.updatetime))
-      return addSensorInfo(sensor, pos)
+      return sensor? addSensorInfo(sensor, pos): null
     })
-    .value()
+    .compact().value()
 }
 
 /** 全てのTxが優先設定の表示情報に紐付いているか確認する

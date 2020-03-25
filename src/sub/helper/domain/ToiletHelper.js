@@ -83,7 +83,7 @@ const fetchSensorData = async (sensorId, deviceKind) => {
   const exCloudSensors = await EXCloudHelper.fetchSensor(sensorId) // センサー情報を取得
   return exCloudSensors.map(sensor => {
     const device = config.idMap[sensor[config.excloudIdKey]] // txかexbを取得
-    const toiletZone = device.location && device.location.getZone(SYSTEM_ZONE_CATEGORY_NAME.TOILET) // そのセンサーが置かれた場所に設定されたトイレのゾーンを取得（なければnull）
+    const toiletZone = device && device.location && device.location.getZone(SYSTEM_ZONE_CATEGORY_NAME.TOILET) // そのセンサーが置かれた場所に設定されたトイレのゾーンを取得（なければnull）
     const toiletType = Util.getValue(device, 'location.extValue.toilet') // トイレのタイプを取得（男/女/共用/多目的）
     // console.warn({sensor, device, toiletZone, toiletType})
     return toiletZone? {

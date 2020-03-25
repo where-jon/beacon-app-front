@@ -157,7 +157,7 @@
       <txdetail :selected-tx="selectedTx" :selected-sensor="selectedSensor" :is-show-modal="isShowModal()" @resetDetail="resetDetail" />
     </div>
 
-    <div v-if="pShowToilet && !isResponsiveMode" v-drag class="lightbox" :style="{top: toiletTop + 'px', height: toiletHeight + 'px'}">
+    <div v-if="pShowToilet && toiletDataList.length > 0 && !isResponsiveMode" v-drag class="lightbox" :style="{top: toiletTop + 'px', height: toiletHeight + 'px'}">
       <toiletview :show-area="false" :data-list="toiletDataList" :small="true" addClass="table-borderless" /><!-- :add-classだと動作しない -->
     </div>
 
