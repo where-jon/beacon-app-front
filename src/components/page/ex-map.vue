@@ -485,7 +485,7 @@ export default {
       return ret? [ret]: []
     },
     filterVisible() { // 絞り込みの表示・非表示（前回の状態を維持）
-      return !!LocalStorageHelper.getLocalStorage(KEY.CURRENT.SHOW_FILTER_ON_POSMAP)
+      return !(this.pFilterToggle && LocalStorageHelper.getLocalStorage(KEY.CURRENT.SHOW_FILTER_ON_POSMAP) === false)
     },
     maxFilterLength() {
       return 1000
