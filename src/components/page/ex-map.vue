@@ -1,6 +1,6 @@
 <template>
   <div id="mapContainer" class="container-fluid" @click="resetDetail">
-    <breadcrumb :items="items" :extra-nav-spec="pExtraNavList" :short-name="shortName" :reload="!pAnalysis" :state="reloadState" :auto-reload="!pSplitAutoReload" :legend-items="legendItems" />
+    <breadcrumb :items="items" :extra-nav-spec="pExtraNavList" :short-name="shortName" :reload="!pAnalysis" :state="reloadState" :auto-reload="!pSplitAutoReload" :legend-items="legendItems" :filter-toggle="pFilterToggle" />
     <alert v-if="pAnalysis" :message="message" />
     <span v-else-if="pThermohWarn">
       <alert :warn-message="warnMessage" :fix="fixHeight" force-no-close :alert-style="alertStyle" />
@@ -9,122 +9,124 @@
       <alert v-model="showDismissibleAlert" :message="message" :fix="fixHeight" :prohibit="showDismissibleAlert" :prohibit-view="isProhibitView" :alert-style="alertStyle" />
     </span>
 
-    <b-row class="mt-2">
-      <b-form inline class="mt-2" @submit.prevent>
-        <b-form-row class="my-1 ml-2 ml-sm-0">
-          <label class="ml-sm-4 ml-2 mr-1">
-            {{ $t('label.area') }}
-          </label>
-          <span :title="vueSelectTitle(vueSelected.area)">
-            <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="ml-1 mr-2 vue-options" :style="vueSelectStyle">
-              <template slot="selected-option" slot-scope="option">
-                {{ vueSelectCutOn(option, true) }}
-              </template>
-              <template slot="no-options">
-                {{ vueSelectNoMatchingOptions }}
-              </template>
-            </v-select>
-          </span>
-        </b-form-row>
-        <div v-for="(item, index) in pFilterList" :key="'filter-' + index">
-          <b-form-row v-if="isUseFilter(item)" class="my-1 ml-2 ml-sm-0">
-            <label class="ml-sm-4 ml-2 mr-1">
-              {{ $t('label.' + item) }}
-            </label>
-            <span :title="vueSelectTitle(vueSelected[item])">
-              <v-select v-model="vueSelected[item]" :options="getFilterOptions(item)" class="ml-1 mr-2 vue-options" :style="vueSelectStyle">
-                <template slot="selected-option" slot-scope="option">
-                  {{ vueSelectCutOn(option) }}
-                </template>
-                <template slot="no-options">
-                  {{ vueSelectNoMatchingOptions }}
-                </template>
-              </v-select>
-            </span>
-          </b-form-row>
-        </div>
-        <div v-for="(item, index) in pExtraFilterList" :key="'extraFilter-' + index">
-          <b-form-row v-if="item == 'datetime'" class="my-1 ml-2 ml-sm-0">
-            <b-form-row class="ml-sm-4 ml-2 mr-1">
-              <label v-t="'label.historyDateFrom'" class="mr-2" />
-              <date-picker v-model="form.datetimeFrom" :clearable="false" type="datetime" class="mr-2 inputdatefrom" required @change="changeDatetimeFrom" />
-            </b-form-row>
-            <b-form-row class="mr-1">
-              <label v-t="'label.historyDateTo'" class="mr-2" />
-              <date-picker v-model="form.datetimeTo" :clearable="false" type="datetime" class="mr-2 inputdateto" required />
-            </b-form-row>
-          </b-form-row>
-          <b-form-row v-else-if="item == 'freeWord'" class="my-1 ml-2 ml-sm-0">
-            <b-form-row class="ml-sm-4 ml-2 mr-1">
-              <label v-t="'label.filter'" class="mr-2" />
-              <b-input-group>
-                <input v-model="selectedFreeWord" class="form-control align-self-center" :maxlength="maxFilterLength">
-                <b-input-group-append>
-                  <b-btn v-t="'label.clear'" :disabled="!selectedFreeWord" variant="secondary" class="align-self-center" @click="selectedFreeWord = ''" />
-                </b-input-group-append>
-              </b-input-group>
-            </b-form-row>
-          </b-form-row>
-          <b-form-row v-else class="my-1 ml-2 ml-sm-0">
-            <label class="ml-sm-4 ml-2 mr-1">
-              {{ $t('label.' + item) }}
-            </label>
-            <span :title="vueSelectTitle(vueSelected[item])">
-              <v-select v-model="vueSelected[item]" :options="getExtraFilterOptions(item)" class="ml-1 mr-2 vue-options" :style="vueSelectStyle">
-                <template slot="selected-option" slot-scope="option">
-                  {{ vueSelectCutOn(option) }}
-                </template>
-                <template slot="no-options">
-                  {{ vueSelectNoMatchingOptions }}
-                </template>
-              </v-select>
-            </span>
-          </b-form-row>
-        </div>
-        <b-form-row v-if="pChangeableHeatmap" class="my-1 ml-2 ml-sm-4">
-          <b-form-row>
-            <b-form-checkbox v-model="isHeatmap" :value="true" :unchecked-value="false">
-              {{ $t('label.showHeatmap') }}
-            </b-form-checkbox>
-          </b-form-row>
-        </b-form-row>
-        <b-form-row v-if="isUseDetailFilter()" class="my-1 ml-2 ml-sm-0">
-          <detail-filter save-filter @detailFilter="onDetailFilter" />
-        </b-form-row>
-        <b-form-row v-if="pShowDetected" class="my-1 ml-2 ml-sm-4">
-          <span class="ml-sm-4 ml-2 mr-1">
-            {{ $t('label.detectedCount') + ' : ' }}
-          </span>
-          <span class="mr-1">
-            {{ detectedCount }}
-          </span>
-        </b-form-row>
-        <b-form-row v-if="pAnalysis" class="my-1 ml-2 ml-sm-0">
-          <b-form-row class="ml-sm-4 ml-2 mr-1">
-            <b-button v-t="'label.display'" :variant="theme" @click="analyseData" />
-          </b-form-row>
-        </b-form-row>
-        <div v-if="pInstallation">
+    <b-collapse id="collapse-filter" :visible="filterVisible">
+      <b-row class="mt-2">
+        <b-form inline class="mt-2" @submit.prevent>
           <b-form-row class="my-1 ml-2 ml-sm-0">
-            <b-form-checkbox v-model="modeRssi" class="ml-sm-4 ml-2 mr-1">
-              {{ $t('label.dispRssi') }}
-            </b-form-checkbox>
-            <b-button v-if="isPause" class="ml-sm-4 ml-2 mr-1" :pressed.sync="isPause" :variant="theme">
-              <font-awesome-icon icon="play" />
-              <span>
-                &nbsp;{{ $t('label.reload') }}{{ $t('label.restart') }}
-              </span>
-            </b-button>
-            <b-button v-else class="ml-sm-4 ml-2 mr-1" :pressed.sync="isPause" :variant="theme">
-              <font-awesome-icon icon="pause" />
-              <span>
-                &nbsp;{{ $t('label.reload') }}{{ $t('label.pause') }}
-              </span>
-            </b-button>
+            <label class="ml-sm-4 ml-2 mr-1">
+              {{ $t('label.area') }}
+            </label>
+            <span :title="vueSelectTitle(vueSelected.area)">
+              <v-select v-model="vueSelected.area" :options="areaOptions" :clearable="false" class="ml-1 mr-2 vue-options" :style="vueSelectStyle">
+                <template slot="selected-option" slot-scope="option">
+                  {{ vueSelectCutOn(option, true) }}
+                </template>
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
+              </v-select>
+            </span>
           </b-form-row>
-        </div>
-      </b-form>
-    </b-row>
+          <div v-for="(item, index) in pFilterList" :key="'filter-' + index">
+            <b-form-row v-if="isUseFilter(item)" class="my-1 ml-2 ml-sm-0">
+              <label class="ml-sm-4 ml-2 mr-1">
+                {{ $t('label.' + item) }}
+              </label>
+              <span :title="vueSelectTitle(vueSelected[item])">
+                <v-select v-model="vueSelected[item]" :options="getFilterOptions(item)" class="ml-1 mr-2 vue-options" :style="vueSelectStyle">
+                  <template slot="selected-option" slot-scope="option">
+                    {{ vueSelectCutOn(option) }}
+                  </template>
+                  <template slot="no-options">
+                    {{ vueSelectNoMatchingOptions }}
+                  </template>
+                </v-select>
+              </span>
+            </b-form-row>
+          </div>
+          <div v-for="(item, index) in pExtraFilterList" :key="'extraFilter-' + index">
+            <b-form-row v-if="item == 'datetime'" class="my-1 ml-2 ml-sm-0">
+              <b-form-row class="ml-sm-4 ml-2 mr-1">
+                <label v-t="'label.historyDateFrom'" class="mr-2" />
+                <date-picker v-model="form.datetimeFrom" :clearable="false" type="datetime" class="mr-2 inputdatefrom" required @change="changeDatetimeFrom" />
+              </b-form-row>
+              <b-form-row class="mr-1">
+                <label v-t="'label.historyDateTo'" class="mr-2" />
+                <date-picker v-model="form.datetimeTo" :clearable="false" type="datetime" class="mr-2 inputdateto" required />
+              </b-form-row>
+            </b-form-row>
+            <b-form-row v-else-if="item == 'freeWord'" class="my-1 ml-2 ml-sm-0">
+              <b-form-row class="ml-sm-4 ml-2 mr-1">
+                <label v-t="'label.filter'" class="mr-2" />
+                <b-input-group>
+                  <input v-model="selectedFreeWord" class="form-control align-self-center" :maxlength="maxFilterLength">
+                  <b-input-group-append>
+                    <b-btn v-t="'label.clear'" :disabled="!selectedFreeWord" variant="secondary" class="align-self-center" @click="selectedFreeWord = ''" />
+                  </b-input-group-append>
+                </b-input-group>
+              </b-form-row>
+            </b-form-row>
+            <b-form-row v-else class="my-1 ml-2 ml-sm-0">
+              <label class="ml-sm-4 ml-2 mr-1">
+                {{ $t('label.' + item) }}
+              </label>
+              <span :title="vueSelectTitle(vueSelected[item])">
+                <v-select v-model="vueSelected[item]" :options="getExtraFilterOptions(item)" class="ml-1 mr-2 vue-options" :style="vueSelectStyle">
+                  <template slot="selected-option" slot-scope="option">
+                    {{ vueSelectCutOn(option) }}
+                  </template>
+                  <template slot="no-options">
+                    {{ vueSelectNoMatchingOptions }}
+                  </template>
+                </v-select>
+              </span>
+            </b-form-row>
+          </div>
+          <b-form-row v-if="pChangeableHeatmap" class="my-1 ml-2 ml-sm-4">
+            <b-form-row>
+              <b-form-checkbox v-model="isHeatmap" :value="true" :unchecked-value="false">
+                {{ $t('label.showHeatmap') }}
+              </b-form-checkbox>
+            </b-form-row>
+          </b-form-row>
+          <b-form-row v-if="isUseDetailFilter()" class="my-1 ml-2 ml-sm-0">
+            <detail-filter save-filter @detailFilter="onDetailFilter" />
+          </b-form-row>
+          <b-form-row v-if="pShowDetected" class="my-1 ml-2 ml-sm-4">
+            <span class="ml-sm-4 ml-2 mr-1">
+              {{ $t('label.detectedCount') + ' : ' }}
+            </span>
+            <span class="mr-1">
+              {{ detectedCount }}
+            </span>
+          </b-form-row>
+          <b-form-row v-if="pAnalysis" class="my-1 ml-2 ml-sm-0">
+            <b-form-row class="ml-sm-4 ml-2 mr-1">
+              <b-button v-t="'label.display'" :variant="theme" @click="analyseData" />
+            </b-form-row>
+          </b-form-row>
+          <div v-if="pInstallation">
+            <b-form-row class="my-1 ml-2 ml-sm-0">
+              <b-form-checkbox v-model="modeRssi" class="ml-sm-4 ml-2 mr-1">
+                {{ $t('label.dispRssi') }}
+              </b-form-checkbox>
+              <b-button v-if="isPause" class="ml-sm-4 ml-2 mr-1" :pressed.sync="isPause" :variant="theme">
+                <font-awesome-icon icon="play" />
+                <span>
+                  &nbsp;{{ $t('label.reload') }}{{ $t('label.restart') }}
+                </span>
+              </b-button>
+              <b-button v-else class="ml-sm-4 ml-2 mr-1" :pressed.sync="isPause" :variant="theme">
+                <font-awesome-icon icon="pause" />
+                <span>
+                  &nbsp;{{ $t('label.reload') }}{{ $t('label.pause') }}
+                </span>
+              </b-button>
+            </b-form-row>
+          </div>
+        </b-form>
+      </b-row>
+    </b-collapse>
 
     <!-- 個別/数量 -->
     <b-row v-if="pQuantity && !isMsTeams" id="quantityToggle" class="mt-2">
@@ -243,6 +245,11 @@ export default {
     pCaptionList: {
       type: Array,
       required: true,
+    },
+    // 絞り込みトグルボタン表示
+    pFilterToggle: {
+      type: Boolean,
+      default: false,
     },
     // Txアイコンを表示するセンサーID
     pShowTxSensorIds: {
@@ -477,6 +484,9 @@ export default {
       const ret = SensorHelper.getSensorFromBtxId('meditag', this.sensorMap.meditag, this.selectedTx.btxId)
       return ret? [ret]: []
     },
+    filterVisible() { // 絞り込みの表示・非表示（前回の状態を維持）
+      return !!LocalStorageHelper.getLocalStorage(KEY.CURRENT.SHOW_FILTER_ON_POSMAP)
+    },
     maxFilterLength() {
       return 1000
     },
@@ -606,6 +616,13 @@ export default {
 
     // フィルタ関係
 
+    switchFilter(e) { // フィルタの表示切り替えでマップのリサイズをする。
+      const isShownNow = document.getElementById('collapse-filter').className.includes('show')
+      LocalStorageHelper.setLocalStorage(KEY.CURRENT.SHOW_FILTER_ON_POSMAP, !isShownNow)
+      if (this.onResize) {
+        this.onResize()
+      }
+    },
     isUseFilter(masterName){ // 検索項目の使用判定
       return MenuHelper.useMaster(masterName) && ArrayUtil.includesIgnoreCase(APP.POT.WITH, masterName)
     },

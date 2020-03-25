@@ -90,6 +90,7 @@ export const KEY = {
   CURRENT: {
     REGION: 'currentRegion',
     AREA: 'currentArea',
+    SHOW_FILTER_ON_POSMAP: 'showFilterOnPosmap',
   },
 }
 

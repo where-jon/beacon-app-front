@@ -2,6 +2,7 @@
   <div id="mapContainer" class="container-fluid">
     <ex-map
       :p-caption-list="captionList"
+      :p-filter-toggle="true"
       :p-show-tx-sensor-ids="txSensors"
       :p-merge-sensor-ids="mergeSensors"
       p-show-detail
