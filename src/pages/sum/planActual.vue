@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <breadcrumb :items="items" :reload="false" />
+    <alert :message="message" />
     <b-row class="mt-2">
       <b-form inline @submit.prevent>
         <b-form-row class="my-1 ml-2 ml-sm-0">
@@ -103,10 +104,11 @@ import { getCharSet } from '../../sub/helper/base/CharSetHelper'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as ColorUtil from '../../sub/util/ColorUtil'
 import { APP_SERVICE } from '../../sub/constant/config'
+import alert from '../../components/parts/alert.vue'
 
 export default {
   components: {
-    breadcrumb, DatePicker, ToggleButton
+    breadcrumb, DatePicker, ToggleButton, alert
   },
   mixins: [commonmixin],
   data () {
@@ -116,6 +118,7 @@ export default {
       appServicePath: '/office/plans/indicators',
       items: ViewHelper.createBreadCrumbItems('sumTitle', 'planActual'),
       sortBy: 'name',
+      message: '',
 
       indicatorTypeOpts: [
         {value:0, label: `${this.$i18n.tnl('label.operatingRate')}（${this.$i18n.tnl('label.operatingHours')}／${this.$i18n.tnl('label.workingHours')}）`},
@@ -330,8 +333,11 @@ export default {
         const data = await HttpHelper.getAppService(uri)
         this.loadIndicators(data)
       }
-      catch(err) {
-        console.error(err)
+      catch(e) {
+        console.error(e)
+        this.message = e.response.data
+        this.replace({showAlert: true})
+        window.scrollTo(0, 0)
       }
     },
     getDateRange() {
@@ -352,12 +358,20 @@ export default {
       return [startDt, endDt]
     },
     exportCsv() {
-      const [startDt, endDt] = this.getDateRange()
-      let uri = `${APP_SERVICE.BASE_URL}${this.appServicePath}/csvdownload?charset=${getCharSet(this.$store.state.loginId)}&startDt=${startDt}&endDt=${endDt}&indicatorType=${this.indicatorTypeFilter.value}`
-      if (this.selectedFilter.filterType && this.selectedFilter.filterId) {
-        uri += `&filterType=${this.selectedFilter.filterType}&filterId=${this.selectedFilter.filterId}`
+      try {
+        const [startDt, endDt] = this.getDateRange()
+        let uri = `${APP_SERVICE.BASE_URL}${this.appServicePath}/csvdownload?charset=${getCharSet(this.$store.state.loginId)}&startDt=${startDt}&endDt=${endDt}&indicatorType=${this.indicatorTypeFilter.value}`
+        if (this.selectedFilter.filterType && this.selectedFilter.filterId) {
+          uri += `&filterType=${this.selectedFilter.filterType}&filterId=${this.selectedFilter.filterId}`
+        }
+        BrowserUtil.executeFileDL(uri)
       }
-      BrowserUtil.executeFileDL(uri)
+      catch(e) {
+        console.error(e)
+        this.message = e.response.data
+        this.replace({showAlert: true})
+        window.scrollTo(0, 0)
+      }
     },
     orgRound(value) {
       const base = 100

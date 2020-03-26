@@ -305,10 +305,16 @@ export default {
             const date = moment(this.plan.date).format("YYYY-MM-DD")
       const sDt = `${date}T${this.plan.timeRange[0]}.000`
       const eDt = `${date}T${this.plan.timeRange[1]}.000`
-      const data = await HttpHelper.getAppService(`${this.appServicePath}?startDt=${sDt}&endDt=${eDt}&filterType=${filterType}&filterId=${filterId}&isDuplicate=true`)
-      if (Array.isArray(data)) {
-        const self = this
-        callback(data[0].plans.filter(e => e.planId != self.plan.planId).length > 0)
+      try {
+        const data = await HttpHelper.getAppService(`${this.appServicePath}?startDt=${sDt}&endDt=${eDt}&filterType=${filterType}&filterId=${filterId}&isDuplicate=true`)
+        if (Array.isArray(data)) {
+          const self = this
+          callback(data[0].plans.filter(e => e.planId != self.plan.planId).length > 0)
+        }
+      }
+      catch(e) {
+        console.error(e)
+        this.$emit('errorMessage', e.response.data);
       }
     },
     async onSaving() {
@@ -321,21 +327,28 @@ export default {
         : this.plan.currentUserPotIds
       this.plan.potPersonIds = potPersonIds.join()
 
-      if (this.plan.planId == null) {
-        return await AppServiceHelper.save(this.appServicePath, this.plan, this.updateOnlyNN)
+      try {
+        if (this.plan.planId == null) {
+          return await AppServiceHelper.save(this.appServicePath, this.plan, this.updateOnlyNN)
+        }
+        return await AppServiceHelper.update(this.appServicePath, this.plan)
       }
-
-      return await AppServiceHelper.update(this.appServicePath, this.plan)
+      catch(e) {
+        console.error(e)
+        this.$emit('errorMessage', e.response.data);
+      }
     },
-    async onDelete (event) {
-      event.schedule = { id: this.plan.planId }
+    async onDelete(event) {
+      event.schedule = { data: { planId: this.plan.planId } }
       this.$emit('delete', event);
     },
     async onSave(event) {
       if (this.validate()) {
         await this.save(event)
-        this.$emit('doneSave', event);
       }
+    },
+    async onSaved() {
+      this.$emit('doneSave', this.message);
     },
     validate() {
       this.isPlanNameEmpty = (!this.plan.planName || !this.plan.planName.trim())

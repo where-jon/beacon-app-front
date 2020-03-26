@@ -1,6 +1,7 @@
 <template>
   <div class="container" :style="cssVars">
     <breadcrumb :items="items" :reload="false" />
+    <alert :message="message" />
     <b-row class="mt-2">
       <b-form inline @submit.prevent>
         <b-form-row class="my-1 ml-2 ml-sm-0">
@@ -89,7 +90,7 @@
     <plan-calendar :id="id" :name="name" :appServicePath="appServicePath" :planMode="planMode" :currentUser="currentUser" :headerOpts="headerOpts" :viewModel="viewModel" :dragHandler="dragHandler" :clickScheduleEvent="clickScheduleEvent" :doCompare="doCompare" :holidays="holidays" :working="working" @doEdit="doEdit" @doDelete="onDeleteSchedule"/>
     <div>
       <b-modal id="editPlanModal" v-model="showEdit" hide-footer :title="$t('label.schedule')" header-class="editPlanHeader">
-        <edit-plan :id="id" :name="name" :appServicePath="appServicePath" :currentUser="currentUser" :plan="targetPlan" :zoneOpts="zoneOpts" :locationOpts="locationOpts" :potPersonOpts="filterPotPersonOpts" :potThingOpts="potThingOpts" :vueSelected="editVueSelected" @doneSave="onEditSave" @delete="onEditDelete"/>
+        <edit-plan :id="id" :name="name" :appServicePath="appServicePath" :currentUser="currentUser" :plan="targetPlan" :zoneOpts="zoneOpts" :locationOpts="locationOpts" :potPersonOpts="filterPotPersonOpts" :potThingOpts="potThingOpts" :vueSelected="editVueSelected" @doneSave="onEditSave" @delete="onEditDelete" @errorMessage="onEditError"/>
       </b-modal>
     </div>
   </div>
@@ -119,10 +120,11 @@ import { TimeCreation } from '../../sub/calendar/handler/time/creation'
 import { TimeMove } from '../../sub/calendar/handler/time/move'
 import { TimeResize } from '../../sub/calendar/handler/time/resize'
 import {getLogin} from '../../sub/helper/base/LocalStorageHelper'
+import alert from '../../components/parts/alert.vue'
 
 export default {
   components: {
-    editPlan, breadcrumb, DatePicker, planCalendar
+    editPlan, breadcrumb, DatePicker, planCalendar, alert
   },
   mixins: [commonmixin],
   data () {
@@ -133,6 +135,7 @@ export default {
       items: ViewHelper.createBreadCrumbItems('main', 'plan'),
       currentUser: null,
       currentUserPotIds: [],
+      message: '',
 
       clickScheduleEvent: null,
 
@@ -524,8 +527,11 @@ export default {
           this.createHandlers()
         }
       }
-      catch(err) {
-        console.error(err)
+      catch(e) {
+        console.error(e)
+        this.message = e.response.data
+        this.replace({showAlert: true})
+        window.scrollTo(0, 0)
       }
     },
     workingTime(start, end) {
@@ -731,14 +737,29 @@ export default {
       }
       this.targetPlan.startDt = e.start
       this.targetPlan.endDt = e.end
-      const result = await AppServiceHelper.update(this.appServicePath, this.targetPlan)
-      this.fetchData()
+      try {
+        const result = await AppServiceHelper.update(this.appServicePath, this.targetPlan)
+        this.fetchData()
+      }
+      catch(e) {
+        console.error(e)
+        this.message = e.response.data
+        this.replace({showAlert: true})
+        window.scrollTo(0, 0)
+      }
     },
-    onEditSave(event) {
-            this.showEdit = false
-      const self = this
+    onEditError(message) {
+      this.showEdit = false
+      this.message = message
+      this.replace({showAlert: true})
+      window.scrollTo(0, 0)
+    },
+    onEditSave(message) {
+      this.showEdit = false
+      this.message = message
+      this.replace({showInfo: true})
       setTimeout(() => {
-        self.fetchData()
+        this.fetchData()
       }, 500);
     },
     onEditDelete(e) {
@@ -747,8 +768,16 @@ export default {
     },
     async onDeleteSchedule(event) {
       this.clickScheduleEvent = null
-      await AppServiceHelper.deleteEntity(this.appServicePath, event.schedule.data.planId)
-      this.fetchData()
+      try {
+        await AppServiceHelper.deleteEntity(this.appServicePath, event.schedule.data.planId)
+        this.fetchData()
+      }
+      catch(e) {
+        console.error(e)
+        this.message = e.response.data
+        this.replace({showAlert: true})
+        window.scrollTo(0, 0)
+      }
     },
     async onClickSync() {
       const login =  getLogin()
