@@ -93,10 +93,9 @@ export default {
         const minorMap = {}
         await this.loadProhibitDetect(minorMap) // 非同期が望ましいが、一覧のblinkingのため、同期で取得（持出検知に閾値を設定している場合性能劣化）
 
-        positions = positions.filter(pos => pos.exb && pos.exb.location).map(pos => {
+        positions = positions.map(pos => {
           let prohibitCheck = minorMap[pos.minor] != null
 
-          const location = pos.exb.location? this.locationIdMap[pos.exb.location.locationId]: {}
           return {
             ...pos,
             // powerLevel: this.getPowerLevel(pos),
@@ -113,7 +112,7 @@ export default {
             categoryId: Util.v(pos, 'tx.pot.category.categoryId'),
             areaId: Util.v(pos, 'location.areaId'),
             blinking : prohibitCheck? 'blinking' : null,
-            isDisableArea: Util.v(location, 'isAbsentZone', false),
+            isDisableArea: Util.v(pos, 'exb.location.isAbsentZone', false),
           }
         })
         this.totalRows = positions.length
