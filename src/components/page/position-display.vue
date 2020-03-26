@@ -142,7 +142,7 @@ export default {
         await PositionHelper.loadPosition(null, true, true)
         this.positions = PositionHelper.filterPositions(undefined, false, true, null, null, null, null).filter(p => p.tx && p.tx.disp==1)
 
-        this.loadProhibitDetect()
+        await this.loadProhibitDetect()
 
         this.alertData.message = this.message
         this.alertData.isAlert = this.showDismissibleAlert ? true: false
