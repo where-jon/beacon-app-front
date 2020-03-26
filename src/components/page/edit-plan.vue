@@ -292,7 +292,7 @@ export default {
       }
     },
     onChangeToggle(e) {
-            this.plan.isLocation = !this.plan.isLocation
+      this.plan.isLocation = !this.plan.isLocation
       if (this.plan.isLocation) {
         this.plan.zoneId = null
         this.vueSelected.zone = null
@@ -302,7 +302,7 @@ export default {
       }
     },
     async isDuplicate(filterType, filterId, callback) {
-            const date = moment(this.plan.date).format("YYYY-MM-DD")
+      const date = moment(this.plan.date).format("YYYY-MM-DD")
       const sDt = `${date}T${this.plan.timeRange[0]}.000`
       const eDt = `${date}T${this.plan.timeRange[1]}.000`
       try {
