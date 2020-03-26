@@ -668,6 +668,9 @@ export const SETTING = {
             DUPLICATE_MAIL_TIME: SETTING.NUMBER,
           },
         },
+        MENU: {
+          MENU_HIDDEN_LIST: SETTING.STRING_LIST,
+        },
         SENSOR: {
           TX_SENSOR: SETTING.NUMBER_LIST,
         },
