@@ -89,7 +89,7 @@
     </b-row>
     <plan-calendar :id="id" :name="name" :appServicePath="appServicePath" :planMode="planMode" :currentUser="currentUser" :headerOpts="headerOpts" :viewModel="viewModel" :dragHandler="dragHandler" :clickScheduleEvent="clickScheduleEvent" :doCompare="doCompare" :holidays="holidays" :working="working" @doEdit="doEdit" @doDelete="onDeleteSchedule"/>
     <div>
-      <b-modal id="editPlanModal" v-model="showEdit" hide-footer :title="$t('label.schedule')" header-class="editPlanHeader">
+      <b-modal v-model="showEdit" hide-footer :title="$t('label.schedule')" header-class="editPlanHeader">
         <edit-plan :id="id" :name="name" :appServicePath="appServicePath" :currentUser="currentUser" :plan="targetPlan" :zoneOpts="zoneOpts" :locationOpts="locationOpts" :potPersonOpts="filterPotPersonOpts" :potThingOpts="potThingOpts" :vueSelected="editVueSelected" @doneSave="onEditSave" @delete="onEditDelete" @errorMessage="onEditError"/>
       </b-modal>
     </div>
@@ -264,6 +264,14 @@ export default {
     },
   },
   watch: {
+    showEdit: {
+      handler: function(newVal, oldVal) {
+        if (!newVal && oldVal) {
+          this.creationHandler.clearGuideElement()
+        }
+      },
+      deep: false
+    },
     planModeFilter: {
       handler: function(newVal, oldVal){
         if (this.planMode != newVal.value) {

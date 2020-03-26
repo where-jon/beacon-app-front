@@ -30,6 +30,10 @@ TimeCreation.prototype.destroy = function() {
     this.dragHandler = this._getScheduleDataFunc = this._dragStart = this.guide = null
 }
 
+TimeCreation.prototype.clearGuideElement = function() {
+    this.guide.clearGuideElement()
+}
+
 TimeCreation.prototype.checkExpectedCondition = function(target) {
     let cssClass = domutil.getClass(target),
         matches
