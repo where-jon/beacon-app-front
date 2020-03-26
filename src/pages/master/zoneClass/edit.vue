@@ -135,6 +135,7 @@ export default {
       cdPattern: this.pPattern,
       isEnableNameText: true,
       isRegist: false,
+      zoneCdOld: null,
     }
   },
   computed: {
@@ -218,11 +219,12 @@ export default {
       })
     },
     async onSaved(){
-      this.$set(this.form, 'zoneCd', MasterHelper.createMasterCd('zone', this.zones, this.zone))
+      this.zoneCdOld = this.form.zoneCd
     },
     async onBeforeReload(){
       this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaNames)
       this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryNames)
+      this.form.zoneCd = MasterHelper.nextCd(this.zoneCdOld)
     },
     async onSaving() {
       const zoneId = Util.hasValue(this.form.zoneId)? this.form.zoneId: -1

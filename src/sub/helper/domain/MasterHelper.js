@@ -595,9 +595,18 @@ export const createMasterCd = (masterType, masterList, masterData = null) => {
     }
     return prevLength < curLength? cur: prev
   }, '')
+  return nextCd(maxCd)
+}
+
+/**
+ * 次のCdを作成する
+ * @param {String} maxCd 
+ */
+export const nextCd = (maxCd) => {
   if(!Util.hasValue(maxCd)){
     return '1'
   }
+  const reg = /([^0-9]*)([0-9]*)/
   return maxCd.split(reg).filter(val => val).reduce((prev, cur, index, array) => {
     const ret = '' + prev
     if(index + 1 < array.length){

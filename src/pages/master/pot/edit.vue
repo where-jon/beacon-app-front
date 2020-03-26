@@ -167,6 +167,7 @@ export default {
       btxIds: Array(PotHelper.getSetting(this.pName).TX_MAX),
       minors: Array(PotHelper.getSetting(this.pName).TX_MAX),
       thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
+      potCdOld: null,
     }
   },
   computed: {
@@ -382,11 +383,10 @@ export default {
       this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryOptions)
       this.vueSelected.group = VueSelectHelper.getVueSelectData(this.groupOptions)
 
-      this.form.potCd = MasterHelper.createMasterCd('pot', this.pots, this.pot)
       this.initPotTxList()
+      this.$set(this.form, 'potCd', MasterHelper.nextCd(this.potCdOld))
     },
     async onSaved(){
-      this.$set(this.form, 'potCd', MasterHelper.createMasterCd('pot', this.pots, this.pot))
     },
     async onSaving() {
       let dummyParam = {dummyKey: -1}
@@ -436,6 +436,7 @@ export default {
       })
       entity.potTxList = potTxList
       entity.deleteThumbnail = this.form.deleteThumbnail
+      this.potCdOld = this.form.potCd
       return await AppServiceHelper.bulkSave(this.pAppServicePath, [entity])
     },
     getNameByteLangth(){
