@@ -30,7 +30,7 @@ export const APP = { // 機能面に関する設定
     LOGIN_PAGE: '/login', // ログインページパス　if no login then /
     AZLOGIN_PAGE: '/azlogin/', // ADログインページパス
     ERROR_PAGE: '/error/', // エラーページパス
-    MENU_HIDDEN_LIST: [], // サイドバーとナビバーで非表示にするメニューのfeature_nameをセット
+    MENU_HIDDEN_LIST: [], // サイドバーとナビバーで非表示にするメニューのfeature_name('showPosition','positionList','positionStack')をセット
   },
   SETTING: {
     DISABLED_THEME: false,
