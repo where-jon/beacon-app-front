@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import * as config from '../sub/constant/config'
+import { SETTING } from '../sub/constant/Constants'
 import * as Util from '../sub/util/Util'
 import * as AuthHelper from '../sub/helper/base/AuthHelper'
 import * as ConfigHelper from '../sub/helper/dataproc/ConfigHelper'
@@ -31,10 +32,10 @@ export default async (context, inject) => {
   setContextToHelper(context)
 
   LocalStorageHelper.setLocalStorage('defaultConfig', JSON.stringify(config)) // TODO: なぜローカルストレージに
-  // LocalStorageHelper.setLocalStorage('defaultConfigConstants', JSON.stringify({ // TODO: 未使用なら削除
-  //   type: SETTING.getType(),
-  //   svc: SETTING.getDefault(),
-  // }))
+  LocalStorageHelper.setLocalStorage('defaultConfigConstants', JSON.stringify({ // TODO: 未使用なら削除
+    type: SETTING.getType(),
+    svc: SETTING.getDefault(),
+  }))
   await ConfigHelper.loadConfigJson()
   try {
     const login = LocalStorageHelper.getLogin()

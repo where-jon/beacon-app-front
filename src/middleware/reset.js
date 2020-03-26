@@ -8,5 +8,5 @@ export default function (context) {
   context.store.commit('main/replaceMain', {selectedCategoryId: null})
   Util.removeInterval()
 
-  // LocalStorageHelper.setLocalStorage('defaultConfigDescription', JSON.stringify(context.app.$i18n.tnl('config'))) // TODO: 未使用なら削除
+  LocalStorageHelper.setLocalStorage('defaultConfigDescription', JSON.stringify(context.app.$i18n.tnl('config'))) // TODO: 未使用なら削除
 }
