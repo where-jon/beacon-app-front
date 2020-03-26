@@ -204,6 +204,7 @@ import * as PositionHelper from '../../sub/helper/domain/PositionHelper'
 import * as ProhibitHelper from '../../sub/helper/domain/ProhibitHelper'
 import * as SensorHelper from '../../sub/helper/domain/SensorHelper'
 import * as ToiletHelper from '../../sub/helper/domain/ToiletHelper'
+import * as PotHelper from '../../sub/helper/domain/PotHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as StyleHelper from '../../sub/helper/ui/StyleHelper'
 import * as TooltipHelper from '../../sub/helper/domain/TooltipHelper'
@@ -1072,7 +1073,7 @@ export default {
         // サムネイル表示あり
         this.preloadThumbnail.onload = () => this.setupSelectedTx(tx, x, y, true)
         this.preloadThumbnail.src = null // iOSでonloadが一度しか呼ばれないので対策
-        this.preloadThumbnail.src = Util.v(tx, 'pot.existThumbnail')? this.thumbnailUrl.replace('{id}', tx.pot.potId): '/default.png'
+        this.preloadThumbnail.src = PotHelper.getThumbnailUrl(tx, this.thumbnailUrl) 
       } else {
         // サムネイル表示無し
         this.setupSelectedTx(tx, x, y, false)
