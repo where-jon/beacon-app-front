@@ -77,12 +77,12 @@
         </b-form-row>
         <b-form-row v-if="planMode == 'meetingRoom' && doCompare" class="my-1 ml-2 ml-sm-0">
           <label class="ml-sm-4 ml-2 mr-2">
-            {{ '凡例' }}
+            {{ $t('label.legend') }}
           </label>
           <ul class="list-group list-group-horizontal">
-            <li class="list-group-item actual-in-plan">予定有・利用有</li>
-            <li class="list-group-item no-actual">予定有・利用無</li>
-            <li class="list-group-item actual-out-of-plan">予定無・利用有</li>
+            <li class="list-group-item actual-in-plan">{{ $t('label.planned') }}・{{ $t('label.used') }}</li>
+            <li class="list-group-item no-actual">{{ $t('label.planned') }}・{{ $t('label.noUse') }}</li>
+            <li class="list-group-item actual-out-of-plan">{{ $t('label.noPlan') }}・{{ $t('label.used') }}</li>
           </ul>
         </b-form-row>
       </b-form>
