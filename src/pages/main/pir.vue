@@ -4,11 +4,11 @@
       :p-caption-list="captionList"
       :p-show-exb-sensor-ids="exbSensors"
       :p-merge-sensor-ids="mergeSensors"
+      :p-show-tx-sensor-ids="txSensors"
       p-show-m-room-status
     />
   </div>
 </template>
-      <!-- :p-show-tx-sensor-ids="txSensors" -->
 
 <script>
 import { SENSOR } from '../../sub/constant/Constants'
