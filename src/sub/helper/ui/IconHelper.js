@@ -552,7 +552,7 @@ export const createThermohIcon = (device, mapScale, stage) => {
  * @param {Number} mapScale
  * @return {Object}
  */
-export const createExbIcon = (exb, exbSensorIdList, mapScale, stage) => {
+export const createExbIcon = (exb, exbSensorIdList, mapScale, stage, bgColor = null, showMRoomStatus = false) => {
   let exbBtn = null
   if (SensorHelper.match(exb.sensorIdList, SENSOR.TEMPERATURE, exbSensorIdList)) {
     exbBtn = createThermohIcon(exb, mapScale, stage)
@@ -573,25 +573,16 @@ export const createExbIcon = (exb, exbSensorIdList, mapScale, stage) => {
     exbBtn.cursor = ''
   }
   else if (SensorHelper.match(exb.sensorIdList, SENSOR.PRESSURE, exbSensorIdList) && exb.pressVol != null) {
-    exbBtn = createUseStateIcon(exb.sensorId, exb.pressVol, mapScale)
+    exbBtn = showMRoomStatus
+      ? createMRoomUseStateIcon(exb.sensorId, exb.pressVol, mapScale, bgColor)
+      : createUseStateIcon(exb.sensorId, exb.pressVol, mapScale)
     exbBtn.cursor = ''
   }
   else if (SensorHelper.match(exb.sensorIdList, SENSOR.PIR, exbSensorIdList)) {
-    exbBtn = createUseStateIcon(exb.sensorId, exb.count, mapScale)
+    exbBtn = showMRoomStatus
+      ? createMRoomUseStateIcon(exb.sensorId, exb.count, mapScale, bgColor)
+      : createUseStateIcon(exb.sensorId, exb.count, mapScale)
     exbBtn.cursor = ''
-  } else {
-    let showMRoomStatus, bgColor // FIXME: 定義されていないので仮にここに
-    if (exb.sensorId == SENSOR.PRESSURE && exb.pressVol != null) {
-      exbBtn = showMRoomStatus
-        ? createMRoomUseStateIcon(exb.sensorId, exb.pressVol, mapScale, bgColor)
-        : createUseStateIcon(exb.sensorId, exb.pressVol, mapScale)
-      exbBtn.cursor = ''
-    } else {
-      exbBtn = showMRoomStatus
-        ? createMRoomUseStateIcon(exb.sensorId, exb.count, mapScale, bgColor)
-        : createUseStateIcon(exb.sensorId, exb.count, mapScale)
-      exbBtn.cursor = ''
-    }
   }
   exbBtn.deviceId = exb.deviceId
   exbBtn.exbId = exb.exbId

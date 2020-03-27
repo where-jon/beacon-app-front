@@ -195,6 +195,7 @@ import * as Util from '../../sub/util/Util'
 import * as VueUtil from '../../sub/util/VueUtil'
 import * as AnalysisHelper from '../../sub/helper/domain/AnalysisHelper'
 import * as HeatmapHelper from '../../sub/helper/ui/HeatmapHelper'
+import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 import * as IconHelper from '../../sub/helper/ui/IconHelper'
 import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
 import * as MessageHelper from '../../sub/helper/domain/MessageHelper'
@@ -221,6 +222,7 @@ import meditag from '../../components/parts/meditag.vue'
 import ToolTip from '../../components/parts/toolTip.vue'
 import txdetail from '../../components/parts/txdetail.vue'
 import toiletview from '../../components/parts/toiletview.vue'
+import moment from 'moment'
 
 export default {
   components: {
@@ -686,6 +688,18 @@ export default {
         this.hideProgress()
       }
     },
+    async fetchMRoomPlan() {
+      const now = moment()
+      const startDt = now.format('YYYY-MM-DDT00:00:00.000')
+      const endDt = now.format('YYYY-MM-DDT23:59:59.999')
+      const url = `/office/plans/m-rooms?startDt=${startDt}&endDt=${endDt}&filterType=area&filterId=${this.selectedAreaId}`
+      const data = await HttpHelper.getAppService(url)
+      const locationMap = data.reduce((accum, elm) => {
+        elm.locationIds.forEach(locationId => accum[locationId] = elm)
+        return accum
+      }, {})
+      this.$store.commit('main/replaceMain', {locationMRoomPlanMap: locationMap})
+    },
     async fetchData(payload) { // リロードボタン押下時
       if (!this.bitmap) {
         this.reloadState.isLoad = false
@@ -703,6 +717,9 @@ export default {
         this.createAnalysisHeatmap()
         return
       }
+      if (this.pShowMRoomStatus) {
+        await this.fetchMRoomPlan()
+      }
       if(!payload.disabledProgress){
         this.showProgress()
       }
@@ -718,7 +735,7 @@ export default {
 
       if (Util.hasValue(this.pShowTxSensorIds) && !payload.disabledPosition){
         const alwaysTxs = this.txs.some(tx => Util.v(tx, 'location.areaId') == this.selectedAreaId && NumberUtil.bitON(tx.disp, TX.DISP.ALWAYS))
-        await PositionHelper.loadPosition(this.count, alwaysTxs)
+        await PositionHelper.loadPosition(this.count, alwaysTxs, false, this.pShowMRoomStatus)
       }
 
       if (this.pShowZone) {
@@ -1139,7 +1156,7 @@ export default {
       }
     },
     showTxAll() { // TXアイコン個別表示
-      if(!Util.hasValue(this.pShowTxSensorIds)){
+      if(!Util.hasValue(this.pShowTxSensorIds) || this.pShowMRoomStatus) {
         return
       }
       if (!this.txCont) {
@@ -1369,11 +1386,54 @@ export default {
       }
       return { txBtn, zoneBtxId }
     },
-
-
+    getBgColorByMRoomStatus(sensor, locationMRoomMap, positionMap) {
+      let bgColor = DISP.PLAN.NO_ACTUAL_NO_PLAN_BG_COLOR
+      const locationId = sensor.locationId
+      if (locationMRoomMap[locationId]) {
+        const mr = locationMRoomMap[sensor.locationId]
+        if (sensor.zoneIdList.includes(mr.zoneId)) {
+          const plans = mr.plans
+          if (plans.length == 0) {
+            if (positionMap[locationId]) {
+              bgColor = DISP.PLAN.ACTUAL_OUT_OF_PLAN_BG_COLOR
+            }
+          } else {
+            if (positionMap[locationId]) {
+              const positions = positionMap[locationId]
+              let hasPlan = false
+              for (let idx in positions) {
+                const pos = positions[idx]
+                const updTime = moment(pos.updatetime).valueOf()
+                for (let pIdx in plans) {
+                  const plan = plans[pIdx]
+                  if (plan.startDt <= updTime && updTime <= plan.endDt) {
+                    hasPlan = true
+                    break
+                  }
+                }
+                if (hasPlan) {
+                  break
+                }
+              }
+              if (hasPlan) {
+                bgColor = DISP.PLAN.ACTUAL_IN_PLAN_BG_COLOR
+              } else {
+                bgColor = DISP.PLAN.ACTUAL_OUT_OF_PLAN_BG_COLOR
+              }
+            } else {
+              bgColor = DISP.PLAN.NO_ACTUAL_IN_PLAN_BG_COLOR
+            }
+          }
+        }
+      }
+      return bgColor
+    },
     // EXBアイコンの表示
 
     showExbAll() { // EXB表示
+      if(!Util.hasValue(this.pShowExbSensorIds)){
+        return
+      }
       const locationMRoomMap = this.$store.state.main.locationMRoomPlanMap
       const positions = this.$store.state.main.positions
       const positionMap = positions.reduce((accum, pos) => {
@@ -1389,7 +1449,11 @@ export default {
       this.exbCon.removeAllChildren()
       _(this.sensorMap).forEach(sensorList => sensorList.forEach(sensor => {
         if (sensor.exbId && sensor.areaId == this.selectedAreaId) {
-          this.showExb(sensor)
+          let bgColor = null
+          if (this.pShowMRoomStatus) {
+            bgColor = this.getBgColorByMRoomStatus(sensor, locationMRoomMap, positionMap)
+          }
+          this.showExb(sensor, bgColor)
         }
       }))
       this.keepExbPosition = false
