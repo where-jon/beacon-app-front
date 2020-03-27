@@ -177,22 +177,36 @@ export default {
       this.hideProgress()
     },
     createEntity(isOn) {
-      var rgb = 0
-      for (var i of this.form.colors) {
-        if (this.deviceType == 2) {
+      let rgb = 0
+      let no = 1
+      const pattern = isOn? this.form.blink: 0
+      if (this.deviceType == 2) {
+        for (var i of this.form.colors) {
           rgb += i
         }
-        else {
-          rgb = Math.log2(i)
+      }
+      else if  (this.deviceType == 5)  {
+        rgb = isOn? Math.log2(this.form.colors[0]): 0
+        no = this.ledNo        
+      }
+      const val = {
+        deviceType: this.deviceType,
+        deviceid: this.form.deviceId,
+        ['rgb' + no]: rgb,
+        ['pattern' + no]: pattern,
+      }
+
+      for (let i=1; i<=5; i++) {
+        if (i != no) {
+          val['rgb' + i] = 0
+          val['pattern' + i] = 0
         }
       }
-      const no = this.deviceType == 5? this.ledNo: 1
-      return [{
-        deviceType: this.deviceType,
-        deviceId: this.form.deviceId,
-        ['rgb' + no]: !isOn && this.deviceType == 5? 0: rgb,
-        ['pattern' + no]: isOn? this.form.blink: 0,
-      }]
+      if (this.deviceType == 5) {
+        val.buzzer_pattern = 0
+      }
+
+      return [val]
     },
     async buttonClick(bool) {
       this.showProgress()
