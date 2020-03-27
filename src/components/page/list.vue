@@ -289,6 +289,7 @@ import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
 import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as PositionHelper from '../../sub/helper/domain/PositionHelper'
 import * as SensorHelper from '../../sub/helper/domain/SensorHelper'
+import * as PotHelper from '../../sub/helper/domain/PotHelper'
 import commonmixin from '../mixin/commonmixin.vue'
 import detailFilter from '../../components/parts/detailFilter.vue'
 import alert from '../parts/alert.vue'
@@ -955,7 +956,7 @@ export default {
         this.preloadThumbnail.onload = () => this.setupSelectedTx(tx, x, y, true)
         this.preloadThumbnail.src = null // iOSでonloadが一度しか呼ばれないので対策
 
-        this.preloadThumbnail.src = Util.v(tx, 'pot.existThumbnail')? this.thumbnailUrl.replace('{id}', tx.pot.potId): '/default.png'
+        this.preloadThumbnail.src = PotHelper.getThumbnailUrl(tx, this.thumbnailUrl)
       }
     },
     txOnClick(evt,tx){

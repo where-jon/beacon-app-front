@@ -62,6 +62,7 @@ export default {
       items: ViewHelper.createBreadCrumbItems('master', {text: 'region', href: '/master/region'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.region.regionId)),
       form: Util.extract(this.$store.state.app_service.region,
         ['regionId', 'regionCd', 'regionName', 'meshId', 'description']),
+      oldRegionCd: null
     }
   },
   computed: {
@@ -90,13 +91,14 @@ export default {
         meshId: this.form.meshId,
         description: this.form.description,
       }
+      this.oldRegionCd = this.form.regionCd
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
     },
     async onSaved(){
       await AuthHelper.switchAppService()
     },
     onBeforeReload(){
-      this.form.regionCd = MasterHelper.createMasterCd('region', this.regions, this.region)
+      this.$set(this.form, 'regionCd', MasterHelper.nextCd(this.oldRegionCd))
     },
   }
 }

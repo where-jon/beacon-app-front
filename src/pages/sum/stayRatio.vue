@@ -170,8 +170,8 @@ export default {
     getStayDataList(date, stayData, absentLimit = 0, lostLimit = APP.POS.LOST_TIME) {
       return stayData.map((data) => {
         const potId = data.potId
-        const pot = this.pots.find((val) => val.potId == potId)
-        const groupName = pot? pot.groupName: ''
+        const pot = this.potIdMap[potId]
+        const groupName = Util.v(pot, 'group.groupName', '')
         const potName = data.potName
         let stayTime = 0, under30minAbsentTime = 0, over30to90minAbsentTime = 0,
           lostTime = 0, presentRatio = 0, absentRatio = 0, absentRatioSub = 0, lostRatio = 0

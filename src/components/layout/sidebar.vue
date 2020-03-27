@@ -13,11 +13,13 @@
             </span>
           </li>
           <vue-slide-up-down :active="selectedItem === i">
-            <li v-for="page in group.pages" :key="page.key" :class="menuItemClasses">
-              <router-link :to="'/' + group.base + page.path" class="bd-toc-link" @click.native="clickMenuItem">
-                <font-awesome-icon :icon="iconClass(page.icon)" fixed-width class="ml-3" />&nbsp;{{ $t("label." + (page.label? page.label: page.key)) }}
-              </router-link>
-            </li>
+            <span v-for="page in group.pages" :key="page.key">
+              <li v-if="isMenuShow(page.key)" :class="menuItemClasses">
+                <router-link :to="'/' + group.base + page.path" class="bd-toc-link" @click.native="clickMenuItem">
+                  <font-awesome-icon :icon="iconClass(page.icon)" fixed-width class="ml-3" />&nbsp;{{ $t("label." + (page.label? page.label: page.key)) }}
+                </router-link>
+              </li>
+            </span>
           </vue-slide-up-down>
         </ul>
       </li>
@@ -71,6 +73,9 @@ export default {
     },
     clickMenuItem(e) {
       this.$nuxt.$emit('MENU_ITEM_CLICK', 'test')
+    },
+    isMenuShow(page) {
+      return !APP.MENU.MENU_HIDDEN_LIST.includes(page)  // リストに存在した場合はメニュー非表示
     }
   },
   templates: {

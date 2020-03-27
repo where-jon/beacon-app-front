@@ -701,7 +701,7 @@ export const createTxDetailInfo = (x, y, tx, canvasScale, offset, containerRect,
   const extValue = Util.v(tx, 'pot.extValue')
   if(extValue){
     Object.keys(extValue).forEach( key => { 
-      if(!ret[key]){ // 既にあるキーは書き換えない
+      if(!ret[key] && extValue[key] ){ // 既にあるキーは書き換えないかつ値が存在する拡張キーのみ表示対象にする
         ret[key] = i18n.tnl('label.' + key) + ':' + extValue[key] 
       }
     } )

@@ -90,6 +90,7 @@ export const KEY = {
   CURRENT: {
     REGION: 'currentRegion',
     AREA: 'currentArea',
+    SHOW_FILTER_ON_POSMAP: 'showFilterOnPosmap',
   },
 }
 
@@ -667,6 +668,9 @@ export const SETTING = {
             DUPLICATE_MAIL_TIME: SETTING.NUMBER,
           },
         },
+        MENU: {
+          MENU_HIDDEN_LIST: SETTING.STRING_LIST,
+        },
         SENSOR: {
           TX_SENSOR: SETTING.NUMBER_LIST,
         },
@@ -762,6 +766,8 @@ export const SETTING = {
             EXCLOUD_RAWLOG_DIR: SETTING.STRING,
             BLANK_RANGE: SETTING.NUMBER,
             MIN_RANGE: SETTING.NUMBER,
+            REAL_TIME: SETTING.BOOLEAN,
+            PATTERN: SETTING.NUMBER_LIST,
           },
           WORKLOAD: {
             PAUSE_TIMEOUT: SETTING.NUMBER,

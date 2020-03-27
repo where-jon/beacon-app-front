@@ -61,6 +61,9 @@ export default {
       ]
     },
     extend (config, { isDev, isClient }) {
+      if (isClient && isDev) {
+        config.devtool = 'source-map'
+      }
       config.module.rules.forEach((val) => {
         if (val.loader == 'babel-loader') {
           val.exclude = /node_modules\/(?!@createjs\/).*/

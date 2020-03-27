@@ -1,5 +1,6 @@
 /**
  * システム設定画面に関するヘルパーモジュール
+ * TODO: 意味不明すぎる。要書き直し
  * @module helper/domain/SettingHelper
  */
 
@@ -108,15 +109,18 @@ export const getDefaultValue = (key, isTenant = false) => {
   if(!Util.hasValue(defaultConfig)){
     return null
   }
+  let ret
   const langDefValue = Util.getValue(SETTING.getDefault(), key)
   if(langDefValue != null){
-    return langDefValue
+    ret = langDefValue
   }
-  const val = key.split('.').reduce((prev, cur) => prev != null && prev[cur] != null? prev[cur]: null, defaultConfig)
-  if (val && val.toString().includes('[object Object]')) {
-    return JSON.stringify(val)
+  else {
+    ret = key.split('.').reduce((prev, cur) => prev != null && prev[cur] != null? prev[cur]: null, defaultConfig)
+    if (ret && ret.toString().includes('[object Object]')) {
+      ret = JSON.stringify(ret)
+    }  
   }
-  return val
+  return ret? '(' + ret + ')': '' // config.jsの値（デフォルト値）はカッコで囲んでテナントの値と区別できるようにする
 }
 
 /**

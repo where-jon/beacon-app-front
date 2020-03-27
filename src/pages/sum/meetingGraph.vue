@@ -79,8 +79,7 @@ export default {
 
       const start = new Date(form.datetimeFrom)
       const end = new Date(form.datetimeTo)
-      const total = func.getTotal(start, end)
-      Util.debug('total', total)
+      const total = func.getTotal(start, end, true)
 
       const from = start.getTime()
       const to = end.getTime()

@@ -9,6 +9,12 @@
           </li>
         </ol>
       </div>
+      <div v-if="filterToggle" class="col-auto px-1">
+        <b-button v-b-toggle.collapse-filter class="legend-button" @click="switchFilter">
+          {{ $i18n.tnl('label.filter') }}
+          <span class="when-opened"><font-awesome-icon icon="angle-up" /></span> <span class="when-closed"><font-awesome-icon icon="angle-down" /></span>
+        </b-button>
+      </div>
       <div v-if="useLegend && legendItems" ref="legendButton" class="col-auto px-1">
         <b-button v-if="showLegend" class="legend-button-active" @click="switchLegend">
           {{ $i18n.tnl('label.legend') }}
@@ -57,17 +63,23 @@ import * as AuthHelper from '../../sub/helper/base/AuthHelper'
 import { EventBus } from '../../sub/helper/base/EventHelper'
 import { getThemeColor, getThemeClasses } from '../../sub/helper/ui/ThemeHelper'
 import LegendItem from '../parts/legend.vue'
+import commonmixin from '../mixin/commonmixin.vue'
 
 export default {
   components: {
     'legendItem': LegendItem,
   },
+  mixins: [commonmixin],
   props: {
     items: {
       type: Array,
       required: true,
     },
     reload: {
+      type: Boolean,
+      default: false
+    },
+    filterToggle: {
       type: Boolean,
       default: false
     },
@@ -181,6 +193,9 @@ export default {
       const color = getThemeColor()
       this.setColor('dropdown-menu', color)
       this.setColor('dropdown-item', color)
+    },
+    switchFilter(e) {
+      this.callParentMethod('switchFilter', e)
     },
     switchLegend(e){
       this.showLegend = !this.showLegend
@@ -323,5 +338,10 @@ export default {
     opacity: 0;
   }
  }
+
+.collapsed > .when-opened,
+:not(.collapsed) > .when-closed {
+  display: none;
+}
 
 </style>
