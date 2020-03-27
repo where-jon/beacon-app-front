@@ -569,11 +569,6 @@ export const NOTIFY_STATE = {
   }
 }
 
-export const TENANT_STATE = {
-  ENABLED: 1,
-  DISABLED: 0
-}
-
 export const ERROR_STATE = {
   NOT_REGIST: 'foreignKey',
   OVER_SIZE: 'uploadImgMax'

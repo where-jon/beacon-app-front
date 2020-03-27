@@ -158,7 +158,7 @@
 <script>
 import { mapState } from 'vuex'
 import { EXCLOUD } from '../../../sub/constant/config'
-import { PATTERN, TENANT_STATE } from '../../../sub/constant/Constants'
+import { PATTERN, TENANT } from '../../../sub/constant/Constants'
 import * as DateUtil from '../../../sub/util/DateUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
@@ -216,8 +216,8 @@ export default {
       defaultCheckFeatureNames: ['positionmap', 'positionlist', 'positionstack'],
       isFirst: true,
       statusOptions:[
-        {text: this.$i18n.tnl('label.enabledType'), value: TENANT_STATE.ENABLED},
-        {text: this.$i18n.tnl('label.disabledType'), value: TENANT_STATE.DISABLED}
+        {text: this.$i18n.tnl('label.enabledType'), value: TENANT.STATUS.REGISTERED},
+        {text: this.$i18n.tnl('label.disabledType'), value: TENANT.STATUS.DISABLED}
       ],
     }
   },
