@@ -191,6 +191,9 @@ export default {
     vueSelectCutOn(option, required){
       return VueSelectHelper.vueSelectCutOn(option, required)
     },
+    vueSelectCutOnWithWidth(option, width, required){
+      return VueSelectHelper.vueSelectCutOnWithWidth(option, width, required)
+    },
     vueSelectTitle(selected){
       return VueSelectHelper.vueSelectTitle(selected)
     },

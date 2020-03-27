@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <breadcrumb :items="items" :reload="false" />
+    <alert :message="message" />
     <b-row class="mt-2">
       <b-form inline @submit.prevent>
         <b-form-row class="my-1 ml-2 ml-sm-0">
@@ -64,11 +65,12 @@ import 'element-ui/lib/theme-chalk/index.css'
 import moment from 'moment'
 import { APP, DISP, APP_SERVICE } from '../../sub/constant/config'
 import * as DateUtil from '../../sub/util/DateUtil'
+import alert from '../../components/parts/alert.vue'
 
 export default {
   mixins: [commonmixin],
   components: {
-    breadcrumb, DatePicker
+    breadcrumb, DatePicker, alert
   },
   data () {
     return {
@@ -80,6 +82,7 @@ export default {
         {value: 1, label: this.$t('label.actual')},
       ],
       planModeFilter: null,
+      message: '',
 
       form: {
         datetimeFrom: null,
@@ -113,12 +116,20 @@ export default {
   },
   methods: {
     async display() {
-      const df = 'YYYY-MM-DDTHH:mm:ss.SSS'
-      const startDt = moment(this.form.datetimeFrom).format(df)
-      const endDt = moment(this.form.datetimeTo).format(df)
-      const data = await HttpHelper.getAppService(`${this.appServicePath}?startDt=${startDt}&endDt=${endDt}&isActual=${this.planModeFilter.value}&limit=${this.rowlimit}`)
-      if (Array.isArray(data)) {
-        this.loadData(data)
+      try {
+        const df = 'YYYY-MM-DDTHH:mm:ss.SSS'
+        const startDt = moment(this.form.datetimeFrom).format(df)
+        const endDt = moment(this.form.datetimeTo).format(df)
+        const data = await HttpHelper.getAppService(`${this.appServicePath}?startDt=${startDt}&endDt=${endDt}&isActual=${this.planModeFilter.value}&limit=${this.rowlimit}`)
+        if (Array.isArray(data)) {
+          this.loadData(data)
+        }
+      }
+      catch(e) {
+        console.error(e)
+        this.message = e.response.data
+        this.replace({showAlert: true})
+        window.scrollTo(0, 0)
       }
     },
     loadData(data) {
@@ -138,11 +149,19 @@ export default {
       this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.tItems.length, maxRows: this.rowlimit})}`
     },
     exportCsv() {
-      const df = 'YYYY-MM-DDTHH:mm:ss.SSS'
-      const startDt = moment(this.form.datetimeFrom).format(df)
-      const endDt = moment(this.form.datetimeTo).format(df)
-      const url = `${APP_SERVICE.BASE_URL}${this.appServicePath}/csvdownload?charset=${getCharSet(this.$store.state.loginId)}&startDt=${startDt}&endDt=${endDt}&isActual=${this.planModeFilter.value}&limit=${this.rowlimit}`
-      BrowserUtil.executeFileDL(url)
+      try {
+        const df = 'YYYY-MM-DDTHH:mm:ss.SSS'
+        const startDt = moment(this.form.datetimeFrom).format(df)
+        const endDt = moment(this.form.datetimeTo).format(df)
+        const url = `${APP_SERVICE.BASE_URL}${this.appServicePath}/csvdownload?charset=${getCharSet(this.$store.state.loginId)}&startDt=${startDt}&endDt=${endDt}&isActual=${this.planModeFilter.value}&limit=${this.rowlimit}`
+        BrowserUtil.executeFileDL(url)
+      }
+      catch(e) {
+        console.error(e)
+        this.message = e.response.data
+        this.replace({showAlert: true})
+        window.scrollTo(0, 0)
+      }
     }
   }
 }
