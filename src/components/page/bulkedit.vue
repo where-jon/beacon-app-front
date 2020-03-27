@@ -145,7 +145,7 @@ export default {
       this.form.csvFile = null
       window.scrollTo(0, 0)
     },
-    async bulkSave2(option) {
+    async bulkSave2() {
       if (!this.form.csvFile) {
         throw new Error(this.$t('message.emptyFile'))
       }

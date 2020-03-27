@@ -113,6 +113,7 @@ import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import * as VueSelectHelper from '../../../sub/helper/ui/VueSelectHelper'
+import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import commonmixin from '../../../components/mixin/commonmixin.vue'
 import editmixin from '../../../components/mixin/editmixin.vue'
@@ -389,54 +390,41 @@ export default {
       this.$set(this.form, 'potCd', MasterHelper.createMasterCd('pot', this.pots, this.pot))
     },
     async onSaving() {
-      let dummyParam = {dummyKey: -1}
       const entity = {
-        potId: this.form.potId || dummyParam.dummyKey--,
-        potCd: this.form.potCd,
+        updateKey: this.form.potId || null,
+        ID: this.form.potCd,
         potName: this.form.potName,
-        potType: this.form.potType,
-        extValue: {
-          ruby: this.form.ruby,
-          description: this.form.description,
-          minors: this.minors,
-          potNames: [this.form.potName],
-        },
+        potType: this.potTypeOptions.filter(e => e.value == this.form.potType).map(e => e.text),
+        extValue: {},
         displayName: this.form.displayName,
-        potGroupList: this.form.groupId ? [{
-          potGroupPK: {groupId: this.form.groupId}
-        }] : [],
-        potCategoryList: this.form.categoryId ? [{
-          potCategoryPK: {categoryId: this.form.categoryId}
-        }] : [],
-        txId: this.form.txId,
+        groupName: this.form.groupId ? this.groupOptions.filter(e => e.value == this.form.groupId).map(e => e.text).join(";") : null,
+        categoryName: this.form.categoryId ? this.categoryOptions.filter(e => e.value == this.form.categoryId).map(e => e.text).join(";") : null,
         thumbnail: this.form.thumbnail,
-        description: this.form.description,
+        description: this.form.description
+      }
+      
+      const arr = ['ruby', 'description', 'minors']
+      arr.forEach(key => {
+        if (this.form[key]) {
+          entity.extValue[key] = this.form[key]
+        }
+      })
+      if (this.form.potName) {
+        entity.extValue['potNames'] = [this.form.potName]
       }
       PotHelper.getPotExtKeys(this.pName).forEach(key => {
         entity.extValue[key] = this.form[key]
       })
+      entity.extValue = ExtValueHelper.jsonStringfyAndFormatCSV(entity.extValue)
       if(Util.hasValue(this.form.authCategoryIdList)){
-        const authCategoryList = this.form.authCategoryIdList.map(authCategoryId => ({ potCategoryPK: { categoryId: authCategoryId } }))
-        entity.potCategoryList.push(...authCategoryList)
+        const list = this.categoryOptions.filter(e => this.form.authCategoryIdList.includes(e.value)).map(e => e.text)
+        entity.auth = list.length > 0 ? list.join(";") : null
       }
 
-      const minorsMap = {}
-      this.txs.forEach(t => minorsMap[t.txId] = t.minor)
-      const potTxList = []
-      this.form.potTxList.forEach((potTx) => {
-        if(potTx.txId){
-          potTxList.push({
-            potTxPK: {
-              potId: this.form.potId || dummyParam.dummyKey--,
-              txId: potTx.txId
-            },
-            minor: minorsMap[potTx.txId]
-          })
-        }
-      })
-      entity.potTxList = potTxList
+      entity.minor = this.minors.length > 0 ? this.minors.join(';') : null
       entity.deleteThumbnail = this.form.deleteThumbnail
-      return await AppServiceHelper.bulkSave(this.pAppServicePath, [entity])
+
+      return await AppServiceHelper.save2(this.pAppServicePath, entity)
     },
     getNameByteLangth(){
       const fileElement = Util.getValue(document.getElementsByClassName('custom-file'), '0')

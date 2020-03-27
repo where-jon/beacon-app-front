@@ -74,44 +74,6 @@ export default {
     getConf() {
       return {}
     },
-    restructZone(entity, dummyKey){
-      const zoneCategoryList = []
-      if(Util.hasValue(entity.guardNames)){
-        const guardList = entity.guardNames.split(BULK.SPLITTER).map(zoneName => ({
-          zoneCategoryPK: {zoneId: dummyKey--, categoryId: dummyKey--},
-          zoneName: zoneName,
-          zoneType: ZONE.GUARD,
-        }))
-        zoneCategoryList.push(...guardList)
-      }
-      if(Util.hasValue(entity.doorNames)){
-        const guardList = entity.doorNames.split(BULK.SPLITTER).map(zoneName => ({
-          zoneCategoryPK: {zoneId: dummyKey--, categoryId: dummyKey--},
-          zoneName: zoneName,
-          zoneType: ZONE.DOOR,
-        }))
-        zoneCategoryList.push(...guardList)
-      }
-      entity.zoneCategoryList = zoneCategoryList
-      return dummyKey
-    },
-    onRestruct(entity, dummyKey){
-      if(Util.hasValueAny(entity.shape, entity.color, entity.bgColor)){
-        Util.setValue(entity, 'display.shape', entity.shape)
-        Util.setValue(entity, 'display.color', entity.color)
-        Util.setValue(entity, 'display.bgColor', entity.bgColor)
-      }
-      if(Util.hasValue(entity.categoryType)){
-        const categoryType = this.categoryTypes.find(type => type.text == entity.categoryType)
-        entity.categoryType = categoryType? categoryType.value: 0
-      }
-      ExtValueHelper.copyToChild(entity, APP.CATEGORY)
-      dummyKey = this.restructZone(entity, dummyKey)
-      entity.categoryCd = entity.ID
-      return dummyKey
-    },
-    async onSaved(){
-    },
   }
 }
 </script>
