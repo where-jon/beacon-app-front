@@ -1150,7 +1150,7 @@ export const fetchSensorInfo = async (targetSensorIds = []) => {
     // pir: val.count >= DISP.PIR.MIN_COUNT // TODO: 元のソースにあったfilter条件。多分不要。
     // exb.sensorId == SENSOR.PRESSURE? exb.pressVol <= DISP.PRESSURE.VOL_MIN || DISP.PRESSURE.EMPTY_SHOW: exb.count > 0 || DISP.PIR.EMPTY_SHOW
     // APP.SENSOR.SHOW_MAGNET_ON_PIR) 
-    sensorMap[sensorData.name] = sensorData.sortBy(sensor => // MEDiTAGの場合、指定時間以内に転倒したものを先頭にソートする
+    sensorMap[sensorInfo.name] = sensorData.sortBy(sensor => // MEDiTAGの場合、指定時間以内に転倒したものを先頭にソートする
       sensor.sensorId == SENSOR.MEDITAG && (new Date().getTime() - sensor.downLatest < APP.SENSOR.MEDITAG.DOWN_RED_TIME)?
         sensor.downLatest * -1
         : sensor.btxId

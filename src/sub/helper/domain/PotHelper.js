@@ -4,6 +4,7 @@
  */
 
 import { APP } from '../../constant/config'
+import * as Util from '../../util/Util'
 
 /**
  * POT設定カテゴリを返す。
@@ -82,3 +83,16 @@ export const createCustomColumn = (potTypeName, isCsv) => {
   }).filter(val => val)
 }
 
+/**
+ * サムネイルのURLを取得する
+ * 
+ * @param {*} tx 
+ * @param {*} thumbnailUrl 
+ */
+export const getThumbnailUrl = (tx, thumbnailUrl) => {
+  const pot = Util.v(tx, 'pot')
+  if (pot && pot.existThumbnail) {
+    return thumbnailUrl.replace('{id}', pot.potId) + pot.thumbnailUpdateDt
+  }  
+  return '/default.png'
+}

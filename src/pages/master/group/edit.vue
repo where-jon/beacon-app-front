@@ -80,6 +80,7 @@ export default {
       oldShape: Util.getValue(group, 'display.shape'),
       oldColor: Util.getValue(group, 'display.color'),
       oldBgColor: Util.getValue(group, 'display.bgColor'),
+      groupCdOld: null
     }
   },
   computed: {
@@ -94,7 +95,7 @@ export default {
     },
   },
   created() {
-    this.onBeforeReload()
+    this.onBeforeReload(true)
   },
   mounted(){
     if(!Util.hasValue(this.form.groupCd)){
@@ -103,16 +104,18 @@ export default {
     ValidateHelper.setCustomValidationMessage()
   },
   methods: {
-    onBeforeReload(){
+    onBeforeReload(isInit){
       if(this.form){
         this.form.displayShape = this.oldShape? this.oldShape: this.shapes[0].value
         this.form.displayColor = ColorUtil.colorCd4display(this.oldColor? this.oldColor: null, this.defaultColor)
         this.form.displayBgColor = ColorUtil.colorCd4display(this.oldBgColor? this.oldBgColor: null, this.defaultBgColor)
       }
+      if(this.isInit){
+        this.form.groupCd = MasterHelper.nextCd(this.groupCdOld)
+      }
     },
     async onSaved(){
-      const groupId = MasterHelper.createMasterCd('group', this.groups, this.group)
-      this.$set(this.form, 'groupCd', groupId)
+      this.groupCdOld = this.form.groupCd
     },
     async onSaving() {
       const entity = {

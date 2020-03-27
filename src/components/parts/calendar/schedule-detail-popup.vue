@@ -10,6 +10,7 @@
         <div class="tui-full-calendar-popup-detail-item"><div class="popup-left"><img src="~/assets/icon/clock.svg" class="popup-icon"></div><div class="popup-right"><span class="tui-full-calendar-content">{{ calendarContent }}</span></div></div>
         <div v-if="event.schedule.location" class="tui-full-calendar-popup-detail-item"><div class="popup-left"><img src="~/assets/icon/location.svg" class="popup-icon"></div><div class="popup-right"><span class="tui-full-calendar-content">{{ event.schedule.location }}</span></div></div>
         <div v-if="event.schedule.attendees" class="tui-full-calendar-popup-detail-item"><div class="popup-left"><img src="~/assets/icon/person.svg" class="popup-icon"></div><div class="popup-right"><span class="tui-full-calendar-content">{{ (event.schedule.attendees || []).join(', ') }}</span></div></div>
+        <div v-if="event.schedule.thing" class="tui-full-calendar-popup-detail-item"><div class="popup-left"><img src="~/assets/icon/box.svg" class="popup-icon"></div><div class="popup-right"><span class="tui-full-calendar-content">{{ event.schedule.thing }}</span></div></div>
         <div v-if="event.schedule.body" class="tui-full-calendar-popup-detail-item"><div class="popup-left"><img src="~/assets/icon/memo.svg" class="popup-icon"></div><div id="popup-content" class="popup-right tui-full-calendar-content"></div></div>
       </div>
       <div v-if="!event.schedule.isReadOnly" class="tui-full-calendar-section-button">

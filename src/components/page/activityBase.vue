@@ -187,7 +187,7 @@ export default {
         this.hideProgress()
       }
     },
-    getTotal(fromDt, toDt){
+    getTotal(fromDt, toDt, doRound=false){
       let fromDate = fromDt.getYear()*10000 + fromDt.getMonth()*100 + fromDt.getDate()
       let toDate = toDt.getYear()*10000 + toDt.getMonth()*100 + toDt.getDate()
       const start = (Math.floor(APP.SVC.STAY_SUM.START / 100)*60 + APP.SVC.STAY_SUM.START % 100) * 60
@@ -207,19 +207,22 @@ export default {
       }
       toTime = Math.min(toTime, end)
 
-      
-
       // 1日の場合
+      let total = 0
       if(fromDate == toDate){
         console.log('oneDay')
-        return this.raunding(toTime - fromTime)
+        total = toTime - fromTime
+      }else{
+        // 2日以上の場合
+        total += end - fromTime
+        total += toTime - start
+        total += (toDate - fromDate - 1) * (end - start)
       }
-      // 2日以上の場合
-      let total = 0
-      total += end - fromTime
-      total += toTime - start
-      total += (toDate - fromDate - 1) * (end - start)
-      return this.raunding(total)
+      if(doRound){
+        total = this.raunding(total)
+      }
+      Util.debug('total', total)
+      return total      
     },
     raunding(sec){
       // コマ時間に揃える

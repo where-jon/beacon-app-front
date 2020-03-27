@@ -225,10 +225,7 @@ const buildMasters = (data) => {
             idmaps[currentMaster + '_Val'] = {}
           }
           const key = row[1] + '_' + row[2]
-          if (!idmaps[currentMaster + '_Val'][key]) {
-            idmaps[currentMaster + '_Val'][key] = []
-          }
-          idmaps[currentMaster + '_Val'][key].push(obj)
+          idmaps[currentMaster + '_Val'][key] = obj
         }
         idmaps[currentMaster][row[0]] = obj // プライマリキー(1列名)をキーにしてidmapを作成
       }
@@ -420,13 +417,15 @@ const addInfo = (masters, idmaps) => {
         //     return obj
         //   }, {})
         // }
+        const lob = idmaps.lob_Val['pot_thumbnail_' + pot.potId]
         Util.merge(pot, {
           txIds: _.map(pot.txList, tx => tx.txId),
           txIdNames: pot.txList.forEach(tx => getTxIdName(tx)),
           groupId: Util.v(pot, 'group.groupId'),
           categoryId: Util.v(pot, 'category.categoryId'),
           authCategoryNames: Util.v(pot, 'authCategoryList', []).map(v => v.categoryName), // TODO: categoryListからfilterして取り出す
-          existThumbnail: !!idmaps.lob_Val['pot_thumbnail_' + pot.potId], // Lob情報よりサムネイルが存在するかをチェック
+          existThumbnail: !!lob, // Lob情報よりサムネイルが存在するかをチェック
+          thumbnailUpdateDt: Util.v(lob, 'updateDt'), // サムネイル更新日時
         })
         Util.merge(pot, pot.extValue)
       })
@@ -595,9 +594,18 @@ export const createMasterCd = (masterType, masterList, masterData = null) => {
     }
     return prevLength < curLength? cur: prev
   }, '')
+  return nextCd(maxCd)
+}
+
+/**
+ * 次のCdを作成する
+ * @param {String} maxCd 
+ */
+export const nextCd = (maxCd) => {
   if(!Util.hasValue(maxCd)){
     return '1'
   }
+  const reg = /([^0-9]*)([0-9]*)/
   return maxCd.split(reg).filter(val => val).reduce((prev, cur, index, array) => {
     const ret = '' + prev
     if(index + 1 < array.length){

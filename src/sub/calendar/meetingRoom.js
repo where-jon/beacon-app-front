@@ -11,20 +11,27 @@ export function loadTimeLine(data, currentUser, dupMessage, basicColorMap) {
       const id = potId ? `${potId}_${plan.planId}` : plan.planId
       let location = null
       let zoneId = null
+      let thing = null
       let hasDup = false
       const attendees = []
       plan.details.forEach(pd => {
-        if (!hasDup) {
-          hasDup = pd.isDuplicate
-        } 
-        location = pd.zoneName ? pd.zoneName : pd.locationName 
+        if (pd.isDuplicate) {
+          hasDup = true
+        }
         switch (pd.targetType) {
-          case PLAN_TARGET_TYPE.POT_PERSON:
-            attendees.push(pd.potName)
-            break
           case PLAN_TARGET_TYPE.ZONE:
             zoneId = pd.zoneId
+            location = pd.isDuplicate ? `${pd.zoneName}(${dupMessage})` : pd.zoneName
             break
+          case PLAN_TARGET_TYPE.LOCATION:
+            location = pd.isDuplicate ? `${pd.locationName}(${dupMessage})` : pd.locationName
+            break
+          case PLAN_TARGET_TYPE.POT_PERSON:
+            const potName = pd.isDuplicate ? `${pd.potName}(${dupMessage})` : pd.potName
+            attendees.push(potName)
+            break
+          default:
+            thing = pd.isDuplicate ? `${pd.potName}(${dupMessage})` : pd.potName
         }
       })
       if (!timeLineMap.hasOwnProperty(zoneId)) {
@@ -52,7 +59,9 @@ export function loadTimeLine(data, currentUser, dupMessage, basicColorMap) {
         isReadOnly: isReadOnly,
         location: location,
         attendees: attendees,
+        thing: thing,
         body: `[${dupMessage}] ${plan.description}`,
+        hasDup: hasDup,
         data: plan
       }
       planMap[card.id] = card

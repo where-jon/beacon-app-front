@@ -153,6 +153,7 @@ export default {
       txIconsVertical: 5,
       checkWarn: false,
       showAreaWarn: false,
+      oldLocationCd: null
     }
   },
   computed: {
@@ -305,6 +306,7 @@ export default {
       this.vueSelected.area = VueSelectHelper.getVueSelectData(this.areaOptions)
       this.vueSelected.zone = VueSelectHelper.getVueSelectData(this.getZoneClassOptions())
       this.checkWarnOn()
+      this.$set(this.form, 'locationCd', MasterHelper.nextCd(this.oldLocationCd))
     },
     async onSaving() {
       let dummyKey = -1
@@ -337,7 +339,7 @@ export default {
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
     },
     async onSaved(){
-      this.$set(this.form, 'locationCd', MasterHelper.createMasterCd('location', this.locations, this.location))
+      this.oldLocationCd = this.form.locationCd
     }
   }
 }

@@ -71,7 +71,7 @@ TimeClick.prototype._onClick = function(clickEvent) {
         target = clickEvent.target,
         timeView = this.checkExpectCondition(target),
         blockElement = domutil.closest(target, config.classname('.time-date-schedule-block'));
-
+    
     if (!timeView || !blockElement) {
         return;
     }

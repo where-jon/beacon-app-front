@@ -105,11 +105,7 @@ export default {
         ])).filter(val => val)
     },
     thumbnail(row) {
-      let addUrlParam = ''
-      if (this.updatedPotThumbnailList && this.updatedPotThumbnailList.some(t => t === row.updateKey)) {
-        addUrlParam = new Date().getTime()
-      }
-      return row.existThumbnail? this.thumbnailUrl.replace('{id}', row.updateKey) + addUrlParam: null
+      return row.existThumbnail? this.thumbnailUrl.replace('{id}', row.updateKey) + row.thumbnailUpdateDt: null
     },
   }
 }

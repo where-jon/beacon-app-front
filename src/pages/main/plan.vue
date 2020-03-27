@@ -1,6 +1,7 @@
 <template>
   <div class="container" :style="cssVars">
     <breadcrumb :items="items" :reload="false" />
+    <alert :message="message" />
     <b-row class="mt-2">
       <b-form inline @submit.prevent>
         <b-form-row class="my-1 ml-2 ml-sm-0">
@@ -24,17 +25,17 @@
           </label>
           <b-form-select v-model="vueSelected.filterType" :options="filterTypeOpts" class="ml-2 inputSelect" />
           <span :title="vueSelectTitle(vueSelected.filter)">
-            <v-select v-if="vueSelected.filterType == 'potPerson'" v-model="vueSelected.filters" :options="potPersonOpts" multiple :close-on-select="false" class="vue-options-multi">
+            <v-select v-if="vueSelected.filterType == 'potPersons'" v-model="vueSelected.filters" :options="potPersonOpts" multiple :close-on-select="false" class="vue-options-multi" style="width: 400px;">
               <template slot="selected-option" slot-scope="option">
-                {{ vueSelectCutOn(option) }}
+                 {{ vueSelectCutOn(option) }}
               </template>
               <template slot="no-options">
                 {{ vueSelectNoMatchingOptions }}
               </template>
             </v-select>
-            <v-select v-else v-model="vueSelected.filter" :options="filterOpts" class="ml-2 inputSelect vue-options" :style="vueSelectStyle">
+            <v-select v-else v-model="vueSelected.filter" :options="filterOpts" class="ml-2 inputSelect vue-options" style="width: 400px;">
               <template slot="selected-option" slot-scope="option">
-                {{ vueSelectCutOn(option) }}
+                 {{ vueSelectCutOnWithWidth(option, 400) }}
               </template>
               <template slot="no-options">
                 {{ vueSelectNoMatchingOptions }}
@@ -42,9 +43,9 @@
             </v-select>
           </span>
         </b-form-row>
-        <b-form-row v-if="planMode == 'normal' && currentUser && currentUser.role.roleName == 'SYS_ADMIN'" class="my-1 ml-2 ml-sm-0">
+        <!-- <b-form-row v-if="planMode == 'normal' && currentUser && currentUser.role.roleName == 'SYS_ADMIN'" class="my-1 ml-2 ml-sm-0">
           <b-button class="ml-sm-4 ml-2 mr-1" :variant="theme" @click="onClickSync">{{ $t('label.syncWithOutlook') }}</b-button>
-        </b-form-row>
+        </b-form-row> -->
         <b-form-row v-if="planMode == 'meetingRoom'" class="my-1 ml-2 ml-sm-0">
           <b-form-checkbox v-model="doCompare">
             {{ $t('label.planActual') }}
@@ -69,33 +70,32 @@
             :type="datePickerType"
             :format="datePickerFormat"
             size="large"
-            style="width: 170px;"
+            style="width: 11rem;"
             :placeholder="datePickerPlaceholder"
             @blur="onDatePickerBlur"
           />
         </b-form-row>
         <b-form-row v-if="planMode == 'meetingRoom' && doCompare" class="my-1 ml-2 ml-sm-0">
           <label class="ml-sm-4 ml-2 mr-2">
-            {{ '凡例' }}
+            {{ $t('label.legend') }}
           </label>
           <ul class="list-group list-group-horizontal">
-            <li class="list-group-item actual-in-plan">予定有・利用有</li>
-            <li class="list-group-item no-actual">予定有・利用無</li>
-            <li class="list-group-item actual-out-of-plan">予定無・利用有</li>
+            <li class="list-group-item actual-in-plan">{{ $t('label.planned') }}・{{ $t('label.used') }}</li>
+            <li class="list-group-item no-actual">{{ $t('label.planned') }}・{{ $t('label.noUse') }}</li>
+            <li class="list-group-item actual-out-of-plan">{{ $t('label.noPlan') }}・{{ $t('label.used') }}</li>
           </ul>
         </b-form-row>
       </b-form>
     </b-row>
-    <plan-calendar :id="id" :name="name" :appServicePath="appServicePath" :planMode="planMode" :currentUser="currentUser" :headerOpts="headerOpts" :viewModel="viewModel" :dragHandler="dragHandler" :clickScheduleEvent="clickScheduleEvent" :mgViewModel="mgViewModel" :doCompare="doCompare" @doEdit="doEdit" @doDelete="onDeleteSchedule"/>
+    <plan-calendar :id="id" :name="name" :appServicePath="appServicePath" :planMode="planMode" :currentUser="currentUser" :headerOpts="headerOpts" :viewModel="viewModel" :dragHandler="dragHandler" :clickScheduleEvent="clickScheduleEvent" :doCompare="doCompare" :holidays="holidays" :working="working" @doEdit="doEdit" @doDelete="onDeleteSchedule"/>
     <div>
-      <b-modal id="editPlanModal" v-model="showEdit" hide-footer :title="$t('label.schedule')" header-class="editPlanHeader">
-        <edit-plan :id="id" :name="name" :appServicePath="appServicePath" :currentUser="currentUser" :plan="targetPlan" :zoneOpts="zoneOpts" :locationOpts="locationOpts" :potPersonOpts="filterPotPersonOpts" :potThingOpts="potThingOpts" :vueSelected="editVueSelected" @doneSave="onEditSave" @delete="onEditDelete"/>
+      <b-modal v-model="showEdit" hide-footer :title="$t('label.schedule')" header-class="editPlanHeader">
+        <edit-plan :id="id" :name="name" :appServicePath="appServicePath" :currentUser="currentUser" :locale="locale" :plan="targetPlan" :zoneOpts="zoneOpts" :locationOpts="locationOpts" :potPersonOpts="filterPotPersonOpts" :potThingOpts="potThingOpts" :vueSelected="editVueSelected" @doneSave="onEditSave" @delete="onEditDelete" @errorMessage="onEditError"/>
       </b-modal>
     </div>
   </div>
 </template>
 <script>
-// FIXME: 日本語リテラルはすべてja.jsonから取るようにする
 
 import moment from 'moment'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
@@ -120,10 +120,11 @@ import { TimeCreation } from '../../sub/calendar/handler/time/creation'
 import { TimeMove } from '../../sub/calendar/handler/time/move'
 import { TimeResize } from '../../sub/calendar/handler/time/resize'
 import {getLogin} from '../../sub/helper/base/LocalStorageHelper'
+import alert from '../../components/parts/alert.vue'
 
 export default {
   components: {
-    editPlan, breadcrumb, DatePicker, planCalendar
+    editPlan, breadcrumb, DatePicker, planCalendar, alert
   },
   mixins: [commonmixin],
   data () {
@@ -134,9 +135,9 @@ export default {
       items: ViewHelper.createBreadCrumbItems('main', 'plan'),
       currentUser: null,
       currentUserPotIds: [],
+      message: '',
+      locale: null,
 
-      moveGuideHandler: null,
-      mgViewModel: null,
       clickScheduleEvent: null,
 
       planMode: 'normal',
@@ -159,6 +160,8 @@ export default {
       today: moment().day(1).set({hour:0,minute:0,second:0,millisecond:0}).toDate(),
       preDate: moment().day(1).set({hour:0,minute:0,second:0,millisecond:0}).toDate(),
       doFetchData: false,
+      holidays: [],
+      working: {},
 
       // 会議室モード
       headerOpts: [],
@@ -176,8 +179,12 @@ export default {
       resizeHandler: null,
 
       // マスタ情報
-      loadStates: ['areas', 'zones', 'locations', 'groups', 'categories', 'pots'],
-      options: [],
+      areaOpts: [],
+      zoneOpts: [],
+      locationOpts: [],
+      groupOpts: [],
+      categoryOpts: [],
+      potOpts: [],
       potPersonOpts: [],
       potThingOpts: [],
 
@@ -190,7 +197,7 @@ export default {
         {value:'groups', text: this.$t('label.group')},
         {value:'categories', text: this.$t('label.category')},
         {value:'pots', text: this.$t('label.pot')},
-        {value:'potPerson', text: this.$t('label.potPerson')},
+        {value:'potPersons', text: this.$t('label.potPerson')},
       ],
       mRoomFilterTypeOpts: [
         {value:'areas', text: this.$t('label.area')},
@@ -237,12 +244,6 @@ export default {
     }
   },
   computed: {
-    zoneOpts() { // TODO: commonmixinのを使う
-      return this.options['zones']
-    },
-    locationOpts() { // TODO: commonmixinのを使う
-      return this.options['locations']
-    },
     cssVars() {
       return {
         '--editPlanHeaderBgColor': DISP.PLAN.EDIT_PLAN_HEADER_BG_COLOR,
@@ -264,6 +265,14 @@ export default {
     },
   },
   watch: {
+    showEdit: {
+      handler: function(newVal, oldVal) {
+        if (!newVal && oldVal) {
+          this.creationHandler.clearGuideElement()
+        }
+      },
+      deep: false
+    },
     planModeFilter: {
       handler: function(newVal, oldVal){
         if (this.planMode != newVal.value) {
@@ -305,7 +314,28 @@ export default {
         this.selectedFilter.filterIds = []
         this.vueSelected.filter = null
         this.vueSelected.filters = []
-        this.filterOpts = this.loadStates.includes(newVal) ? this.options[newVal] : []
+        switch (newVal) {
+          case 'areas':
+            this.filterOpts = this.areaOpts
+            break;
+          case 'zones':
+            this.filterOpts = this.zoneOpts
+            break;
+          case 'locations':
+            this.filterOpts = this.locationOpts
+            break;
+          case 'groups':
+            this.filterOpts = this.groupOpts
+            break;
+          case 'categories':
+            this.filterOpts = this.categoryOpts
+            break;
+          case 'pots':
+            this.filterOpts = this.potOpts
+            break;
+          default:
+            this.filterOpts = []
+        }
         if (!newVal) {
           this.fetchData()
         }
@@ -353,6 +383,7 @@ export default {
     }
   },
   async mounted() {
+    this.locale = LocaleHelper.getSystemLocale()
     if (LocalStorageHelper.getLogin().isProviderUser) {
       this.showErrorModal({key: 'providerUserNotAllowed'})
       return
@@ -385,6 +416,24 @@ export default {
     },
     // マスタ
     async loadMaster() {
+      this.areaOpts = this.areas.map(area => {
+        return {value: area.areaId, label: area.areaName}
+      })
+      this.zoneOpts = this.zones.map(zone => {
+        return {value: zone.zoneId, label: zone.zoneName}
+      })
+      this.locationOpts = this.locations.map(location => {
+        return {value: location.locationId, label: location.locationName}
+      })
+      this.groupOpts = this.groups.map(e => {
+        return {value: e.groupId, label: e.groupName}
+      })
+      this.categoryOpts = this.categories.map(cate => {
+        return {value: cate.categoryId, label: cate.categoryName}
+      })
+      this.potOpts = this.pots.map(e => {
+        return {value: e.potId, label: e.potName}
+      })
       this.potPersonOpts = this.pots.filter(pot => pot.potType == CATEGORY.PERSON).map(pot => {
         return {value: pot.potId, label: pot.potName}
       })
@@ -395,27 +444,6 @@ export default {
         return z.categoryList.map(cate => cate.categoryCd=='MEETING_ROOM').includes(true)
       }).map(zone => {
         return {value: zone.zoneId, label: zone.zoneName}
-      })
-      this.makeOpts()
-    },
-    async makeOpts() {
-      this.loadStates.forEach( st => { // TODO: commonmixinのを使う
-        this.options[st] = this[st].map( e => {
-          switch (st) {
-          case 'areas': 
-            return {value: e.areaId, label: e.areaName}
-          case 'zones': 
-            return {value: e.zoneId, label: e.zoneName}
-          case 'locations': 
-            return {value: e.locationId, label: e.locationName}
-          case 'groups': 
-            return {value: e.groupId, label: e.groupName}
-          case 'categories': 
-            return {value: e.categoryId, label: e.categoryName}
-          case 'pots': 
-            return {value: e.potId, label: e.potName}
-          }
-        })
       })
     },
     onClickNavi(e) {
@@ -458,12 +486,10 @@ export default {
       this.preDate = dt
     },
     getNormalHeader(date) {
-      if (LocaleHelper.getSystemLocale() == 'ja') {
-        moment.updateLocale('ja', {
-          weekdays: ["日曜日","月曜日","火曜日","水曜日","木曜日","金曜日","土曜日"], // FIXME: locatlから取る。
-          weekdaysShort: ["日","月","火","水","木","金","土"],
-        }) 
-      }
+      moment.updateLocale(this.locale, {
+        weekdays: [this.$t('label.sunday'),this.$t('label.monday'),this.$t('label.tuesday'),this.$t('label.wednesday'),this.$t('label.thursday'),this.$t('label.friday'),this.$t('label.saturday')],
+        weekdaysShort: [this.$t('label.sun'),this.$t('label.mon'),this.$t('label.tue'),this.$t('label.wed'),this.$t('label.thu'),this.$t('label.fri'),this.$t('label.sat')],
+      }) 
       const sunday = moment(date).day(0)
       return [...Array(7).keys()].map(i => {
         const dt = moment(sunday).add(i, 'd')
@@ -501,14 +527,30 @@ export default {
           this.destoryHandlers()
           const dupMessage = this.$t('label.duplicateSchedule')
           const result = app.loadTimeLine(this.planMode, data, this.currentUser, dupMessage, this.headerOpts, this.doCompare, this.currentUserPotIds)
+          this.holidays = data.length > 0 ? data[0].holidays : []
+          this.working = data.length > 0 && data[0].workingStart ? this.workingTime(data[0].workingStart, data[0].workingEnd) : {}
           this.planMap = result[0]
           this.viewModel = result[1]
           this.dragHandler = new Drag({distance: 10}, document.getElementById('calendar-layout'))
           this.createHandlers()
         }
       }
-      catch(err) {
-        console.error(err)
+      catch(e) {
+        console.error(e)
+        this.message = e.response.data
+        this.replace({showAlert: true})
+        window.scrollTo(0, 0)
+      }
+    },
+    workingTime(start, end) {
+      const stHour = parseInt(start.substring(0, 2))
+      const stMin = parseInt(start.substring(2, 4))
+      const enHour = parseInt(end.substring(0, 2))
+      const enMin = parseInt(end.substring(2, 4))
+
+      return {
+        start: stHour * 3600000 + stMin * 60000,
+        end: enHour * 3600000 + enMin * 60000
       }
     },
     destoryHandlers() {
@@ -703,14 +745,29 @@ export default {
       }
       this.targetPlan.startDt = e.start
       this.targetPlan.endDt = e.end
-      const result = await AppServiceHelper.update(this.appServicePath, this.targetPlan)
-      this.fetchData()
+      try {
+        const result = await AppServiceHelper.update(this.appServicePath, this.targetPlan)
+        this.fetchData()
+      }
+      catch(e) {
+        console.error(e)
+        this.message = e.response.data
+        this.replace({showAlert: true})
+        window.scrollTo(0, 0)
+      }
     },
-    onEditSave(event) {
-            this.showEdit = false
-      const self = this
+    onEditError(message) {
+      this.showEdit = false
+      this.message = message
+      this.replace({showAlert: true})
+      window.scrollTo(0, 0)
+    },
+    onEditSave(message) {
+      this.showEdit = false
+      this.message = message
+      this.replace({showInfo: true})
       setTimeout(() => {
-        self.fetchData()
+        this.fetchData()
       }, 500);
     },
     onEditDelete(e) {
@@ -719,8 +776,16 @@ export default {
     },
     async onDeleteSchedule(event) {
       this.clickScheduleEvent = null
-      await AppServiceHelper.deleteEntity(this.appServicePath, event.schedule.data.planId)
-      this.fetchData()
+      try {
+        await AppServiceHelper.deleteEntity(this.appServicePath, event.schedule.data.planId)
+        this.fetchData()
+      }
+      catch(e) {
+        console.error(e)
+        this.message = e.response.data
+        this.replace({showAlert: true})
+        window.scrollTo(0, 0)
+      }
     },
     async onClickSync() {
       const login =  getLogin()

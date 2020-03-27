@@ -203,7 +203,7 @@ export default {
         return zone.areaId && zone.x && zone.y && zone.areaId == areaId && ((zone.x + zone.w) >= width || (zone.y + zone.h) >= height)
       })
       const zoneSizeErrors = _.filter(this.zones, zone => {
-        return zone.areaId && zone.x && zone.y && zone.areaId == areaId && zone.w > width || zone.h > height
+        return zone.areaId && zone.x && zone.y && zone.areaId == areaId && (zone.w > width || zone.h > height)
       })
 
       this.posError = exbError || txError || Util.hasValue(zoneErrors) || Util.hasValue(zoneSizeErrors)

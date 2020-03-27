@@ -54,9 +54,10 @@ export const setApp = (pStore, pI18n) => {
  * @param {Number} count mock用
  * @param {Boolean} [allShow = false] 検知されないデバイスの情報も取得する。
  * @param {Boolean} [fixSize = false] 固定サイズ用の幅と高さをcssに適用する。
+ * @param {Boolean} [showMRoom = false] 会議室状況を表示する。
  * @return {Object[]}
  */
-export const loadPosition = async (count, allShow = false, fixSize = false) => { // position-display, pir, position-list, position, sensor-list
+export const loadPosition = async (count, allShow = false, fixSize = false, showMRoom = false) => { // position-display, pir, position-list, position, sensor-list
   const pMock = DEV.USE_MOCK_EXC? mock.positions[count]: null
 
   let positions = await EXCloudHelper.fetchPositionHistory(allShow, pMock)
@@ -66,6 +67,10 @@ export const loadPosition = async (count, allShow = false, fixSize = false) => {
   const txIdMap = store.state.app_service.txIdMap
   const exbIdMap = store.state.app_service.exbIdMap
   const locationIdMap = store.state.app_service.locationIdMap
+  const locationMRoomPlanMap = showMRoom ? store.state.main.locationMRoomPlanMap : null
+  if (showMRoom) {
+    positions = positions.filter(pos => locationMRoomPlanMap[pos.locationId])
+  }
 
   positions = _(positions).filter(pos => allShow || DEV.NOT_FILTER_TX || txIdMap[pos.txId])
     .filter(pos => allShow || Util.hasValue(pos.locationId) && locationIdMap[pos.locationId] && (txIdMap[pos.txId] && NumberUtil.bitON(txIdMap[pos.txId].disp, TX.DISP.POS)))
@@ -701,7 +706,7 @@ export const createTxDetailInfo = (x, y, tx, canvasScale, offset, containerRect,
   const extValue = Util.v(tx, 'pot.extValue')
   if(extValue){
     Object.keys(extValue).forEach( key => { 
-      if(!ret[key]){ // 既にあるキーは書き換えない
+      if(!ret[key] && extValue[key] ){ // 既にあるキーは書き換えないかつ値が存在する拡張キーのみ表示対象にする
         ret[key] = i18n.tnl('label.' + key) + ':' + extValue[key] 
       }
     } )

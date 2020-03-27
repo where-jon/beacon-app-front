@@ -12,6 +12,10 @@
       </div>
       <!-- right -->
       <div id='tgScrl' class="tui-full-calendar-timegrid-right sync-scroll" :style="{'margin-left': styles.leftWidth}" @scroll="handleScroll">
+          <div class="wt-timegrid-schedules">
+            <div v-for="(headerOpt, idx) in headerOpts" :key="idx" class="wt-time-date" :style="workingTimeDateStyle(headerOpt.value)">
+            </div>
+          </div>
           <div id="tg-h-g" class="tui-full-calendar-timegrid-h-grid">
             <div v-for="(timeSlot, idx) in timeSlots" :key="idx" class="tui-full-calendar-timegrid-gridline" :style="{height: styles.oneHourHeight}">
               <div class="tui-full-calendar-timegrid-gridline-half" :style="{height: styles.halfHourHeight, 'border-bottom': styles.halfHourBorderBottomone}"></div>
@@ -19,7 +23,7 @@
           </div>
           <div id="tg-s" class="tui-full-calendar-timegrid-schedules">
             <div class="tui-full-calendar-timegrid-schedules-container">
-              <div v-for="(headerOpt, idx) in headerOpts" :key="idx" :class="idx == headerOpts.length-1 ? 'tui-full-calendar-time-date-last' : 'tui-full-calendar-time-date'" :data-id="headerOpt.value" :style="timeDateStyle(headerOpt.value)">
+              <div v-for="(headerOpt, idx) in headerOpts" :key="idx" class="tui-full-calendar-time-date" :data-id="headerOpt.value" :style="timeDateStyle(headerOpt.value, headerOpts.length-1 == idx)">
                 <time-panel-compare v-if="doCompare" :headerId="headerOpt.value" :viewModel="viewModel">
                 </time-panel-compare>
                 <time-panel v-if="!doCompare" :isToday="today == headerOpt.value" :headerId="headerOpt.value" :viewModel="viewModel">
@@ -46,6 +50,7 @@ import { Theme } from '../../../sub/calendar/theme/theme'
 import moment from 'moment'
 import timePanel from './time-panel.vue'
 import timePanelCompare from './time-panel-compare.vue'
+import * as chroma from 'chroma-js'
 
 export default {
   components: {
@@ -57,6 +62,8 @@ export default {
     timeSlots: null,
     viewModel: null,
     doCompare: null,
+    holidays: null,
+    working: null,
   },
   data () {
     return {
@@ -67,17 +74,44 @@ export default {
       showHourMarker: false,
       todaymarkerLeft: 0,
       todaymarkerWidth: 0,
-      todaymarkerRight: 0
+      todaymarkerRight: 0,
+      workingBgColor: chroma('#edebe9').alpha(0.25),
     }
   },
   computed: {
     timeDateStyle() {
-      return (headerId) => {
+      return (headerId, isLast) => {
         const lw = this.viewModel.timeLineLeftAndWidth
         return {
           left: (lw[headerId] ? lw[headerId].left : 0) + '%',
           width: (lw[headerId] ? lw[headerId].width : 0) + '%',
-          'border-right': this.styles.borderRight,
+          'border-right': isLast ? 'none' : this.styles.borderRight,
+        }
+      }
+    },
+    workingTimeDateStyle() {
+      return (headerId) => {
+        let isHoliday = false
+        if (this.holidays) {
+          isHoliday = this.holidays.includes(headerId)
+        }
+        const baseMS = 24 * 60 * 60 * 1000
+        const baseHeight = 1248
+
+        let start = !isHoliday && this.working ? this.working.start : 0
+        let end = !isHoliday && this.working ? this.working.end : 0
+
+        const duration = end - start
+        const top = (baseHeight * start) / baseMS
+        const height = (baseHeight * duration) / baseMS
+
+        const lw = this.viewModel.timeLineLeftAndWidth
+        return {
+          left: (lw[headerId] ? lw[headerId].left : 0) + '%',
+          width: (lw[headerId] ? lw[headerId].width : 0) + '%',
+          top: `${top}px`,
+          height: `${height}px`,
+          backgroundColor: this.workingBgColor
         }
       }
     }
@@ -187,5 +221,19 @@ export default {
   right: 0;
   text-align: center;
   line-height: 25px;
+}
+.wt-timegrid-schedules {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  cursor: pointer;
+}
+.wt-time-date {
+  position: absolute;
+  height: 100%;
+  margin-left: -1px;
+  box-sizing: content-box;
 }
 </style>

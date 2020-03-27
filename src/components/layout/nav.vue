@@ -23,7 +23,9 @@
               {{ $i18n.tnl('label.' + group.key) }}
             </em>
           </template>
-          <b-dropdown-item v-for="page in group.pages" :key="page.key" v-t="'label.' + (page.label? page.label: page.key)" :class="navbarClasses" href="#" @click="move('/' + group.base + page.path)" />
+          <span v-for="page in group.pages" :key="page.key">
+            <b-dropdown-item v-if="isMenuShow(page.key)" v-t="'label.' + (page.label? page.label: page.key)" :class="navbarClasses" href="#" @click="move('/' + group.base + page.path)" />
+          </span>
         </b-nav-item-dropdown>
       </b-navbar-nav>
 
@@ -305,6 +307,9 @@ export default {
       }
       return ret
     },
+    isMenuShow(page) {
+      return !APP.MENU.MENU_HIDDEN_LIST.includes(page)  // リストに存在した場合はメニュー非表示
+    }
   }
 }
 </script>

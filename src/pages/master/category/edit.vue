@@ -138,6 +138,7 @@ export default {
         zoneGuards: [],
         zoneDoors: [],
       },
+      categoryCdOld: null
     }
   },
   computed: {
@@ -221,19 +222,18 @@ export default {
     getZoneDoorOptions(){
       return this.getZoneOptions(ZONE.DOOR)
     },
-    onBeforeReload(isInit){
+    onBeforeReload(isInit){ // isInitはcreatedから呼ばれたとき
       if (this.form) {
         if(!isInit) {
           this.form.categoryType = this.oldType? this.oldType: this.categoryTypes[0].value
           this.vueSelected.zoneGuards = []
           this.vueSelected.zoneDoors = []
+          this.form.categoryCd = MasterHelper.nextCd(this.categoryCdOld)
         }
         this.form.displayShape = this.oldShape? this.oldShape: this.shapes[0].value
         this.form.displayColor = ColorUtil.colorCd4display(this.oldColor? this.oldColor: null, this.defaultColor)
         this.form.displayBgColor = ColorUtil.colorCd4display(this.oldBgColor? this.oldBgColor: null, this.defaultBgColor)
         const categoryList = this.categories.filter(category => category.systemUse == 0)
-        // TODO:大容量のときはcategoryマスタを保持できないのでいったんコメントアウト
-        //this.form.categoryCd = MasterHelper.createMasterCd('category', categoryList, this.category)
       }
     },
     async onSaving() {
@@ -265,7 +265,7 @@ export default {
     },
     async onSaved(){
       const categoryList = this.categories.filter(category => category.systemUse == 0)
-      this.$set(this.form, 'categoryCd', MasterHelper.createMasterCd('category', categoryList, this.category))
+      this.categoryCdOld = this.form.categoryCd
     }
   },
 }
