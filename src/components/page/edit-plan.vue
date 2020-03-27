@@ -15,10 +15,17 @@
         </b-form-row>
         <!-- 出席者 -->
         <b-form-row class="mt-3 mb-3">
-            <b-col cols="1" align="middle"><img src="~/assets/icon/person.svg" class="edit-plan-icon"></b-col>
-            <b-col cols="11">
-            <div>
-          <multiselect v-model="vueSelected.potPersonList" :hide-selected="true" tag-placeholder="" :select-label="$t('label.select')" :deselect-label="$t('label.remove')" :placeholder="participantMessage" label="label" track-by="value" :options="potPersonOpts" :multiple="true" :taggable="false" :disabled="!plan.editable"></multiselect>
+          <b-col cols="1" align="middle"><img src="~/assets/icon/person.svg" class="edit-plan-icon"></b-col>
+          <b-col cols="11">
+          <div>
+          <v-select v-model="vueSelected.potPersonList" :options="potPersonOpts" multiple :close-on-select="false" class="vue-options-multi" style="width: 380px;">
+            <template slot="selected-option" slot-scope="option">
+              {{ vueSelectCutOn(option) }}
+            </template>
+            <template slot="no-options">
+              {{ vueSelectNoMatchingOptions }}
+            </template>
+          </v-select>
           </div>
             </b-col>
         </b-form-row>
@@ -38,7 +45,7 @@
               type="date"
               :placeholder="$t('label.date')"
               size="large"
-              style="width: 135px;"
+              style="width: 9rem;"
               :disabled="!plan.editable"
               @blur="onPlanDateBlur"
             >
@@ -51,7 +58,7 @@
               :start-placeholder="$t('label.start')"
               :end-placeholder="$t('label.end')"
               value-format="HH:mm:ss"
-              style="width: 250px;"
+              style="width: 15rem;"
               :disabled="!plan.editable"
               @blur="onPlanDateBlur"
             >
@@ -71,16 +78,16 @@
                :color="{checked: '#66cdaa', unchecked: '#87cefa', disabled: '#cccccc'}"
                :sync="true"
                :labels="{checked: $t('label.initLocation'), unchecked: $t('label.meetingRoom')}"
-               v-bind:width="60" @change="onChangeToggle"/>
+               :width="locationToggleWidth" @change="onChangeToggle"/>
           </div>
         </b-form-row>
         <!-- 会議室 -->
         <b-form-row v-if="!plan.isLocation" class="mt-3">
           <b-col cols="1" align="middle"><img src="~/assets/icon/location.svg" class="edit-plan-icon"></b-col>
           <b-col cols="11">
-          <v-select v-model="vueSelected.zone" :options="zoneOpts" class="inputSelect vue-options" :style="vueSelectStyle" :disabled="!plan.editable">
+          <v-select v-model="vueSelected.zone" :options="zoneOpts" class="inputSelect vue-options" style="width: 380px;" :disabled="!plan.editable">
             <template slot="selected-option" slot-scope="option">
-              {{ vueSelectCutOn(option, true) }}
+              {{ vueSelectCutOnWithWidth(option, 380) }}
             </template>
             <template slot="no-options">
               {{ vueSelectNoMatchingOptions }}
@@ -100,9 +107,9 @@
         <b-form-row v-if="plan.isLocation" class="mt-3">
           <b-col cols="1" align="middle"><img src="~/assets/icon/location.svg" class="edit-plan-icon"></b-col>
           <b-col cols="11">
-          <v-select v-model="vueSelected.location" :options="locationOpts" class="inputSelect vue-options" :style="vueSelectStyle" :disabled="!plan.editable">
+          <v-select v-model="vueSelected.location" :options="locationOpts" class="inputSelect vue-options" style="width: 380px;" :disabled="!plan.editable">
             <template slot="selected-option" slot-scope="option">
-              {{ vueSelectCutOn(option, true) }}
+              {{ vueSelectCutOnWithWidth(option, 380) }}
             </template>
             <template slot="no-options">
               {{ vueSelectNoMatchingOptions }}
@@ -122,9 +129,9 @@
         <b-form-row class="mt-3">
           <b-col cols="1" align="middle"><img src="~/assets/icon/box.svg" class="edit-plan-icon"></b-col>
           <b-col cols="11">
-          <v-select v-model="vueSelected.potThing" :options="potThingOpts" class="inputSelect vue-options" :style="vueSelectStyle" :disabled="!plan.editable">
+          <v-select v-model="vueSelected.potThing" :options="potThingOpts" class="inputSelect vue-options" style="width: 380px;" :disabled="!plan.editable">
             <template slot="selected-option" slot-scope="option">
-              {{ vueSelectCutOn(option, true) }}
+              {{ vueSelectCutOnWithWidth(option, 380) }}
             </template>
             <template slot="no-options">
               {{ vueSelectNoMatchingOptions }}
@@ -169,8 +176,6 @@ import { importElementUI } from '../../sub/helper/ui/ViewHelper'
 import { DISP } from '../../sub/constant/config'
 import { DatePicker, TimePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import Multiselect from 'vue-multiselect'
-import 'vue-multiselect/dist/vue-multiselect.min.css'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 import moment from 'moment'
 import { ToggleButton } from 'vue-js-toggle-button'
@@ -178,13 +183,14 @@ import { ToggleButton } from 'vue-js-toggle-button'
 export default {
   mixins: [commonmixin, editmixin],
   components: {
-    DatePicker, TimePicker, Multiselect, ToggleButton
+    DatePicker, TimePicker, ToggleButton
   },
   props: {
     name: null,
     id: null,
     appServicePath: null,
     showEdit: false,
+    locale: null,
     plan: null,
     zoneOpts: null,
     locationOpts: null,
@@ -248,6 +254,9 @@ export default {
     },
   },
   computed: {
+    locationToggleWidth() {
+      return this.locale == 'ja' ? 60 : 100
+    },
     userName() {
       return this.currentUser && this.currentUser.isAd ? this.plan.potName : this.plan.userName
     },

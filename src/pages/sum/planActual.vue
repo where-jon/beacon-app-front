@@ -9,7 +9,7 @@
             {{ $t('label.mode') }}
           </label>
           <span :title="indicatorTypeFilter.label">
-            <v-select v-model="indicatorTypeFilter" :options="indicatorTypeOpts" :clearable="false" style="width: 400px;">
+            <v-select v-model="indicatorTypeFilter" :options="indicatorTypeOpts" :clearable="false" :style="indicatorTypeFilterSelector">
               <template slot="no-options">
                 {{ vueSelectNoMatchingOptions }}
               </template>
@@ -26,9 +26,9 @@
           </label>
           <b-form-select v-model="vueSelected.filterType" :options="filterTypeOpts" class="ml-2 inputSelect" />
           <span :title="vueSelectTitle(vueSelected.filter)">
-            <v-select v-model="vueSelected.filter" :options="filterOpts" class="ml-2 inputSelect vue-options" :style="vueSelectStyle">
+            <v-select v-model="vueSelected.filter" :options="filterOpts" class="ml-2 inputSelect vue-options" style="width: 400px;">
               <template slot="selected-option" slot-scope="option">
-                {{ vueSelectCutOn(option) }}
+                {{ vueSelectCutOnWithWidth(option, 400) }}
               </template>
               <template slot="no-options">
                 {{ vueSelectNoMatchingOptions }}
@@ -42,6 +42,7 @@
             :color="{checked: '#66cdaa', unchecked: '#87cefa', disabled: '#cccccc'}"
             :sync="true"
             :labels="{checked: $t('label.week'), unchecked: $t('label.month')}"
+            :width="65"
             @change="onChangeToggle"
           />
           <date-picker
@@ -51,7 +52,7 @@
             :type="datePickerType"
             :format="datePickerFormat"
             size="large"
-            style="width: 170px;"
+            style="width: 11rem;"
             :placeholder="datePickerPlaceholder"
             @blur="onDatePickerBlur"
           />
@@ -105,6 +106,7 @@ import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as ColorUtil from '../../sub/util/ColorUtil'
 import { APP_SERVICE } from '../../sub/constant/config'
 import alert from '../../components/parts/alert.vue'
+import * as LocaleHelper from '../../sub/helper/base/LocaleHelper'
 
 export default {
   components: {
@@ -119,6 +121,7 @@ export default {
       items: ViewHelper.createBreadCrumbItems('sumTitle', 'planActual'),
       sortBy: 'name',
       message: '',
+      locale: null,
 
       indicatorTypeOpts: [
         {value:0, label: `${this.$i18n.tnl('label.operatingRate')}（${this.$i18n.tnl('label.operatingHours')}／${this.$i18n.tnl('label.workingHours')}）`},
@@ -210,6 +213,9 @@ export default {
     }
   },
   computed: {
+    indicatorTypeFilterSelector() {
+      return this.locale == 'ja' ? 'width: 400px;' : 'width: 570px;'
+    }
   },
   watch: {
     indicatorTypeFilter: {
@@ -279,6 +285,7 @@ export default {
     this.loadMaster()
   },
   async mounted() {
+    this.locale = LocaleHelper.getSystemLocale()
     importElementUI()
     this.tFields = this.tFieldsReservationRate
   },

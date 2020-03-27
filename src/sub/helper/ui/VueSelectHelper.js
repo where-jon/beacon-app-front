@@ -60,6 +60,11 @@ export const vueSelectCutOn = (selected, required = false) => {
   return selected? StringUtil.cutOnLongWidth(selected.label, DISP.CONTROL.COMBO_BOX.W * 0.9, true, style): null
 }
 
+export const vueSelectCutOnWithWidth = (selected, width, required = false) => {
+  const style = {padding: required? '1.4em': '2em'}
+  return selected? StringUtil.cutOnLongWidth(selected.label, width * 0.9, true, style): null
+}
+
 /**
  * v-selectの選択中文字が省略されているか確認する
  * @method

@@ -25,17 +25,17 @@
           </label>
           <b-form-select v-model="vueSelected.filterType" :options="filterTypeOpts" class="ml-2 inputSelect" />
           <span :title="vueSelectTitle(vueSelected.filter)">
-            <v-select v-if="vueSelected.filterType == 'potPersons'" v-model="vueSelected.filters" :options="potPersonOpts" multiple :close-on-select="false" class="vue-options-multi">
+            <v-select v-if="vueSelected.filterType == 'potPersons'" v-model="vueSelected.filters" :options="potPersonOpts" multiple :close-on-select="false" class="vue-options-multi" style="width: 400px;">
               <template slot="selected-option" slot-scope="option">
-                {{ vueSelectCutOn(option) }}
+                 {{ vueSelectCutOn(option) }}
               </template>
               <template slot="no-options">
                 {{ vueSelectNoMatchingOptions }}
               </template>
             </v-select>
-            <v-select v-else v-model="vueSelected.filter" :options="filterOpts" class="ml-2 inputSelect vue-options" :style="vueSelectStyle">
+            <v-select v-else v-model="vueSelected.filter" :options="filterOpts" class="ml-2 inputSelect vue-options" style="width: 400px;">
               <template slot="selected-option" slot-scope="option">
-                {{ vueSelectCutOn(option) }}
+                 {{ vueSelectCutOnWithWidth(option, 400) }}
               </template>
               <template slot="no-options">
                 {{ vueSelectNoMatchingOptions }}
@@ -70,7 +70,7 @@
             :type="datePickerType"
             :format="datePickerFormat"
             size="large"
-            style="width: 170px;"
+            style="width: 11rem;"
             :placeholder="datePickerPlaceholder"
             @blur="onDatePickerBlur"
           />
@@ -90,7 +90,7 @@
     <plan-calendar :id="id" :name="name" :appServicePath="appServicePath" :planMode="planMode" :currentUser="currentUser" :headerOpts="headerOpts" :viewModel="viewModel" :dragHandler="dragHandler" :clickScheduleEvent="clickScheduleEvent" :doCompare="doCompare" :holidays="holidays" :working="working" @doEdit="doEdit" @doDelete="onDeleteSchedule"/>
     <div>
       <b-modal v-model="showEdit" hide-footer :title="$t('label.schedule')" header-class="editPlanHeader">
-        <edit-plan :id="id" :name="name" :appServicePath="appServicePath" :currentUser="currentUser" :plan="targetPlan" :zoneOpts="zoneOpts" :locationOpts="locationOpts" :potPersonOpts="filterPotPersonOpts" :potThingOpts="potThingOpts" :vueSelected="editVueSelected" @doneSave="onEditSave" @delete="onEditDelete" @errorMessage="onEditError"/>
+        <edit-plan :id="id" :name="name" :appServicePath="appServicePath" :currentUser="currentUser" :locale="locale" :plan="targetPlan" :zoneOpts="zoneOpts" :locationOpts="locationOpts" :potPersonOpts="filterPotPersonOpts" :potThingOpts="potThingOpts" :vueSelected="editVueSelected" @doneSave="onEditSave" @delete="onEditDelete" @errorMessage="onEditError"/>
       </b-modal>
     </div>
   </div>
@@ -136,6 +136,7 @@ export default {
       currentUser: null,
       currentUserPotIds: [],
       message: '',
+      locale: null,
 
       clickScheduleEvent: null,
 
@@ -382,6 +383,7 @@ export default {
     }
   },
   async mounted() {
+    this.locale = LocaleHelper.getSystemLocale()
     if (LocalStorageHelper.getLogin().isProviderUser) {
       this.showErrorModal({key: 'providerUserNotAllowed'})
       return
@@ -484,12 +486,10 @@ export default {
       this.preDate = dt
     },
     getNormalHeader(date) {
-      if (LocaleHelper.getSystemLocale() == 'ja') {
-        moment.updateLocale('ja', {
-          weekdays: [this.$t('label.sunday'),this.$t('label.monday'),this.$t('label.tuesday'),this.$t('label.wednesday'),this.$t('label.thursday'),this.$t('label.friday'),this.$t('label.saturday')],
-          weekdaysShort: [this.$t('label.sun'),this.$t('label.mon'),this.$t('label.tue'),this.$t('label.wed'),this.$t('label.thu'),this.$t('label.fri'),this.$t('label.sat')],
-        }) 
-      }
+      moment.updateLocale(this.locale, {
+        weekdays: [this.$t('label.sunday'),this.$t('label.monday'),this.$t('label.tuesday'),this.$t('label.wednesday'),this.$t('label.thursday'),this.$t('label.friday'),this.$t('label.saturday')],
+        weekdaysShort: [this.$t('label.sun'),this.$t('label.mon'),this.$t('label.tue'),this.$t('label.wed'),this.$t('label.thu'),this.$t('label.fri'),this.$t('label.sat')],
+      }) 
       const sunday = moment(date).day(0)
       return [...Array(7).keys()].map(i => {
         const dt = moment(sunday).add(i, 'd')
