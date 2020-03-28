@@ -8,7 +8,7 @@ import Chart from 'chart.js'
 import _ from 'lodash'
 import * as mock from '../../../assets/mock/mock'
 import { APP, DISP, DEV } from '../../constant/config'
-import { DISCOMFORT, SENSOR, THERMOHUMIDITY, SHAPE } from '../../constant/Constants'
+import { DISCOMFORT, SENSOR, THERMOHUMIDITY, SHAPE, CATEGORY } from '../../constant/Constants'
 import * as ArrayUtil from '../../util/ArrayUtil'
 import * as DateUtil from '../../util/DateUtil'
 import * as NumberUtil from '../../util/NumberUtil'
@@ -926,7 +926,7 @@ export const getMagnetGroupTypes = txList => txList.filter(val => val.groupId &&
  * @param {Object[]} categoryList
  * @return {Object[]}
  */
-export const getCategoryLegendElements = categoryList => categoryList.filter(category => !category.systemUse).map(val => ({ id: val.categoryId, name: val.categoryName, ...val,}))
+export const getCategoryLegendElements = categoryList => categoryList.filter(category => !category.systemUse && category.categoryType != CATEGORY.AUTH).map(val => ({ id: val.categoryId, name: val.categoryName, ...val,}))
 
 /**
  * グループの汎用を表示するための情報を取得する。
