@@ -281,6 +281,7 @@ import * as StringUtil from '../../sub/util/StringUtil'
 import * as Util from '../../sub/util/Util'
 import * as DomUtil from '../../sub/util/DomUtil'
 import * as AppServiceHelper from '../../sub/helper/dataproc/AppServiceHelper'
+import * as VueSelectHelper from '../../sub/helper/ui/VueSelectHelper'
 import * as AuthHelper from '../../sub/helper/base/AuthHelper'
 import { getCharSet } from '../../sub/helper/base/CharSetHelper'
 import * as DetectStateHelper from '../../sub/helper/domain/DetectStateHelper'
@@ -492,7 +493,7 @@ export default {
             this.selectedCategoryId = nVal
           }
           if (key == 'group') {
-            this.selectedGroupId = nVal
+            this.selectedGroupId = Util.getValue(newVal, 'value')
           }
         })
         if (this.compactMode) {
@@ -512,6 +513,8 @@ export default {
     if(Util.hasValue(currentArea)) {
       this.selectedAreaId = currentArea
     }
+    this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryOptions, this.selectedCategoryId, false)
+    this.vueSelected.group = VueSelectHelper.getVueSelectData(this.groupOptions, this.selectedGroupId, false)
     const strageMessage = LocalStorageHelper.popLocalStorage('listMessage')
     this.message = Util.hasValue(strageMessage)? strageMessage: this.listMessage
     this.replaceAS({listMessage: null})
