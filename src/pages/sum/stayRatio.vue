@@ -226,7 +226,7 @@ export default {
         this.hideProgress()
         return
       }
-      let viewList = this.getStayDataList(moment(this.form.date).format('YYYY-MM-DD'), dataList, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
+      let viewList = this.getStayDataList(moment(this.form.date).format('YYYY-MM-DD'), dataList, APP.STAY_SUM.ABSENT_LIMIT, APP.STAY_SUM.LOST_LIMIT)
       ArrayUtil.sortIgnoreCase(viewList, 'name')
 
       const searchDate = moment(this.form.date).format('YYYY-MM-DD')
