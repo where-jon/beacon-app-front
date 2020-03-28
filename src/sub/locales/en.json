@@ -1360,7 +1360,7 @@
       "HUMIDITY_PATTERN": {
         "NUMBER": "Numerics::Threshold。",
         "LESS": "LESS::Display a warining when you measure humidity under the threshold.",
-        "MORE": "MORE::Display a warining when you measure humidity above the threshold."
+        "MORE": "MORE::Display a warining when you measure humidity above or equal to the threshold."
       },
       "SORT": {
         "asc": "asc::Ascending order",
