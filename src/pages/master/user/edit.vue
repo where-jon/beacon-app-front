@@ -273,6 +273,7 @@ export default {
         pass: this.pass,
         userRegionList: [],
         potUserList: [],
+        minors: []
       }
       if(Util.hasValue(this.regionIdList)){
         entity.userRegionList = this.regionIdList.filter(e => e).map(regionId => ({
@@ -286,6 +287,10 @@ export default {
             potUserPK: {userId: dummyKey--, potId}, regionId: this.regionIdList[index]
           }
         })
+        entity.minors = this.txs.filter(tx => {
+          const potId = Util.v(tx, 'pot.potId')
+          return potId && this.potIdList.includes(potId)
+        }).map(tx => tx.minor)
       }
       return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
     },
