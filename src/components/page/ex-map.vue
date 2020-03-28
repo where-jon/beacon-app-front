@@ -1166,7 +1166,7 @@ export default {
       this.txCont.removeAllChildren()
 
       // 不在表示用ゾーン
-      if (this.pShowAbsent) {
+      if (this.pShowAbsent && !this.isQuantity) {
         this.showAbsentZoneTxAll()
       }
 
