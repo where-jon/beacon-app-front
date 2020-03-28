@@ -131,6 +131,7 @@ export default {
     },
     async loadProhibitDetect() {
       if (Util.hasValueAny(APP.POS.PROHIBIT_GROUP_ZONE, APP.POS.LOST_GROUP_ZONE)) {
+        clearInterval(this.prohibitInterval)  // 点滅クリア
         Util.merge(this, await ProhibitHelper.loadProhibitDetect(ALERT_STATE.WHOLE, this.stage, this.icons, this.zones))
       }
     },
