@@ -1137,6 +1137,7 @@ export default {
         const y = location? location.y: selectedTxPosition.y
         this.showDetail(tx.btxId, x, y)
       }
+      this.resetDetail()
     },
     // ポップアップの自動非表示
     resetDetail() { // p, pir, position
