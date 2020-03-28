@@ -680,8 +680,8 @@ export default {
         const result = {
           date: date,
           name: data.potName, 
-          groupName: pot? pot.groupName: '',
-          categoryName: pot? pot.categoryName: '',
+          groupName: Util.v(pot, 'group.groupName', ''),
+          categoryName: (pot, 'category.categoryName', ''),
           graph: graphList,
           stayTime: moment().startOf('days').add(stayTime, 's').format('HH:mm') + ' (' + StayTimeHelper.getRatio(stayTime) + '%)', 
           lostTime: moment().startOf('days').add(lostTime, 's').format('HH:mm') + ' (' + StayTimeHelper.getRatio(lostTime) + '%)', 
