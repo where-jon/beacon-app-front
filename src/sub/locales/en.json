@@ -838,7 +838,7 @@
         "LOST": {
           "DUPLICATE_MAIL_TIME": "Duplicate alert notification limit (E-mail)::Prevents notification by e-mail when an alert with the same content is sent within the set up time. Set up in milliseconds."
         },
-        "PLUGIN": {
+        "$PLUGIN": {
           "FILTER": "Use detailed filter on position screen::Use plug-in to display detailed filter on position screen"
         }
       },

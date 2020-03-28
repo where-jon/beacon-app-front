@@ -200,6 +200,9 @@ export const createSetting = (setting, isTenant, option) => {
  */
 export const getI18ConfigInner = (config, isTenant, parentKey = '', list = []) => {
   Object.keys(config).forEach(configKey => {
+    if (configKey.includes('$')) { // キーに$を含むものはコメントアウト扱いにして表示しない
+      return
+    }
     const data = config[configKey]
     const key = parentKey + configKey
     if(typeof data == 'object' && !ArrayUtil.isArray(data)){
