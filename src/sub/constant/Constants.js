@@ -116,7 +116,7 @@ export const BULK = {
     LOCATION: { ALLOW: ['updateKey', 'ID', 'locationName', 'txViewType'] },
     POT: { ALLOW: ['updateKey', 'ID', 'potName', 'potType'] },
     CATEGORY: { ALLOW: ['updateKey', 'ID', 'categoryName', 'categoryType', 'color', 'bgColor', 'shape' ] },
-    AUTH_CATEGORY: { ALLOW: ['updateKey', 'ID', 'categoryName', 'categoryType', 'color', 'bgColor', 'shape' ] },
+    AUTH_CATEGORY: { ALLOW: ['updateKey', 'ID', 'categoryName', 'categoryType', 'guardNames', 'doorNames' ] },
     GROUP: { ALLOW: ['updateKey', 'ID', 'groupName', 'color', 'bgColor', 'shape'] },
     USER: { ALLOW: ['updateKey', 'loginId', 'roleName'], DISALLOW: ['potName'] },
     ROLE: { ALLOW: ['updateKey', 'roleName'], DISALLOW: ['loginId'] },

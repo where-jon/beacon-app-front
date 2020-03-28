@@ -18,7 +18,7 @@
           <b-form-select v-model="form.categoryType" :options="categoryTypes" :disabled="!isEditable" :readonly="!isEditable" required />
         </b-form-group>
 
-        <extform :is-editable="isEditable" :form="form" :p-ext-value="extValue" />
+        <extform v-if="!pShowAuth" :is-editable="isEditable" :form="form" :p-ext-value="extValue" />
 
         <b-form-group v-if="!selectZone && pShowIcon">
           <label v-t="'label.shape'" />

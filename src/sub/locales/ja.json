@@ -361,6 +361,7 @@
     "categoryThing": "物カテゴリ",
     "categoryZone": "ゾーンカテゴリ",
     "categoryAuth": "権限管理",
+    "categoryAuthCategory": "権限管理",
     "categoryId": "カテゴリID",
     "categoryCd": "ID",
     "categoryName": "カテゴリ名",

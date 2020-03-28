@@ -32,6 +32,7 @@ export default {
   computed: {
     ...mapState('app_service', [
       'user',
+      'roles',
     ]),
   },
   methods: {
@@ -48,7 +49,8 @@ export default {
     },
     onRestruct(entity, dummyKey){
       if(Util.hasValue(entity.roleName)) {
-        entity.role = {roleId: dummyKey--, roleName: entity.roleName}
+        const role = this.roles.find(role => role.roleName == entity.roleName)
+        entity.roleId = role? role.roleId: null
       }
       if(Util.hasValue(entity.regionNames)) {
         entity.userRegionList = entity.regionNames.split(BULK.SPLITTER).map(regionName => ({

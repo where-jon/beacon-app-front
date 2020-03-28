@@ -14,7 +14,7 @@ export default {
   },
   computed: {
     name() {
-      return 'auth'
+      return 'authCategory'
     },
     typeList() {
       return [CATEGORY.AUTH]
