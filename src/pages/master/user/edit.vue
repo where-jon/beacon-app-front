@@ -176,7 +176,8 @@ export default {
 
       // app-serviceからregionに対応したpotのリストを取得
       if (!potOptions) {
-        const regionPotList = await HttpHelper.getAppService(`/basic/pot/byRegion/${regionId}`)
+        const userId = Util.nvl(this.form.userId, -1)
+        const regionPotList = await HttpHelper.getAppService(`/basic/pot/byRegion/${regionId}/${userId}`)
         if (!regionPotList) return []
 
         // Option形式に変換
