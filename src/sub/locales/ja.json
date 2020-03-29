@@ -99,6 +99,7 @@
     "develop": "開発用",
     "env": "環境変数",
     "execTask": "バッチ実行",
+    "createSimulationData": "ランダムデータ作成",
     "detectedProhibitZone": "進入検知",
     "detectedLostZone": "持出検知",
     "exbId": "EXB ID",
@@ -782,7 +783,6 @@
     "hitoMono": "人・物レコード",
     "sample": "サンプル",
     "adminConsent": "管理者承認",
-    "dummy": "",
     "plan": "予定",
     "planActual": "予実比較",
     "actual": "実績",
@@ -794,8 +794,32 @@
     "posId": "位置ID",
     "planId": "予定ID",
     "planDetailId": "予定詳細ID",
-    "basetime": "基準時間"
-    
+    "basetime": "基準時間",
+
+    "batchTarget": "バッチ処理",
+    "POSITION": "測位",
+    "PROHIBIT_ZONE": "進入禁止",
+    "LOST_ZONE": "持出禁止",
+    "SENSOR_1": "温湿度",
+    "SENSOR_2": "PIR",
+    "SENSOR_3": "サーモパイル",
+    "SENSOR_5": "MEDiTAG",
+    "SENSOR_6": "マグネット",
+    "SENSOR_8": "圧力",
+    "SENSOR_9": "オムロン環境",
+    "SENSOR_10": "オムロンTP_HUMAN",
+    "SENSOR_11": "オムロンTP_ENV",
+    "MONITOR": "モニタ",
+    "UTILIZATION": "利用状況（未検証）",
+    "STAY_SUM": "滞在集計",
+    "PROXIMITY": "交流集計",
+    "AD_SYNC": "AD同期",
+    "ENTER_COUNT": "入退場集計",
+    "periodSec": "期間（秒）",
+    "stepSec": "間隔（秒）",
+    "Execute": "実行",
+            
+    "dummy": ""
   },
   "config": {
     "APP": {
@@ -1880,6 +1904,7 @@
     "meetingGraph": "会議室利用実績を表示する画面です。",
     "systemJson": "禁止区域侵入不可、もしくは重要物品の対象グループ設定を表示し、編集を行う画面です。",
     "execTask": "パラメータをセットしてバッチを実行する画面です。",
+    "createSimulationData": "パラメータをセットして手動でテストデータを登録する画面です。",
     "guestAccess": "来客アクセスを表示する画面です。",
     
     "dummy": ""

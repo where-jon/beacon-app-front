@@ -1332,6 +1332,11 @@ export const MENU = [
         path: 'execTask',
         icon: 'upload',
       },
+      {
+        key: 'createSimulationData',
+        path: 'createSimulationData',
+        icon: 'upload',
+      },
     ],
   },
 ]
