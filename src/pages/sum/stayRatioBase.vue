@@ -681,7 +681,7 @@ export default {
           date: date,
           name: data.potName, 
           groupName: Util.v(pot, 'group.groupName', ''),
-          categoryName: (pot, 'category.categoryName', ''),
+          categoryName: Util.v(pot, 'category.categoryName', ''),
           graph: graphList,
           stayTime: moment().startOf('days').add(stayTime, 's').format('HH:mm') + ' (' + StayTimeHelper.getRatio(stayTime) + '%)', 
           lostTime: moment().startOf('days').add(lostTime, 's').format('HH:mm') + ' (' + StayTimeHelper.getRatio(lostTime) + '%)', 
