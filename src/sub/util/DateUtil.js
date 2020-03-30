@@ -75,6 +75,13 @@ export const dateRange = (start, end, by) => {
 export const formatDate = (timestamp, format = 'YYYY/MM/DD HH:mm:ss') => timestamp? moment(typeof timestamp == 'object'? timestamp: new Date(timestamp)).format(format): ''
 
 /**
+ * 設定されたタイムゾーンを利用して日付フォーマットを行う
+ * @param {Number} timestamp Unix時間
+ * @param {String} [format = 'YYYY/MM/DD HH:mm:ss'] 表記はmoment.jsに準拠。 
+ */
+export const formatDateWithTimeZone = (timestamp, format = 'YYYY/MM/DD HH:mm:ss') => momentTz.tz(timestamp, TIME_ZONE.getData(APP.COMMON.TIME_ZONE)).format(format)
+
+/**
  * 時刻フォーマットを行う。
  * @method
  * @param {Number} time 秒　（UNIX TIMEではない）
