@@ -98,7 +98,7 @@ export default {
           const color = ColorUtil.getStackColor(i)
           if(per > 0){
             graph.push({
-              name: i,
+              name: this.$i18n.tnl('message.count', {count: i}),
               style: `width: ${per}% !important; background: ${color};`,
               time: DateUtil.toHHmm(second),
               ratio: Math.floor(per)
