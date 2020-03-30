@@ -169,10 +169,10 @@ export default {
         }
 
         // グラフ作成
-        const func = {getTotal: this.getTotal}
         if(isDownload){
           this.$parent.download(this.form, data)
         }else{
+          const func = {getTotal: this.getTotal}
           this.viewList = this.$parent.createGraph(this.form, data, func)
         }
 

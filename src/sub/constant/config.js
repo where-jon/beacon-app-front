@@ -326,7 +326,7 @@ export const APP = { // 機能面に関する設定
 
   // 活動実績
   ACTIVITY: {
-    STACK_TYPE: 'zoneCategory'
+    STACK_TYPE: 'location'
   },
   // 会議室利用実績
   MEETING: {
