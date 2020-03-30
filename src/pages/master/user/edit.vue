@@ -185,6 +185,7 @@ export default {
             value: pot.potId,
             text: pot.potName,
             lavbel: pot.potName,
+            cd: pot.potCd
           }
         })
         potOptions.unshift({value: null, text: '', label: ''})
@@ -264,30 +265,35 @@ export default {
     async onSaving() {
       let dummyKey = -1
       const entity = {
-        userId: Util.hasValue(this.form.userId) ? this.form.userId : dummyKey--,
+        updateKey: Util.hasValue(this.form.userId) ? this.form.userId : null,
         name: this.form.name,
         loginId: this.form.loginId,
         email: this.form.email,
-        roleId: this.role,
+        roleName: this.roleOptions.find(e => e.value == this.role).text,
         description: this.form.description,
         pass: this.pass,
-        userRegionList: [],
-        potUserList: [],
+        regionCd: null,
+        potCd: null,
       }
+      const self = this
+      const regionCdList = []
       if(Util.hasValue(this.regionIdList)){
-        entity.userRegionList = this.regionIdList.filter(e => e).map(regionId => ({
-          userRegionPK: {userId: dummyKey--, regionId}
-        }))
+        entity.regionCd = this.regionIdList.filter(regionId => regionId).map(regionId => {
+          const regionCd = self.regions.find(e => e.regionId == regionId).regionCd
+          regionCdList.push(regionCd)
+          return regionCd
+        }).join(";")
       }
       if(Util.hasValue(this.potIdList)){
-        entity.potUserList = this.potIdList.map((potId, index) => {
-          if (!potId) return
-          return {
-            potUserPK: {userId: dummyKey--, potId}, regionId: this.regionIdList[index]
-          }
-        })
+        entity.potCd = this.potIdList.filter(potId => potId).map((potId, index) => {
+          const regionCd = regionCdList[index]
+          const pot = self.potOptionList[index].find(e => e.value == potId)
+          const potCd = pot.cd
+          return `${regionCd}/${potCd}`
+        }).join(";")
       }
-      return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
+      console.log('!!!')
+      return await AppServiceHelper.save2(this.appServicePath, entity)
     },
     beforeSubmit(event, again){
       this.replace({showAlert: false})
