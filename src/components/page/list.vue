@@ -493,7 +493,7 @@ export default {
             this.selectedCategoryId = nVal
           }
           if (key == 'group') {
-            this.selectedGroupId = Util.getValue(newVal, 'value')
+            this.selectedGroupId = nVal
           }
         })
         if (this.compactMode) {
