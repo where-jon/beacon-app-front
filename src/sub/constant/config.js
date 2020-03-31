@@ -227,7 +227,7 @@ export const APP = { // 機能面に関する設定
   },
   // group
   GROUP: {
-    WITH: ['ruby'],
+    WITH: [], // 'ruby'
     // 拡張項目定義（サンプル）: デフォルトはなし
     EXT_DEF: [
       // {key: 'ruby', type: 'string', length: 20, showlist: true, sort: true },
