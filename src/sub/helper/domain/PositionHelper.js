@@ -355,7 +355,7 @@ export const addFixedPosition = (orgPositions, locations = [], selectedMapId = n
     pos.isFixedPosition = isFixedPosOnArea(pos.tx, selectedMapId)
 
     if (pos.isFixedPosition) { // txが場所固定されており、現在位置が場所固定ゾーンにいる場合（txの固定場所のゾーンでなくても同じエリアの固定ゾーンであれば）
-      pos.inFixedZone = pos.exb.location.isFixedPosZone // 今いる場所が固定場所ゾーンに入っているか
+      pos.inFixedZone = Util.v(pos, 'exb.location.isFixedPosZone') // 今いる場所が固定場所ゾーンに入っているか
       // 固定場所ゾーンにいず、かつ同じエリアにいて、検知状態の場合、フリーアドレスとしても表示
       if (!pos.inFixedZone && isInTheArea(pos, locations, selectedMapId) && pos.detectState == DETECT_STATE.DETECTED && !SensorHelper.isFixedSensorTx(pos.tx)) {
         const addPos = _.cloneDeep(pos)
