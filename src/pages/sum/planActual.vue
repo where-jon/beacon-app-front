@@ -338,6 +338,11 @@ export default {
           uri = `${uri}&filterType=${this.selectedFilter.filterType}&filterId=${this.selectedFilter.filterId}`
         }
         const data = await HttpHelper.getAppService(uri)
+        if (data.indicators.length == 0) {
+          this.message = this.$i18n.tnl('message.notFoundData', {target: this.indicatorTypeFilter.label})
+          this.replace({showAlert: true})
+          window.scrollTo(0, 0)
+        }
         this.loadIndicators(data)
       }
       catch(e) {
