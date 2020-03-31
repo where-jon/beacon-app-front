@@ -29,7 +29,7 @@
 import { APP } from '../../sub/constant/config'
 import { SENSOR, EXTRA_NAV } from '../../sub/constant/Constants'
 import * as Util from '../../sub/util/Util'
-import * as SensorHelper from '../../sub/helper/domain/SensorHelper'
+import * as LegendHelper from '../../sub/helper/domain/LegendHelper'
 import commonmixin from '../../components/mixin/commonmixin.vue'
 import exMap from '../../components/page/ex-map.vue'
 
@@ -93,7 +93,7 @@ export default {
   },
   methods: {
     getLegendItems(vComponent){
-      return SensorHelper.createTxLegends(vComponent.txs, vComponent.categories, vComponent.groups)
+      return LegendHelper.createTxLegends(vComponent.txs, vComponent.categories, vComponent.groups)
     },
   },
 }
