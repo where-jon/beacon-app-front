@@ -209,6 +209,7 @@ import * as PotHelper from '../../sub/helper/domain/PotHelper'
 import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as StyleHelper from '../../sub/helper/ui/StyleHelper'
 import * as TooltipHelper from '../../sub/helper/domain/TooltipHelper'
+import * as PlanHelper from '../../sub/helper/domain/PlanHelper'
 import * as ValidateHelper from '../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import * as VueSelectHelper from '../../sub/helper/ui/VueSelectHelper'
@@ -241,6 +242,10 @@ export default {
   mixins: [commonmixin, reloadmixin, showmapmixin],
   props: {
     pShowMRoomStatus: {
+      type: Boolean,
+      default: false,
+    },
+    pShowPir: {
       type: Boolean,
       default: false,
     },
@@ -603,17 +608,28 @@ export default {
       this.resetDetail()
     },
     iconMouseOver(event){
-      if(this.pQuantity){
-        this.createTooltip(event, event.target.parent)
-      }else if(APP.SENSOR.USE_THERMOH_TOOLTIP){
-        this.createThermoTooltip(event, event.target.parent)
+      console.log('!!!')
+      if (this.pShowMRoomStatus) {
+        this.createTooltipMRoom(event, event.target.parent)
+      } else if (this.pShowPir) {
+        this.createTooltipPir(event, event.target.parent)
+      } else {
+        if(this.pQuantity){
+          this.createTooltip(event, event.target.parent)
+        }else if(APP.SENSOR.USE_THERMOH_TOOLTIP){
+          this.createThermoTooltip(event, event.target.parent)
+        }
       }
     },
     iconMouseOut(){
-      if(this.pQuantity){
+      if (this.pShowMRoomStatus || this.pShowPir) {
         this.removeTooltip()
-      }else if(APP.SENSOR.USE_THERMOH_TOOLTIP){
-        this.removeThermoTooltip()
+      } else {
+        if(this.pQuantity){
+          this.removeTooltip()
+        }else if(APP.SENSOR.USE_THERMOH_TOOLTIP){
+          this.removeThermoTooltip()
+        }
       }
     },
 
@@ -688,18 +704,6 @@ export default {
         this.hideProgress()
       }
     },
-    async fetchMRoomPlan() {
-      const now = moment()
-      const startDt = now.format('YYYY-MM-DDT00:00:00.000')
-      const endDt = now.format('YYYY-MM-DDT23:59:59.999')
-      const url = `/office/plans/m-rooms?startDt=${startDt}&endDt=${endDt}&filterType=area&filterId=${this.selectedAreaId}`
-      const data = await HttpHelper.getAppService(url)
-      const locationMap = data.reduce((accum, elm) => {
-        elm.locationIds.forEach(locationId => accum[locationId] = elm)
-        return accum
-      }, {})
-      this.$store.commit('main/replaceMain', {locationMRoomPlanMap: locationMap})
-    },
     async fetchData(payload) { // リロードボタン押下時
       if (!this.bitmap) {
         this.reloadState.isLoad = false
@@ -718,7 +722,7 @@ export default {
         return
       }
       if (this.pShowMRoomStatus) {
-        await this.fetchMRoomPlan()
+        await PlanHelper.fetchMRoomPlan(this.selectedAreaId)
       }
       if(!payload.disabledProgress){
         this.showProgress()
@@ -732,7 +736,6 @@ export default {
       this.keepExbPosition = false
 
       this.sensorMap = await SensorHelper.fetchSensorInfo(this.pMergeSensorIds)
-
       if (Util.hasValue(this.pShowTxSensorIds) && !payload.disabledPosition){
         const alwaysTxs = this.txs.some(tx => Util.v(tx, 'location.areaId') == this.selectedAreaId && NumberUtil.bitON(tx.disp, TX.DISP.ALWAYS))
         await PositionHelper.loadPosition(this.count, alwaysTxs, false, this.pShowMRoomStatus)
@@ -742,6 +745,7 @@ export default {
         this.showZone() // 進入禁止ゾーンを表示する
       }
 
+      this.showAllMRoom()
       if (Util.hasValue(this.pShowExbSensorIds)) {
         this.showExbAll()
       }
@@ -938,6 +942,32 @@ export default {
         })
     },
 
+    createTooltipMRoom(event, container) {
+      const tooltipInfo = this.createTooltipInfoMRoom(event.nativeEvent, container)
+      this.toolTipLabel = [tooltipInfo.zoneName, tooltipInfo.planUserNum, , tooltipInfo.userNum]
+      this.toolTipShow = true
+      this.$nextTick(() => {
+        const toolTipElement = document.getElementById('toolTipComponent')
+        const left = tooltipInfo.baseX + (tooltipInfo.isDispRight? 8: -1 * Util.getValue(toolTipElement, 'clientWidth', 0) - 4)
+        const top = tooltipInfo.baseY - Util.getValue(toolTipElement, 'clientHeight', 0) - 4
+        this.toolTipStyle = this.createTooltipSetting(true)
+        this.toolTipStyle.left = '' + left + 'px'
+        this.toolTipStyle.top = '' + top + 'px'
+      })
+    },
+    createTooltipPir(event, container) {
+      const tooltipInfo = this.createTooltipInfoPir(event.nativeEvent, container)
+      this.toolTipLabel = [tooltipInfo.sensorName]
+      this.toolTipShow = true
+      this.$nextTick(() => {
+        const toolTipElement = document.getElementById('toolTipComponent')
+        const left = tooltipInfo.baseX + (tooltipInfo.isDispRight? 8: -1 * Util.getValue(toolTipElement, 'clientWidth', 0) - 4)
+        const top = tooltipInfo.baseY - Util.getValue(toolTipElement, 'clientHeight', 0) - 4
+        this.toolTipStyle = this.createTooltipSetting(true)
+        this.toolTipStyle.left = '' + left + 'px'
+        this.toolTipStyle.top = '' + top + 'px'
+      })
+    },
     // 数量ツールチップ表示
     createTooltip(event, container) {
       const tooltipInfo = this.createTooltipInfo(event.nativeEvent, container)
@@ -951,6 +981,28 @@ export default {
         this.toolTipStyle.left = '' + left + 'px'
         this.toolTipStyle.top = '' + top + 'px'
       })
+    },
+    createTooltipInfoMRoom(nativeEvent, container){
+      const pageElement = document.getElementById('bd-page')
+      return {
+        fontSize: StyleHelper.getFont2Size(DISP.TX_NUM.TOOLTIP_FONT),
+        zoneName: this.$i18n.tnl('label.zoneName') + ':' + container.zoneName,
+        planUserNum: this.$i18n.tnl('label.planUserNum') + ':' + container.planUserNum,
+        userNum: this.$i18n.tnl('label.userNum') + ':' + container.userNum,
+        baseX: window.pageXOffset + nativeEvent.clientX - Util.getValue(pageElement, 'offsetLeft', 0),
+        baseY: window.pageYOffset + nativeEvent.clientY - Util.getValue(pageElement, 'offsetTop', 0),
+        isDispRight: container.x * 2 <= this.stage.canvas.width,
+      }
+    },
+    createTooltipInfoPir(nativeEvent, container){
+      const pageElement = document.getElementById('bd-page')
+      return {
+        fontSize: StyleHelper.getFont2Size(DISP.TX_NUM.TOOLTIP_FONT),
+        sensorName: this.$i18n.tnl('label.sensorName') + ':' + container.sensorName,
+        baseX: window.pageXOffset + nativeEvent.clientX - Util.getValue(pageElement, 'offsetLeft', 0),
+        baseY: window.pageYOffset + nativeEvent.clientY - Util.getValue(pageElement, 'offsetTop', 0),
+        isDispRight: container.x * 2 <= this.stage.canvas.width,
+      }
     },
     // 数量ツールチップ情報作成
     createTooltipInfo(nativeEvent, container){
@@ -1388,74 +1440,20 @@ export default {
       }
       return { txBtn, zoneBtxId }
     },
-    getBgColorByMRoomStatus(sensor, locationMRoomMap, positionMap) {
-      let bgColor = DISP.PLAN.NO_ACTUAL_NO_PLAN_BG_COLOR
-      const locationId = sensor.locationId
-      if (locationMRoomMap[locationId]) {
-        const mr = locationMRoomMap[sensor.locationId]
-        if (sensor.zoneIdList.includes(mr.zoneId)) {
-          const plans = mr.plans
-          if (plans.length == 0) {
-            if (positionMap[locationId]) {
-              bgColor = DISP.PLAN.ACTUAL_OUT_OF_PLAN_BG_COLOR
-            }
-          } else {
-            if (positionMap[locationId]) {
-              const positions = positionMap[locationId]
-              let hasPlan = false
-              for (let idx in positions) {
-                const pos = positions[idx]
-                const updTime = moment(pos.updatetime).valueOf()
-                for (let pIdx in plans) {
-                  const plan = plans[pIdx]
-                  if (plan.startDt <= updTime && updTime <= plan.endDt) {
-                    hasPlan = true
-                    break
-                  }
-                }
-                if (hasPlan) {
-                  break
-                }
-              }
-              if (hasPlan) {
-                bgColor = DISP.PLAN.ACTUAL_IN_PLAN_BG_COLOR
-              } else {
-                bgColor = DISP.PLAN.ACTUAL_OUT_OF_PLAN_BG_COLOR
-              }
-            } else {
-              bgColor = DISP.PLAN.NO_ACTUAL_IN_PLAN_BG_COLOR
-            }
-          }
-        }
-      }
-      return bgColor
-    },
     // EXBアイコンの表示
 
     showExbAll() { // EXB表示
       if(!Util.hasValue(this.pShowExbSensorIds)){
         return
       }
-      const locationMRoomMap = this.$store.state.main.locationMRoomPlanMap
-      const positions = this.$store.state.main.positions
-      const positionMap = positions.reduce((accum, pos) => {
-        if (!accum[pos.location.locationId]) {
-          accum[pos.location.locationId] = []
-        }
-        accum[pos.location.locationId].push(pos)
-        return accum
-      }, {})
       if (!this.exbCon) {
         this.exbCon = ViewHelper.addContainerOnStage(this.stage, this.bitmap.width, this.bitmap.height)
       }
       this.exbCon.removeAllChildren()
+ 
       _(this.sensorMap).forEach(sensorList => sensorList.forEach(sensor => {
         if (sensor.exbId && sensor.areaId == this.selectedAreaId) {
-          let bgColor = null
-          if (this.pShowMRoomStatus) {
-            bgColor = this.getBgColorByMRoomStatus(sensor, locationMRoomMap, positionMap)
-          }
-          this.showExb(sensor, bgColor)
+          this.showExb(sensor)
         }
       }))
       this.keepExbPosition = false
@@ -1465,10 +1463,14 @@ export default {
           .forEach(tx => this.showMagnet(tx))
       }
     },
-    showExb(exb, bgColor = null) {
-      const icon = IconHelper.createExbIcon(exb, this.pShowExbSensorIds, this.getMapScale(), this.stage, bgColor, this.pShowMRoomStatus)
+    showExb(exb) {
+      const icon = IconHelper.createExbIcon(exb, this.pShowExbSensorIds, this.getMapScale(), this.stage)
       if(!icon){
         return
+      }
+      if (this.pShowPir) {
+        icon.on('mouseover', this.iconMouseOver)
+        icon.on('mouseout', this.iconMouseOut)
       }
       if(SensorHelper.match(this.pMergeSensorIds, SENSOR.TEMPERATURE, exb.sensorIdList)) {
         icon.on('mouseover', this.iconMouseOver)
@@ -1481,10 +1483,28 @@ export default {
     showMagnet(tx) { // TXマグネットセンサ表示　（同じ場所に複数TXがあると、あとのもので上書きされてい表示される。複数TXはトイレ表示用途）
       const icon = IconHelper.createExbIconForMagnet(tx, this.sensorMap.magnet, this.getMapScale())
       if(icon){
+        if (this.pShowPir) {
+          icon.on('mouseover', this.iconMouseOver)
+          icon.on('mouseout', this.iconMouseOut)
+        }
         this.exbCon.addChild(icon)
       }
     },
-
+    showAllMRoom() {
+      if(!this.pShowMRoomStatus) {
+        return
+      }
+      if (!this.txCont) {
+        this.txCont = ViewHelper.addContainerOnStage(this.stage, this.bitmap.width, this.bitmap.height)
+      }
+      this.txCont.removeAllChildren()
+      const icons = PlanHelper.createAllMRoomIcons(this.getMapScale())
+      icons.forEach(icon => {
+        icon.on('mouseover', this.iconMouseOver)
+        icon.on('mouseout', this.iconMouseOut)
+        this.txCont.addChild(icon)
+      })
+    },
     // 分析用の表示処理（動線・ヒートマップ）
 
     // 分析用のヒートマップ作成

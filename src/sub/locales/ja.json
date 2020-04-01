@@ -786,6 +786,8 @@
     "plan": "予定",
     "planActual": "予実比較",
     "actual": "実績",
+    "planUserNum": "予定利用者数",
+    "userNum": "利用者数",
 
     "startDt": "開始時間",
     "endDt": "終了時間",

@@ -59,7 +59,6 @@ export const setApp = (pStore, pI18n) => {
  */
 export const loadPosition = async (count, allShow = false, fixSize = false, showMRoom = false) => { // position-display, pir, position-list, position, sensor-list
   const pMock = DEV.USE_MOCK_EXC? mock.positions[count]: null
-
   let positions = await EXCloudHelper.fetchPositionHistory(allShow, pMock)
   Util.debug('fetchPositionHistory', positions)
   const now = !DEV.USE_MOCK_EXC ? new Date().getTime(): mock.positions_conf.start + count++ * mock.positions_conf.interval
@@ -67,10 +66,7 @@ export const loadPosition = async (count, allShow = false, fixSize = false, show
   const txIdMap = store.state.app_service.txIdMap
   const exbIdMap = store.state.app_service.exbIdMap
   const locationIdMap = store.state.app_service.locationIdMap
-  const locationMRoomPlanMap = showMRoom ? store.state.main.locationMRoomPlanMap : null
-  if (showMRoom) {
-    positions = positions.filter(pos => locationMRoomPlanMap[pos.locationId])
-  }
+  const mRoomPlans = showMRoom ? store.state.main.mRoomPlans : null
 
   positions = _(positions).filter(pos => allShow || DEV.NOT_FILTER_TX || txIdMap[pos.txId])
     .filter(pos => allShow || Util.hasValue(pos.locationId) && locationIdMap[pos.locationId] && (txIdMap[pos.txId] && NumberUtil.bitON(txIdMap[pos.txId].disp, TX.DISP.POS)))
@@ -100,6 +96,16 @@ export const loadPosition = async (count, allShow = false, fixSize = false, show
         display
       }
     }).compact().value()
+  if (showMRoom) {
+    const locationIds = mRoomPlans.reduce((arr, e) => {
+      arr = arr.concat(e.locationIds)
+      return arr
+    }, [])
+    positions = positions.filter(pos => {
+      const locationId = Util.v(pos, 'location.locationId')
+      return locationId && locationIds.includes(locationId)
+    })
+  }
 
   store.commit('main/replaceMain', {positions})
   return positions

@@ -19,6 +19,7 @@ import * as LocaleHelper from '../sub/helper/base/LocaleHelper'
 import * as MessageHelper from '../sub/helper/domain/MessageHelper'
 import * as ProhibitHelper from '../sub/helper/domain/ProhibitHelper'
 import * as PositionHelper from '../sub/helper/domain/PositionHelper'
+import * as PlanHelper from '../sub/helper/domain/PlanHelper'
 import * as SensorHelper from '../sub/helper/domain/SensorHelper'
 import * as SettingHelper from '../sub/helper/domain/SettingHelper'
 import * as TooltipHelper from '../sub/helper/domain/TooltipHelper'
@@ -151,6 +152,7 @@ const setContextToHelper = (context) => {
   StateHelper.setApp(context.app.store, context.app.i18n)
   SensorHelper.setApp(context.app.store, context.app.i18n)
   PositionHelper.setApp(context.app.store, context.app.i18n)
+  PlanHelper.setApp(context.app.store, context.app.i18n)
   ToiletHelper.setApp(context.app.store, context.app.i18n)
   ViewHelper.setApp(context.app.i18n)
   HttpHelper.setApp(context)
