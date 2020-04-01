@@ -356,7 +356,8 @@ export const SENSOR = {
     ON: 4,
   },
   STRING: ['','temperature','pir','thermopile','led_type2','meditag','magnet','button','pressure','omr-env','omr-tp-human','omr-tp-env','led_type5'],
-  NAMES: ['','thermohumidity','pir','thermopile','led_type2','meditag','magnet','button','pressure','omr-env','omr-tp-human','omr-tp-env','led_type5']
+  NAMES: ['','thermohumidity','pir','thermopile','led_type2','meditag','magnet','button','pressure','omr-env','omr-tp-human','omr-tp-env','led_type5'],
+  EXB_SENSORS: [2, 3, 6, 8],
 }
 
 export const SUM_UNIT = {
@@ -978,6 +979,11 @@ export const MENU = [
     {
       key: 'pirMenu',
       path: 'pir',
+      icon: 'users',
+    },
+    {
+      key: 'planActual',
+      path: 'plan-actual',
       icon: 'users',
     },
     {

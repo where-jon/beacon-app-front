@@ -773,7 +773,9 @@
     "dummy": "",
     "plan": "Plan",
     "planActual": "Plan result compare",
-    "actual": "actual"
+    "actual": "Actual",
+    "planUserNum": "Planed user num",
+    "userNum": "User num"
 
   },
   "config": {

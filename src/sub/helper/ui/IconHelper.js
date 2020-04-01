@@ -421,11 +421,13 @@ export const createUseStateIcon = (sensorId, count, mapScale) => {
   return createCircleIcon(labelInfo.label, shapeInfo.width / mapScale, labelInfo.color, shapeInfo.bgColor, {bold: false})
 }
 
-export const createMRoomUseStateIcon = (sensorId, count, mapScale, bgColor) => {
-  const shapeInfo = createExbShapeInfo(sensorId, count)
-  const labelInfo = createExbLabelInfo(sensorId, count)
-  const size = shapeInfo.width / mapScale
-  return createRectIcon(labelInfo.label, size, size, labelInfo.color, bgColor, {bold: false})
+export const createMRoomStateIcon = (name, x, y, mapScale, bgColor) => {
+  const size = DISP.PIR.R_SIZE / mapScale
+  const btn = createRectIcon(name, size, size, DISP.PIR.FGCOLOR, bgColor, {bold: false})
+  btn.cursor = ''
+  btn.x = x
+  btn.y = y
+  return btn
 }
 
 /**
@@ -446,6 +448,7 @@ export const createExbIconForMagnet = (tx, magnetSensorList, mapScale) => {
   const count = APP.SENSOR.MAGNET_ON_IS_USED && magnetOn || !APP.SENSOR.MAGNET_ON_IS_USED && !magnetOn? 1: 0
   const txBtn = createUseStateIcon(tx.sensorId, count, mapScale)
 
+  txBtn.sensorName = i18n.tnl('label.magnet')
   txBtn.x = tx.location.x
   txBtn.y = tx.location.y
   return txBtn
@@ -552,10 +555,11 @@ export const createThermohIcon = (device, mapScale, stage) => {
  * @param {Number} mapScale
  * @return {Object}
  */
-export const createExbIcon = (exb, exbSensorIdList, mapScale, stage, bgColor = null, showMRoomStatus = false) => {
+export const createExbIcon = (exb, exbSensorIdList, mapScale, stage) => {
   let exbBtn = null
   if (SensorHelper.match(exb.sensorIdList, SENSOR.TEMPERATURE, exbSensorIdList)) {
     exbBtn = createThermohIcon(exb, mapScale, stage)
+    exbBtn.sensorName = i18n.tnl('label.temperature')
   }
   else if (SensorHelper.match(exb.sensorIdList, SENSOR.THERMOPILE, exbSensorIdList) && exb.count != null) { 
     // not use?
@@ -571,18 +575,17 @@ export const createExbIcon = (exb, exbSensorIdList, mapScale, stage, bgColor = n
     // only for Exhibition（delete immediately）
     exbBtn = createCountButton(exb.count, mapScale)
     exbBtn.cursor = ''
+    exbBtn.sensorName = i18n.tnl('label.thermopile')
   }
   else if (SensorHelper.match(exb.sensorIdList, SENSOR.PRESSURE, exbSensorIdList) && exb.pressVol != null) {
-    exbBtn = showMRoomStatus
-      ? createMRoomUseStateIcon(exb.sensorId, exb.pressVol, mapScale, bgColor)
-      : createUseStateIcon(exb.sensorId, exb.pressVol, mapScale)
+    exbBtn = createUseStateIcon(exb.sensorId, exb.pressVol, mapScale)
     exbBtn.cursor = ''
+    exbBtn.sensorName = i18n.tnl('label.pressure')
   }
   else if (SensorHelper.match(exb.sensorIdList, SENSOR.PIR, exbSensorIdList)) {
-    exbBtn = showMRoomStatus
-      ? createMRoomUseStateIcon(exb.sensorId, exb.count, mapScale, bgColor)
-      : createUseStateIcon(exb.sensorId, exb.count, mapScale)
+    exbBtn = createUseStateIcon(exb.sensorId, exb.count, mapScale)
     exbBtn.cursor = ''
+    exbBtn.sensorName = i18n.tnl('label.pir')
   }
   exbBtn.deviceId = exb.deviceId
   exbBtn.exbId = exb.exbId
