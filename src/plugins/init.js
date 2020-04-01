@@ -20,6 +20,7 @@ import * as MessageHelper from '../sub/helper/domain/MessageHelper'
 import * as ProhibitHelper from '../sub/helper/domain/ProhibitHelper'
 import * as PositionHelper from '../sub/helper/domain/PositionHelper'
 import * as SensorHelper from '../sub/helper/domain/SensorHelper'
+import * as LegendHelper from '../sub/helper/domain/LegendHelper'
 import * as SettingHelper from '../sub/helper/domain/SettingHelper'
 import * as TooltipHelper from '../sub/helper/domain/TooltipHelper'
 import * as ValidateHelper from '../sub/helper/dataproc/ValidateHelper'
@@ -150,6 +151,7 @@ const setContextToHelper = (context) => {
   MasterHelper.setApp(context.app.store, context.app.i18n)
   StateHelper.setApp(context.app.store, context.app.i18n)
   SensorHelper.setApp(context.app.store, context.app.i18n)
+  LegendHelper.setApp(context.app.i18n)
   PositionHelper.setApp(context.app.store, context.app.i18n)
   ToiletHelper.setApp(context.app.store, context.app.i18n)
   ViewHelper.setApp(context.app.i18n)
