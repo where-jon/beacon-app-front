@@ -156,7 +156,7 @@ export default {
         return
       }
 
-      this.viewList = this.getStayDataList(moment(this.form.date).format('YYYY-MM-DD'), sumData, APP.STAY_SUM.BSENT_LIMIT, APP.STAY_SUM.LOST_LIMIT)
+      this.viewList = this.getStayDataList(moment(this.form.date).format('YYYY-MM-DD'), sumData, APP.STAY_SUM.ABSENT_LIMIT, APP.STAY_SUM.LOST_LIMIT)
       this.totalRows = this.viewList.length
       this.hideProgress()
     },
