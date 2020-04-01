@@ -1230,7 +1230,8 @@
     "DEV": {
       "SIMULATION": "Use temporary data::Perform position using temporary data.",
       "SIMULATION_MOVE_PERCENT": "Move probability::Set up the move probability as a percentage.",
-      "SIMULATION_MOVE_AREA_PERCENT": "Area move probability::Set up the move probability to ignore the area as a percentage. "
+      "SIMULATION_MOVE_AREA_PERCENT": "Area move probability::Set up the move probability to ignore the area as a percentage. ",
+      "ONLY_FROM_DB": "(For Test)Use latest data::Without fetching position or sensor info, use only data from database."
     },
     "EXCLOUD": {
       "BASE_URL": "EXCloud URL::Set up EXCloud URL."

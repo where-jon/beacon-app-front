@@ -49,7 +49,7 @@ export default {
   mounted() {
   },
   methods: {
-    publishTask() {
+    async publishTask() {
       this.showProgress()
       try {
         const task = {
@@ -61,15 +61,13 @@ export default {
           expired: new Date().getTime() + 60000
         }
         const queueName = ArrayUtil.equalsAny(this.batchTarget, 'UTILIZATION','STAY_SUM','PROXIMITY','AD_SYNC','ENTER_COUNT')? 'CRON': 'INTERVAL'
-        HttpHelper.putAppService('/meta/tenant/publishTask?stopAfter=10&queueName=' + queueName, task)
+        await HttpHelper.putAppService('/meta/tenant/publishTask?stopAfter=10&queueName=' + queueName, task)
       }
       catch(e) {
         console.error(e)
       }
       finally {
-        setTimeout(() => {
-          this.hideProgress()
-        }, 300) // 一瞬で投入が終わってプログレスが表示されないため
+        this.hideProgress()
       }
     },
   }

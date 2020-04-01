@@ -100,6 +100,7 @@
     "env": "環境変数",
     "execTask": "バッチ実行",
     "createSimulationData": "ランダムデータ作成",
+    "createData": "テストデータ作成",
     "detectedProhibitZone": "進入検知",
     "detectedLostZone": "持出検知",
     "exbId": "EXB ID",
@@ -820,6 +821,10 @@
     "periodSec": "期間（秒）",
     "stepSec": "間隔（秒）",
     "Execute": "実行",
+    "stdDate": "基準日時",
+    "dtDiff": "差分(秒)",
+    "toDbOnlyMode": "DBオンリーモードへ",
+    "toNomalMode": "通常モードへ",
             
     "dummy": ""
   },
@@ -1425,7 +1430,8 @@
     "DEV": {
       "SIMULATION": "仮データを使用する::仮のデータを使用して測位などを実施します。(0:無効 1:ランダム 2:移動)",
       "SIMULATION_MOVE_PERCENT": "移動確率::移動確率をパーセントで設定します。",
-      "SIMULATION_MOVE_AREA_PERCENT": "エリア移動確率::エリアを無視して移動する確率をパーセントで設定します。"
+      "SIMULATION_MOVE_AREA_PERCENT": "エリア移動確率::エリアを無視して移動する確率をパーセントで設定します。",
+      "ONLY_FROM_DB": "(検証用)DB最新値使用::測位やセンセデータをEXCloudやシミュレーションで取得せず、DBの最新地を取得します。"
     },
     "EXCLOUD": {
       "BASE_URL": "EXCloudのURL::EXCloudのURLを設定します。"
@@ -1907,6 +1913,7 @@
     "systemJson": "禁止区域侵入不可、もしくは重要物品の対象グループ設定を表示し、編集を行う画面です。",
     "execTask": "パラメータをセットしてバッチを実行する画面です。",
     "createSimulationData": "パラメータをセットして手動でテストデータを登録する画面です。",
+    "createData": "手動で直接テストデータを登録する画面です。",
     "guestAccess": "来客アクセスを表示する画面です。",
     
     "dummy": ""

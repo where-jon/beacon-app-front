@@ -368,6 +368,7 @@ export const EXCLOUD = {
   GATEWAY_URL: '/core/excloud/gateway?_=',
   TELEMETRY_URL: '/core/excloud/telemetry?_=',
   SENSOR_URL: '/core/excloud/sensor/{id}?_=',
+  SENSOR_URL_NEW: '/basic/sensorHistory/fetch/{id}?_=', // 十分に確認が取れた段階でSENSOR_URLに変更
   DL_LIST_URL: '/core/excloud/dllist/{type}/{yyyymm}?_=',
   DL_URL: '/core/excloud/dl/{type}/{yyyymmdd}?_=',
   LED_URL: '/core/excloud/led?_=',

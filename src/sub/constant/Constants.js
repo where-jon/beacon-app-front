@@ -855,6 +855,7 @@ export const SETTING = {
         SIMULATION: SETTING.NUMBER,
         SIMULATION_MOVE_PERCENT: SETTING.NUMBER,
         SIMULATION_MOVE_AREA_PERCENT: SETTING.NUMBER,
+        ONLY_FROM_DB: SETTING.BOOLEAN,
       },
       EXSERVER: {
         BASE_URL: SETTING.STRING,
@@ -1341,6 +1342,11 @@ export const MENU = [
       {
         key: 'createSimulationData',
         path: 'createSimulationData',
+        icon: 'upload',
+      },
+      {
+        key: 'createData',
+        path: 'createData',
         icon: 'upload',
       },
     ],

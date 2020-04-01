@@ -57,7 +57,7 @@ export default {
   mounted() {
   },
   methods: {
-    createData() {
+    async createData() {
       this.showProgress()
       try {
         const apiName = this.kind == 'POSITION'? '/core/positionHistory/createByDate': '/basic/sensorHistory/createByDate'
@@ -68,15 +68,13 @@ export default {
           stepSec: this.stepSec,
           sensorId,
         }
-        HttpHelper.putAppService(apiName + '?' + HttpHelper.toParam(param, true))
+        await HttpHelper.putAppService(apiName + '?' + HttpHelper.toParam(param, true))
       }
       catch(e) {
         console.error(e)
       }
       finally {
-        setTimeout(() => {
-          this.hideProgress()
-        }, 300) // 一瞬で投入が終わってプログレスが表示されないため
+        this.hideProgress()
       }
     },
   }
