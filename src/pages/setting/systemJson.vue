@@ -122,6 +122,7 @@ export default {
       return options
     },
     onKeyChange() { // 設定項目選択
+      this.groupZoneList = []
       this.showGroupZoneType = !!this.key
       if (!this.showGroupZoneType) return
 
