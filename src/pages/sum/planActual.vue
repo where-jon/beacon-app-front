@@ -337,6 +337,7 @@ export default {
         if (this.selectedFilter.filterType && this.selectedFilter.filterId) {
           uri = `${uri}&filterType=${this.selectedFilter.filterType}&filterId=${this.selectedFilter.filterId}`
         }
+        this.showProgress()
         const data = await HttpHelper.getAppService(uri)
         if (data.indicators.length == 0) {
           this.message = this.$i18n.tnl('message.notFoundData', {target: this.indicatorTypeFilter.label})
@@ -346,6 +347,7 @@ export default {
         this.loadIndicators(data)
       }
       catch(e) {
+        this.hideProgress()
         console.error(e)
         this.message = e.response.data
         this.replace({showAlert: true})
@@ -461,6 +463,7 @@ export default {
       })
       this.totalRows = arr.length
       this.tItems = arr
+      this.hideProgress()
     },
   }
 }
