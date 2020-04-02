@@ -128,6 +128,7 @@ export default {
     },
     async loadProhibitDetect(minorMap) {
       if (Util.hasValueAny(APP.POS.PROHIBIT_GROUP_ZONE, APP.POS.LOST_GROUP_ZONE)) {
+        clearInterval(this.prohibitInterval)  // 点滅クリア
         Util.merge(this, await ProhibitHelper.loadProhibitDetect(ALERT_STATE.LIST, this.stage, this.icons, this.zones))
         this.replace({showAlert: this.showDismissibleAlert})
         this.prohibitDetectList? this.prohibitDetectList.forEach((p) => minorMap[p.minor] = p) : null

@@ -65,8 +65,9 @@ export const fetchPositionHistory = async (allShow, pMock) => {
  * @return {Object[]}
  */
 export const fetchSensor = async (sensorId) => {
+  const sensorUrl = DEV.ONLY_FROM_DB? EXCLOUD.SENSOR_URL_NEW: EXCLOUD.SENSOR_URL // 大幅な変更があるため十分検証されるまでは、開発用のみで使う
   let data = DEV.USE_MOCK_EXC? mock.sensor[sensorId]:
-    await HttpHelper.getExCloud(url(EXCLOUD.SENSOR_URL).replace('{id}', sensorId) + new Date().getTime())
+    await HttpHelper.getExCloud(url(sensorUrl).replace('{id}', sensorId) + new Date().getTime())
   
   return _(data).map(val => { // deviceid, btx_idはすべて名前を変換する
     if (val.deviceid) {

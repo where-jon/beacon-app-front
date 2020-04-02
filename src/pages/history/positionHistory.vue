@@ -183,7 +183,7 @@ export default {
         }
         for (var posHist of fetchList) {
           const d = new Date(posHist.positionDt)
-          posHist.positionDt = DateUtil.formatDate(d.getTime())
+          posHist.positionDt = DateUtil.formatDateWithTimeZone(d.getTime())
           const tx = this.txIdMap[posHist.txId]
           posHist.potName = Util.getValue(tx, 'pot.potName', '')
           posHist.major = Util.getValue(tx, 'major', '')

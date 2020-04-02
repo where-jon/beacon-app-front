@@ -116,7 +116,7 @@ export const BULK = {
     LOCATION: { ALLOW: ['updateKey', 'ID', 'locationName', 'txViewType'] },
     POT: { ALLOW: ['updateKey', 'ID', 'potName', 'potType'] },
     CATEGORY: { ALLOW: ['updateKey', 'ID', 'categoryName', 'categoryType', 'color', 'bgColor', 'shape' ] },
-    AUTH_CATEGORY: { ALLOW: ['updateKey', 'ID', 'categoryName', 'categoryType', 'color', 'bgColor', 'shape' ] },
+    AUTH_CATEGORY: { ALLOW: ['updateKey', 'ID', 'categoryName', 'categoryType', 'guardNames', 'doorNames' ] },
     GROUP: { ALLOW: ['updateKey', 'ID', 'groupName', 'color', 'bgColor', 'shape'] },
     USER: { ALLOW: ['updateKey', 'loginId', 'roleName'], DISALLOW: ['potName'] },
     ROLE: { ALLOW: ['updateKey', 'roleName'], DISALLOW: ['loginId'] },
@@ -356,7 +356,8 @@ export const SENSOR = {
     ON: 4,
   },
   STRING: ['','temperature','pir','thermopile','led_type2','meditag','magnet','button','pressure','omr-env','omr-tp-human','omr-tp-env','led_type5'],
-  NAMES: ['','thermohumidity','pir','thermopile','led_type2','meditag','magnet','button','pressure','omr-env','omr-tp-human','omr-tp-env','led_type5']
+  NAMES: ['','thermohumidity','pir','thermopile','led_type2','meditag','magnet','button','pressure','omr-env','omr-tp-human','omr-tp-env','led_type5'],
+  EXB_SENSORS: [2, 3, 6, 8],
 }
 
 export const SUM_UNIT = {
@@ -854,6 +855,7 @@ export const SETTING = {
         SIMULATION: SETTING.NUMBER,
         SIMULATION_MOVE_PERCENT: SETTING.NUMBER,
         SIMULATION_MOVE_AREA_PERCENT: SETTING.NUMBER,
+        ONLY_FROM_DB: SETTING.BOOLEAN,
       },
       EXSERVER: {
         BASE_URL: SETTING.STRING,
@@ -978,6 +980,11 @@ export const MENU = [
     {
       key: 'pirMenu',
       path: 'pir',
+      icon: 'users',
+    },
+    {
+      key: 'planActual',
+      path: 'plan-actual',
       icon: 'users',
     },
     {
@@ -1330,6 +1337,16 @@ export const MENU = [
       {
         key: 'execTask',
         path: 'execTask',
+        icon: 'upload',
+      },
+      {
+        key: 'createSimulationData',
+        path: 'createSimulationData',
+        icon: 'upload',
+      },
+      {
+        key: 'createData',
+        path: 'createData',
         icon: 'upload',
       },
     ],

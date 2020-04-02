@@ -156,7 +156,7 @@ export default {
         return
       }
 
-      this.viewList = this.getStayDataList(moment(this.form.date).format('YYYY-MM-DD'), sumData, APP.STAY_SUM.BSENT_LIMIT, APP.STAY_SUM.LOST_LIMIT)
+      this.viewList = this.getStayDataList(moment(this.form.date).format('YYYY-MM-DD'), sumData, APP.STAY_SUM.ABSENT_LIMIT, APP.STAY_SUM.LOST_LIMIT)
       this.totalRows = this.viewList.length
       this.hideProgress()
     },
@@ -226,7 +226,7 @@ export default {
         this.hideProgress()
         return
       }
-      let viewList = this.getStayDataList(moment(this.form.date).format('YYYY-MM-DD'), dataList, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
+      let viewList = this.getStayDataList(moment(this.form.date).format('YYYY-MM-DD'), dataList, APP.STAY_SUM.ABSENT_LIMIT, APP.STAY_SUM.LOST_LIMIT)
       ArrayUtil.sortIgnoreCase(viewList, 'name')
 
       const searchDate = moment(this.form.date).format('YYYY-MM-DD')

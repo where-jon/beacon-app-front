@@ -120,7 +120,8 @@ export const getDefaultValue = (key, isTenant = false) => {
       ret = JSON.stringify(ret)
     }  
   }
-  return ret? '(' + ret + ')': '' // config.jsの値（デフォルト値）はカッコで囲んでテナントの値と区別できるようにする
+  return ret
+  // return ret? '(' + ret + ')': '' // config.jsの値（デフォルト値）はカッコで囲んでテナントの値と区別できるようにする ➔型が区別できなくなるので戻し。TODO:抜本的に修正するタイミングで
 }
 
 /**
@@ -200,6 +201,9 @@ export const createSetting = (setting, isTenant, option) => {
  */
 export const getI18ConfigInner = (config, isTenant, parentKey = '', list = []) => {
   Object.keys(config).forEach(configKey => {
+    if (configKey.includes('$')) { // キーに$を含むものはコメントアウト扱いにして表示しない
+      return
+    }
     const data = config[configKey]
     const key = parentKey + configKey
     if(typeof data == 'object' && !ArrayUtil.isArray(data)){

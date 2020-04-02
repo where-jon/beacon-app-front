@@ -468,6 +468,7 @@ const addInfo = (masters, idmaps) => {
           isToiletZone: zoneCategoryList.some(category => category.categoryCd === SYSTEM_ZONE_CATEGORY_NAME.TOILET),
           zoneIdList: location.zoneList.map(zone => zone.zoneId),
           zoneCategoryIdList: zoneCategoryList.map(c => c.categoryId),
+          zoneNames: masters.zone.filter(zone => location.zoneList.some(lzone => lzone.zoneId == zone.zoneId)).map(zone => zone.zoneName).join(';'),
           getZone: categoryCd => {
             return location.zoneList.find(zone => zone.categoryList.some(category => category.categoryCd == categoryCd))
           }

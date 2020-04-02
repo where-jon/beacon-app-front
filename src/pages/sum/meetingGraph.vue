@@ -98,7 +98,7 @@ export default {
           const color = ColorUtil.getStackColor(i)
           if(per > 0){
             graph.push({
-              name: i,
+              name: this.$i18n.tnl('message.count', {count: i}),
               style: `width: ${per}% !important; background: ${color};`,
               time: DateUtil.toHHmm(second),
               ratio: Math.floor(per)
@@ -130,9 +130,9 @@ export default {
       }).filter(view => view.name != null && (!form.areaId || form.areaId==view.areaId))
     },
     download(form, data) {
-      const from = new Date(form.datetimeFrom).getTime()
-      const to = new Date(form.datetimeTo).getTime()
       const interval = APP.POSITION_SUMMARY_INTERVAL * 60 * 1000
+      const from = Math.floor(new Date(form.datetimeFrom).getTime() / interval) * interval
+      const to = Math.floor(new Date(form.datetimeTo).getTime() / interval) * interval
 
       const sum = ArrayUtil.sumData(data, 'timestamp')
       Util.debug('sum', sum)

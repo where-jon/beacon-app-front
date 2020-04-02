@@ -773,7 +773,9 @@
     "dummy": "",
     "plan": "Plan",
     "planActual": "Plan result compare",
-    "actual": "actual"
+    "actual": "Actual",
+    "planUserNum": "Planed user num",
+    "userNum": "User num"
 
   },
   "config": {
@@ -838,7 +840,7 @@
         "LOST": {
           "DUPLICATE_MAIL_TIME": "Duplicate alert notification limit (E-mail)::Prevents notification by e-mail when an alert with the same content is sent within the set up time. Set up in milliseconds."
         },
-        "PLUGIN": {
+        "$PLUGIN": {
           "FILTER": "Use detailed filter on position screen::Use plug-in to display detailed filter on position screen"
         }
       },
@@ -1228,7 +1230,8 @@
     "DEV": {
       "SIMULATION": "Use temporary data::Perform position using temporary data.",
       "SIMULATION_MOVE_PERCENT": "Move probability::Set up the move probability as a percentage.",
-      "SIMULATION_MOVE_AREA_PERCENT": "Area move probability::Set up the move probability to ignore the area as a percentage. "
+      "SIMULATION_MOVE_AREA_PERCENT": "Area move probability::Set up the move probability to ignore the area as a percentage. ",
+      "ONLY_FROM_DB": "(For Test)Use latest data::Without fetching position or sensor info, use only data from database."
     },
     "EXCLOUD": {
       "BASE_URL": "EXCloud URL::Set up EXCloud URL."
@@ -1360,7 +1363,7 @@
       "HUMIDITY_PATTERN": {
         "NUMBER": "Numerics::Threshold。",
         "LESS": "LESS::Display a warining when you measure humidity under the threshold.",
-        "MORE": "MORE::Display a warining when you measure humidity above the threshold."
+        "MORE": "MORE::Display a warining when you measure humidity above or equal to the threshold."
       },
       "SORT": {
         "asc": "asc::Ascending order",

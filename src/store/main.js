@@ -13,7 +13,7 @@ export const state = () => ({
   initDetailFilter: null,
   positions: [],
   timers: [],
-  locationMRoomPlanMap: []
+  mRoomPlans: []
 })
 
 const initState = state()

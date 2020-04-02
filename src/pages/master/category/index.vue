@@ -81,12 +81,14 @@ export default {
     },
     createCustomColumn(isDownload){
       const ret = []
-      APP.CATEGORY.WITH.forEach(val => {
-        if(!isDownload && !ExtValueHelper.isShowList(APP.CATEGORY, val)) {
-          return
-        }
-        ret.push({key: val, label: val, sortable: true})
-      })
+      if (!this.pShowAuth) {
+        APP.CATEGORY.WITH.forEach(val => {
+          if(!isDownload && !ExtValueHelper.isShowList(APP.CATEGORY, val)) {
+            return
+          }
+          ret.push({key: val, label: val, sortable: true})
+        })
+      }
       return ret
     },
     getCustumCsvColumns(){

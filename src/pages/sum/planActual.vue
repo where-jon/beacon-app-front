@@ -338,6 +338,11 @@ export default {
           uri = `${uri}&filterType=${this.selectedFilter.filterType}&filterId=${this.selectedFilter.filterId}`
         }
         const data = await HttpHelper.getAppService(uri)
+        if (data.indicators.length == 0) {
+          this.message = this.$i18n.tnl('message.notFoundData', {target: this.indicatorTypeFilter.label})
+          this.replace({showAlert: true})
+          window.scrollTo(0, 0)
+        }
         this.loadIndicators(data)
       }
       catch(e) {
@@ -380,9 +385,13 @@ export default {
         window.scrollTo(0, 0)
       }
     },
-    orgRound(value) {
+    round(value) {
       const base = 100
       return Math.round(value * base) / base
+    },
+    getPercentage(v1, v2) {
+      const per = this.round(v1 / v2 * 100)
+      return per > 100 ? 100 : per
     },
     loadIndicators(data) {
       const color = ColorUtil.getStackColor(1)
@@ -398,7 +407,7 @@ export default {
               hour2 = data.sumOfWorkingHours * e.capacity
             }
             if (0 < e.value && 0 < hour2) {
-              per = this.orgRound(e.value / hour2 * 100)
+              per = this.getPercentage(e.value, hour2)
             }
             graph.push({
               name: 1, 
@@ -413,7 +422,7 @@ export default {
             return {
               name: e.targetName, 
               indicator: per,
-              hour: e.value,
+              hour: this.round(e.value),
               hour2: hour2,
               graph: graph
             }
@@ -423,7 +432,7 @@ export default {
               hour2 = e.sumOfReservationHours * e.capacity
             }
             if (0 < e.value && 0 < hour2) {
-              per = this.orgRound(e.value / hour2 * 100)
+              per = this.getPercentage(e.value, hour2)
             }
             graph.push({
               name: 1, 
@@ -438,7 +447,7 @@ export default {
             return {
               name: e.targetName, 
               indicator: per,
-              hour: e.value,
+              hour: this.round(e.value),
               hour2: hour2,
               graph: graph
             }

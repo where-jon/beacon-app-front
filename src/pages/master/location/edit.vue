@@ -139,7 +139,7 @@ export default {
         'locationId', 'locationCd', 'locationType', 'locationName',
         'areaId', 'x', 'y', 'capacity',
         'txViewType', 'locationZoneList',
-        'exbIds', 'txIds', 
+        'exbList', 'txList', 
         ...ExtValueHelper.getExtValueKeys(APP.LOCATION, true)
       ]),
       vueSelected: {
@@ -254,14 +254,14 @@ export default {
     }
 
     this.$nextTick(() => {
-      if(Util.hasValue(this.form.exbIds)){
-        this.vueSelected.exbIdList = _(this.form.exbIds).map(exbId => 
-          VueSelectHelper.getVueSelectData(this.iExbOptions, exbId)
+      if(Util.hasValue(this.form.exbList)){
+        this.vueSelected.exbIdList = _(this.form.exbList).map(exb => 
+          VueSelectHelper.getVueSelectData(this.iExbOptions, exb.exbId)
         ).filter(option => option).sort((a, b) => a.label < b.label? -1: 1).uniqWith(_.isEqual).value()
-      }
-      if(Util.hasValue(this.form.txIds)){
-        this.vueSelected.txIdList = _(this.form.txIds).map(txId => 
-          VueSelectHelper.getVueSelectData(this.iTxOptions, txId)
+      }      
+      if(Util.hasValue(this.form.txList)){
+        this.vueSelected.txIdList = _(this.form.txList).map(tx => 
+          VueSelectHelper.getVueSelectData(this.iTxOptions, tx.txId)
         ).filter(option => option).sort((a, b) => a.label < b.label? -1: 1).uniqWith(_.isEqual).value()
       }
       const locationZoneList = this.form.locationZoneList

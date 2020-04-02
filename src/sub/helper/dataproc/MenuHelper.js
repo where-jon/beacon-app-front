@@ -105,8 +105,8 @@ const loadPluginMenuItems = async (orgMenuItems, masterFeatureList, tenantFeatur
     const nonOrders = res.data.filter((d) => d.order === null || d.order === undefined || d.order >= length)
     return orgMenuItems.concat(nonOrders)
   })
-    .catch(error => {
-      console.error(error)
+    .catch(e => {
+      console.warn(e)
       return orgMenuItems
     })
 }

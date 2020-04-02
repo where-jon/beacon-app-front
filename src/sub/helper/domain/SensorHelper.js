@@ -921,61 +921,6 @@ export const getMagnetCategoryTypes = txList => txList.filter(val => val.categor
 export const getMagnetGroupTypes = txList => txList.filter(val => val.groupId && val.sensorId == SENSOR.MAGNET).map(val => val.groupId)
 
 /**
- * カテゴリの汎用を表示するための情報を取得する。
- * @method
- * @param {Object[]} categoryList
- * @return {Object[]}
- */
-export const getCategoryLegendElements = categoryList => categoryList.filter(category => !category.systemUse).map(val => ({ id: val.categoryId, name: val.categoryName, ...val,}))
-
-/**
- * グループの汎用を表示するための情報を取得する。
- * @method
- * @param {Object[]} groupList
- * @return {Object[]}
- */
-export const getGroupLegendElements = groupList => groupList.map(val => ({id: val.groupId, name: val.groupName, ...val, }))
-
-/**
- * 凡例データを作成する。
- * @method
- * @param {Object[]} txList
- * @param {Object[]} categoryList
- * @param {IObject[]} groupList
- * @return {Object[]}
- */
-export const createTxLegends = (txList, categoryList, groupList) => {
-  const loadCategory = DISP.TX.DISPLAY_PRIORITY == 'category'
-  const magnetCategoryTypes = loadCategory? getMagnetCategoryTypes(txList): getMagnetGroupTypes(txList)
-  const legendElements = loadCategory? getCategoryLegendElements(categoryList): getGroupLegendElements(groupList)
-
-  const ret = legendElements.map(legendElement => ({
-    id: legendElement.id,
-    items: magnetCategoryTypes.includes(legendElement.id)? [
-      { id: 1, text: 'A', style: StyleHelper.getStyleDisplay1(legendElement) },
-      { id: 2, text: `${legendElement.name} : ${i18n.tnl('label.using')}`, style: null },
-      { id: 3, text: 'A', style: StyleHelper.getStyleDisplay1(legendElement, {reverceColor: true, fixSize: true}) },
-      { id: 4, text: `${i18n.tnl('label.notUse')}`, style: {} },
-    ]: [
-      { id: 1, text: 'A', style: StyleHelper.getStyleDisplay1(legendElement) },
-      { id: 2, text: legendElement.name, style: {} },
-    ]
-  }))
-  // グループ、カテゴリに全てのTXが紐付いている場合は、デフォルトを非表示
-  if(!hasAllTxDisplayInfo(txList)){
-    const defaultStyle = { shape: SHAPE.CIRCLE, bgColor: DISP.TX.BGCOLOR, color: DISP.TX.COLOR }
-    ret.push({
-      id: 0,
-      items: [
-        { id: 5, text: 'A', style: StyleHelper.getStyleDisplay1(defaultStyle) },
-        { id: 6, text: i18n.tnl('label.defaultOther'), style: {} },
-      ]
-    })
-  }
-  return ret
-}
-
-/**
  * 指定したセンサIDを含むか確認する。undefinedとnullは通常として扱う
  * checkIdをつけた場合、targetSensorIdと一致するか確認する
  * @method
@@ -1268,17 +1213,3 @@ export const mergeTxWithSensorAndPosition = (selectedSensor, exCluodSensors, pos
     .compact().value()
 }
 
-/** 全てのTxが優先設定の表示情報に紐付いているか確認する
- * @method
- * @param {Object[]} txList
- * @return {Boolean}
- */
-export const hasAllTxDisplayInfo = txList =>{
-  var displayInfo = null
-  if (DISP.TX.DISPLAY_PRIORITY == 'category'){
-    displayInfo = txList.filter(val => (val.categoryId ))
-  }else {
-    displayInfo = txList.filter(val => (val.groupId ))
-  }
-  return txList.length == displayInfo.length
-}

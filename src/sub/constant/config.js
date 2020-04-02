@@ -229,7 +229,7 @@ export const APP = { // 機能面に関する設定
   },
   // group
   GROUP: {
-    WITH: ['ruby'],
+    WITH: [], // 'ruby'
     // 拡張項目定義（サンプル）: デフォルトはなし
     EXT_DEF: [
       // {key: 'ruby', type: 'string', length: 20, showlist: true, sort: true },
@@ -252,8 +252,8 @@ export const APP = { // 機能面に関する設定
   },
   // 動線分析関連設定
   ANALYSIS: {
-    DATETIME_DEFAULT: 1, // デフォルトの期間Fromに現在時刻から設定値分過去の日時を自動入力する
-    DATETIME_DEFAULT_UNIT: 'month', // デフォルトの期間Fromに現在時刻から設定値分過去の日時を自動入力する（単位）
+    DATETIME_DEFAULT: 24, // デフォルトの期間Fromに現在時刻から設定値分過去の日時を自動入力する
+    DATETIME_DEFAULT_UNIT: 'hours', // デフォルトの期間Fromに現在時刻から設定値分過去の日時を自動入力する（単位）
     DATETIME_LIMIT: 366, // 分析期間の上限
     DATETIME_INTERVAL: 60 * 24, // Fromを設定した場合、この設定値分未来の日付をToに自動入力する（分単位）
   },
@@ -328,7 +328,7 @@ export const APP = { // 機能面に関する設定
 
   // 活動実績
   ACTIVITY: {
-    STACK_TYPE: 'zoneCategory'
+    STACK_TYPE: 'location'
   },
   // 会議室利用実績
   MEETING: {
@@ -370,6 +370,7 @@ export const EXCLOUD = {
   GATEWAY_URL: '/core/excloud/gateway?_=',
   TELEMETRY_URL: '/core/excloud/telemetry?_=',
   SENSOR_URL: '/core/excloud/sensor/{id}?_=',
+  SENSOR_URL_NEW: '/basic/sensorHistory/fetch/{id}?_=', // 十分に確認が取れた段階でSENSOR_URLに変更
   DL_LIST_URL: '/core/excloud/dllist/{type}/{yyyymm}?_=',
   DL_URL: '/core/excloud/dl/{type}/{yyyymmdd}?_=',
   LED_URL: '/core/excloud/led?_=',

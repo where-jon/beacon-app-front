@@ -557,7 +557,7 @@ export default {
           return
         }
 
-        this.viewList = this.getStayDataList(moment(this.form.date).format('YYYY-MM-DD'), sumData, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
+        this.viewList = this.getStayDataList(moment(this.form.date).format('YYYY-MM-DD'), sumData, APP.STAY_SUM.ABSENT_LIMIT, APP.STAY_SUM.LOST_LIMIT)
 
         this.totalRows = this.viewList.length
       }
@@ -680,8 +680,8 @@ export default {
         const result = {
           date: date,
           name: data.potName, 
-          groupName: pot? pot.groupName: '',
-          categoryName: pot? pot.categoryName: '',
+          groupName: Util.v(pot, 'group.groupName', ''),
+          categoryName: Util.v(pot, 'category.categoryName', ''),
           graph: graphList,
           stayTime: moment().startOf('days').add(stayTime, 's').format('HH:mm') + ' (' + StayTimeHelper.getRatio(stayTime) + '%)', 
           lostTime: moment().startOf('days').add(lostTime, 's').format('HH:mm') + ' (' + StayTimeHelper.getRatio(lostTime) + '%)', 
@@ -770,7 +770,7 @@ export default {
         this.hideProgress()
         return
       }
-      viewList = this.getStayDataList(moment(this.form.date).format('YYYY-MM-DD'), dataList, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
+      viewList = this.getStayDataList(moment(this.form.date).format('YYYY-MM-DD'), dataList, APP.STAY_SUM.ABSENT_LIMIT, APP.STAY_SUM.LOST_LIMIT)
 
       ArrayUtil.sortIgnoreCase(viewList, 'name')
       const csvList = this.getCsvList(key, viewList)
@@ -907,7 +907,7 @@ export default {
             return
           }
 
-          let list = this.getStayDataList(moment(searchDate).format('YYYY-MM-DD'), sumData, APP.SUM_ABSENT_LIMIT, APP.SUM_LOST_LIMIT)
+          let list = this.getStayDataList(moment(searchDate).format('YYYY-MM-DD'), sumData, APP.STAY_SUM.ABSENT_LIMIT, APP.STAY_SUM.LOST_LIMIT)
           ArrayUtil.sortIgnoreCase(list, 'name')
           const dateList = this.getCsvList(key, list)
           csvList = csvList.isEmpty? dateList: csvList.concat(dateList)

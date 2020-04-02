@@ -163,7 +163,6 @@ export const loadProhibitDetect = async (viewName, stage, icons, zones, position
   }
 
   if (viewName == ALERT_STATE.MAP) {
-    clearInterval(ret.prohibitInterval)  // 点滅クリア
     // 禁止区域に検知されたら点滅させる
     if (ret.showDismissibleAlert) {
       ret.prohibitInterval = setInterval(() => ViewHelper.twinkleProhibit(stage, icons, ret.prohibitDetectList), DISP.PROHIBIT.TWINKLE_TIME)

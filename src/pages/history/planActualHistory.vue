@@ -122,6 +122,11 @@ export default {
         const endDt = moment(this.form.datetimeTo).format(df)
         const data = await HttpHelper.getAppService(`${this.appServicePath}?startDt=${startDt}&endDt=${endDt}&isActual=${this.planModeFilter.value}&limit=${this.rowlimit}`)
         if (Array.isArray(data)) {
+          if (data.length == 0) {
+            this.message = this.$i18n.tnl('message.notFoundData', {target: this.planModeFilter.label})
+            this.replace({showAlert: true})
+            window.scrollTo(0, 0)
+          }
           this.loadData(data)
         }
       }

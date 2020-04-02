@@ -110,7 +110,7 @@ export default {
         this.form.displayColor = ColorUtil.colorCd4display(this.oldColor? this.oldColor: null, this.defaultColor)
         this.form.displayBgColor = ColorUtil.colorCd4display(this.oldBgColor? this.oldBgColor: null, this.defaultBgColor)
       }
-      if(this.isInit){
+      if(!isInit){
         this.form.groupCd = MasterHelper.nextCd(this.groupCdOld)
       }
     },
