@@ -543,8 +543,8 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     ENTER_BGCOLOR: 'rgb(217,217,217)', // 入場者の背景色
   },
 
-  FONT_ICON_ADJUST_SCALE: 1.0, // アイコン内テキストのフォントサイズ係数
-  IS_SCALE_ICON_TEXT: false, // アイコン内のテキストを自動スケールさせる
+  FONT_ICON_ADJUST_SCALE: 1.0, // アイコン内テキストのフォントサイズ係数 TODO:次のバージョンでTX以下へ移動
+  IS_SCALE_ICON_TEXT: false, // アイコン内のテキストを自動スケールさせる TODO:次のバージョンでTX以下へ移動
   DUMMY_ICON_TEXT: 'あああ',
   SHOW_MAP_RATIO: false, // 寸法設定を表示する
 
