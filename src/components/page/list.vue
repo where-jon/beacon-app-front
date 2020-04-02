@@ -1,5 +1,6 @@
 <template>
-  <b-form inline @submit.prevent>
+  <b-form inline @submit.prevent autocomlete="off">
+    <input type="password" style="display:none">
     <b-container :fluid="isFluid" @click="resetDetail">
       <alert :message="showMessage? message: error" :force-hide="alertForceHide" />
 
