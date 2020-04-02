@@ -164,10 +164,16 @@ export default {
     },
     async onSaving() {
       let entity = {
-        roleFeaturePK:{roleId: this.role.roleId, featureId: this.featureId},
-        mode: Util.hasValue(this.selectedModes)? this.selectedModes.reduce((a, b) => a | b): 0
+        updateKey: `${this.role.roleId}/${this.featureId}`,
+        mode: Util.hasValue(this.selectedModes)? this.selectedModes.map(v => this.modeOptions.find(opt => opt.value == v).text).join(';') : null
       }
-      const saveId = await AppServiceHelper.bulkSave(this.appServicePath, [entity])
+      if (Util.hasValue(this.selectedModes)) {
+        entity.mode = this.selectedModes.filter(v => v != '0')
+          .map(v => this.modeOptions.find(opt => opt.value == v).text).join(';')
+      } else {
+        entity.mode = null
+      }
+      const saveId =  await AppServiceHelper.save2(this.appServicePath, entity)
       return saveId
     },
     async onSaved(){

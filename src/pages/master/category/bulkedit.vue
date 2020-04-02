@@ -71,9 +71,6 @@ export default {
     async onSaving() {
       await this.$refs.bulkEdit.bulkSave2()
     },
-    getConf() {
-      return {}
-    },
   }
 }
 </script>

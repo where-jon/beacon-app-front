@@ -48,9 +48,6 @@ export default {
     async onSaving() {
       await this.$refs.bulkEdit.bulkSave2()
     },
-    getConf() {
-      return {}
-    },
     async onSaved(bulkSaveFunc, param){
       const result = await RegionHelper.autoSwitchRegion(this.regions)
       if(result){

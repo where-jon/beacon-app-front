@@ -80,10 +80,10 @@ export default {
     },
     async onSaving() {
       let entity = {
-        roleId: Util.hasValue(this.form.roleId)? this.form.roleId: -1,
+        updateKey: Util.hasValue(this.form.roleId)? this.form.roleId: null,
         roleName: this.form.roleName,
       }
-      return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
+      return await AppServiceHelper.save2(this.appServicePath, entity)
     },
   }
 }

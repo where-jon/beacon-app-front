@@ -149,10 +149,13 @@ export default {
       if (!this.form.csvFile) {
         throw new Error(this.$t('message.emptyFile'))
       }
-      const conf = this.$parent.$options.methods.getConf.call(this.$parent)
+      const getConf = this.$parent.$options.methods.getConf
       let formData = new FormData()
       formData.append('csvFile', this.form.csvFile)
-      formData.append('conf', JSON.stringify(conf))
+      if (getConf) {
+        const conf = getConf.call(this.$parent)
+        formData.append('conf', JSON.stringify(conf))
+      }
       const charSet = CHAR_SET.find(e => e.id == this.csvCharSet)
       let result = await AppServiceHelper.bulkSave2(this.appServicePath, formData, charSet.name, UPDATE_ONLY_NN.NONE, IGNORE.ON)
       if(this.$parent.$options.methods && this.$parent.$options.methods.onSaved) {
