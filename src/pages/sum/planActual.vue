@@ -340,6 +340,7 @@ export default {
         this.showProgress()
         const data = await HttpHelper.getAppService(uri)
         if (data.indicators.length == 0) {
+          this.hideProgress()
           this.message = this.$i18n.tnl('message.notFoundData', {target: this.indicatorTypeFilter.label})
           this.replace({showAlert: true})
           window.scrollTo(0, 0)
