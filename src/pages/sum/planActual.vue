@@ -344,6 +344,8 @@ export default {
           this.message = this.$i18n.tnl('message.notFoundData', {target: this.indicatorTypeFilter.label})
           this.replace({showAlert: true})
           window.scrollTo(0, 0)
+        } else {
+          this.replace({showAlert: false})
         }
         this.loadIndicators(data)
       }
