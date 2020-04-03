@@ -86,7 +86,7 @@ export const loadPosition = async (count, allShow = false, fixSize = false, show
       setDetectState(pos)
 
       // スタイルをセット
-      let display = Util.getValue(pos.tx, DISP.TX.DISPLAY_PRIORITY + '.display', defaultDisplay)
+      let display = Util.getValue(tx.pot, DISP.TX.DISPLAY_PRIORITY + '.display', defaultDisplay)
       display = StyleHelper.getStyleDisplay1({...display, label}, {fixSize})
   
       return { ...pos, btxId: tx.btxId, deviceId: Util.v(exb, 'deviceId'), posx: pos.x, posy: pos.y,

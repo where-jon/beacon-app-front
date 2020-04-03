@@ -36,7 +36,7 @@
       </b-form>
     </b-row>
     <div>
-      <b-table sticky-header :items="tItems" :fields="tFields" :current-page="currentPage" :per-page="perPage" :sort-compare="defaultSortCompare" stacked="md" hover outlined>
+      <b-table :items="tItems" :fields="tFields" :current-page="currentPage" :per-page="perPage"  :sort-by.sync="sortBy" :sort-compare="defaultSortCompare" stacked="md" striped hover outlined >
       </b-table>
       <b-row>
           <b-col md="6" class="my-1">
@@ -102,6 +102,7 @@ export default {
         {key: 'potPerson', sortable: true, label: this.$i18n.tnl('label.potPerson')},
         {key: 'potThing', sortable: true, label: this.$i18n.tnl('label.potThing')},
       ],
+      sortBy: null,
     }
   },
   created() {
@@ -126,6 +127,8 @@ export default {
             this.message = this.$i18n.tnl('message.notFoundData', {target: this.planModeFilter.label})
             this.replace({showAlert: true})
             window.scrollTo(0, 0)
+          } else {
+            this.replace({showAlert: false})
           }
           this.loadData(data)
         }
