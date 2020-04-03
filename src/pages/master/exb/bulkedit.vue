@@ -43,7 +43,7 @@ export default {
       await this.$refs.bulkEdit.bulkSave2()
     },
     getConf() {
-      return {exbSensor: APP.EXB.SENSOR}
+      return {nullLabel: this.$i18n.tnl('label.null'), normalLabel: this.$i18n.tnl('label.normal')}
     },
     onRestruct(entity, dummyKey){
       if(Util.hasValue(entity.deviceId) || Util.hasValue(entity.deviceIdX)){

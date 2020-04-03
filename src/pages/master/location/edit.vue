@@ -10,7 +10,8 @@
           <b-form v-if="show" @submit.prevent="save">
             <b-form-group>
               <label v-t="'label.id'" />
-              <input v-model="form.locationCd" :readonly="!isEditable" type="text" maxlength="20" class="form-control" :pattern="cdPattern" required>
+              <input v-model="form.locationCd" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required> 
+              <!-- :pattern="cdPattern" required> -->
             </b-form-group>
             <b-form-group>
               <label v-t="'label.locationName'" />
@@ -311,32 +312,43 @@ export default {
     async onSaving() {
       let dummyKey = -1
       const entity = {
-        locationId: this.form.locationId? this.form.locationId: dummyKey--,
-        locationCd: this.form.locationCd,
+        updateKey: this.form.locationId? this.form.locationId: null,
+        ID: this.form.locationCd,
         locationType: Util.v(this.form, 'locationType', 0),
         areaId: this.form.areaId,
         locationName: this.form.locationName,
-        txViewType: {
-          displayFormat: this.txIconsDispFormat,
-          horizon: this.txIconsHorizon,
-          vertical: this.txIconsVertical
-        },
-        extValue: {},
         x: this.form.x,
         y: this.form.y,
         capacity: this.form.capacity,
-        exbIdList: this.form.exbIds,
-        txIdList: this.form.txIds,
+        exbIdList: this.form.exbIds ? this.form.exbIds.join(";") : null,
+        txIdList: this.form.txIds ? this.form.txIds.join(";") : null,
+        txViewType: null,
+        extValue: null
       }
-      ExtValueHelper.getExtValueKeys(APP.LOCATION).forEach(key => entity.extValue[key] = this.form[key])
 
-      entity.locationZoneList = Util.getValue(this.form, 'locationZoneList', []).map(locationZone => ({
-        locationZonePK: {
-          locationId: this.form.locationId? this.form.locationId: dummyKey--,
-          zoneId: locationZone.locationZonePK.zoneId
+      if (this.txIconsDispFormat && this.txIconsHorizon && this.txIconsVertical) {
+        entity.txViewType = {
+          displayFormat: this.txIconsDispFormat,
+          horizon: this.txIconsHorizon,
+          vertical: this.txIconsVertical
         }
-      }))
-      return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
+        entity.txViewType = ExtValueHelper.jsonStringfyAndFormatCSV(entity.txViewType)
+      }
+
+      const extValue = {}
+      ExtValueHelper.getExtValueKeys(APP.LOCATION).forEach(key => {
+        if (this.form[key]) {
+          extValue[key] = this.form[key]
+        }
+      })
+      if (Object.keys(extValue).length > 0) {
+        entity.extValue = ExtValueHelper.jsonStringfyAndFormatCSV(extValue)
+      }
+
+      entity.zoneClass = Util.getValue(this.form, 'locationZoneList', []).map(locationZone => {
+        return this.zones.find(zone => zone.zoneId == locationZone.locationZonePK.zoneId).zoneCd
+      }).join(";")
+      return await AppServiceHelper.save2(this.appServicePath, entity)
     },
     async onSaved(){
       this.oldLocationCd = this.form.locationCd

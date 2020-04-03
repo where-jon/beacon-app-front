@@ -243,7 +243,6 @@ export default {
         ID: this.form.categoryCd,
         categoryName: this.form.categoryName,
         categoryType: cateTypes.length > 0 ? cateTypes[0] : null,
-        extValue: {},
         description: this.form.description,
         display: ExtValueHelper.jsonStringfyAndFormatCSV({
           shape: `${this.form.displayShape}`,
@@ -251,11 +250,20 @@ export default {
           bgColor: ColorUtil.colorCd4display(this.form.displayBgColor),
         }),
         guardNames: Util.getValue(this.form, 'zoneGuardList', []).join(";"),
-        doorNames: Util.getValue(this.form, 'zoneDoorList', []).join(";")
+        doorNames: Util.getValue(this.form, 'zoneDoorList', []).join(";"),
+        extValue: null
       }
-      ExtValueHelper.getExtValueKeys(APP.CATEGORY).forEach(key => entity.extValue[key] = this.form[key])
-      entity.extValue = ExtValueHelper.jsonStringfyAndFormatCSV(entity.extValue)
       
+      const extValue = {}
+      ExtValueHelper.getExtValueKeys(APP.CATEGORY).forEach(key => {
+        if (this.form[key]) {
+          extValue[key] = this.form[key]
+        }
+      })
+      if (Object.keys(extValue).length > 0) {
+        entity.extValue = ExtValueHelper.jsonStringfyAndFormatCSV(extValue)
+      }
+
       this.oldType = this.form.categoryType
       this.oldShape = this.form.displayShape
       this.oldColor = this.form.displayColor

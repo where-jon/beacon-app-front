@@ -293,7 +293,7 @@ export default {
           return `${regionCd}/${potCd}`
         }).join(";")
       }
-      console.log('!!!')
+
       return await AppServiceHelper.save2(this.appServicePath, entity)
     },
     beforeSubmit(event, again){

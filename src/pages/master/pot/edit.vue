@@ -395,27 +395,31 @@ export default {
         ID: this.form.potCd,
         potName: this.form.potName,
         potType: this.potTypeOptions.filter(e => e.value == this.form.potType).map(e => e.text),
-        extValue: {},
         displayName: this.form.displayName,
         groupName: this.form.groupId ? this.groupOptions.filter(e => e.value == this.form.groupId).map(e => e.text).join(";") : null,
         categoryName: this.form.categoryId ? this.categoryOptions.filter(e => e.value == this.form.categoryId).map(e => e.text).join(";") : null,
         thumbnail: this.form.thumbnail,
-        description: this.form.description
+        description: this.form.description,
+        extValue: null
       }
       
+      const extValue = {}
       const arr = ['ruby', 'description', 'minors']
       arr.forEach(key => {
         if (this.form[key]) {
-          entity.extValue[key] = this.form[key]
+          extValue[key] = this.form[key]
         }
       })
       if (this.form.potName) {
-        entity.extValue['potNames'] = [this.form.potName]
+        extValue['potNames'] = [this.form.potName]
       }
       PotHelper.getPotExtKeys(this.pName).forEach(key => {
-        entity.extValue[key] = this.form[key]
+        extValue[key] = this.form[key]
       })
-      entity.extValue = ExtValueHelper.jsonStringfyAndFormatCSV(entity.extValue)
+      if (Object.keys(extValue).length > 0) {
+        entity.extValue = ExtValueHelper.jsonStringfyAndFormatCSV(extValue)
+      }
+
       if(Util.hasValue(this.form.authCategoryIdList)){
         const list = this.categoryOptions.filter(e => this.form.authCategoryIdList.includes(e.value)).map(e => e.text)
         entity.auth = list.length > 0 ? list.join(";") : null

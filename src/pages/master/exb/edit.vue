@@ -250,26 +250,25 @@ export default {
       this.vueSelected.location = null
     },
     async onSaving() {
-      let dummyKey = -1
       const entity = {
-        exbId: this.form.exbId != null? this.form.exbId: dummyKey--,
+        updateKey: this.form.exbId != null? this.form.exbId: null,
         deviceId: this.deviceId,
         locationId: this.form.locationId,
         exbType: this.form.exbType,
       }
       this.adjustParams.forEach(param => entity[param.key] = this.form[param.key])
 
-      const exbSensorList = []
+      const sensorOptions = OptionHelper.getSensorOptions('exb', false)
+      const sensorNames = []
       this.form.exbSensorList.forEach(exbSensor => {
         if(exbSensor.sensorId){
-          exbSensorList.push({
-            exbSensorPK: { exbId: this.form.exbId || dummyKey--, sensorId: exbSensor.sensorId }
-          })
+          const opt = sensorOptions.filter(opt => opt.value == exbSensor.sensorId)[0]
+          sensorNames.push(opt.text)
         }
       })
-      entity.exbSensorList = exbSensorList
+      entity.sensorNames = sensorNames.join(";")
 
-      let ret = await AppServiceHelper.bulkSave(this.appServicePath, [entity])
+      let ret = await AppServiceHelper.save2(this.appServicePath, entity)
       this.deviceId = null
       this.deviceIdX = null
       return ret

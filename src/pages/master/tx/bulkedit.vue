@@ -51,7 +51,7 @@ export default {
       await this.$refs.bulkEdit.bulkSave2()
     },
     getConf() {
-      return {txSensor: APP.SENSOR.TX_SENSOR}
+      return {nullLabel: this.$i18n.tnl('label.null'), normalLabel: this.$i18n.tnl('label.normal')}
     },
     restructTx(entity, dummyKey){
       if(APP.TX.BTX_MINOR == 'minor'){
