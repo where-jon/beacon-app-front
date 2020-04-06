@@ -145,7 +145,7 @@ export const bulkSave = async (target, entities, updateOnlyNN = UPDATE_ONLY_NN.N
 
 export const save2 = async (target, entity, updateOnlyNN = UPDATE_ONLY_NN.NONE, ignoreImage = IGNORE.OFF) => {
   const csvHeader = Object.keys(entity).map(v => `${v}`).join(",")
-  const csvRecord = Object.values(entity).map(v => v ? `"${v}"` : '""').join(",")
+  const csvRecord = Object.values(entity).map(v => v || v == 0 ? `"${v}"` : '""').join(",")
 
   let formData = new FormData()
   formData.append('csvHeader', csvHeader)

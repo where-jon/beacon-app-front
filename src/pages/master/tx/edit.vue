@@ -199,7 +199,7 @@ export default {
         updateKey,
         disp,
       }
-      console.log('!!!')
+
       const sensorOptions = this.sensorOptionsTx
       const sensorNames = []
       if (this.form.sensorId) {

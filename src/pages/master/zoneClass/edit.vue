@@ -100,7 +100,7 @@ export default {
     },
     pAppServicePath: {
       type: String,
-      default: '/core/zone/edit',
+      default: '/core/zone',
     },
     pTypeList: {
       type: Array,
@@ -227,25 +227,39 @@ export default {
       this.form.zoneCd = MasterHelper.nextCd(this.zoneCdOld)
     },
     async onSaving() {
-      const zoneId = Util.hasValue(this.form.zoneId)? this.form.zoneId: -1
       const entity = {
-        zoneId: zoneId,
-        zoneCd: this.form.zoneCd,
+        updateKey: Util.hasValue(this.form.zoneId)? this.form.zoneId: null,
+        ID: this.form.zoneCd,
         zoneName: this.form.zoneName,
-        extValue: {},
-        zoneType: this.form.zoneType,
-        areaId: this.form.areaId,
-        locationZoneList: this.form.locationId? [{locationZonePK: {zoneId: zoneId, locationId: this.form.locationId}}]: null,
-        zoneCategoryList: this.form.zoneCategoryList
+        extValue: null,
       }
-      ExtValueHelper.getExtValueKeys(APP.ZONE).forEach(key => entity.extValue[key] = this.form[key])
-      if(this.form.categoryId) {
-        if (!entity.zoneCategoryList) {
-          entity.zoneCategoryList = []
+
+      const extValue = {}
+      ExtValueHelper.getExtValueKeys(APP.ZONE).forEach(key => {
+        if (this.form[key]) {
+          extValue[key] = this.form[key]
         }
-        entity.zoneCategoryList.push({ zoneCategoryPK: {zoneId: zoneId, categoryId: this.form.categoryId} })
+      })
+      if (Object.keys(extValue).length > 0) {
+        entity.extValue = ExtValueHelper.jsonStringfyAndFormatCSV(extValue)
       }
-      return await AppServiceHelper.bulkSave(this.pAppServicePath, [entity])
+
+      const category = this.categories.find(category => category.categoryId == this.form.categoryId)
+      if (category) {
+        entity.categoryCd = category.categoryCd
+      }
+
+      const area = this.areas.find(ar => ar.areaId == this.form.areaId)
+      if (area) {
+        entity.areaCd = area.areaCd
+      }
+
+      const zoneType = this.zoneTypeOptions.find(zt => zt.value == this.form.zoneType)
+      if (zoneType) {
+        entity.zoneType = zoneType.text
+      }
+
+      return await AppServiceHelper.save2(this.pAppServicePath, entity)
     },
   }
 }

@@ -85,14 +85,14 @@ export default {
   methods: {
     async onSaving() {
       let entity = {
-        regionId: Util.hasValue(this.form.regionId)? this.form.regionId: -1,
-        regionCd: this.form.regionCd,
+        updateKey: Util.hasValue(this.form.regionId)? this.form.regionId: null,
+        ID: this.form.regionCd,
         regionName: this.form.regionName,
         meshId: this.form.meshId,
         description: this.form.description,
       }
       this.oldRegionCd = this.form.regionCd
-      return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
+      return await AppServiceHelper.save2(this.appServicePath, entity)
     },
     async onSaved(){
       await AuthHelper.switchAppService()
