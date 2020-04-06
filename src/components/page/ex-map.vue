@@ -213,6 +213,7 @@ import * as PlanHelper from '../../sub/helper/domain/PlanHelper'
 import * as ValidateHelper from '../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import * as VueSelectHelper from '../../sub/helper/ui/VueSelectHelper'
+import * as AuthHelper from '../../sub/helper/base/AuthHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import commonmixin from '../../components/mixin/commonmixin.vue'
 import reloadmixin from '../../components/mixin/reloadmixin.vue'
@@ -494,7 +495,8 @@ export default {
       return ret? [ret]: []
     },
     filterVisible() { // 絞り込みの表示・非表示（前回の状態を維持）
-      return !(this.pFilterToggle && LocalStorageHelper.getLocalStorage(KEY.CURRENT.SHOW_FILTER_ON_POSMAP) === false)
+      const regionId = AuthHelper.getRegionId()
+      return !(this.pFilterToggle && LocalStorageHelper.getLocalStorage(KEY.CURRENT.SHOW_FILTER_ON_POSMAP + regionId) === false)
     },
     maxFilterLength() {
       return 1000
@@ -638,7 +640,8 @@ export default {
 
     switchFilter(e) { // フィルタの表示切り替えでマップのリサイズをする。
       const isShownNow = document.getElementById('collapse-filter').className.includes('show')
-      LocalStorageHelper.setLocalStorage(KEY.CURRENT.SHOW_FILTER_ON_POSMAP, !isShownNow)
+      const regionId = AuthHelper.getRegionId()
+      LocalStorageHelper.setLocalStorage(KEY.CURRENT.SHOW_FILTER_ON_POSMAP + regionId, !isShownNow)
       if (this.onResize) {
         this.onResize()
       }
