@@ -135,6 +135,22 @@
         <template slot="thumbnail" slot-scope="row">
           <img v-if="row.item.existThumbnail" :src="thumbnail(row.item)" height="70">
         </template>
+        <!-- ID (デバッグ用に属性にpkey付加) -->
+        <template slot="ID" slot-scope="row">
+          <div :updateKey="row.item.updateKey">
+            {{ row.item.ID }}
+          </div>
+        </template>
+        <template slot="btxId" slot-scope="row">
+          <div :updateKey="row.item.updateKey">
+            {{ row.item.btxId }}
+          </div>
+        </template>
+        <template slot="deviceId" slot-scope="row">
+          <div :updateKey="row.item.updateKey">
+            {{ row.item.deviceId }}
+          </div>
+        </template>
         <!-- リージョン名 -->
         <template slot="regionNames" slot-scope="row">
           <div>
