@@ -9,7 +9,7 @@ import * as StringUtil from '../../util/StringUtil'
 import * as ArrayUtil from '../../util/ArrayUtil'
 import _ from 'lodash'
 import { APP, DISP } from '../../constant/config'
-import { EXB, NOTIFY_STATE, SYSTEM_ZONE_CATEGORY_NAME} from '../../constant/Constants'
+import { EXB, NOTIFY_STATE, SYSTEM_ZONE_CATEGORY_NAME, CATEGORY } from '../../constant/Constants'
 import * as Util from '../../util/Util'
 import * as ConfigHelper from './../dataproc/ConfigHelper'
 import * as StateHelper from './../dataproc/StateHelper'
@@ -302,7 +302,8 @@ const buildRelation = (masters, idmaps) => {
       list.forEach(e => {
         e.txList = relate(e, 'potId', idmaps.potTx, 'txId', idmaps.tx)
         e.group = relate(e, 'potId', idmaps.potGroup, 'groupId', idmaps.group)[0]
-        e.category = relate(e, 'potId', idmaps.potCategory, 'categoryId', idmaps.category)[0]
+        const categoryList = relate(e, 'potId', idmaps.potCategory, 'categoryId', idmaps.category).filter(category => category.categoryType != CATEGORY.AUTH)
+        e.category = categoryList? categoryList[0]: null
         e.user = relate(e, 'potId', idmaps.potUser, 'userId', idmaps.user)[0]
         // Util.debug(e)
       })

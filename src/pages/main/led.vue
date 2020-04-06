@@ -216,7 +216,7 @@ export default {
         Util.debug('led send: ', entity)
         await EXCloudHelper.postLed(entity)
 
-        const timerKey = 'led-' + entity[0].deviceId
+        const timerKey = 'led-' + entity[0].deviceid
         if(APP.SENSOR.LED.AUTO_OFF_TIME > 0) {
           if(this.lightOnCandidate) {
             const req = this.createEntity(false)
