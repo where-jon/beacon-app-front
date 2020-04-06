@@ -919,6 +919,7 @@ export default {
         this.replaceMain({ initDetailFilter: true })
       }
       this.replaceMain({selectedAreaId})
+      this.replaceMain({usePositionsCache: true})
       this.$router.push('/main/position')
     },
 

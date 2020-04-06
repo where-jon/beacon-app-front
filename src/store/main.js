@@ -12,6 +12,7 @@ export const state = () => ({
   eachZones: [],
   initDetailFilter: null,
   positions: [],
+  usePositionsCache: false,
   timers: [],
   mRoomPlans: []
 })
