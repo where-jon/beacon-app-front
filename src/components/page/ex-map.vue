@@ -478,6 +478,7 @@ export default {
   computed: {
     ...mapState('main', [
       'selectedTx',
+      'usePositionsCache',
     ]),
     ...mapState([
       'reload',
@@ -738,7 +739,12 @@ export default {
       this.sensorMap = await SensorHelper.fetchSensorInfo(this.pMergeSensorIds)
       if (Util.hasValue(this.pShowTxSensorIds) && !payload.disabledPosition){
         const alwaysTxs = this.txs.some(tx => Util.v(tx, 'location.areaId') == this.selectedAreaId && NumberUtil.bitON(tx.disp, TX.DISP.ALWAYS))
-        await PositionHelper.loadPosition(this.count, alwaysTxs, false, this.pShowMRoomStatus)
+        if (this.usePositionsCache) {
+          this.replaceMain({usePositionsCache: false})
+        }
+        else {
+          await PositionHelper.loadPosition(this.count, alwaysTxs, false, this.pShowMRoomStatus)
+        }
       }
 
       if (this.pShowZone) {
