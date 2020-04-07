@@ -374,21 +374,58 @@ export default {
       const endDt = moment(eDt).format("YYYY-MM-DDT23:59:59.999")
       return [startDt, endDt]
     },
+    getCsvCols() {
+      switch (this.indicatorTypeFilter.value) {
+        case 0:
+          return [this.$i18n.tnl('label.type'), 'ID', this.$i18n.tnl('label.name'), this.$i18n.tnl('label.operatingRate'), this.$i18n.tnl('label.operatingHours'), this.$i18n.tnl('label.workingHours')]
+        case 1:
+          return [this.$i18n.tnl('label.type'), 'ID', this.$i18n.tnl('label.name'), this.$i18n.tnl('label.reservationRate'), this.$i18n.tnl('label.reservationHours'), this.$i18n.tnl('label.workingHours')]
+        case 2:
+          return [this.$i18n.tnl('label.type'), 'ID', this.$i18n.tnl('label.name'), this.$i18n.tnl('label.reserveOperatingRate'), this.$i18n.tnl('label.reserveOperatingHours'), this.$i18n.tnl('label.reservationHours')]
+        case 3:
+          return [this.$i18n.tnl('label.type'), 'ID', this.$i18n.tnl('label.name'), this.$i18n.tnl('label.unreserveOperatingRate'), this.$i18n.tnl('label.unreserveOperatingHours'), this.$i18n.tnl('label.workingHours')]
+        default:
+          return [this.$i18n.tnl('label.type'), 'ID', this.$i18n.tnl('label.name'), this.$i18n.tnl('label.emptyReservationCount')]
+      }
+    },
+    getCsvFileName() {
+      switch (this.indicatorTypeFilter.value) {
+        case 0:
+          return 'operatingRate'
+        case 1:
+          return 'reservationRate'
+        case 2:
+          return 'reserveOperatingRate'
+        case 3:
+          return 'unreserveOperatingRate'
+        default:
+          return 'emptyReservationCount'
+      }
+    },
     exportCsv() {
-      try {
-        const [startDt, endDt] = this.getDateRange()
-        let uri = `${APP_SERVICE.BASE_URL}${this.appServicePath}/csvdownload?charset=${getCharSet(this.$store.state.loginId)}&startDt=${startDt}&endDt=${endDt}&indicatorType=${this.indicatorTypeFilter.value}`
-        if (this.selectedFilter.filterType && this.selectedFilter.filterId) {
-          uri += `&filterType=${this.selectedFilter.filterType}&filterId=${this.selectedFilter.filterId}`
+      const [startDt, endDt] = this.getDateRange()
+      const fromStr = startDt.substr(0, 10)
+      const toStr = endDt.substr(0, 10)
+
+      let csv = this.getCsvCols().join(',') + "\n"
+
+      this.tItems.forEach(e => {
+        switch (this.indicatorTypeFilter.value) {
+          case 0:
+          case 1:
+          case 2:
+          case 3:
+            csv += [e.type, e.id, e.name, e.indicator, e.hour, e.hour2].join(',') + "\n"
+            break
+          default:
+            csv += [e.type, e.id, e.name, e.indicator].join(',') + "\n"
         }
-        BrowserUtil.executeFileDL(uri)
-      }
-      catch(e) {
-        console.error(e)
-        this.message = e.response.data
-        this.replace({showAlert: true})
-        window.scrollTo(0, 0)
-      }
+      })
+      BrowserUtil.fileDL(
+        `${fromStr}_${toStr}_${this.getCsvFileName()}.csv`,
+        csv,
+        getCharSet(this.$store.state.loginId)
+      )
     },
     round(value) {
       const base = 100
@@ -401,6 +438,17 @@ export default {
     loadIndicators(data) {
       const color = ColorUtil.getStackColor(1)
       const arr = data.indicators.map((e) => {
+        let targetType = ''
+        switch (e.targetType) {
+          case 'ZONE':
+            targetType = this.$i18n.tnl('label.zone')
+            break
+          case 'LOCATION':
+            targetType = this.$i18n.tnl('label.initLocation')
+            break
+          default:
+            targetType = this.$i18n.tnl('label.potThing')
+        }
         let per = 0
         let hour2 = 0
         const graph = []
@@ -425,6 +473,8 @@ export default {
               ratio: 100-per
             })
             return {
+              type: targetType,
+              id: e.targetId,
               name: e.targetName, 
               indicator: per,
               hour: this.round(e.value),
@@ -450,6 +500,8 @@ export default {
               ratio: 100-per
             })
             return {
+              type: targetType,
+              id: e.targetId,
               name: e.targetName, 
               indicator: per,
               hour: this.round(e.value),
@@ -459,6 +511,8 @@ export default {
           default:
             // 空予約数
             return { 
+              type: targetType,
+              id: e.targetId,
               name: e.targetName, 
               indicator: e.value,
             }
