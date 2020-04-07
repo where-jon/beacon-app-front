@@ -117,7 +117,10 @@ export default {
               if (!map.positions) {
                 map.positions = []
               }
-              map.positions.push(pos)
+              if( !map.positions.find(p => p.minor == pos.minor) ){
+                pos.absent = true
+                map.positions.push(pos)
+              }
             }
           }
         })

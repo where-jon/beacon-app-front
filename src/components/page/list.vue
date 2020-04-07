@@ -921,6 +921,9 @@ export default {
       this.$router.push(pageParam.jumpPath)
     },
     async mapDisplay(item, filterReset) { // 位置把握(一覧)から在席表示に遷移する
+      if(item.absent){
+        return
+      }
       const tx = item.tx
       const selectedTx = {
         btxId: tx.btxId,
