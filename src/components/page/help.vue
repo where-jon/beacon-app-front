@@ -14,7 +14,7 @@
           <div class="list-group mt-3">
             <b>{{ getHelpDescription(introduction) }}</b>
           </div>
-          <a v-for="(intro,key) in helpBaseKeys" :key="key" :href="createInternalLink(introduction, intro)" class="list-group-item list-group-item-action">
+          <a v-for="(intro,key) in helpBaseKeys" :key="key" :href="createIntrolLink(introduction, intro)" class="list-group-item list-group-item-action">
             {{ getLabel(intro) }}
           </a>
         </div>
@@ -166,6 +166,9 @@ export default {
     },
     getConfig(key, option){
       return this.$i18n.tnl('config.' + key, option)
+    },
+    createIntrolLink(groupKey, pageKey){
+      return '#'+ groupKey + '_' + StringUtil.kebab2camel(pageKey) 
     },
     createInternalLink(groupKey, pageKey){
       return '#'+ groupKey.replace('/','_') + StringUtil.kebab2camel(pageKey) 
