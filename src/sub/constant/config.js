@@ -74,7 +74,7 @@ export const APP = { // 機能面に関する設定
     SHOW_QUANTITY: false, // 数量（トグルボタン）を表示
     SHOW_TOILET: false, // トイレ情報を表示
     SHOW_TX_NO_OWNER: true, // POTと紐付いていないタグを表示する
-    GUEST_GROUP_CD: 'GUEST', // ゲスト（来客）のグループコード
+    GUEST_GROUP_CD_LIST: ['GUEST'], // ゲスト（来客）のグループコード
 
     WITH: {
       CATEGORY: true, // 位置表示(地図)にカテゴリを表示

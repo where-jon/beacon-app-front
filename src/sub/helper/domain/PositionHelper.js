@@ -197,6 +197,18 @@ const positionFilter = (positions, groupId, categoryId, txIdList, freeWord) => {
   }).value()
 }
 
+/**
+ * ゲスト指定されているグループのみに絞り込む
+ * 
+ * @param {} positions 
+ */
+export const filterPositionsOnlyGuest = (positions) => {
+  return positions.filter(pos => {
+    const tx = store.state.app_service.txIdMap[pos.txId]
+    const groupCd = Util.getValue(tx, 'pot.group.groupCd')
+    return APP.POS.GUEST_GROUP_CD_LIST.includes(groupCd)
+  })
+}
 
 
 

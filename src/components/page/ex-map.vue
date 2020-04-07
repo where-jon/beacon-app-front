@@ -655,6 +655,14 @@ export default {
       return DISP.TX.R_ABSOLUTE? this.canvasScale: 1
     },
     getFilterOptions(masterName){
+      if (masterName == 'group' && this.pShowOnlyGuest) { // 来客アクセス管理の場合、グループのプルダウンの中身を設定されているグループのみにする
+        return APP.POS.GUEST_GROUP_CD_LIST.map(groupCd => {
+          const group = this.groups.find(group => group.groupCd == groupCd)
+          if (group) {
+            return this.groupOptions.find(option => option.value == group.groupId)
+          }
+        }).filter(e => e)
+      }
       return this[masterName + 'Options'] // commonmixin参照
     },
     getExtraFilterOptions(masterName){
@@ -1236,13 +1244,12 @@ export default {
         positions = PositionHelper.addFixedPosition(positions, this.locations, this.selectedAreaId) // 固定位置追加
       }
       // 表示Txのフィルタリング
-      if (this.pShowOnlyGuest) {
-        this.selectedGroupId = Util.v(this.groups.find(group => group.groupCd == APP.POS.GUEST_GROUP_CD), 'groupId', -1)
-      }
-
       positions = this.pDisabledFilter?
         PositionHelper.filterPositions(positions, false, undefined, null, null, null):
         PositionHelper.filterPositions(positions)
+      if (this.pShowOnlyGuest && !this.selectedGroupId) {
+        positions = PositionHelper.filterPositionsOnlyGuest(positions)
+      }
 
       if (this.isQuantity) { // 数量ボタン押下時
         this.showQuantityTx(positions)
