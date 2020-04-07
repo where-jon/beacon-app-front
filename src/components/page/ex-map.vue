@@ -129,7 +129,7 @@
     </b-collapse>
 
     <!-- 個別/数量 -->
-    <b-row v-if="pQuantity && !isMsTeams" id="quantityToggle" class="mt-2">
+    <b-row v-if="pQuantity" id="quantityToggle" class="mt-2">
       <b-form>
         <b-form-row class="ml-sm-4 ml-2 mr-1">
           <b-button-group>
@@ -183,7 +183,7 @@ import { Container, Shape, Text } from 'createjs-module'
 import 'element-ui/lib/theme-chalk/index.css'
 import drag from '@branu-jp/v-drag'
 import { SENSOR, TX, POT_TYPE, SHAPE, KEY, SYSTEM_ZONE_CATEGORY_NAME, ALERT_STATE } from '../../sub/constant/Constants'
-import { APP, DISP, APP_SERVICE, EXCLOUD, MSTEAMS_APP } from '../../sub/constant/config'
+import { APP, DISP, APP_SERVICE, EXCLOUD } from '../../sub/constant/config'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as ColorUtil from '../../sub/util/ColorUtil'
@@ -417,7 +417,6 @@ export default {
       isPause: false,
       isHeatmap: this.pDefaultHeatmap,
       isLoading: false,
-      isMsTeams: MSTEAMS_APP.IS_COOPERATION,
       noImageErrorKey: 'noMapImage',
       detectedCount: 0,
       thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,

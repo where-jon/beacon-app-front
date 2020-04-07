@@ -22,6 +22,14 @@ export const APP = { // 機能面に関する設定
     TIMEOUT: 60 * 60 * 1000, // session timeout(using local storage)
     STATE_EXPIRE_TIME: 3 * 60 * 1000, // マスタキャッシュ有効時間(ミリ秒)
   },
+  AUTH: {
+    USE_AD: false, // ActiveDirectoryで認証
+    // APP_ID: 'fcfc143f-c8c8-454e-ab72-fdf2e49f862f',
+    // REDIRECT_URL: 'https://xxx.saas.msteams.exbeacon.com/azlogin/adminend/',
+    REDIRECT_URL: 'http://localhost:3000/azlogin/end/', // 認証後redirect先
+    APP_ID: 'dd3ea682-9b02-49ec-9d15-c63cee38c792', // AAD clientId
+    ADMINCONSENT_URL_BASE: 'https://login.microsoftonline.com/common/adminconsent' // 管理者承認ページURL
+  },  
   MENU: {
     SHOW_MENU_LINK: '',
     SHOW_MENU_LINK_URL: '',
@@ -639,15 +647,5 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     ZONE_OTHER: true // ゾーンその他を表示する
   },
 
-}
-
-export const MSTEAMS_APP = {
-  IS_COOPERATION: false,
-  // APP_ID: 'fcfc143f-c8c8-454e-ab72-fdf2e49f862f',
-  // REDIRECT_URL: 'https://xxx.saas.msteams.exbeacon.com/azlogin/adminend/',
-  REDIRECT_URL: 'http://localhost:3000/azlogin/end/',
-  APP_ID: 'dd3ea682-9b02-49ec-9d15-c63cee38c792',
-  ADMINCONSENT_URL_BASE: 'https://login.microsoftonline.com/common/adminconsent',
-  AES_KEY: '93361405B57C62DF33873146A7215790256978125098DF0A197CF2'
 }
 

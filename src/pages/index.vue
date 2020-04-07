@@ -3,11 +3,11 @@
 </template>
 
 <script>
-import { APP, MSTEAMS_APP } from '../sub/constant/config'
+import { APP } from '../sub/constant/config'
 
 export default {
   mounted() {
-    if (!MSTEAMS_APP.IS_COOPERATION) {
+    if (!APP.AUTH.USE_AD) {
       this.$router.push(APP.MENU.TOP_PAGE)  // redirect
     } else {
       this.$router.push('/azlogin/')  // redirect

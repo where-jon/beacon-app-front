@@ -7,11 +7,11 @@
       <b-form v-if="show" @submit.prevent="save">
         <b-form-group>
           <label v-t="'label.id'" />
-          <input v-model="form.groupCd" :readonly="!isEditable" type="text" maxlength="20" class="form-control">
+          <input v-model="form.groupCd" :readonly="!isEditable || useAd" type="text" maxlength="20" class="form-control">
         </b-form-group>
         <b-form-group>
           <label v-t="'label.groupName'" />
-          <input v-model="form.groupName" :readonly="!isEditable" type="text" maxlength="20" class="form-control" required>
+          <input v-model="form.groupName" :readonly="!isEditable || useAd" type="text" maxlength="20" class="form-control" required>
         </b-form-group>
 
         <extform :is-editable="isEditable" :form="form" :p-ext-value="extValue" />
@@ -24,7 +24,7 @@
         <color-picker :caption="'label.bgColor'" :name="'displayBgColor'" />
         <b-form-group>
           <label v-t="'label.description'" />
-          <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" :readonly="!isEditable" maxlength="1000" />
+          <b-form-textarea v-model="form.description" :rows="3" :max-rows="6" :readonly="!isEditable || useAd" maxlength="1000" />
         </b-form-group>
 
         <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
@@ -80,7 +80,8 @@ export default {
       oldShape: Util.getValue(group, 'display.shape'),
       oldColor: Util.getValue(group, 'display.color'),
       oldBgColor: Util.getValue(group, 'display.bgColor'),
-      groupCdOld: null
+      groupCdOld: null,
+      useAd: APP.AUTH.USE_AD,
     }
   },
   computed: {

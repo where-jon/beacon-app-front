@@ -19,8 +19,12 @@
           </div>
           <div class="description">
             <div v-for="item in getDispItems()" :key="item.key">
-              <div v-if="item.key !== 'name' || !inMsTeams">{{ item.val }}</div>
-              <div v-else><a href="#" @click="moveToChat">{{ item.val }}</a></div>
+              <div v-if="item.key !== 'name' || !inMsTeams">
+                {{ item.val }}
+              </div>
+              <div v-else>
+                <a href="#" @click="moveToChat">{{ item.val }}</a>
+              </div>
             </div>
           </div>
         </div>
@@ -39,9 +43,11 @@
         </div>
         <div class="descriptionSensor">
           <div v-for="item in getDispItems()" :key="item.key">
-            <div v-if="item.key !== 'name'">{{ item.val }}</div>
+            <div v-if="item.key !== 'name'">
+              {{ item.val }}
+            </div>
             <div v-else>
-              <a href="#" v-if="inMsTeams" @click="moveToChat">{{ item.val }}</a>
+              <a v-if="inMsTeams" href="#" @click="moveToChat">{{ item.val }}</a>
             </div>
           </div>
         </div>
@@ -60,7 +66,7 @@ import * as StringUtil from '../../sub/util/StringUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import meditag from './meditag.vue'
 import txdetailmodal from './txdetailmodal.vue'
-import * as microsoftTeams from "@microsoft/teams-js"
+import * as microsoftTeams from '@microsoft/teams-js'
 
 const loadImage = (src, fixHeight) => {
   if(!src){
@@ -102,7 +108,7 @@ export default {
       left: 0,
       meditagWidth: 266,
       blackColor: FONT.COLOR.BLACK,
-      inMsTeams: BrowserUtil.inIframe()
+      inMsTeams: APP.AUTH.USE_AD && BrowserUtil.inIframe()
     }
   },
   computed: {

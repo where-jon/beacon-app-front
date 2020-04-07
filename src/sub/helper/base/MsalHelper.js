@@ -6,7 +6,7 @@
  */
 
 import * as Msal from 'msal'
-import { MSTEAMS_APP } from '../../constant/config'
+import { APP } from '../../constant/config'
 import { Date } from 'core-js'
 
 const loginRequest = {
@@ -19,7 +19,7 @@ let myMSALObj
 export const init = () => {
   myMSALObj = new Msal.UserAgentApplication({
     auth: {
-      clientId: MSTEAMS_APP.APP_ID,
+      clientId: APP.AUTH.APP_ID,
       authority: 'https://login.microsoftonline.com/common',
       validateAuthority: true
     },

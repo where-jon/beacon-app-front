@@ -5,7 +5,7 @@
  */
 
 import * as microsoftTeams from '@microsoft/teams-js'
-import { MSTEAMS_APP } from '../../constant/config'
+import { APP } from '../../constant/config'
 
 export const init = () => {
   microsoftTeams.initialize()
@@ -51,7 +51,7 @@ export const getContext = () => {
     localStorage.removeItem('aad.error')
     // Go to the Azure AD authorization endpoint
     let queryParams = {
-      client_id: MSTEAMS_APP.APP_ID,
+      client_id: APP.AUTH.APP_ID,
       response_type: 'id_token token',
       response_mode: 'fragment',
       resource: 'https://graph.microsoft.com',
