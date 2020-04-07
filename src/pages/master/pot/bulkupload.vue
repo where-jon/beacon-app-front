@@ -18,6 +18,10 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkupload from '../../../components/page/bulkupload.vue'
 
 export default {
+  components: {
+    breadcrumb,
+    bulkupload,
+  },
   props: {
     pName: {
       type: String,
@@ -35,10 +39,6 @@ export default {
       type: Array,
       default: () => [CATEGORY.PERSON, CATEGORY.THING],
     },
-  },
-  components: {
-    breadcrumb,
-    bulkupload,
   },
   data() {
     return {

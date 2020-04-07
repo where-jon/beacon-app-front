@@ -4,7 +4,7 @@
  */
 
 import { APP } from '../../constant/config'
-import { SENSOR, FEATURE, CATEGORY, ZONE, ROLE_FEATURE } from '../../constant/Constants'
+import { SENSOR, FEATURE, CATEGORY, ZONE, ROLE_FEATURE, POT_TYPE } from '../../constant/Constants'
 import * as Util from '../../util/Util'
 import * as StringUtil from '../../util/StringUtil'
 import * as ConfigHelper from './ConfigHelper'
@@ -30,6 +30,7 @@ export const setApp = pi18n => {
 export const getMagicNumberList = (features) => {
   const retMap = {}
 
+  retMap.potType = createOptionMap(POT_TYPE.getTypes())
   retMap.categoryType = createOptionMap(CATEGORY.getTypes(true))
   retMap.sensor = createOptionMap(getSensorAllOptions())
   retMap.locationType = createOptionMap(getLocationTypeOptions())
