@@ -348,7 +348,7 @@ export const APP = { // 機能面に関する設定
   SPLIT_UPLOAD_SIZE_IE: 10 * 1024 * 1024, // 分割アップロードのサイズ閾値（Byte）（for IE）
   MAX_IMAGE_SIZE: 1.5 * 1024 * 1024, // アップロード可能な最大イメージサイズ(Byte)
   MAX_IMAGE_ZIP_SIZE: 100 * 1024 * 1024, // アップロード可能な最大イメージzipサイズ(Byte)
-  AREA_THUMBNAIL_MAX: 200, // サムネイルリサイズ時の最大幅・高さ(エリア)
+  AREA_THUMBNAIL_MAX: 300, // サムネイルリサイズ時の最大幅・高さ(エリア)
   POT_THUMBNAIL_MAX: 200, // サムネイルリサイズ時の最大幅・高さ(pot)
 
   POSITION_SUMMARY_START: 10, // 位置情報csvダウンロード開始時刻（時）
