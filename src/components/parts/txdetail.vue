@@ -201,25 +201,26 @@ export default {
 .balloon {
   position: absolute;
   padding: 0px;
+  z-index: 5;
 }
 .balloon::before {
   content: '';
   position: absolute;
-  z-index: 1;
+  z-index: 6;
   width: 20px;
   height: 20px;
 }
 .balloon::after {
   content: '';
   position: absolute;
-  z-index: 2;
+  z-index: 7;
   top: 0; left: 0;
   width: 100%;
   height: 100%;
 }
 .balloon>* {
   position: relative;
-  z-index: 3;
+  z-index: 8;
 }
 .balloon,
 .balloon::after {
