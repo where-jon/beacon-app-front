@@ -41,7 +41,7 @@
           <img v-if="selectedTx.thumbnail.length > 0" :src="selectedTx.thumbnail" width="100%" height="auto">
           <img v-else src="/default.png" width="auto" height="116">
         </div>
-        <div class="descriptionSensor">
+        <div :class="descriptionSP">
           <div v-for="item in getDispItems()" :key="item.key">
             <div v-if="item.key !== 'name'">
               {{ item.val }}
@@ -115,6 +115,9 @@ export default {
     enableThumbnail () {
       return !this.isDisableThumbnail()
     },
+    descriptionSP() {
+      return APP.TXDETAIL.NO_UNREGIST_THUMB ? "descriptionSPNoThumbnail" : "descriptionSP"
+    }
   },
   mounted() {
     microsoftTeams.initialize()
@@ -296,12 +299,19 @@ export default {
   word-break: break-all;
   -ms-overflow-style: none;
 }
-.descriptionSensor {
+.descriptionSP {
   float: left;
   width: 50%;
   height: 150px;
   font-weight: bold;
   padding-left: 10px;
+  overflow-y: scroll;
+}
+
+.descriptionSPNoThumnail {
+  float: left;
+  height: 150px;
+  font-weight: bold;
   overflow-y: scroll;
 }
 
