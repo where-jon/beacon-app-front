@@ -1,6 +1,6 @@
 <template>
   <div>
-    <b-table :items="dataList" :fields="dataFieldList" stacked="md" striped hover :bordered="false" :small="small" :class="addClass">
+    <b-table :items="dataList" :fields="dataFieldList" :stacked="false" striped hover :bordered="false" :small="small" :class="addClass">
       <template slot="HEAD_male">
         <div style="float:left">
           <label v-t="'label.male'" /><img src="~/assets/icon/male.svg" :class="iconHeader">
