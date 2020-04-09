@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" />
+    <breadcrumb :items="breadCrumbs" />
     <m-list :params="params" :list="gateways" />
   </div>
 </template>
@@ -33,7 +33,7 @@ export default {
         sortBy: 'deviceId',
         initTotalRows: 0
       },
-      items: ViewHelper.createBreadCrumbItems('master', 'masterGateway'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('master', 'masterGateway'),
       gateways: []
     }
   },

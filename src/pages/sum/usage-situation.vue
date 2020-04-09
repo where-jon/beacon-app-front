@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" :reload="false" />
+    <breadcrumb :items="breadCrumbs" :reload="false" />
     <div class="container">
       <alert :message="message" />
       <b-form inline @submit.prevent>
@@ -125,7 +125,7 @@ export default {
   data () {
     return {
       name: 'usageSituation',
-      items: ViewHelper.createBreadCrumbItems('sumTitle', 'usageSituation'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('sumTitle', 'usageSituation'),
       fields: [],
       fields1: ViewHelper.addLabelByKey(this.$i18n, [
         {key: 'zoneCategoryName', sortable: true},

@@ -1,6 +1,6 @@
 <template>
   <div id="locationSetting" class="container-fluid">
-    <breadcrumb :items="items" :legend-items="legend.items" />
+    <breadcrumb :items="breadCrumbs" :legend-items="legend.items" />
     <alert :message="message" />
 
     <b-form inline class="mt-2" @submit.prevent>
@@ -121,7 +121,7 @@ export default {
   mixins: [commonmixin, showmapmixin],
   data() {
     return {
-      items: ViewHelper.createBreadCrumbItems('master', 'locationSetting'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('master', 'locationSetting'),
       vueSelected: {
         area: null,
         locationPos: null,

@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" />
+    <breadcrumb :items="breadCrumbs" />
     <m-list :params="params" :list="tenants" />
   </div>
 </template>
@@ -38,7 +38,7 @@ export default {
         ]),
         initTotalRows: this.$store.state.app_service.tenants.length
       },
-      items: ViewHelper.createBreadCrumbItems('provider', 'tenant'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('provider', 'tenant'),
     }
   },
   computed: {

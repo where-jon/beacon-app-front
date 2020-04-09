@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <breadcrumb :items="items" :reload="false" />
+    <breadcrumb :items="breadCrumbs" :reload="false" />
     <alert :message="message" />
     <b-row class="mt-2">
       <b-form inline @submit.prevent>
@@ -76,7 +76,7 @@ export default {
     return {
       name: 'planActualHistory',
       appServicePath: '/office/plans/histories',
-      items: ViewHelper.createBreadCrumbItems('historyTitle', 'planActualHistory'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('historyTitle', 'planActualHistory'),
       planModeOpts: [
         {value: 0, label: this.$t('label.plan')},
         {value: 1, label: this.$t('label.actual')},

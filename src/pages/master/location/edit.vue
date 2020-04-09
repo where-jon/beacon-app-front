@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" />
+    <breadcrumb :items="breadCrumbs" />
     <div class="container">
       <alert :message="message" />
       <auto-alert :custom="showAreaWarn" :p-custom-message="areaWarnMessage" />
@@ -132,7 +132,7 @@ export default {
       id: 'locationId',
       backPath: '/master/location',
       appServicePath: '/core/location',
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'locationList', href: '/master/location'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.location.locationId)),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('master', {text: 'locationList', href: '/master/location'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.location.locationId)),
       useZoneClass: MenuHelper.isMenuEntry('/master/zoneClass') && this.isShown('LOCATION.WITH', 'zoneClass'),
       useZoneBlock: MenuHelper.isMenuEntry('/master/zoneBlock') && this.isShown('LOCATION.WITH', 'zoneBlock'),
       form: Util.extract(this.$store.state.app_service.location, [

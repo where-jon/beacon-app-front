@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" />
+    <breadcrumb :items="breadCrumbs" />
     <div class="container">
       <alert :message="message" />
 
@@ -76,7 +76,7 @@ export default {
     return {
       appServicePath: '/meta/setting',
       name: 'setting',
-      items: ViewHelper.createBreadCrumbItems('setting', 'systemJson'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('setting', 'systemJson'),
       vueSelected: {
         key: null, // 設定キー
       },

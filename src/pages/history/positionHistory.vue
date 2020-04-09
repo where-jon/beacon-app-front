@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" :reload="false" />
+    <breadcrumb :items="breadCrumbs" :reload="false" />
     <div class="container">
       <alert :message="message" />
 
@@ -102,7 +102,7 @@ export default {
   data () {
     return {
       name: 'positionHistory',
-      items: ViewHelper.createBreadCrumbItems('historyTitle', 'positionHistory'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('historyTitle', 'positionHistory'),
       fields: ViewHelper.addLabelByKey(this.$i18n, [
         {key: 'positionDt', sortable: true, label:'dt'},
         ...DISP.POSITION_HISTORY.HEADERS.map(header => {

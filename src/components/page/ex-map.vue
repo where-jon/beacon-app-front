@@ -1,6 +1,6 @@
 <template>
   <div id="mapContainer" class="container-fluid" @click="resetDetail">
-    <breadcrumb :items="items" :extra-nav-spec="pExtraNavList" :short-name="shortName" :reload="!pAnalysis" :state="reloadState" :auto-reload="!pSplitAutoReload" :legend-items="legendItems" :filter-toggle="pFilterToggle" />
+    <breadcrumb :items="breadCrumbs" :extra-nav-spec="pExtraNavList" :short-name="shortName" :reload="!pAnalysis" :state="reloadState" :auto-reload="!pSplitAutoReload" :legend-items="legendItems" :filter-toggle="pFilterToggle" />
     <alert v-if="pAnalysis" :message="message" />
     <span v-else-if="pThermohWarn">
       <alert :warn-message="warnMessage" :fix="fixHeight" force-no-close :alert-style="alertStyle" />
@@ -404,7 +404,7 @@ export default {
   },
   data() {
     return {
-      items: ViewHelper.createBreadCrumbItems(...this.pCaptionList),
+      breadCrumbs: ViewHelper.createBreadCrumbItems(...this.pCaptionList),
       message: '',
       showMeditag: this.pShowMeditagList && !this.pInstallation,
       shortName: Util.hasValue(this.pShortName)? this.$i18n.tnl('label.' + this.pShortName): '',

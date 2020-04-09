@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" />
+    <breadcrumb :items="breadCrumbs" />
     <m-list :params="params" compact-mode />
   </div>
 </template>
@@ -33,7 +33,7 @@ export default {
         ]),
         sortBy: 'roleName',
       },
-      items: ViewHelper.createBreadCrumbItems('master', 'role'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('master', 'role'),
     }
   },
   methods: {

@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" :extra-nav-spec="extraNavSpec"
+    <breadcrumb :items="breadCrumbs" :extra-nav-spec="extraNavSpec"
                 :reload="reload" :short-name="shortName" reload-emit-name="allFetch"
     />
     <alert v-model="alertData.isAlert" :message="alertData.message" :fix="fixHeight" :prohibit="alertData.isAlert" :prohibit-view="isProhibitView" :alert-style="alertStyle" />
@@ -57,7 +57,7 @@ export default {
     return {
       fixHeight: DISP.THERMOH.ALERT_FIX_HEIGHT,
       isProhibitView:true,
-      items: ViewHelper.createBreadCrumbItems('main', 'positionStack'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('main', 'positionStack'),
       extraNavSpec: EXTRA_NAV,
       shortName: this.$i18n.t('label.positionStackShort'),
       reload: true,

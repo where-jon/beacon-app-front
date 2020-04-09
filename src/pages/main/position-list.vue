@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" :extra-nav-spec="extraNavSpec"
+    <breadcrumb :items="breadCrumbs" :extra-nav-spec="extraNavSpec"
                 :reload="reload" :short-name="shortName"
     />
     <alert v-model="showDismissibleAlert" :message="message" :fix="fixHeight" :prohibit="showDismissibleAlert" :prohibit-view="isProhibitView" :alert-style="alertStyle" />
@@ -60,7 +60,7 @@ export default {
         disableTableButtons: true,
       },
       totalRows: 0,
-      items: ViewHelper.createBreadCrumbItems('main', 'positionList'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('main', 'positionList'),
       message: '',
       extraNavSpec: EXTRA_NAV,
       shortName: this.$i18n.t('label.positionListShort'),

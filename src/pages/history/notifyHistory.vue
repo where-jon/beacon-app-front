@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" :reload="false" />
+    <breadcrumb :items="breadCrumbs" :reload="false" />
     <div class="container">
       <alert :message="message" />
 
@@ -185,7 +185,7 @@ export default {
   data () {
     return {
       name: 'notifyHistory',
-      items: ViewHelper.createBreadCrumbItems('historyTitle', 'notifyHistory'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('historyTitle', 'notifyHistory'),
       fields: [],
       fields1: ViewHelper.addLabelByKey(this.$i18n, [  // TXボタン押下通知
         {key: 'positionDt', sortable: true, label:'dt'},

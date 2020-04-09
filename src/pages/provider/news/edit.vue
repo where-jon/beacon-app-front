@@ -1,6 +1,6 @@
 <template>
   <div>
-    <breadcrumb :items="items" />
+    <breadcrumb :items="breadCrumbs" />
     <div class="container">
       <alert :message="message" />
 
@@ -54,7 +54,7 @@ export default {
       id: 'newsId',
       backPath: '/provider/news',
       appServicePath: '/news',
-      items: ViewHelper.createBreadCrumbItems('provider', {text: 'news', href: '/provider/news'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.news.newsId)),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('provider', {text: 'news', href: '/provider/news'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.news.newsId)),
       form: Util.extract(this.$store.state.app_service.news,
         ['newsId', 'newsDate', 'content', 'dispFlg']),
     }

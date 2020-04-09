@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" />
+    <breadcrumb :items="breadCrumbs" />
     <m-list :params="params" compact-mode />
   </div>
 </template>
@@ -33,7 +33,7 @@ export default {
         fields: this.getFields(),
         sortBy: 'ID',
       },
-      items: ViewHelper.createBreadCrumbItems('master', 'group'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('master', 'group'),
     }
   },
   methods: {
