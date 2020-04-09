@@ -142,6 +142,15 @@ if (!String.prototype.repeat) {
   }
 }
 
+// IE11がremove()をサポートしていないため追加
+if (!('remove' in Element.prototype)) {
+  Element.prototype.remove = function() {
+    if (this.parentNode) {
+      this.parentNode.removeChild(this)
+    }
+  }
+}
+
 const setContextToHelper = (context) => {
   const lang = LocaleHelper.getLocale(process.browser? BrowserUtil.getLangShort(): 'ja')
   context.app.i18n.locale = context.app.i18n.messages[lang]? lang: 'en'
