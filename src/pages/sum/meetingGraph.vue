@@ -93,7 +93,6 @@ export default {
           const count = posList.filter(pos => pos.cnt==i || (i==max && pos.cnt>=max)).length
           const second = count * APP.POSITION_SUMMARY_INTERVAL * 60
           const per = second / total * 100.0
-          console.log('test')
           stayRatio += per
           const color = ColorUtil.getStackColor(i)
           if(per > 0){
@@ -108,7 +107,7 @@ export default {
         if(stayRatio < 100){
           const color = 'gray'
           const per = 100 - stayRatio
-          const second = Math.floor(total * stayRatio / 100)
+          const second = Math.floor(total * per / 100)
           graph.push({
             name: 0,
             style: `width: ${per}% !important; background: ${color};`,
