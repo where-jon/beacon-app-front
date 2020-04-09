@@ -210,7 +210,6 @@ export default {
       // 1日の場合
       let total = 0
       if(fromDate == toDate){
-        console.log('oneDay')
         total = toTime - fromTime
       }else{
         // 2日以上の場合

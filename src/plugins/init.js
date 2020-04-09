@@ -29,7 +29,6 @@ import * as ViewHelper from '../sub/helper/ui/ViewHelper'
 import * as VueSelectHelper from '../sub/helper/ui/VueSelectHelper'
 
 export default async (context, inject) => {
-  console.log('App Init') // If you need common initialize procedure, write here.
 
   setContextToHelper(context)
 
@@ -56,7 +55,7 @@ export default async (context, inject) => {
       // get all master
       const start = new Date().getTime()
       await MasterHelper.loadMaster()
-      console.log('master get', new Date().getTime() - start, 'msec')
+      Util.debug('master get', new Date().getTime() - start, 'msec')
     }
   }
   catch (e) {

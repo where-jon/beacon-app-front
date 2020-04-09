@@ -198,7 +198,6 @@ export default {
       return (h >= 10 ? h : "0" + h) + ":" + (m >= 10 ? m : "0" + m)
     },
     getUseRatio(posList, total){
-      console.log(posList)
       let sum = 0.0
       posList.forEach(pos => {        
         sum += pos.cnt / (pos.capacity ? pos.capacity : pos.cnt) * APP.POSITION_SUMMARY_INTERVAL * 60

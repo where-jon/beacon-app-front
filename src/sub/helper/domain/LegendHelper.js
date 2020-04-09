@@ -90,7 +90,5 @@ export const hasAllTxDisplayInfo = txList =>{
   }else {
     displayInfo = txList.filter(val => val.pot && val.pot.group )
   }
-  console.log('txList', txList)
-  console.log('displayInfo', displayInfo)
   return txList.length == displayInfo.length
 }

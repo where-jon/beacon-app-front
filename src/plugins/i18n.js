@@ -9,7 +9,6 @@ Vue.use(VueI18n)
 const lang = LocaleHelper.getLocale(process.browser? getLangShort(): 'ja')
 
 export default async ({ app, store }, inject) => {
-  console.log('i18n init start')
   app.i18n = new VueI18n({
     locale: lang,
     messages: {
@@ -37,6 +36,5 @@ export default async ({ app, store }, inject) => {
   inject('i18n', app.i18n)
   setI18nConstants(app.i18n)
   store.commit('setLang', getLangShort())
-  console.log('i18n init end')
 }
 

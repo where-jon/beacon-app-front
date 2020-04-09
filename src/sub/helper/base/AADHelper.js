@@ -6,6 +6,7 @@
 
 import * as microsoftTeams from '@microsoft/teams-js'
 import { APP } from '../../constant/config'
+import * as Util from '../../util/Util'
 
 export const init = () => {
   microsoftTeams.initialize()
@@ -25,18 +26,18 @@ export const isTeamsApp = () =>  window.navigator.userAgent.includes('Teams/')
 
 export const getCachedToken = () => {
   const expire = localStorage.getItem('aad.expire')
-  console.log({expire})
+  Util.debug({expire})
   if (!expire || expire - new Date().getTime() < 0) {
     return null
   }
   const idtoken = localStorage.getItem('aad.id_token')
-  console.log({idtoken})
+  Util.debug({idtoken})
   return idtoken
 }
 
 export const getContextForMobile = (callback) => {
   microsoftTeams.getContext((context) => {
-    console.log({context})
+    Util.debug({context})
     callback(context)
   })
 }
@@ -44,7 +45,7 @@ export const getContextForMobile = (callback) => {
 export const getContext = () => {
   init()
   microsoftTeams.getContext((context) => {
-    console.log({context})
+    Util.debug({context})
     // Generate random state string and store it, so we can verify it in the callback
     let state = _guid() // _guid() is a helper function in the sample
     localStorage.setItem('aad.state', state)

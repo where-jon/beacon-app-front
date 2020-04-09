@@ -610,7 +610,6 @@ export default {
       this.resetDetail()
     },
     iconMouseOver(event){
-      console.log('!!!')
       if (this.pShowMRoomStatus) {
         this.createTooltipMRoom(event, event.target.parent)
       } else if (this.pShowPir) {

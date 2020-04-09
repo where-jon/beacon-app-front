@@ -8,6 +8,7 @@
 import * as Msal from 'msal'
 import { APP } from '../../constant/config'
 import { Date } from 'core-js'
+import * as Util from '../../util/Util'
 
 const loginRequest = {
   scopes: ['openid', 'profile', 'User.Read']
@@ -32,13 +33,13 @@ export const init = () => {
   // register callback for redirect usecases
   myMSALObj.handleRedirectCallback((error, response) => {
     if (error) {
-      console.log(error)
+      Util.debug(error)
     } else {
       if (response.tokenType === 'id_token') {
-        console.log(response)
+        Util.debug(response)
       }
       else {
-        console.log('token type is:' + response.tokenType)
+        Util.debug('token type is:' + response.tokenType)
       }
     }
   })
@@ -49,17 +50,17 @@ export const init = () => {
 export const signIn = (callback) => {
   myMSALObj.loginPopup(loginRequest).then((loginResponse) => {
     //Login Success
-    console.log(loginResponse)
+    Util.debug(loginResponse)
     const account = myMSALObj.getAccount()
     if (account) {// avoid duplicate code execution on page load in case of iframe and popup window.
-      console.log(account)
+      Util.debug(account)
       callback(account.idToken, account.userName)
     }
     else {
-      console.error('get account failed')
+      Util.debug('get account failed')
     }
   }).catch((error) => {
-    console.log(error)
+    Util.debug(error)
   })
 }
 
@@ -85,9 +86,9 @@ export const getCachedToken = () => {
   }
   const account = myMSALObj.getAccount()
   if (account && (!isIE || !myMSALObj.isCallback(window.location.hash))) {// avoid duplicate code execution on page load in case of iframe and popup window.
-    console.log(account)
+    Util.debug(account)
     if (account.idToken.exp * 1000 < new Date().getTime()) {
-      console.warn('id token exipired')
+      Util.debug('id token exipired')
       return null
     }
     return account.idToken

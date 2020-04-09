@@ -34,34 +34,26 @@ export const setApp = (pStore, pi18n) => {
  * マスタエンティティをロードする
  */
 export const loadMaster = async () => {
-  console.log('fetch', new Date())
   const masterAll = await HttpHelper.getAppService('/core/region/masterall')
 
-  console.log('parse', new Date())
   const res = Papa.parse(masterAll, {delimiter: ','})
   if (res.errors.length > 0) {
     res.errors.forEach(e => {
-      console.error(e)
+      Util.debug(e)
     })
     return
   }
 
-  console.log('build', new Date())
   const {masters, idmaps} = buildMasters(res.data)
   // Util.debug({masters})
 
-  console.log('relation', new Date())
   buildRelation(masters, idmaps)
 
-  console.log('add', new Date())
   addInfo(masters, idmaps)
 
-  console.log('commit', new Date())
   storeCommitAll(masters, idmaps)
 
-  console.log('end', new Date())
   Util.debug({masters})
-  console.warn({masters})
 }
 
 /**
@@ -283,7 +275,7 @@ const jsonParse = (col, val) => {
   try {
     return JSON.parse(val.split('|').join('"'))    
   } catch (e) {
-    console.error('JSON parse error', col, val, e)
+    Util.debug('JSON parse error', col, val, e)
     throw e
   }
 }
