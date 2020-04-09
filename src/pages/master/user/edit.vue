@@ -248,16 +248,6 @@ export default {
       this.role = null
       this.pass = null
       this.passConfirm = null
-      if(this.selfUpdate){
-        const authPass = Util.hasValue(this.form.pass)? this.form.pass: this.$store.state.pass
-        await AuthHelper.authByAppService(
-          this.form.loginId,
-          authPass,
-          () => {
-            this.replace({pass: authPass})
-          }
-        )
-      }
     },
     onBeforeReload(){
       this.vueSelected.role = VueSelectHelper.getVueSelectData(this.roleOptions, this.roleOptions.reduce((prev, cur) => cur).value)
