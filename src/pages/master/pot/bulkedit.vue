@@ -113,6 +113,10 @@ export default {
         Util.setValue(entity, 'extValue.' + ext, entity[ext])
       })
 
+      if (entity.potTypeName) {
+        entity.potType = Util.v(POT_TYPE.getTypes().find(e => e.text == entity.potTypeName), 'value')
+        entity.potTypeName = null
+      }
       if(!isNaN(entity.potType) && !APP.POT.TYPES.includes(entity.potType)){
         entity['potTypeOneOf'] = APP.POT.TYPES
       }
