@@ -471,7 +471,7 @@ export default {
       })
     },
     async onChangeAreaId(areaId) {
-      const areaImage = await StateHelper.loadAreaImage(areaId, true)
+      const areaImage = await StateHelper.loadAreaImage(areaId, false)
       if (areaImage) {
         this.setupCanvas(areaImage)
       }
