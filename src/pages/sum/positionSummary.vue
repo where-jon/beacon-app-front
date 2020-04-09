@@ -1,6 +1,6 @@
 <template>
   <div>
-    <breadcrumb :items="items" :reload="false" />
+    <breadcrumb :items="breadCrumbs" :reload="false" />
     <div>
       <alert :message="message" />
 
@@ -48,7 +48,7 @@ export default {
   mixins: [commonmixin],
   data () {
     return {
-      items: ViewHelper.createBreadCrumbItems('sumTitle', 'positionSummary'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('sumTitle', 'positionSummary'),
       form: {
         date: '',
       },

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <breadcrumb :items="items" />
+    <breadcrumb :items="breadCrumbs" />
     <m-list :params="params" :list="newsList" />
   </div>
 </template>
@@ -38,7 +38,7 @@ export default {
         sortDesc: true,
         initTotalRows: this.$store.state.app_service.newsList.length
       },
-      items: ViewHelper.createBreadCrumbItems('provider', 'news'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('provider', 'news'),
     }
   },
   computed: {

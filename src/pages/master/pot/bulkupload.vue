@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" />
+    <breadcrumb :items="breadCrumbs" />
     <bulkupload :id="id" :name="name" :back-path="backPath" :app-service-path="appServicePath" />
   </div>
 </template>
@@ -54,7 +54,7 @@ export default {
     backPath() {
       return this.pPath
     },
-    items() {
+    breadCrumbs() {
       return ViewHelper.createBreadCrumbItems('master', {text: StringUtil.concatCamel('pot', this.pName), href: this.backPath}, 'bulkUpload')
     },
   },

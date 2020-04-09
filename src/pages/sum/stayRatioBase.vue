@@ -89,7 +89,7 @@
         </b-button>
       </div>
     </b-modal>
-    <breadcrumb :items="items" :legend-items="legendItems" :reload="false" />
+    <breadcrumb :items="breadCrumbs" :legend-items="legendItems" :reload="false" />
     <div class="container">
       <alert :message="message" />
 
@@ -256,7 +256,7 @@ export default {
   mixins: [commonmixin],
   data () {
     return {
-      items: ViewHelper.createBreadCrumbItems('sumTitle', 'stayRatioBase'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('sumTitle', 'stayRatioBase'),
       legendItems: [],
       fields: this.getFields(true),
       form: {

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <breadcrumb :items="items" :reload="false" />
+    <breadcrumb :items="breadCrumbs" :reload="false" />
     <div class="container">
       <alert :message="message" />
 
@@ -94,7 +94,7 @@ export default {
   props: ['page', 'type', 'filter', 'download'],
   data () {
     return {
-      items: ViewHelper.createBreadCrumbItems('sumTitle', this.page),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('sumTitle', this.page),
       form: {
         datetimeFrom: '2020-02-20 00:00:00',
         datetimeTo: '2020-02-21 00:00:00'

@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" />
+    <breadcrumb :items="breadCrumbs" />
     <div class="container">
       <alert :message="message" />
 
@@ -70,7 +70,7 @@ export default {
       id: 'groupId',
       backPath: '/master/group',
       appServicePath: '/basic/group',
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'group', href: '/master/group'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.group.groupId)),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('master', {text: 'group', href: '/master/group'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.group.groupId)),
       form: Util.extract(this.$store.state.app_service.group, [
         'groupId', 'groupCd', 'groupName', 'display', 'description',
         ...ExtValueHelper.getExtValueKeys(APP.GROUP, true)

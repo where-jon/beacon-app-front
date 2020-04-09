@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" />
+    <breadcrumb :items="breadCrumbs" />
     <div class="container">
       <alert :message="message" />
 
@@ -50,7 +50,7 @@ export default {
       id: 'roleId',
       backPath: '/master/role',
       appServicePath: '/meta/role',
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'role', href: '/master/role'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.role.roleId)),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('master', {text: 'role', href: '/master/role'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.role.roleId)),
       form: Util.extract(this.$store.state.app_service.role, ['roleId', 'roleName']),
       roleFeatureMessages: {message: ''},
     }

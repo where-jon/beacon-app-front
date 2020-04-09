@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" :reload="false" />
+    <breadcrumb :items="breadCrumbs" :reload="false" />
     <div class="container">
       <alert :message="message" />
 
@@ -147,7 +147,7 @@ export default {
   mixins: [commonmixin],
   data () {
     return {
-      items: ViewHelper.createBreadCrumbItems('sumTitle', 'sensorGraph'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('sumTitle', 'sensorGraph'),
       form: {
         sensorId: null,
         datetimeFrom: null,

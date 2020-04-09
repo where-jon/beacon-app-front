@@ -1,6 +1,6 @@
 <template>
   <div>
-    <breadcrumb :items="items" :reload="false" />
+    <breadcrumb :items="breadCrumbs" :reload="false" />
     <div class="container">
       <alert :message="message" />
 
@@ -77,7 +77,7 @@ export default {
   mixins: [commonmixin],
   data () {
     return {
-      items: ViewHelper.createBreadCrumbItems('sumTitle', 'stayRatioGp'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('sumTitle', 'stayRatioGp'),
       fields: ViewHelper.addLabelByKey(this.$i18n, [
         {key: 'date', sortable: false, label: 'date'},
         {key: 'name', sortable: true, label: 'potName'},

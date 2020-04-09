@@ -1,6 +1,6 @@
 <template>
   <div class="container" :style="cssVars">
-    <breadcrumb :items="items" :reload="false" />
+    <breadcrumb :items="breadCrumbs" :reload="false" />
     <alert :message="message" />
     <b-row class="mt-2">
       <b-form inline @submit.prevent>
@@ -132,7 +132,7 @@ export default {
       name: 'plan',
       id: 'planId',
       appServicePath: '/office/plans',
-      items: ViewHelper.createBreadCrumbItems('main', 'plan'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('main', 'plan'),
       currentUser: null,
       currentUserPotIds: [],
       message: '',

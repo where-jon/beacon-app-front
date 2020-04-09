@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" />
+    <breadcrumb :items="breadCrumbs" />
     <m-list :params="params" :list="templates" />
   </div>
 </template>
@@ -39,7 +39,7 @@ export default {
         sortBy: 'notifyTemplateId',
         initTotalRows: this.$store.state.app_service.templates.length
       },
-      items: ViewHelper.createBreadCrumbItems('master', 'notifyTemplate'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('master', 'notifyTemplate'),
     }
   },
   computed: {

@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" />
+    <breadcrumb :items="breadCrumbs" />
     <div class="container">
       <alert :message="message" />
 
@@ -71,7 +71,7 @@ export default {
       id: 'areaId',
       backPath: '/master/area',
       appServicePath: '/core/area',
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'area', href: '/master/area'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.area.areaId)),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('master', {text: 'area', href: '/master/area'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.area.areaId)),
       form: Util.extract(this.$store.state.app_service.area, ['areaId', 'areaCd', 'areaName', 'mapImage']),
       updateOnlyNN: UPDATE_ONLY_NN.NULL,
       mapUpdate: false,

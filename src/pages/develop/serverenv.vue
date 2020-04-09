@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" :reload="true" @reload="fetchData" />
+    <breadcrumb :items="breadCrumbs" :reload="true" @reload="fetchData" />
     <div v-for="(env, index) in envs" :key="index">
       <div>{{ env.key }}</div>
       <table class="mb-3">
@@ -32,7 +32,7 @@ export default {
   },
   data () {
     return {
-      items: ViewHelper.createBreadCrumbItems('develop', 'env'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('develop', 'env'),
       envs: [],
     }
   },

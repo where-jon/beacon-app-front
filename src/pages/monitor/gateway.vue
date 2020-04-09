@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" :reload="true" :state="reloadState" @reload="fetchData" />
+    <breadcrumb :items="breadCrumbs" :reload="true" :state="reloadState" @reload="fetchData" />
     <div v-show="!reloadState.isLoad" class="container">
       <monitor-table ref="monitorTable" type="gw" :all-count="allCount" :fields="fields" :list="gateways" :tr-class="getClass" max-filter-length="40" />
     </div>
@@ -28,7 +28,7 @@ export default {
   mixins: [commonmixin, reloadmixin],
   data () {
     return {
-      items: ViewHelper.createBreadCrumbItems('monitor', 'gateway'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('monitor', 'gateway'),
       fields: ViewHelper.addLabelByKey(this.$i18n, EXSERVER.ENABLE?[
         { key: 'deviceId', label: 'deviceId', sortable: true, tdClass: 'action-rowdata'},
         { key: 'updated', label: 'finalReceiveTimestamp', sortable: true, tdClass: 'action-rowdata'},

@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" />
+    <breadcrumb :items="breadCrumbs" />
     <m-list :params="params" :another-page-params="anotherPageParams" compact-mode />
   </div>
 </template>
@@ -42,7 +42,7 @@ export default {
         { name: 'zone', id: 'zoneList', jumpPath: '/master/zoneBlock/', sendParamNames: ['updateKey']},
         { name: 'location', id: 'locationIdList', jumpPath: '/master/location/position', sendParamNames: ['updateKey']}, 
       ],
-      items: ViewHelper.createBreadCrumbItems('master', 'area'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('master', 'area'),
       thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.AREA_THUMBNAIL_URL,
     }
   },

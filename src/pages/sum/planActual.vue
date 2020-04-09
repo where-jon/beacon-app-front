@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <breadcrumb :items="items" :reload="false" />
+    <breadcrumb :items="breadCrumbs" :reload="false" />
     <alert :message="message" />
     <b-row class="mt-2">
       <b-form inline @submit.prevent>
@@ -118,7 +118,7 @@ export default {
       name: 'planActual',
       id: 'planActualId',
       appServicePath: '/office/plans/indicators',
-      items: ViewHelper.createBreadCrumbItems('sumTitle', 'planActual'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('sumTitle', 'planActual'),
       sortBy: 'name',
       message: '',
       locale: null,
