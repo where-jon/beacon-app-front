@@ -96,8 +96,8 @@ export default {
     return {
       breadCrumbs: ViewHelper.createBreadCrumbItems('sumTitle', this.page),
       form: {
-        datetimeFrom: null,
-        datetimeTo: null
+        datetimeFrom: '',
+        datetimeTo: ''
       },
       vueSelected: {
         group: null,
@@ -132,6 +132,8 @@ export default {
   },
   async created() {
     const date = DateUtil.getDefaultDate()
+    this.form.datetimeFrom = DateUtil.getDatetime(date, {date: -1})
+    this.form.datetimeTo = DateUtil.getDatetime(date)
   },
   async mounted() {
     ViewHelper.importElementUI()
