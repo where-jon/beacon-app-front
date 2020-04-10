@@ -40,7 +40,6 @@
         <div v-if="enableThumbnail" class="thumbnail-modal">
           <img v-if="selectedTx.thumbnail.length > 0" :src="selectedTx.thumbnail" width="100%" height="auto">
           <img v-else src="/default.png" width="auto" height="116">
-          <br>
         </div>
         <div :class="descriptionSP">
           <div v-for="item in getDispItems()" :key="item.key">
