@@ -1730,6 +1730,7 @@
     "networkError": "サーバに接続できません。",
     "noLedDevice": "操作できるLEDデバイスがありません。",
     "providerUserNotAllowed": "プロバイダユーザではこの機能は利用できません。",
+    "noPersonAssociated": "このユーザは人と関連付けがないため、この機能は使用できません。",
     "totalRowsMessage": "{row}件(表示は最新{maxRows}件まで)",
     "listEmpty": "データが存在しません。",
     "uploadMax": "アップロード可能な最大ファイルサイズは{target}Mバイトです。",
