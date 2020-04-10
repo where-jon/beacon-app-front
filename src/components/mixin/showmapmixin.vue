@@ -80,6 +80,7 @@ export default {
 
     // リサイズイベント定義
     defineResizeEvent(path) {
+      path = path.slice(-1) == '#' ? path.slice(0, -1) : path // Webサーバーによって#が付与されたときに削除
       if (!StringUtil.startsWithAny(path, ['/main','/sum','/develop/installation'])) {
         return
       }
