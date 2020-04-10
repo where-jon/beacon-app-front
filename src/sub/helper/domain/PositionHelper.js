@@ -231,6 +231,20 @@ export const hasTxLocation = tx => tx && tx.location && tx.location.x && tx.loca
  */
 export const isFixedPosOnArea = (tx, areaId) => hasTxLocation(tx) && tx.location.areaId == areaId
 
+/**
+ * 今いる場所が、TXの固定場所の属する固定ゾーンと一致するか
+ * 
+ * @param {*} pos 
+ */
+export const isInFixedPosZone = (pos) => {
+  const zoneList = Util.v(pos, 'tx.location.fixedPosZoneList') // TX所属の固定ゾーン
+  if (!zoneList) return false
+
+  const locationId = Util.v(pos, 'exb.location.locationId') // 現在の場所
+  if (!locationId) return false
+
+  return zoneList.some(zone => zone.locationList.some(location => location.locationId == locationId))
+}
 
 /**
  * エリア内にいるかを返す
@@ -370,12 +384,13 @@ export const addFixedPosition = (orgPositions, locations = [], selectedMapId = n
   const additionalPos = []
   // 表示対象となるTxのposを抽出
   positions.forEach(pos => {
-    pos.isFixedPosition = isFixedPosOnArea(pos.tx, selectedMapId)
+    pos.isFixedPosition = hasTxLocation(pos.tx)
 
-    if (pos.isFixedPosition) { // txが場所固定されており、現在位置が場所固定ゾーンにいる場合（txの固定場所のゾーンでなくても同じエリアの固定ゾーンであれば）
-      pos.inFixedZone = Util.v(pos, 'exb.location.isFixedPosZone') // 今いる場所が固定場所ゾーンに入っているか
-      // 固定場所ゾーンにいず、かつ同じエリアにいて、検知状態の場合、フリーアドレスとしても表示
-      if (!pos.inFixedZone && isInTheArea(pos, locations, selectedMapId) && pos.detectState == DETECT_STATE.DETECTED && !SensorHelper.isFixedSensorTx(pos.tx)) {
+    if (pos.isFixedPosition) { // txが場所固定されている場合
+      // 今いる場所のゾーンとTXの固定場所の固定ゾーンが一致するか
+      pos.inFixedZone = isInFixedPosZone(pos)
+      // 固定場所ゾーンにいず、かつ検知状態の場合、フリーアドレスとしても表示
+      if (!pos.inFixedZone && pos.detectState == DETECT_STATE.DETECTED && !SensorHelper.isFixedSensorTx(pos.tx)) {
         const addPos = _.cloneDeep(pos)
         addPos.isFixedPosition = false
         addPos.location = pos.exb.location

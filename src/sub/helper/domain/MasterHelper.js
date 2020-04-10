@@ -465,6 +465,7 @@ const addInfo = (masters, idmaps) => {
         const zoneCategoryList = location.zoneList.map(zone => zone.categoryList).flatMap(e => e).filter(e => e)
         Util.merge(location, {
           isAbsentZone: zoneCategoryList.some(category => category.categoryCd === SYSTEM_ZONE_CATEGORY_NAME.ABSENT),
+          fixedPosZoneList: location.zoneList.filter(zone => zone.categoryList.some(category => category.categoryCd === SYSTEM_ZONE_CATEGORY_NAME.FIXED_POS)),
           isFixedPosZone: zoneCategoryList.some(category => category.categoryCd === SYSTEM_ZONE_CATEGORY_NAME.FIXED_POS),
           isToiletZone: zoneCategoryList.some(category => category.categoryCd === SYSTEM_ZONE_CATEGORY_NAME.TOILET),
           zoneIdList: location.zoneList.map(zone => zone.zoneId),
