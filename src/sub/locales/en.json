@@ -1533,6 +1533,7 @@
     "networkError": "Unable to connect to the server.",
     "noLedDevice": "There are no LED devices to operate.",
     "providerUserNotAllowed": "This function is not available for provider users.",
+    "noPersonAssociated": "This feature is not available because this user has no person associated with it.",
     "totalRowsMessage": "Total: {row} (Only latest {maxRows} are displayed)",
     "listEmpty": "There are no records matching your request.",
     "uploadMax": "Upload file size is limited to {target}Mbytes.",

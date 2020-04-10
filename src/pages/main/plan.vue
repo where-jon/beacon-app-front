@@ -2,96 +2,98 @@
   <div class="container" :style="cssVars">
     <breadcrumb :items="breadCrumbs" :reload="false" />
     <alert :message="message" />
-    <b-row class="mt-2">
-      <b-form inline @submit.prevent>
-        <b-form-row class="my-1 ml-2 ml-sm-0">
-          <label class="ml-sm-4 ml-2 mr-1">
-            {{ $t('label.mode') }}
-          </label>
-          <span :title="vueSelectTitle(planModeFilter)">
-            <v-select v-model="planModeFilter" :options="planModeOpts" :clearable="false" class="ml-1 mr-2 vue-options" :style="vueSelectStyle">
-              <template slot="selected-option" slot-scope="option">
-                {{ vueSelectCutOn(option, true) }}
-              </template>
-              <template slot="no-options">
-                {{ vueSelectNoMatchingOptions }}
-              </template>
-            </v-select>
-          </span>
-        </b-form-row>
-        <b-form-row class="my-1 ml-2 ml-sm-0">
-          <label class="ml-sm-4 ml-2 mr-1">
-            {{ $t('label.filter') }}
-          </label>
-          <b-form-select v-model="vueSelected.filterType" :options="filterTypeOpts" class="ml-2 inputSelect" />
-          <span :title="vueSelectTitle(vueSelected.filter)">
-            <v-select v-if="vueSelected.filterType == 'potPersons'" v-model="vueSelected.filters" :options="potPersonOpts" multiple :close-on-select="false" class="vue-options-multi" style="width: 400px;">
-              <template slot="selected-option" slot-scope="option">
-                 {{ vueSelectCutOn(option) }}
-              </template>
-              <template slot="no-options">
-                {{ vueSelectNoMatchingOptions }}
-              </template>
-            </v-select>
-            <v-select v-else v-model="vueSelected.filter" :options="filterOpts" class="ml-2 inputSelect vue-options" style="width: 400px;">
-              <template slot="selected-option" slot-scope="option">
-                 {{ vueSelectCutOnWithWidth(option, 400) }}
-              </template>
-              <template slot="no-options">
-                {{ vueSelectNoMatchingOptions }}
-              </template>
-            </v-select>
-          </span>
-        </b-form-row>
-        <!-- <b-form-row v-if="planMode == 'normal' && currentUser && currentUser.role.roleName == 'SYS_ADMIN'" class="my-1 ml-2 ml-sm-0">
-          <b-button class="ml-sm-4 ml-2 mr-1" :variant="theme" @click="onClickSync">{{ $t('label.syncWithOutlook') }}</b-button>
-        </b-form-row> -->
-        <b-form-row v-if="planMode == 'meetingRoom'" class="my-1 ml-2 ml-sm-0">
-          <b-form-checkbox v-model="doCompare">
-            {{ $t('label.planActual') }}
-          </b-form-checkbox>
-        </b-form-row>
-      </b-form>
-    </b-row>
-    <b-row class="mt-2 mb-2">
-      <b-form inline>
-        <b-form-row class="my-1 ml-2 ml-sm-0 mr-2">
-          <div class="ml-sm-4 ml-2" @click="onClickNavi">
-            <b-button :variant="theme" data-action="move-today">{{ $t('label.today') }}</b-button>
-            <b-button :variant="theme" data-action="move-prev">&lt;</b-button>
-            <b-button :variant="theme" data-action="move-next">&gt;</b-button>
-          </div>
-        </b-form-row>
-        <b-form-row class="my-1 ml-2 ml-sm-0">
-          <date-picker
-            v-show="true"
-            ref="datePicker"
-            v-model="today"
-            :type="datePickerType"
-            :format="datePickerFormat"
-            size="large"
-            style="width: 11rem;"
-            :placeholder="datePickerPlaceholder"
-            @blur="onDatePickerBlur"
-          />
-        </b-form-row>
-        <b-form-row v-if="planMode == 'meetingRoom' && doCompare" class="my-1 ml-2 ml-sm-0">
-          <label class="ml-sm-4 ml-2 mr-2">
-            {{ $t('label.legend') }}
-          </label>
-          <ul class="list-group list-group-horizontal">
-            <li class="list-group-item actual-in-plan">{{ $t('label.planned') }}・{{ $t('label.used') }}</li>
-            <li class="list-group-item no-actual">{{ $t('label.planned') }}・{{ $t('label.noUse') }}</li>
-            <li class="list-group-item actual-out-of-plan">{{ $t('label.noPlan') }}・{{ $t('label.used') }}</li>
-          </ul>
-        </b-form-row>
-      </b-form>
-    </b-row>
-    <plan-calendar :id="id" :name="name" :appServicePath="appServicePath" :planMode="planMode" :headerOpts="headerOpts" :viewModel="viewModel" :dragHandler="dragHandler" :clickScheduleEvent="clickScheduleEvent" :doCompare="doCompare" :holidays="holidays" :working="working" @doEdit="doEdit" @doDelete="onDeleteSchedule"/>
-    <div>
-      <b-modal v-model="showEdit" hide-footer :title="$t('label.schedule')" header-class="editPlanHeader">
-        <edit-plan :id="id" :name="name" :appServicePath="appServicePath" :currentUser="currentUser" :locale="locale" :plan="targetPlan" :zoneOpts="zoneOpts" :locationOpts="locationOpts" :potPersonOpts="filterPotPersonOpts" :potThingOpts="potThingOpts" :vueSelected="editVueSelected" @doneSave="onEditSave" @delete="onEditDelete" @errorMessage="onEditError"/>
-      </b-modal>
+    <div v-if="isFeatureAvailabe">
+      <b-row class="mt-2">
+        <b-form inline @submit.prevent>
+          <b-form-row class="my-1 ml-2 ml-sm-0">
+            <label class="ml-sm-4 ml-2 mr-1">
+              {{ $t('label.mode') }}
+            </label>
+            <span :title="vueSelectTitle(planModeFilter)">
+              <v-select v-model="planModeFilter" :options="planModeOpts" :clearable="false" class="ml-1 mr-2 vue-options" :style="vueSelectStyle">
+                <template slot="selected-option" slot-scope="option">
+                  {{ vueSelectCutOn(option, true) }}
+                </template>
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
+              </v-select>
+            </span>
+          </b-form-row>
+          <b-form-row class="my-1 ml-2 ml-sm-0">
+            <label class="ml-sm-4 ml-2 mr-1">
+              {{ $t('label.filter') }}
+            </label>
+            <b-form-select v-model="vueSelected.filterType" :options="filterTypeOpts" class="ml-2 inputSelect" />
+            <span :title="vueSelectTitle(vueSelected.filter)">
+              <v-select v-if="vueSelected.filterType == 'potPersons'" v-model="vueSelected.filters" :options="potPersonOpts" multiple :close-on-select="false" class="vue-options-multi" style="width: 400px;">
+                <template slot="selected-option" slot-scope="option">
+                  {{ vueSelectCutOn(option) }}
+                </template>
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
+              </v-select>
+              <v-select v-else v-model="vueSelected.filter" :options="filterOpts" class="ml-2 inputSelect vue-options" style="width: 400px;">
+                <template slot="selected-option" slot-scope="option">
+                  {{ vueSelectCutOnWithWidth(option, 400) }}
+                </template>
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
+              </v-select>
+            </span>
+          </b-form-row>
+          <!-- <b-form-row v-if="planMode == 'normal' && currentUser && currentUser.role.roleName == 'SYS_ADMIN'" class="my-1 ml-2 ml-sm-0">
+            <b-button class="ml-sm-4 ml-2 mr-1" :variant="theme" @click="onClickSync">{{ $t('label.syncWithOutlook') }}</b-button>
+          </b-form-row> -->
+          <b-form-row v-if="planMode == 'meetingRoom'" class="my-1 ml-2 ml-sm-0">
+            <b-form-checkbox v-model="doCompare">
+              {{ $t('label.planActual') }}
+            </b-form-checkbox>
+          </b-form-row>
+        </b-form>
+      </b-row>
+      <b-row class="mt-2 mb-2">
+        <b-form inline>
+          <b-form-row class="my-1 ml-2 ml-sm-0 mr-2">
+            <div class="ml-sm-4 ml-2" @click="onClickNavi">
+              <b-button :variant="theme" data-action="move-today">{{ $t('label.today') }}</b-button>
+              <b-button :variant="theme" data-action="move-prev">&lt;</b-button>
+              <b-button :variant="theme" data-action="move-next">&gt;</b-button>
+            </div>
+          </b-form-row>
+          <b-form-row class="my-1 ml-2 ml-sm-0">
+            <date-picker
+              v-show="true"
+              ref="datePicker"
+              v-model="today"
+              :type="datePickerType"
+              :format="datePickerFormat"
+              size="large"
+              style="width: 11rem;"
+              :placeholder="datePickerPlaceholder"
+              @blur="onDatePickerBlur"
+            />
+          </b-form-row>
+          <b-form-row v-if="planMode == 'meetingRoom' && doCompare" class="my-1 ml-2 ml-sm-0">
+            <label class="ml-sm-4 ml-2 mr-2">
+              {{ $t('label.legend') }}
+            </label>
+            <ul class="list-group list-group-horizontal">
+              <li class="list-group-item actual-in-plan">{{ $t('label.planned') }}・{{ $t('label.used') }}</li>
+              <li class="list-group-item no-actual">{{ $t('label.planned') }}・{{ $t('label.noUse') }}</li>
+              <li class="list-group-item actual-out-of-plan">{{ $t('label.noPlan') }}・{{ $t('label.used') }}</li>
+            </ul>
+          </b-form-row>
+        </b-form>
+      </b-row>
+      <plan-calendar :id="id" :name="name" :appServicePath="appServicePath" :planMode="planMode" :headerOpts="headerOpts" :viewModel="viewModel" :dragHandler="dragHandler" :clickScheduleEvent="clickScheduleEvent" :doCompare="doCompare" :holidays="holidays" :working="working" @doEdit="doEdit" @doDelete="onDeleteSchedule"/>
+      <div>
+        <b-modal v-model="showEdit" hide-footer :title="$t('label.schedule')" header-class="editPlanHeader">
+          <edit-plan :id="id" :name="name" :appServicePath="appServicePath" :currentUser="currentUser" :locale="locale" :plan="targetPlan" :zoneOpts="zoneOpts" :locationOpts="locationOpts" :potPersonOpts="filterPotPersonOpts" :potThingOpts="potThingOpts" :vueSelected="editVueSelected" @doneSave="onEditSave" @delete="onEditDelete" @errorMessage="onEditError"/>
+        </b-modal>
+      </div>
     </div>
   </div>
 </template>
@@ -147,6 +149,7 @@ export default {
       ],
       planModeFilter: null,
       doCompare: false,
+      featureAvailabe: true,
 
       // datePicker
       datePickerType: 'week',
@@ -244,6 +247,9 @@ export default {
     }
   },
   computed: {
+    isFeatureAvailabe() {
+      return this.featureAvailabe
+    },
     cssVars() {
       return {
         '--editPlanHeaderBgColor': DISP.PLAN.EDIT_PLAN_HEADER_BG_COLOR,
@@ -536,7 +542,11 @@ export default {
       }
       catch(e) {
         console.error(e)
-        this.message = e.response.data
+        const message = e.response.data
+        if (message == 'noPersonAssociated') {
+          this.message = this.$t(`message.${message}`)
+          this.featureAvailabe = false
+        }
         this.replace({showAlert: true})
         window.scrollTo(0, 0)
       }
