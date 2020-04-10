@@ -87,7 +87,7 @@
         </b-form-row>
       </b-form>
     </b-row>
-    <plan-calendar :id="id" :name="name" :appServicePath="appServicePath" :planMode="planMode" :currentUser="currentUser" :headerOpts="headerOpts" :viewModel="viewModel" :dragHandler="dragHandler" :clickScheduleEvent="clickScheduleEvent" :doCompare="doCompare" :holidays="holidays" :working="working" @doEdit="doEdit" @doDelete="onDeleteSchedule"/>
+    <plan-calendar :id="id" :name="name" :appServicePath="appServicePath" :planMode="planMode" :headerOpts="headerOpts" :viewModel="viewModel" :dragHandler="dragHandler" :clickScheduleEvent="clickScheduleEvent" :doCompare="doCompare" :holidays="holidays" :working="working" @doEdit="doEdit" @doDelete="onDeleteSchedule"/>
     <div>
       <b-modal v-model="showEdit" hide-footer :title="$t('label.schedule')" header-class="editPlanHeader">
         <edit-plan :id="id" :name="name" :appServicePath="appServicePath" :currentUser="currentUser" :locale="locale" :plan="targetPlan" :zoneOpts="zoneOpts" :locationOpts="locationOpts" :potPersonOpts="filterPotPersonOpts" :potThingOpts="potThingOpts" :vueSelected="editVueSelected" @doneSave="onEditSave" @delete="onEditDelete" @errorMessage="onEditError"/>
@@ -384,13 +384,9 @@ export default {
   },
   async mounted() {
     this.locale = LocaleHelper.getSystemLocale()
-    if (LocalStorageHelper.getLogin().isProviderUser) {
-      this.showErrorModal({key: 'providerUserNotAllowed'})
-      return
-    }
     domevent.on(document.body, 'mousedown', this.onMouseDown, this)
     if (!this.currentUser) {
-      this.currentUser = await AppServiceHelper.getCurrentUser()
+      this.currentUser = await this.getCurrentUser()
       if (this.currentUser.isAd) {
         this.currentUserPotIds = [this.currentUser.adPot.potId]
       } else {
@@ -498,6 +494,9 @@ export default {
           label: dt.format('ddd')
         }
       })
+    },
+    async getCurrentUser() {
+      return await HttpHelper.getAppService(`${this.appServicePath}/currentUser`)
     },
     async fetchData(dt = null) {
       try {

@@ -32,7 +32,6 @@ export default {
     id: null,
     appServicePath: null,
     planMode: null,
-    currentUser: null,
     headerOpts: null,
     viewModel: null,
     dragHandler: null,
