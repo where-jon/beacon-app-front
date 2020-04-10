@@ -33,7 +33,7 @@ export const init = () => {
   // register callback for redirect usecases
   myMSALObj.handleRedirectCallback((error, response) => {
     if (error) {
-      Util.debug(error)
+      console.log(error)
     } else {
       if (response.tokenType === 'id_token') {
         Util.debug(response)
@@ -57,10 +57,10 @@ export const signIn = (callback) => {
       callback(account.idToken, account.userName)
     }
     else {
-      Util.debug('get account failed')
+      console.error('get account failed')
     }
   }).catch((error) => {
-    Util.debug(error)
+    console.log(error)
   })
 }
 
@@ -88,7 +88,7 @@ export const getCachedToken = () => {
   if (account && (!isIE || !myMSALObj.isCallback(window.location.hash))) {// avoid duplicate code execution on page load in case of iframe and popup window.
     Util.debug(account)
     if (account.idToken.exp * 1000 < new Date().getTime()) {
-      Util.debug('id token exipired')
+      console.warn('id token exipired')
       return null
     }
     return account.idToken
