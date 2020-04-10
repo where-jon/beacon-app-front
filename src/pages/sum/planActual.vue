@@ -243,7 +243,6 @@ export default {
     },
     'vueSelected.filterType': {
       handler: function(newVal, oldVal){
-        console.log('vueSelected')
         this.selectedFilter.filterType = newVal
         this.selectedFilter.filterId = null
         this.vueSelected.filter = null
