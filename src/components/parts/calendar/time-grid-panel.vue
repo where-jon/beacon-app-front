@@ -1,7 +1,7 @@
 <template>
   <!-- height設定 -->
   <div id="vlayout-area" class="tui-full-calendar-vlayout-area tui-full-calendar-vlayout-container">
-    <div class="tui-full-calendar-timegrid-container">
+    <div id="tgc" class="tui-full-calendar-timegrid-container">
       <!-- left -->
       <div id="tg-left" class="tui-full-calendar-timegrid-left" :style="{width: styles.leftWidth, 'font-size': styles.leftFontSize}">
         <div class="tui-full-calendar-timegrid-timezone" :style="{position: 'absolute', top: 0, width: '100%', left: '0%', 'border-right': styles.leftBorderRight, 'background-color': styles.displayTimezoneLabelBackgroundColor}">
@@ -12,7 +12,7 @@
       </div>
       <!-- right -->
       <div id='tgScrl' class="tui-full-calendar-timegrid-right sync-scroll" :style="{'margin-left': styles.leftWidth}" @scroll="handleScroll">
-          <div class="wt-timegrid-schedules">
+          <div id="wt-tg-s" class="wt-timegrid-schedules">
             <div v-for="(headerOpt, idx) in headerOpts" :key="idx" class="wt-time-date" :style="workingTimeDateStyle(headerOpt.value)">
             </div>
           </div>
