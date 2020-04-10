@@ -425,7 +425,7 @@ export default {
         return {value: e.groupId, label: e.groupName}
       })
       this.categoryOpts = this.categories.map(cate => {
-        return {value: cate.categoryId, label: cate.categoryName}
+        return {value: cate.categoryId, label: cate.systemUse ? cate.description : cate.categoryName}
       })
       this.potOpts = this.pots.map(e => {
         return {value: e.potId, label: e.potName}

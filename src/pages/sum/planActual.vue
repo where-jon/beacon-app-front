@@ -319,7 +319,7 @@ export default {
         return {value: location.locationId, label: location.locationName}
       })
       this.zoneCategoryOpts = this.categories.filter(cate => cate.categoryType == CATEGORY.ZONE).map(cate => {
-        return {value: cate.categoryId, label: cate.categoryName}
+        return {value: cate.categoryId, label: cate.systemUse ? cate.description : cate.categoryName}
       })
       this.potThingOpts = this.pots.filter(pot => pot.potType == POT_TYPE.THING).map(pot => {
         return {value: pot.potId, label: pot.potName}
