@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" />
+    <breadcrumb :items="breadCrumbs" />
     <m-list :params="pParams" compact-mode />
   </div>
 </template>
@@ -37,7 +37,7 @@ export default {
     },
   },
   computed: {
-    items() {
+    breadCrumbs() {
       return ViewHelper.createBreadCrumbItems('master', StringUtil.concatCamel(this.pMasterName, this.pCategoryName))
     },
   },

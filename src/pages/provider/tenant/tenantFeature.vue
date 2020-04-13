@@ -1,6 +1,6 @@
 <template>
   <div>
-    <breadcrumb :items="items" />
+    <breadcrumb :items="breadCrumbs" />
     <div class="container">
       <alert :message="message" />
 
@@ -44,7 +44,7 @@ export default {
       name: 'tenant',
       id: 'tenantId',
       appServicePath: '/meta/tenantFeature',
-      items: ViewHelper.createBreadCrumbItems('provider', 'tenant'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('provider', 'tenant'),
       fields: ViewHelper.addLabelByKey(this.$i18n, [ 
         {key: 'parentCheck', label: 'dummy', thStyle: {width:'4px !important'} },
         {key: 'subCheck', label: 'dummy', thStyle: {width:'4px !important'} },

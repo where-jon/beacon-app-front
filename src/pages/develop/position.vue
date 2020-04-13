@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" :reload="true" :state="reloadState" @reload="fetchData" />
+    <breadcrumb :items="breadCrumbs" :reload="true" :state="reloadState" @reload="fetchData" />
     <div v-show="!reloadState.isLoad" class="container">
       <monitor-table ref="monitorTable" type="position" :vue-table-mode="isDev" :all-count="allCount" :headers="headers" :datas="positions" :tr-class="getClass" />
     </div>
@@ -31,7 +31,7 @@ export default {
   data () {
     return {
       isDev: true,
-      items: ViewHelper.createBreadCrumbItems('develop', 'position'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('develop', 'position'),
       headers: this.getHeaders(),
       positions: [],
       reloadState: { isLoad: false },

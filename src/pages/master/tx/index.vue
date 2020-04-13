@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" />
+    <breadcrumb :items="breadCrumbs" />
     <m-list :params="params" compact-mode />
   </div>
 </template>
@@ -34,7 +34,7 @@ export default {
         fields: this.getFields(),
         sortBy: APP.TX.BTX_MINOR != 'minor'? 'btxId': 'minor',
       },
-      items: ViewHelper.createBreadCrumbItems('master', 'masterTx'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('master', 'masterTx'),
     }
   },
   methods: {

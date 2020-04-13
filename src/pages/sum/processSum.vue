@@ -1,6 +1,6 @@
 <template>
   <div>
-    <breadcrumb :items="items" :reload="true" @reload="fetchData" />
+    <breadcrumb :items="breadCrumbs" :reload="true" @reload="fetchData" />
     <div class="container">
       <b-form inline @submit.prevent>
         <b-form-group>
@@ -40,7 +40,7 @@ export default {
   mixins: [reloadmixin],
   data () {
     return {
-      items: ViewHelper.createBreadCrumbItems('sumTitle', 'processSum'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('sumTitle', 'processSum'),
       fields: [],
       form: {
         categoryType: CATEGORY.THING,

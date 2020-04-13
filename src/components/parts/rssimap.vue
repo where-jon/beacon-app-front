@@ -1,6 +1,6 @@
 <template>
   <div id="mapContainer" class="container-fluid">
-    <breadcrumb :items="items" :reload="true" :state="reloadState" />
+    <breadcrumb :items="breadCrumbs" :reload="true" :state="reloadState" />
     <b-row class="mt-2">
       <b-form inline class="mt-2" @submit.prevent>
         <b-form-row class="my-1 ml-2 ml-sm-0">
@@ -126,7 +126,7 @@ export default {
   mixins: [commonmixin, showmapmixin],
   data () {
     return {
-      items: ViewHelper.createBreadCrumbItems('monitor', 'installation'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('monitor', 'installation'),
       modeRssi: true,
       exbDisp: 'deviceId',
       nearest: [],

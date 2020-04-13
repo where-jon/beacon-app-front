@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" />
+    <breadcrumb :items="breadCrumbs" />
     <b-form @submit.prevent="createData">
       <b-form-group>
         <span>
@@ -103,7 +103,7 @@ export default {
   mixins: [commonmixin],
   data () {
     return {
-      items: ViewHelper.createBreadCrumbItems('develop', 'createData'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('develop', 'createData'),
       kind: 'POSITION',
       stdDate: new Date(new Date().getTime() - 3600 * 1000),
       shiftSec: 60,

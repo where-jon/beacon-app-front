@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" />
+    <breadcrumb :items="breadCrumbs" />
     <div class="container">
       <alert :message="message" />
 
@@ -192,7 +192,7 @@ export default {
       id: 'tenantId',
       backPath: '/provider/tenant',
       appServicePath: '/meta/tenant',
-      items: ViewHelper.createBreadCrumbItems('provider', {text: 'tenant', href: '/provider/tenant'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.tenant.tenantId)),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('provider', {text: 'tenant', href: '/provider/tenant'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.tenant.tenantId)),
       fields: ViewHelper.addLabelByKey(this.$i18n, [ 
         {key: 'parentCheck', label: 'dummy', thStyle: {width:'4px !important'} },
         {key: 'subCheck', label: 'dummy', thStyle: {width:'4px !important'} },

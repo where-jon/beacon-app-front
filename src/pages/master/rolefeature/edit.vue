@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" />
+    <breadcrumb :items="breadCrumbs" />
     <div class="container">
       <alert :message="message" />
 
@@ -68,7 +68,7 @@ export default {
       authPath: '/master/rolefeature',
       backPath: '/master/role/edit',
       appServicePath: '/meta/roleFeature',
-      items: ViewHelper.createBreadCrumbItems(
+      breadCrumbs: ViewHelper.createBreadCrumbItems(
         'master',
         {text: 'role', href: '/master/role'},
         {text: 'update', href: '/master/role/edit'},

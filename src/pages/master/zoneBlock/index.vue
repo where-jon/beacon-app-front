@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" />
+    <breadcrumb :items="breadCrumbs" />
     <auto-alert mobile p-name="zoneBlock" />
     <alert :message="message" />
     <b-row>
@@ -93,7 +93,7 @@ export default {
       backPath: '/master/zoneBlock',
       appServicePath: '/core/zone',
       zoneClassPath: '/master/zoneClass',
-      items: ViewHelper.createBreadCrumbItems('master', 'zoneBlock'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('master', 'zoneBlock'),
       // form: Util.extract(this.$store.state.app_service.zone, ['zoneId', 'zoneCd', 'zoneName', 'areaId', 'locationZoneList.0.locationZonePK.locationId', 'zoneCategoryList.0.zoneCategoryPK.categoryId']), // TODO: 使ってなさそう。要削除
       areaId: null,
       categoryNames: [],

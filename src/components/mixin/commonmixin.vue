@@ -89,7 +89,7 @@ export default {
       return MasterHelper.getOptionsFromState('category',
         category => MasterHelper.getDispCategoryName(category),
         true, 
-        category => CATEGORY.ZONE_AVAILABLE.includes(category.categoryType)
+        category => CATEGORY.ZONE_AVAILABLE.includes(category.categoryType) && category.categoryCd != 'ABSENT'
       )
     },
     authCategoryOptions() {

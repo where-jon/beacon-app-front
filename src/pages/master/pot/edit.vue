@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" />
+    <breadcrumb :items="breadCrumbs" />
     <div class="container">
       <alert :message="message" />
 
@@ -24,17 +24,17 @@
                 </b-form-group>
               </b-form>
             </span>
-            <b-form-group v-show="potTypeOptions.length > 1">
+            <b-form-group v-show="potTypeOptions.length > 1 && !useAd">
               <label v-t="'label.categoryType'" />
               <b-form-radio-group v-model="form.potType" :options="potTypeOptions" :disabled="!isEditable" :required="potTypeOptions.length > 1" />
             </b-form-group>
             <b-form-group>
               <label v-t="'label.potCd'" />
-              <input v-model="form.potCd" :readonly="!isEditable" type="text" maxlength="20" class="form-control">
+              <input v-model="form.potCd" :readonly="!isEditable || useAd" type="text" maxlength="20" class="form-control">
             </b-form-group>
             <b-form-group>
               <label v-t="'label.potName'" />
-              <input v-model="form.potName" :readonly="!isEditable" type="text" maxlength="100" class="form-control" required>
+              <input v-model="form.potName" :readonly="!isEditable || useAd" type="text" maxlength="100" class="form-control" required>
             </b-form-group>
             <b-form-group v-show="isShownWith('ruby')">
               <label v-t="'label.ruby'" />
@@ -169,6 +169,7 @@ export default {
       minors: Array(PotHelper.getSetting(this.pName).TX_MAX),
       thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
       potCdOld: null,
+      useAd: APP.AUTH.USE_AD,
     }
   },
   computed: {
@@ -181,7 +182,7 @@ export default {
     defValue() {
       return { 'potType': this.pTypeList[0] }
     },
-    items() {
+    breadCrumbs() {
       return ViewHelper.createBreadCrumbItems('master', {text: StringUtil.concatCamel('pot', this.pName), href: this.backPath}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.pot.potId))
     },
     categoryOptions() {

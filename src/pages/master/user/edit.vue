@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" />
+    <breadcrumb :items="breadCrumbs" />
     <div class="container">
       <alert :message="message" />
 
@@ -95,7 +95,7 @@ export default {
       id: 'userId',
       backPath: '/master/user',
       appServicePath: '/meta/user',
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'user', href: '/master/user'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.user.userId)),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('master', {text: 'user', href: '/master/user'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.user.userId)),
       form: Util.extract(this.$store.state.app_service.user, ['userId', 'loginId', 'name', 'email', 'roleId', 'userRegionList', 'potUserList', 'description']),
       vueSelected: {
         role: null,
@@ -249,16 +249,6 @@ export default {
       this.role = null
       this.pass = null
       this.passConfirm = null
-      if(this.selfUpdate){
-        const authPass = Util.hasValue(this.form.pass)? this.form.pass: this.$store.state.pass
-        await AuthHelper.authByAppService(
-          this.form.loginId,
-          authPass,
-          () => {
-            this.replace({pass: authPass})
-          }
-        )
-      }
     },
     onBeforeReload(){
       this.vueSelected.role = VueSelectHelper.getVueSelectData(this.roleOptions, this.roleOptions.reduce((prev, cur) => cur).value)

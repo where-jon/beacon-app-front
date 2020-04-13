@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" :reload="false" />
+    <breadcrumb :items="breadCrumbs" :reload="false" />
     <div class="container">
       <alert :message="message" />
 
@@ -185,7 +185,7 @@ export default {
   data () {
     return {
       name: 'notifyHistory',
-      items: ViewHelper.createBreadCrumbItems('historyTitle', 'notifyHistory'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('historyTitle', 'notifyHistory'),
       fields: [],
       fields1: ViewHelper.addLabelByKey(this.$i18n, [  // TXボタン押下通知
         {key: 'positionDt', sortable: true, label:'dt'},
@@ -470,10 +470,10 @@ export default {
             notifyData.minors.find((tval,index) =>
               tval == this.userMinor ? tempIndex = index:null
             )
-            notifyData.minors = notifyData.minors[tempIndex]
-            this.gPowerLevel= notifyData.powerLevels[tempIndex]
-            notifyData.majors = notifyData.majors[tempIndex]
-            notifyData.txNames = notifyData.txNames[tempIndex]
+            notifyData.minors = notifyData.minors && notifyData.minors.length > 0 ? notifyData.minors[tempIndex] : null
+            this.gPowerLevel= notifyData.powerLevels && notifyData.powerLevels.length > 0 ? notifyData.powerLevels[tempIndex] : null
+            notifyData.majors = notifyData.majors && notifyData.majors > 0 ? notifyData.majors[tempIndex] : null
+            notifyData.txNames = notifyData.txNames && notifyData.txNames > 0 ? notifyData.txNames[tempIndex] : null
             let arNotifyto = this.getNotifyTo(notifyData.notifyTo)
             arNotifyto ? notifyData.notifyTo = arNotifyto: null
             if (++count <= this.limitViewRows) {

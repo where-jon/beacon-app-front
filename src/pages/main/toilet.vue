@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" reload :auto-reload="autoReload" />
+    <breadcrumb :items="breadCrumbs" reload :auto-reload="autoReload" />
     <toiletview :data-list="dataList" :show-area="true" icon-header="iconHeaderLarge" />
   </div>
 </template>
@@ -29,7 +29,7 @@ export default {
     autoReload() {
       return APP.TOILET.AUTO_RELOAD
     },
-    items() {
+    breadCrumbs() {
       return ViewHelper.createBreadCrumbItems('main', 'toiletStatus')
     },
   },

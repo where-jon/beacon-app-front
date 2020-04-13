@@ -1,7 +1,7 @@
 
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" />
+    <breadcrumb :items="breadCrumbs" />
     <div class="container">
       <alert :message="getMessage()" />
       <b-row>
@@ -9,7 +9,7 @@
           <pagetitle title="label.login-user-profile" />
           <b-form>
             <!-- MS Teams版ではログインID欄非表示 -->
-            <b-form-group v-if="!isMsTeams">
+            <b-form-group v-if="!useAd">
               <label v-t="'label.loginId'" />
               <b-form-input v-model="loginUser.loginId" :state="errorMessages.loginId.length > 0 ? false : null" type="text" maxlength="16" readonly />
               <p v-for="(val, key) in errorMessages.loginId" :key="key" v-t="val" class="error" />
@@ -51,7 +51,7 @@
             <!-- プロフィール・パスワードを変更するボタン -->
             <b-form-group v-if="isUpdatable && !isProviderUser">
               <!-- MS Teams版ではパスワード変更不可-->
-              <div v-if="!isMsTeams">
+              <div v-if="!useAd">
                 <b-button v-show="!isChange" v-t="'label.changeProfilePassword'" :variant="theme" 
                           type="button" class="btn-block" @click="isChange = true"
                 />
@@ -85,7 +85,7 @@
         </b-col>
       </b-row>
       <!-- MS Teams版では常にキャンセル・変更ボタンを非表示 -->
-      <b-row v-if="!isMsTeams && !isProviderUser" :style="{ marginTop: '30px' }">
+      <b-row v-if="!useAd && !isProviderUser" :style="{ marginTop: '30px' }">
         <b-form-group class="col text-center">
           <b-button v-t="'label.cancel'" type="button" class="mr-4 mb-2 input-btn" variant="outline-danger" @click="handleCancelButton" />
           <b-button v-t="'label.modify'" :variant="theme" type="button" class="ml-4 mb-2 input-btn" @click="onSubmit" />
@@ -97,7 +97,7 @@
 
 <script>
 import { mapState, mapMutations } from 'vuex'
-import { APP, MSTEAMS_APP } from '../../sub/constant/config'
+import { APP } from '../../sub/constant/config'
 import { THEME, CHAR_SET, LOCALE } from '../../sub/constant/Constants'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import { getLangShort } from '../../sub/util/BrowserUtil'
@@ -161,7 +161,7 @@ export default {
         passwordConfirm: '',
       },
       isChange: false,
-      isMsTeams: MSTEAMS_APP.IS_COOPERATION,
+      useAd: APP.AUTH.USE_AD,
     }
   },
   computed: {
@@ -223,7 +223,7 @@ export default {
       const selectedLc = LOCALE.find((val) => val.name == LocaleHelper.getLocale(this.loginUser.loginId))
       this.selectedLocale = selectedLc != null ? selectedLc.id : LOCALE[0].id
       this.locales = LOCALE.map((e) => {return { value: e.id, text: this.$i18n.tnl('label.' + e.name) }})
-      this.items = ViewHelper.createBreadCrumbItems('setting', 'personal')
+      this.breadCrumbs = ViewHelper.createBreadCrumbItems('setting', 'personal')
     },
     themeSelected (selected) {
       const t = THEME.find((e) => {

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <breadcrumb :items="items" :reload="false" />
+    <breadcrumb :items="breadCrumbs" :reload="false" />
     <div class="container">
       <alert :message="message" />
 
@@ -104,7 +104,7 @@ export default {
   mixins: [commonmixin],
   data () {
     return {
-      items: ViewHelper.createBreadCrumbItems('sumTitle', 'proximityGraph'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('sumTitle', 'proximityGraph'),
       form: {
         datetimeFrom: '2019-02-11',
         datetimeTo: '2019-02-22',

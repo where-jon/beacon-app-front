@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" :extra-nav-spec="extraNavSpec"
+    <breadcrumb :items="breadCrumbs" :extra-nav-spec="extraNavSpec"
                 :reload="reload" :short-name="shortName"
     />
     <alert v-model="showDismissibleAlert" :message="message" :fix="fixHeight" :prohibit="showDismissibleAlert" :prohibit-view="isProhibitView" :alert-style="alertStyle" />
@@ -60,7 +60,7 @@ export default {
         disableTableButtons: true,
       },
       totalRows: 0,
-      items: ViewHelper.createBreadCrumbItems('main', 'positionList'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('main', 'positionList'),
       message: '',
       extraNavSpec: EXTRA_NAV,
       shortName: this.$i18n.t('label.positionListShort'),
@@ -102,15 +102,15 @@ export default {
             txId: Util.v(pos, 'tx.txId'),
             potCd: Util.v(pos, 'tx.pot.potCd'),
             tel: Util.v(pos, 'tx.pot.extValue.tel'),
-            locationName: Util.v(pos, 'location.locationName'),
+            locationName: Util.v(pos, 'exb.location.locationName'),
             potName: Util.v(pos, 'tx.pot.potName'),
-            areaName: Util.v(pos, 'location.area.areaName'),
+            areaName: Util.v(pos, 'exb.location.area.areaName'),
             groupName: Util.v(pos, 'tx.pot.group.groupName'),
             categoryName: Util.v(pos, 'tx.pot.category.categoryName'),
             // 追加フィルタ用
             groupId: Util.v(pos, 'tx.pot.group.groupId'),
             categoryId: Util.v(pos, 'tx.pot.category.categoryId'),
-            areaId: Util.v(pos, 'location.areaId'),
+            areaId: Util.v(pos, 'exb.location.areaId'),
             blinking : prohibitCheck? 'blinking' : null,
             isDisableArea: Util.v(pos, 'exb.location.isAbsentZone', false),
           }

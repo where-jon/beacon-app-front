@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" />
+    <breadcrumb :items="breadCrumbs" />
     <b-form @submit.prevent="publishTask">
       <b-form-group>
         <label v-t="'label.batchTarget'" />
@@ -31,7 +31,7 @@ export default {
   mixins: [commonmixin],
   data () {
     return {
-      items: ViewHelper.createBreadCrumbItems('develop', 'execTask'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('develop', 'execTask'),
       param: DateUtil.formatDatetime(new Date(), 'yyyy/MM/dd'),
       batchTarget: 'SENSOR_1',
     }

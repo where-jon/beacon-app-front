@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" />
+    <breadcrumb :items="breadCrumbs" />
     <div class="container">
       <alert :message="message" />
 
@@ -151,7 +151,7 @@ export default {
     defValue() {
       return { 'categoryType': this.pTypeList[0] }
     },
-    items() {
+    breadCrumbs() {
       return ViewHelper.createBreadCrumbItems('master', {text: StringUtil.concatCamel('category', this.pName), href: this.backPath}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.category.categoryId))
     },
     categoryTypes(){

@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" />
+    <breadcrumb :items="breadCrumbs" />
     <bulkedit :id="id" ref="bulkEdit" :name="name" :bulk-name="bulkName" :back-path="backPath" :app-service-path="appServicePath" />
   </div>
 </template>
@@ -31,7 +31,7 @@ export default {
       backPath: '/master/location',
       appServicePath: '/core/location',
       bulkName: 'locationList',
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'locationList', href: '/master/location'}, 'bulkRegister'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('master', {text: 'locationList', href: '/master/location'}, 'bulkRegister'),
     }
   },
   computed: {

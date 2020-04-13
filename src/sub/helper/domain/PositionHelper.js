@@ -68,8 +68,7 @@ export const loadPosition = async (count, allShow = false, fixSize = false, show
   const locationIdMap = store.state.app_service.locationIdMap
   const mRoomPlans = showMRoom ? store.state.main.mRoomPlans : null
 
-  positions = _(positions).filter(pos => allShow || DEV.NOT_FILTER_TX || txIdMap[pos.txId])
-    .filter(pos => allShow || Util.hasValue(pos.locationId) && locationIdMap[pos.locationId] && (txIdMap[pos.txId] && NumberUtil.bitON(txIdMap[pos.txId].disp, TX.DISP.POS)))
+  positions = _(positions).filter(pos => shoudTxShow(pos, allShow, txIdMap, locationIdMap))
     .map(pos => {
       // if (pos.minor == 603) { // 開発目的：矯正ポジション設定
       //   console.log(pos)
@@ -114,6 +113,24 @@ export const loadPosition = async (count, allShow = false, fixSize = false, show
 
 
 // ----------　フィルタリング ------------
+
+/**
+ * TXを位置表示（地図）画面に表示するか
+ * 
+ * @param {*} pos 
+ * @param {*} allShow 
+ * @param {*} txIdMap 
+ * @param {*} locationIdMap 
+ */
+export const shoudTxShow = (pos, allShow, txIdMap, locationIdMap) => {
+  if (allShow) return true
+
+  return txIdMap[pos.txId]
+    && pos.locationId
+    && locationIdMap[pos.locationId]
+    && NumberUtil.bitON(txIdMap[pos.txId].disp, TX.DISP.POS)
+}
+
 
 /**
  * 位置情報を絞り込んで返す。
@@ -197,6 +214,18 @@ const positionFilter = (positions, groupId, categoryId, txIdList, freeWord) => {
   }).value()
 }
 
+/**
+ * ゲスト指定されているグループのみに絞り込む
+ * 
+ * @param {} positions 
+ */
+export const filterPositionsOnlyGuest = (positions) => {
+  return positions.filter(pos => {
+    const tx = store.state.app_service.txIdMap[pos.txId]
+    const groupCd = Util.getValue(tx, 'pot.group.groupCd')
+    return APP.POS.GUEST_GROUP_CD_LIST.includes(groupCd)
+  })
+}
 
 
 
@@ -219,6 +248,20 @@ export const hasTxLocation = tx => tx && tx.location && tx.location.x && tx.loca
  */
 export const isFixedPosOnArea = (tx, areaId) => hasTxLocation(tx) && tx.location.areaId == areaId
 
+/**
+ * 今いる場所が、TXの固定場所の属する固定ゾーンと一致するか
+ * 
+ * @param {*} pos 
+ */
+export const isInFixedPosZone = (pos) => {
+  const zoneList = Util.v(pos, 'tx.location.fixedPosZoneList') // TX所属の固定ゾーン
+  if (!zoneList) return false
+
+  const locationId = Util.v(pos, 'exb.location.locationId') // 現在の場所
+  if (!locationId) return false
+
+  return zoneList.some(zone => zone.locationList.some(location => location.locationId == locationId))
+}
 
 /**
  * エリア内にいるかを返す
@@ -358,16 +401,17 @@ export const addFixedPosition = (orgPositions, locations = [], selectedMapId = n
   const additionalPos = []
   // 表示対象となるTxのposを抽出
   positions.forEach(pos => {
-    pos.isFixedPosition = isFixedPosOnArea(pos.tx, selectedMapId)
+    pos.isFixedPosition = hasTxLocation(pos.tx)
 
-    if (pos.isFixedPosition) { // txが場所固定されており、現在位置が場所固定ゾーンにいる場合（txの固定場所のゾーンでなくても同じエリアの固定ゾーンであれば）
-      pos.inFixedZone = Util.v(pos, 'exb.location.isFixedPosZone') // 今いる場所が固定場所ゾーンに入っているか
-      // 固定場所ゾーンにいず、かつ同じエリアにいて、検知状態の場合、フリーアドレスとしても表示
-      if (!pos.inFixedZone && isInTheArea(pos, locations, selectedMapId) && pos.detectState == DETECT_STATE.DETECTED && !SensorHelper.isFixedSensorTx(pos.tx)) {
+    if (pos.isFixedPosition) { // txが場所固定されている場合
+      // 今いる場所のゾーンとTXの固定場所の固定ゾーンが一致するか
+      pos.inFixedZone = isInFixedPosZone(pos)
+      // 固定場所ゾーンにいず、かつ検知状態の場合、フリーアドレスとしても表示
+      if (!pos.inFixedZone && pos.detectState == DETECT_STATE.DETECTED && !SensorHelper.isFixedSensorTx(pos.tx)) {
         const addPos = _.cloneDeep(pos)
         addPos.isFixedPosition = false
         addPos.location = pos.exb.location
-        addPos.isAddtional = true
+        // addPos.isAddtional = true
         additionalPos.push(addPos)
 
         pos.hasAnother = true

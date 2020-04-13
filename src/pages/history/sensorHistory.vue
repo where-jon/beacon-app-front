@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" :reload="false" />
+    <breadcrumb :items="breadCrumbs" :reload="false" />
     <div class="container">
       <alert :message="message" />
 
@@ -82,7 +82,7 @@ export default {
   data () {
     return {
       name: 'sensorHistory',
-      items: ViewHelper.createBreadCrumbItems('historyTitle', 'sensorHistory'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('historyTitle', 'sensorHistory'),
       form: {
         sensorId: null,
         datetimeFrom: null,

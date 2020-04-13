@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" />
+    <breadcrumb :items="breadCrumbs" />
     <bulkedit :id="id" ref="bulkEdit" :name="name" :bulk-disp-name="dispName" :back-path="backPath" :app-service-path="pAppServicePath" />
   </div>
 </template>
@@ -55,7 +55,7 @@ export default {
     backPath() {
       return this.pPath
     },
-    items() {
+    breadCrumbs() {
       return ViewHelper.createBreadCrumbItems('master', {text: StringUtil.concatCamel('category', this.pName), href: this.backPath}, 'bulkRegister')
     },
     categoryTypes(){

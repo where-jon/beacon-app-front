@@ -1,6 +1,6 @@
 <template>
   <div id="mapContainer" class="container-fluid" @click="resetDetail">
-    <breadcrumb :items="items" :extra-nav-spec="pExtraNavList" :short-name="shortName" :reload="!pAnalysis" :state="reloadState" :auto-reload="!pSplitAutoReload" :legend-items="legendItems" :filter-toggle="pFilterToggle" />
+    <breadcrumb :items="breadCrumbs" :extra-nav-spec="pExtraNavList" :short-name="shortName" :reload="!pAnalysis" :state="reloadState" :auto-reload="!pSplitAutoReload" :legend-items="legendItems" :filter-toggle="pFilterToggle" />
     <alert v-if="pAnalysis" :message="message" />
     <span v-else-if="pThermohWarn">
       <alert :warn-message="warnMessage" :fix="fixHeight" force-no-close :alert-style="alertStyle" />
@@ -129,7 +129,7 @@
     </b-collapse>
 
     <!-- 個別/数量 -->
-    <b-row v-if="pQuantity && !isMsTeams" id="quantityToggle" class="mt-2">
+    <b-row v-if="pQuantity" id="quantityToggle" class="mt-2">
       <b-form>
         <b-form-row class="ml-sm-4 ml-2 mr-1">
           <b-button-group>
@@ -183,7 +183,7 @@ import { Container, Shape, Text } from 'createjs-module'
 import 'element-ui/lib/theme-chalk/index.css'
 import drag from '@branu-jp/v-drag'
 import { SENSOR, TX, POT_TYPE, SHAPE, KEY, SYSTEM_ZONE_CATEGORY_NAME, ALERT_STATE } from '../../sub/constant/Constants'
-import { APP, DISP, APP_SERVICE, EXCLOUD, MSTEAMS_APP } from '../../sub/constant/config'
+import { APP, DISP, APP_SERVICE, EXCLOUD } from '../../sub/constant/config'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as ColorUtil from '../../sub/util/ColorUtil'
@@ -213,6 +213,7 @@ import * as PlanHelper from '../../sub/helper/domain/PlanHelper'
 import * as ValidateHelper from '../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import * as VueSelectHelper from '../../sub/helper/ui/VueSelectHelper'
+import * as AuthHelper from '../../sub/helper/base/AuthHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import commonmixin from '../../components/mixin/commonmixin.vue'
 import reloadmixin from '../../components/mixin/reloadmixin.vue'
@@ -403,7 +404,7 @@ export default {
   },
   data() {
     return {
-      items: ViewHelper.createBreadCrumbItems(...this.pCaptionList),
+      breadCrumbs: ViewHelper.createBreadCrumbItems(...this.pCaptionList),
       message: '',
       showMeditag: this.pShowMeditagList && !this.pInstallation,
       shortName: Util.hasValue(this.pShortName)? this.$i18n.tnl('label.' + this.pShortName): '',
@@ -416,7 +417,6 @@ export default {
       isPause: false,
       isHeatmap: this.pDefaultHeatmap,
       isLoading: false,
-      isMsTeams: MSTEAMS_APP.IS_COOPERATION,
       noImageErrorKey: 'noMapImage',
       detectedCount: 0,
       thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
@@ -478,6 +478,7 @@ export default {
   computed: {
     ...mapState('main', [
       'selectedTx',
+      'usePositionsCache',
     ]),
     ...mapState([
       'reload',
@@ -493,7 +494,8 @@ export default {
       return ret? [ret]: []
     },
     filterVisible() { // 絞り込みの表示・非表示（前回の状態を維持）
-      return !(this.pFilterToggle && LocalStorageHelper.getLocalStorage(KEY.CURRENT.SHOW_FILTER_ON_POSMAP) === false)
+      const regionId = AuthHelper.getRegionId()
+      return !(this.pFilterToggle && LocalStorageHelper.getLocalStorage(KEY.CURRENT.SHOW_FILTER_ON_POSMAP + regionId) === false)
     },
     maxFilterLength() {
       return 1000
@@ -636,7 +638,8 @@ export default {
 
     switchFilter(e) { // フィルタの表示切り替えでマップのリサイズをする。
       const isShownNow = document.getElementById('collapse-filter').className.includes('show')
-      LocalStorageHelper.setLocalStorage(KEY.CURRENT.SHOW_FILTER_ON_POSMAP, !isShownNow)
+      const regionId = AuthHelper.getRegionId()
+      LocalStorageHelper.setLocalStorage(KEY.CURRENT.SHOW_FILTER_ON_POSMAP + regionId, !isShownNow)
       if (this.onResize) {
         this.onResize()
       }
@@ -651,6 +654,14 @@ export default {
       return DISP.TX.R_ABSOLUTE? this.canvasScale: 1
     },
     getFilterOptions(masterName){
+      if (masterName == 'group' && this.pShowOnlyGuest) { // 来客アクセス管理の場合、グループのプルダウンの中身を設定されているグループのみにする
+        return APP.POS.GUEST_GROUP_CD_LIST.map(groupCd => {
+          const group = this.groups.find(group => group.groupCd == groupCd)
+          if (group) {
+            return this.groupOptions.find(option => option.value == group.groupId)
+          }
+        }).filter(e => e)
+      }
       return this[masterName + 'Options'] // commonmixin参照
     },
     getExtraFilterOptions(masterName){
@@ -737,7 +748,14 @@ export default {
       this.sensorMap = await SensorHelper.fetchSensorInfo(this.pMergeSensorIds)
       if (Util.hasValue(this.pShowTxSensorIds) && !payload.disabledPosition){
         const alwaysTxs = this.txs.some(tx => Util.v(tx, 'location.areaId') == this.selectedAreaId && NumberUtil.bitON(tx.disp, TX.DISP.ALWAYS))
-        await PositionHelper.loadPosition(this.count, alwaysTxs, false, this.pShowMRoomStatus)
+        if (this.usePositionsCache) {
+          this.replaceMain({usePositionsCache: false})
+          const positions = this.$store.state.main.positions.filter(pos => PositionHelper.shoudTxShow(pos, false, this.txIdMap, this.locationIdMap))
+          this.replaceMain({ positions })
+        }
+        else {
+          await PositionHelper.loadPosition(this.count, alwaysTxs, false, this.pShowMRoomStatus)
+        }
       }
 
       if (this.pShowZone) {
@@ -1180,14 +1198,13 @@ export default {
       if (selectedAbsentTxPosition) {
         this.showDetail(tx.btxId, selectedAbsentTxPosition.x, selectedAbsentTxPosition.y)
       } else {
-        const selectedTxPosition = positions.find(pos => pos.btxId == tx.btxId)
-        if (!selectedTxPosition || !selectedTxPosition.tx) {
+        const pos = positions.find(pos => pos.btxId == tx.btxId)
+        if (!pos || !pos.tx) {
           return
         }
-        const location = PositionHelper.isFixedPosOnArea(selectedTxPosition.tx, this.selectedAreaId)? selectedTxPosition.tx.location: null
-        const x = location? location.x: selectedTxPosition.x
-        const y = location? location.y: selectedTxPosition.y
-        this.showDetail(tx.btxId, x, y)
+        // 固定座席の場合、固定座席ゾーンにいる場合、固定座席の場所に表示し、それ以外は検知された場所で表示
+        const loc = pos.isFixedPosition? pos.inFixedZone? pos.tx.location: pos.exb.location: pos
+        this.showDetail(tx.btxId, loc.x, loc.y)
       }
       this.resetDetail()
     },
@@ -1227,13 +1244,12 @@ export default {
         positions = PositionHelper.addFixedPosition(positions, this.locations, this.selectedAreaId) // 固定位置追加
       }
       // 表示Txのフィルタリング
-      if (this.pShowOnlyGuest) {
-        this.selectedGroupId = Util.v(this.groups.find(group => group.groupCd == APP.POS.GUEST_GROUP_CD), 'groupId', -1)
-      }
-
       positions = this.pDisabledFilter?
         PositionHelper.filterPositions(positions, false, undefined, null, null, null):
         PositionHelper.filterPositions(positions)
+      if (this.pShowOnlyGuest && !this.selectedGroupId) {
+        positions = PositionHelper.filterPositionsOnlyGuest(positions)
+      }
 
       if (this.isQuantity) { // 数量ボタン押下時
         this.showQuantityTx(positions)
@@ -1242,7 +1258,7 @@ export default {
           this.sensorMap.temperature.forEach(val => { // サンワセンサーはminorを持たずEXCloud側で測位しないため、仮想的に測位情報を作る（あとの処理で必要なものだけセット）
             if (!positions.some(pos => pos.btxId == val.btxId)) {
               const tx = _.cloneDeep(this.txIdMap[val.txId])
-              if (tx) {
+              if (tx && tx.location) {
                 tx.disp = 1
                 positions.push({
                   txId: val.txId, btxId: val.btxId, isFixedPosition: true, x: tx.location.x, y: tx.location.y, 

@@ -9,6 +9,7 @@ import { FEATURE } from '../../constant/Constants'
 import * as DateUtil from '../../util/DateUtil'
 import * as StringUtil from '../../util/StringUtil'
 import * as AppServiceHelper from './AppServiceHelper'
+import * as Util from '../../util/Util'
 
 const areaImages = [] // Use normal variable instead of state
 
@@ -147,14 +148,14 @@ export const storeCommit = (key, val) => {
  */
 export const loadAreaImage = async (areaId, force) => {
   if (areaId == null) {
-    console.log('empty areas', areaId)
+    Util.debug('empty areas', areaId)
     return
   }
   if (areaImages[areaId] && !force) {
-    console.log('FOUND areas', areaId)
+    Util.debug('FOUND areas', areaId)
     return areaImages[areaId]
   }
-  console.log('load areas', areaId)
+  Util.debug('load areas', areaId)
   let base64 = await AppServiceHelper.fetchMapImage('/core/area/' + areaId + '/mapImage')
   // eslint-disable-next-line require-atomic-updates
   areaImages[areaId] = base64

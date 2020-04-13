@@ -7,7 +7,6 @@ export const DEV = { // 開発デバッグ関連
   DEBUG: 0, // デバッグモード (0:なし、1以上デバッグレベル)
   USE_MOCK_APS: false || location.search.indexOf('mockAps') != -1, // AppService API結果の代わりにモックデータを使用する
   USE_MOCK_EXC: false || location.search.indexOf('mockExc') != -1, // Excloud API結果の代わりにモックデータを使用する
-  NOT_FILTER_TX: true,
   DEFAULT_DATE: '', // yyyy/MM/dd hh:mm:ss
 }
 
@@ -22,6 +21,14 @@ export const APP = { // 機能面に関する設定
     TIMEOUT: 60 * 60 * 1000, // session timeout(using local storage)
     STATE_EXPIRE_TIME: 3 * 60 * 1000, // マスタキャッシュ有効時間(ミリ秒)
   },
+  AUTH: {
+    USE_AD: false, // ActiveDirectoryで認証
+    // APP_ID: 'fcfc143f-c8c8-454e-ab72-fdf2e49f862f',
+    // REDIRECT_URL: 'https://xxx.saas.msteams.exbeacon.com/azlogin/adminend/',
+    REDIRECT_URL: 'http://localhost:3000/azlogin/end/', // 認証後redirect先
+    APP_ID: 'dd3ea682-9b02-49ec-9d15-c63cee38c792', // AAD clientId
+    ADMINCONSENT_URL_BASE: 'https://login.microsoftonline.com/common/adminconsent' // 管理者承認ページURL
+  },  
   MENU: {
     SHOW_MENU_LINK: '',
     SHOW_MENU_LINK_URL: '',
@@ -66,7 +73,7 @@ export const APP = { // 機能面に関する設定
     SHOW_QUANTITY: false, // 数量（トグルボタン）を表示
     SHOW_TOILET: false, // トイレ情報を表示
     SHOW_TX_NO_OWNER: true, // POTと紐付いていないタグを表示する
-    GUEST_GROUP_CD: 'GUEST', // ゲスト（来客）のグループコード
+    GUEST_GROUP_CD_LIST: ['GUEST'], // ゲスト（来客）のグループコード
 
     WITH: {
       CATEGORY: true, // 位置表示(地図)にカテゴリを表示
@@ -342,7 +349,7 @@ export const APP = { // 機能面に関する設定
   SPLIT_UPLOAD_SIZE_IE: 10 * 1024 * 1024, // 分割アップロードのサイズ閾値（Byte）（for IE）
   MAX_IMAGE_SIZE: 1.5 * 1024 * 1024, // アップロード可能な最大イメージサイズ(Byte)
   MAX_IMAGE_ZIP_SIZE: 100 * 1024 * 1024, // アップロード可能な最大イメージzipサイズ(Byte)
-  AREA_THUMBNAIL_MAX: 200, // サムネイルリサイズ時の最大幅・高さ(エリア)
+  AREA_THUMBNAIL_MAX: 300, // サムネイルリサイズ時の最大幅・高さ(エリア)
   POT_THUMBNAIL_MAX: 200, // サムネイルリサイズ時の最大幅・高さ(pot)
 
   POSITION_SUMMARY_START: 10, // 位置情報csvダウンロード開始時刻（時）
@@ -504,7 +511,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     INUSE_LABEL: 'InUse', // PIRで存在時のラベルキー
     EMPTY_SHOW: true, // PIRで不在時に表示するか否か
     EMPTY_BGCOLOR: '#595959', // PIRで不存時の背景色
-    EMPTY_LABEL: 'Empty', // PIRで不在時のラベルキー
+    EMPTY_LABEL: 'empty', // PIRで不在時のラベルキー
   },
   PRESSURE: {
     R_SIZE: 26,  // 圧力センサ表示時の円の半径
@@ -514,7 +521,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     INUSE_LABEL: 'InUse', // 圧力センサで使用時のラベルキー
     EMPTY_SHOW: true, // 圧力センサで未使用時に表示するか否か
     EMPTY_BGCOLOR: '#595959', // 圧力センサで不存時の背景色
-    EMPTY_LABEL: 'Empty', // 圧力センサで未使用時のラベルキー
+    EMPTY_LABEL: 'empty', // 圧力センサで未使用時のラベルキー
   },
   MEDITAG: {
     STRESS_BG: ['#85A9D1', '#F0C864', '#F49696'], // ストレスレベルに応じた背景色
@@ -641,15 +648,5 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     ZONE_OTHER: true // ゾーンその他を表示する
   },
 
-}
-
-export const MSTEAMS_APP = {
-  IS_COOPERATION: false,
-  // APP_ID: 'fcfc143f-c8c8-454e-ab72-fdf2e49f862f',
-  // REDIRECT_URL: 'https://xxx.saas.msteams.exbeacon.com/azlogin/adminend/',
-  REDIRECT_URL: 'http://localhost:3000/azlogin/end/',
-  APP_ID: 'dd3ea682-9b02-49ec-9d15-c63cee38c792',
-  ADMINCONSENT_URL_BASE: 'https://login.microsoftonline.com/common/adminconsent',
-  AES_KEY: '93361405B57C62DF33873146A7215790256978125098DF0A197CF2'
 }
 

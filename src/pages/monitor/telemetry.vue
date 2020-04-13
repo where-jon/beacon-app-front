@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" :reload="true" :state="reloadState" @reload="fetchData" />
+    <breadcrumb :items="breadCrumbs" :reload="true" :state="reloadState" @reload="fetchData" />
     <div v-show="!reloadState.isLoad" class="container">
       <monitor-table ref="monitorTable" type="exb" :all-count="allCount" :fields="fields" :list="telemetrys" :tr-class="getClass" :td-class="getTdClass" max-filter-length="40" />
     </div>
@@ -31,7 +31,7 @@ export default {
   mixins: [commonmixin, reloadmixin],
   data () {
     return {
-      items: ViewHelper.createBreadCrumbItems('monitor', 'telemetry'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('monitor', 'telemetry'),
       fields: this.getHeaders(),
       telemetrys: [],
       reloadState: { isLoad: false },

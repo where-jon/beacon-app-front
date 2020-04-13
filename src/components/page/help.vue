@@ -14,7 +14,7 @@
           <div class="list-group mt-3">
             <b>{{ getHelpDescription(introduction) }}</b>
           </div>
-          <a v-for="(intro,key) in helpBaseKeys" :key="key" :href="createInternalLink(introduction, intro)" class="list-group-item list-group-item-action">
+          <a v-for="(intro,key) in helpBaseKeys" :key="key" :href="createIntrolLink(introduction, intro)" class="list-group-item list-group-item-action">
             {{ getLabel(intro) }}
           </a>
         </div>
@@ -141,7 +141,7 @@ export default {
     },
     createLabel(){
       this.csvFields = ViewHelper.addLabelByKey(this.$i18n, [
-        {key: 'keyName', sortable: true, label: 'keyName', thClass: 'fields', tdClass: 'items'},
+        {key: 'keyName', sortable: true, label: 'keyName', thClass: 'keyFields', tdClass: 'items'},
         {key: 'displayName', sortable: false, label: 'displayName', thClass: 'fields', tdClass: 'items'},
       ])
       this.bulkFields = ViewHelper.addLabelByKey(this.$i18n, [
@@ -151,6 +151,9 @@ export default {
     },
     getLabel(key, option){
       return this.$i18n.tnl('label.' + key, option)
+    },
+    getLabelWith(key, withKey, option){
+      return this.getLabel(key, option) + '(' + this.getLabel(withKey, option) + ')'
     },
     getMessage(key, option){
       return this.$i18n.tnl('message.' + key, option)
@@ -166,6 +169,9 @@ export default {
     },
     getConfig(key, option){
       return this.$i18n.tnl('config.' + key, option)
+    },
+    createIntrolLink(groupKey, pageKey){
+      return '#'+ groupKey + '_' + StringUtil.kebab2camel(pageKey) 
     },
     createInternalLink(groupKey, pageKey){
       return '#'+ groupKey.replace('/','_') + StringUtil.kebab2camel(pageKey) 
@@ -226,7 +232,7 @@ export default {
       case 'locationList':
         return [
           { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
-          { isActive: true, displayName: this.getLabel('locationCd'), keyName: 'locationCd' },
+          { isActive: true, displayName: this.getLabel('locationCd'), keyName: this.getLabel('locationCd') },
           { isActive: true, displayName: this.getLabel('locationName'), keyName: 'locationName' },
           { isActive: true, displayName: this.getLabel('areaName'), keyName: 'areaName' },
           { isActive: true, displayName: this.getHelpDescription('locationXY'), keyName: 'x' },
@@ -234,15 +240,15 @@ export default {
           { isActive: true, displayName: this.getLabel('txViewType'), keyName: 'txViewType' },
           { isActive: true, displayName: this.getLabel('visible'), keyName: 'visible' },
           { isActive: true, displayName: this.getLabel('zoneClass'), keyName: 'zoneClass' },
-          { isActive: true, displayName: this.getLabel('zoneClass'), keyName: 'zoneClass' },
           { isActive: true, displayName: this.getLabel('deviceId'), keyName: 'deviceId' },
           { isActive: true, displayName: this.getLabel('btxId'), keyName: 'btxId' },
           { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
+          { isActive: true, displayName: this.getLabel('capacity'), keyName: 'capacity' },
         ]
       case 'pot':
         return [
           { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
-          { isActive: true, displayName: this.getLabel('potCd'), keyName: 'potCd' },
+          { isActive: true, displayName: this.getLabel('potCd'), keyName: this.getLabel('potCd') },
           { isActive: true, displayName: this.getLabel('btxId'), keyName: 'btxId' },
           { isActive: true, displayName: this.getLabel('potName'), keyName: 'potName' },
           { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'potType' },
@@ -251,6 +257,7 @@ export default {
           { isActive: true, displayName: this.getLabel('category'), keyName: 'categoryName' },
           { isActive: true, displayName: this.getLabel('ruby'), keyName: 'ruby' },
           { isActive: true, displayName: this.getLabel('description'), keyName: 'description' },
+          { isActive: true, displayName: this.getLabel('group'), keyName: 'groupName' },
         ]
       case 'potPerson':
         return [
@@ -389,29 +396,30 @@ export default {
         ]
       case 'gateway':
         return [
-          { isActive: true, displayName: this.getLabel('no'), keyName: 'num' },
-          { isActive: true, displayName: this.getLabel('deviceId'), keyName: 'deviceId' },
-          { isActive: true, displayName: this.getLabel('finalReceiveTimestamp'), keyName: 'updated' },
-          { isActive: true, displayName: this.getLabel('state'), keyName: 'state' },
+          { isActive: true, displayName: this.getLabel('no'), keyName: this.getLabel('no') },
+          { isActive: true, displayName: this.getLabel('deviceId'), keyName: this.getLabel('deviceId') },
+          { isActive: true, displayName: this.getLabel('finalReceiveTimestamp'), keyName: this.getLabel('finalReceiveTimestamp') },
+          { isActive: true, displayName: this.getLabel('state'), keyName: this.getLabel('state') },
         ]
       case 'position':
         return [
-          { isActive: true, displayName: this.getLabel('btxId'), keyName: 'btxId' },
-          { isActive: true, displayName: this.getLabel('major'), keyName: 'major' },
-          { isActive: true, displayName: this.getLabel('minor'), keyName: 'minor' },
-          { isActive: true, displayName: this.getLabel('name'), keyName: 'name' },
-          { isActive: true, displayName: this.getLabel('powerLevel'), keyName: 'powerLevel' },
-          { isActive: true, displayName: this.getLabel('finalReceiveLocation'), keyName: 'location' },
-          { isActive: true, displayName: this.getLabel('finalReceiveTimestamp'), keyName: 'timestamp' },
-          { isActive: true, displayName: this.getLabel('state'), keyName: 'state' },
+          { isActive: true, displayName: this.getLabel('btxId'), keyName: this.getLabel('btxId') },
+          { isActive: true, displayName: this.getLabel('major'), keyName: this.getLabel('major') },
+          { isActive: true, displayName: this.getLabel('minor'), keyName: this.getLabel('minor') },
+          { isActive: true, displayName: this.getLabel('name'), keyName: this.getLabel('name') },
+          { isActive: true, displayName: this.getLabel('powerLevel'), keyName: this.getLabel('powerLevel') },
+          { isActive: true, displayName: this.getLabel('finalReceiveLocation'), keyName: this.getLabel('finalReceiveLocation') },
+          { isActive: true, displayName: this.getLabel('finalReceiveTimestamp'), keyName: this.getLabel('finalReceiveTimestamp') },
+          { isActive: true, displayName: this.getLabel('state'), keyName: this.getLabel('state') },
+          { isActive: true, displayName: this.getLabel('powerLevelTimestamp'), keyName: this.getLabel('powerLevelTimestamp') },
         ]
       case 'telemetry':
         return [
-          { isActive: true, displayName: this.getLabel('deviceId'), keyName: 'deviceId' },
-          { isActive: true, displayName: this.getLabel('locationName'), keyName: 'locationName' },
-          { isActive: true, displayName: this.getLabel('powerLevel'), keyName: 'powerLevel' },
-          { isActive: true, displayName: this.getLabel('finalReceiveTimestamp'), keyName: 'timestamp' },
-          { isActive: true, displayName: this.getLabel('state'), keyName: 'state' },
+          { isActive: true, displayName: this.getLabel('deviceId'), keyName: this.getLabel('deviceId') },
+          { isActive: true, displayName: this.getLabel('locationName'), keyName: this.getLabel('locationName') },
+          { isActive: true, displayName: this.getLabel('powerLevel'), keyName: this.getLabel('powerLevel') },
+          { isActive: true, displayName: this.getLabel('finalReceiveTimestamp'), keyName: this.getLabel('finalReceiveTimestamp') },
+          { isActive: true, displayName: this.getLabel('state'), keyName: this.getLabel('state') },
         ]
       case 'usageSituation':
         return [
@@ -424,44 +432,35 @@ export default {
         ]
       case 'sensorGraph':
         return [
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'humidity(lat)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'humidity(max)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'humidity(avg)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'humidity(min)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'temperature(lat)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'temperature(max)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'temperature(avg)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'temperature(min)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'count(lat)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'count(max)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'count(avg)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'count(min)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'step(lat)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'step(max)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'step(avg)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'step(min)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'beat(lat)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'beat(max)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'beat(avg)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'beat(min)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'low(lat)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'low(max)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'low(avg)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'low(min)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'high(lat)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'high(max)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'high(avg)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'high(min)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'down(lat)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'down(max)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'down(avg)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'down(min)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'magnet(max)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'magnet(min)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'pressVol(lat)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'pressVol(max)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'pressVol(avg)' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'pressVol(min)' },
+          { isActive: true, displayName: this.getLabelWith('humidity', 'max'), keyName: this.getLabelWith('humidity', 'max') }, // TODO専用メソッド作成
+          { isActive: true, displayName: this.getLabelWith('humidity', 'avg'), keyName: this.getLabelWith('humidity', 'avg') },
+          { isActive: true, displayName: this.getLabelWith('humidity', 'min'), keyName: this.getLabelWith('humidity', 'min') },
+          { isActive: true, displayName: this.getLabelWith('temperature', 'max'), keyName: this.getLabelWith('temperature', 'max') },
+          { isActive: true, displayName: this.getLabelWith('temperature', 'avg'), keyName: this.getLabelWith('temperature', 'avg') },
+          { isActive: true, displayName: this.getLabelWith('temperature', 'min'), keyName: this.getLabelWith('temperature', 'min') },
+          { isActive: true, displayName: this.getLabelWith('count', 'max'), keyName: this.getLabelWith('count', 'max') },
+          { isActive: true, displayName: this.getLabelWith('count', 'avg'), keyName: this.getLabelWith('count', 'avg') },
+          { isActive: true, displayName: this.getLabelWith('count', 'min'), keyName: this.getLabelWith('count', 'min') },
+          { isActive: true, displayName: this.getLabelWith('step', 'max'), keyName: this.getLabelWith('step', 'max') },
+          { isActive: true, displayName: this.getLabelWith('step', 'avg'), keyName: this.getLabelWith('step', 'avg') },
+          { isActive: true, displayName: this.getLabelWith('step', 'min'), keyName: this.getLabelWith('step', 'min') },
+          { isActive: true, displayName: this.getLabelWith('beat', 'max'), keyName: this.getLabelWith('beat', 'max') },
+          { isActive: true, displayName: this.getLabelWith('beat', 'avg'), keyName: this.getLabelWith('beat', 'avg') },
+          { isActive: true, displayName: this.getLabelWith('beat', 'min'), keyName: this.getLabelWith('beat', 'min') },
+          { isActive: true, displayName: this.getLabelWith('low', 'max'), keyName: this.getLabelWith('low', 'max') },
+          { isActive: true, displayName: this.getLabelWith('low', 'avg'), keyName: this.getLabelWith('low', 'avg') },
+          { isActive: true, displayName: this.getLabelWith('low', 'min'), keyName: this.getLabelWith('low', 'min') },
+          { isActive: true, displayName: this.getLabelWith('high', 'max'), keyName: this.getLabelWith('high', 'max') },
+          { isActive: true, displayName: this.getLabelWith('high', 'avg'), keyName: this.getLabelWith('high', 'avg') },
+          { isActive: true, displayName: this.getLabelWith('high', 'min'), keyName: this.getLabelWith('high', 'min') },
+          { isActive: true, displayName: this.getLabelWith('down', 'max'), keyName: this.getLabelWith('down', 'max') },
+          { isActive: true, displayName: this.getLabelWith('down', 'avg'), keyName: this.getLabelWith('down', 'avg') },
+          { isActive: true, displayName: this.getLabelWith('down', 'min'), keyName: this.getLabelWith('down', 'min') },
+          { isActive: true, displayName: this.getLabelWith('magnet', 'max'), keyName: this.getLabelWith('magnet', 'max') },
+          { isActive: true, displayName: this.getLabelWith('magnet', 'min'), keyName: this.getLabelWith('magnet', 'min') },
+          { isActive: true, displayName: this.getLabelWith('pressVol', 'max'), keyName: this.getLabelWith('pressVol', 'max') },
+          { isActive: true, displayName: this.getLabelWith('pressVol', 'avg'), keyName: this.getLabelWith('pressVol', 'avg') },
+          { isActive: true, displayName: this.getLabelWith('pressVol', 'min'), keyName: this.getLabelWith('pressVol', 'min') },
         ]
       case 'stayRatioGp':
         return [
@@ -493,15 +492,13 @@ export default {
         ]
       case 'positionHistory':
         return [
-          { isActive: true, displayName: this.getLabel('dt'), keyName: 'positionDt' },
-          { isActive: true, displayName: this.getConfig('OPTIONS.POSITION_HISTORY.txName'), keyName: 'txName' },
-          { isActive: true, displayName: this.getConfig('OPTIONS.POSITION_HISTORY.major'), keyName: 'major' },
-          { isActive: true, displayName: this.getConfig('OPTIONS.POSITION_HISTORY.minor'), keyName: 'minor' },
-          { isActive: true, displayName: this.getLabel('deviceId'), keyName: 'exbId' },
-          { isActive: true, displayName: this.getConfig('OPTIONS.POSITION_HISTORY.locationName'), keyName: 'locationName' },
-          { isActive: true, displayName: this.getLabel('area'), keyName: 'areaName' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'x' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'y' },
+          { isActive: true, displayName: this.getLabel('dt'), keyName: this.getLabel('dt') },
+          { isActive: true, displayName: this.getLabel('txName'), keyName: this.getLabel('txName') },
+          { isActive: true, displayName: this.getLabel('major'), keyName: this.getLabel('major') },
+          { isActive: true, displayName: this.getLabel('minor'), keyName: this.getLabel('minor') },
+          { isActive: true, displayName: this.getLabel('deviceId'), keyName: this.getLabel('deviceId') },
+          { isActive: true, displayName: this.getLabel('locationName'), keyName: this.getLabel('locationName') },
+          { isActive: true, displayName: this.getLabel('area'), keyName: this.getLabel('area') },
         ]
       case 'positionHistoryExc':
         return [
@@ -552,6 +549,13 @@ export default {
           { isActive: true, displayName: this.getLabel('potName'), keyName: 'potName' },
           { isActive: true, displayName: this.getLabel('potCategoryType'), keyName: 'potCategoryType' },
         ]
+      case 'meetingGraph':
+        return [
+          { isActive: true, displayName: this.getLabel('datetime'), keyName: this.getLabel('datetime') },
+          { isActive: true, displayName: this.getLabel('id'), keyName: this.getLabel('id') },
+          { isActive: true, displayName: this.getLabel('locationName'), keyName: this.getLabel('locationName') },
+          { isActive: true, displayName: this.getLabel('count'), keyName: this.getLabel('count') },
+        ]
       default:
         return null
       }
@@ -597,6 +601,10 @@ hr {
 }
 .fields {
   font-size: 14px !important;
+}
+.keyFields {
+  font-size: 14px !important;
+  width: 20%;
 }
 .items {
   font-size: 14px !important;

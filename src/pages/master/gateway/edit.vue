@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" />
+    <breadcrumb :items="breadCrumbs" />
     <div class="container">
       <alert :message="message" />
 
@@ -49,7 +49,7 @@ export default {
       id: 'deviceId',
       backPath: '/master/gateway',
       appServicePath: '/core/excloud/gwlist',
-      items: ViewHelper.createBreadCrumbItems('master', {text: 'masterGateway', href: '/master/gateway'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.exb.exbId)),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('master', {text: 'masterGateway', href: '/master/gateway'}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.exb.exbId)),
       form: {'deviceId':null, 'meshId':null},
       mutex: false,
       deviceId: null,

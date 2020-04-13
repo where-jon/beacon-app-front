@@ -19,8 +19,12 @@
           </div>
           <div class="description">
             <div v-for="item in getDispItems()" :key="item.key">
-              <div v-if="item.key !== 'name' || !inMsTeams">{{ item.val }}</div>
-              <div v-else><a href="#" @click="moveToChat">{{ item.val }}</a></div>
+              <div v-if="item.key !== 'name' || !inMsTeams">
+                {{ item.val }}
+              </div>
+              <div v-else>
+                <a href="#" @click="moveToChat">{{ item.val }}</a>
+              </div>
             </div>
           </div>
         </div>
@@ -33,15 +37,17 @@
       :color="selectedSensor.length == 0? selectedTx.color: blackColor"
     >
       <div v-if="selectedSensor.length == 0" :style="{backgroundColor: selectedTx.bgColor}" class="clearfix">
-        <div v-if="enableThumbnail" class="thumbnail thumbnail-modal">
+        <div v-if="enableThumbnail" class="thumbnail-modal">
           <img v-if="selectedTx.thumbnail.length > 0" :src="selectedTx.thumbnail" width="100%" height="auto">
           <img v-else src="/default.png" width="auto" height="116">
         </div>
-        <div class="descriptionSensor">
+        <div :class="descriptionSP">
           <div v-for="item in getDispItems()" :key="item.key">
-            <div v-if="item.key !== 'name'">{{ item.val }}</div>
+            <div v-if="item.key !== 'name'">
+              {{ item.val }}
+            </div>
             <div v-else>
-              <a href="#" v-if="inMsTeams" @click="moveToChat">{{ item.val }}</a>
+              <a v-if="inMsTeams" href="#" @click="moveToChat">{{ item.val }}</a>
             </div>
           </div>
         </div>
@@ -60,7 +66,7 @@ import * as StringUtil from '../../sub/util/StringUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import meditag from './meditag.vue'
 import txdetailmodal from './txdetailmodal.vue'
-import * as microsoftTeams from "@microsoft/teams-js"
+import * as microsoftTeams from '@microsoft/teams-js'
 
 const loadImage = (src, fixHeight) => {
   if(!src){
@@ -102,13 +108,16 @@ export default {
       left: 0,
       meditagWidth: 266,
       blackColor: FONT.COLOR.BLACK,
-      inMsTeams: BrowserUtil.inIframe()
+      inMsTeams: APP.AUTH.USE_AD && BrowserUtil.inIframe()
     }
   },
   computed: {
     enableThumbnail () {
       return !this.isDisableThumbnail()
     },
+    descriptionSP() {
+      return APP.TXDETAIL.NO_UNREGIST_THUMB ? "descriptionSPNoThumbnail" : "descriptionSP"
+    }
   },
   mounted() {
     microsoftTeams.initialize()
@@ -192,25 +201,26 @@ export default {
 .balloon {
   position: absolute;
   padding: 0px;
+  z-index: 5;
 }
 .balloon::before {
   content: '';
   position: absolute;
-  z-index: 1;
+  z-index: 6;
   width: 20px;
   height: 20px;
 }
 .balloon::after {
   content: '';
   position: absolute;
-  z-index: 2;
+  z-index: 7;
   top: 0; left: 0;
   width: 100%;
   height: 100%;
 }
 .balloon>* {
   position: relative;
-  z-index: 3;
+  z-index: 8;
 }
 .balloon,
 .balloon::after {
@@ -290,12 +300,19 @@ export default {
   word-break: break-all;
   -ms-overflow-style: none;
 }
-.descriptionSensor {
+.descriptionSP {
   float: left;
   width: 50%;
   height: 150px;
   font-weight: bold;
   padding-left: 10px;
+  overflow-y: scroll;
+}
+
+.descriptionSPNoThumnail {
+  float: left;
+  height: 150px;
+  font-weight: bold;
   overflow-y: scroll;
 }
 
@@ -306,5 +323,6 @@ export default {
 
 .thumbnail-modal {
   width: 50%;
+  margin: auto;
 }
 </style>

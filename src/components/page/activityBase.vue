@@ -1,6 +1,6 @@
 <template>
   <div>
-    <breadcrumb :items="items" :reload="false" />
+    <breadcrumb :items="breadCrumbs" :reload="false" />
     <div class="container">
       <alert :message="message" />
 
@@ -94,10 +94,10 @@ export default {
   props: ['page', 'type', 'filter', 'download'],
   data () {
     return {
-      items: ViewHelper.createBreadCrumbItems('sumTitle', this.page),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('sumTitle', this.page),
       form: {
-        datetimeFrom: '2020-02-20 00:00:00',
-        datetimeTo: '2020-02-21 00:00:00'
+        datetimeFrom: '',
+        datetimeTo: ''
       },
       vueSelected: {
         group: null,
@@ -207,10 +207,15 @@ export default {
       }
       toTime = Math.min(toTime, end)
 
+      // 指定時間を丸める
+      if(doRound){
+        fromTime = this.round(fromTime)
+        toTime = this.round(toTime)
+      }
+
       // 1日の場合
       let total = 0
       if(fromDate == toDate){
-        console.log('oneDay')
         total = toTime - fromTime
       }else{
         // 2日以上の場合
@@ -219,15 +224,15 @@ export default {
         total += (toDate - fromDate - 1) * (end - start)
       }
       if(doRound){
-        total = this.raunding(total)
+        total += APP.POSITION_SUMMARY_INTERVAL * 60
       }
       Util.debug('total', total)
-      return total      
+      return total
     },
-    raunding(sec){
+    round(sec){
       // コマ時間に揃える
       const interval = APP.POSITION_SUMMARY_INTERVAL * 60
-      return Math.floor(sec / interval) * interval + interval
+      return Math.floor(sec / interval) * interval
     }
   }
 }

@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" />
+    <breadcrumb :items="breadCrumbs" />
     <b-form @submit.prevent="createData">
       <b-form-group>
         <label v-t="'label.keyCategory'" />
@@ -41,7 +41,7 @@ export default {
   mixins: [commonmixin],
   data () {
     return {
-      items: ViewHelper.createBreadCrumbItems('develop', 'createSimulationData'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('develop', 'createSimulationData'),
       kind: 'POSITION',
       startDate: new Date(new Date().getTime() - 3600 * 1000),
       periodSec: 3600,

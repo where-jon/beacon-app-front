@@ -55,6 +55,11 @@ export const getPotExtKeys = (potTypeName, addPrefix) => {
 export const createCustomColumn = (potTypeName, isCsv) => {
   const settings = getSetting(potTypeName)
   return settings.WITH.filter(val => val != 'thumbnail').map(val => {
+    if (val == 'potType') {
+      if (APP.AUTH.USE_AD) {
+        return null
+      }  
+    }
     if('user' == val){
       return {key:'loginId'}
     }

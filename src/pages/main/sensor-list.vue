@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" :reload="true" />
+    <breadcrumb :items="breadCrumbs" :reload="true" />
     <m-list :params="params" :list="sensorList" />
   </div>
 </template>
@@ -36,7 +36,7 @@ export default {
         hideNormalSearchBox: true,
         fields: [],
       },
-      items: ViewHelper.createBreadCrumbItems('main', 'sensorList'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('main', 'sensorList'),
       sensorList: [],
       selectedSensor: SENSOR.TEMPERATURE,
     }

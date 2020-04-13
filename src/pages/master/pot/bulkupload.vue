@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" />
+    <breadcrumb :items="breadCrumbs" />
     <bulkupload :id="id" :name="name" :back-path="backPath" :app-service-path="appServicePath" />
   </div>
 </template>
@@ -18,6 +18,10 @@ import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkupload from '../../../components/page/bulkupload.vue'
 
 export default {
+  components: {
+    breadcrumb,
+    bulkupload,
+  },
   props: {
     pName: {
       type: String,
@@ -36,10 +40,6 @@ export default {
       default: () => [CATEGORY.PERSON, CATEGORY.THING],
     },
   },
-  components: {
-    breadcrumb,
-    bulkupload,
-  },
   data() {
     return {
       name: 'pot',
@@ -54,7 +54,7 @@ export default {
     backPath() {
       return this.pPath
     },
-    items() {
+    breadCrumbs() {
       return ViewHelper.createBreadCrumbItems('master', {text: StringUtil.concatCamel('pot', this.pName), href: this.backPath}, 'bulkUpload')
     },
   },

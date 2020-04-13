@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" :reload="reload" :auto-pager="autoPager" :auto-pager-play="autoPagerPlay" :short-name="shortName" />
+    <breadcrumb :items="breadCrumbs" :reload="reload" :auto-pager="autoPager" :auto-pager-play="autoPagerPlay" :short-name="shortName" />
     <div class="countDisplay">
       <div class="smallBox enter">
         <span><img src="~/assets/icon/person.svg" width="32" height="32"><span style="margin-left: 5px;" v-t="'label.enter'" /></span>
@@ -64,7 +64,7 @@ export default {
       todaysEnterCount: 0, // 今日入場した数
       totalEnterCount: 0, // 述べ入場人数
       elapsedTime: 0, // APP.ENTER.START_TIME以降の時間
-      items: ViewHelper.createBreadCrumbItems('main', 'enterTable'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('main', 'enterTable'),
       shortName: this.$i18n.t('label.enterTable'),
       reload: true,
       timer: null,
@@ -140,7 +140,7 @@ export default {
 
       _(pots).map(pot => {
         let pos = positions.find(pos => pot.txIds.includes(pos.txId)) // potの現在の場所を取得
-        const locationId = Util.v(pos, 'exb.location,locationId')
+        const locationId = Util.v(pos, 'exb.location.locationId')
         const isAbsentZone = _.some(absentLocationList, loc => loc.locationId == locationId)
         return { // potの名前、場所、不在ゾーンかどうか、グループ情報、色等をオブジェクトにして返す
           potId: pot.potId,

@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" />
+    <breadcrumb :items="breadCrumbs" />
     <div class="container">
       <alert :message="message" />
 
@@ -145,7 +145,7 @@ export default {
     backPath() {
       return this.pPath
     },
-    items() {
+    breadCrumbs() {
       return ViewHelper.createBreadCrumbItems('master', {text: StringUtil.concatCamel('zone', this.pName), href: this.backPath}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.zone.zoneId))
     },
     zoneTypeOptions() {

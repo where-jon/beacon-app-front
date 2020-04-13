@@ -468,7 +468,7 @@ export const createChartMagnetOptions = (chartData, by, isResponsive = false) =>
           min: SENSOR.MAGNET_STATUS.OFF,
           max: SENSOR.MAGNET_STATUS.ON,
           callback: function(value, index, values){
-            return value == SENSOR.MAGNET_STATUS.ON? i18n.tnl('label.InUse'): value == SENSOR.MAGNET_STATUS.OFF? i18n.tnl('label.notUse'): ''
+            return value == SENSOR.MAGNET_STATUS.ON? i18n.tnl('label.inUse'): value == SENSOR.MAGNET_STATUS.OFF? i18n.tnl('label.notUse'): ''
           }
         },
         position: 'left'

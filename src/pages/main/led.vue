@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid">
-    <breadcrumb :items="items" />
+    <breadcrumb :items="breadCrumbs" />
     <b-container>
       <alert :message="message" :force-hide="true" />
 
@@ -108,7 +108,7 @@ export default {
       vueSelected: {
         deviceId: null,
       },
-      items: ViewHelper.createBreadCrumbItems('main', 'ledOperation'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('main', 'ledOperation'),
       deviceIds: [],
       ledColors: LED_COLORS,
       ledBlinkTypes: LED_BLINK_TYPES,

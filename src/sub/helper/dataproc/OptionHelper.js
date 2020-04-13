@@ -30,6 +30,7 @@ export const setApp = pi18n => {
 export const getMagicNumberList = (features) => {
   const retMap = {}
 
+  retMap.potType = createOptionMap(POT_TYPE.getTypes())
   retMap.categoryType = createOptionMap(CATEGORY.getTypes(true))
   retMap.sensor = createOptionMap(getSensorAllOptions())
   retMap.locationType = createOptionMap(getLocationTypeOptions())

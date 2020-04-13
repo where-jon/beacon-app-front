@@ -7,6 +7,7 @@
       :p-show-prohibit="true"
       :p-show-only-guest="true"
       :p-show-lost="false"
+      :p-filter-list="filterList"
       p-split-auto-reload
       :p-show-zone="true"
     />
@@ -14,6 +15,7 @@
 </template>
 
 <script>
+import { APP } from '../../sub/constant/config'
 import commonmixin from '../../components/mixin/commonmixin.vue'
 import exMap from '../../components/page/ex-map.vue'
 
@@ -25,6 +27,9 @@ export default {
   computed: {
     captionList(){
       return ['main', 'guestAccess']
+    },
+    filterList(){
+      return APP.POS.WITH.GROUP? ['group']: []
     },
   },
   methods: {
