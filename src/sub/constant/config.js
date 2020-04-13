@@ -4,7 +4,7 @@
 import { DETECT_STATE, SHAPE } from './Constants'
 
 export const DEV = { // 開発デバッグ関連
-  DEBUG: 0, // デバッグモード (0:なし、1以上デバッグレベル)
+  DEBUG: 1, // デバッグモード (0:なし、1以上デバッグレベル)
   USE_MOCK_APS: false || location.search.indexOf('mockAps') != -1, // AppService API結果の代わりにモックデータを使用する
   USE_MOCK_EXC: false || location.search.indexOf('mockExc') != -1, // Excloud API結果の代わりにモックデータを使用する
   NOT_FILTER_TX: true,
@@ -23,11 +23,11 @@ export const APP = { // 機能面に関する設定
     STATE_EXPIRE_TIME: 3 * 60 * 1000, // マスタキャッシュ有効時間(ミリ秒)
   },
   AUTH: {
-    USE_AD: false, // ActiveDirectoryで認証
+    USE_AD: true, // ActiveDirectoryで認証
     // APP_ID: 'fcfc143f-c8c8-454e-ab72-fdf2e49f862f',
     // REDIRECT_URL: 'https://xxx.saas.msteams.exbeacon.com/azlogin/adminend/',
     REDIRECT_URL: 'http://localhost:3000/azlogin/end/', // 認証後redirect先
-    APP_ID: 'dd3ea682-9b02-49ec-9d15-c63cee38c792', // AAD clientId
+    APP_ID: '8a3c94dd-df78-4b59-b18f-656f6370dc2a', // AAD clientId
     ADMINCONSENT_URL_BASE: 'https://login.microsoftonline.com/common/adminconsent' // 管理者承認ページURL
   },  
   MENU: {
