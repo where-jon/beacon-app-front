@@ -141,7 +141,7 @@ export default {
     },
     createLabel(){
       this.csvFields = ViewHelper.addLabelByKey(this.$i18n, [
-        {key: 'keyName', sortable: true, label: 'keyName', thClass: 'fields', tdClass: 'items'},
+        {key: 'keyName', sortable: true, label: 'keyName', thClass: 'keyFields', tdClass: 'items'},
         {key: 'displayName', sortable: false, label: 'displayName', thClass: 'fields', tdClass: 'items'},
       ])
       this.bulkFields = ViewHelper.addLabelByKey(this.$i18n, [
@@ -492,15 +492,13 @@ export default {
         ]
       case 'positionHistory':
         return [
-          { isActive: true, displayName: this.getLabel('dt'), keyName: 'positionDt' },
-          { isActive: true, displayName: this.getConfig('OPTIONS.POSITION_HISTORY.txName'), keyName: 'txName' },
-          { isActive: true, displayName: this.getConfig('OPTIONS.POSITION_HISTORY.major'), keyName: 'major' },
-          { isActive: true, displayName: this.getConfig('OPTIONS.POSITION_HISTORY.minor'), keyName: 'minor' },
-          { isActive: true, displayName: this.getLabel('deviceId'), keyName: 'exbId' },
-          { isActive: true, displayName: this.getConfig('OPTIONS.POSITION_HISTORY.locationName'), keyName: 'locationName' },
-          { isActive: true, displayName: this.getLabel('area'), keyName: 'areaName' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'x' },
-          { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'y' },
+          { isActive: true, displayName: this.getLabel('dt'), keyName: this.getLabel('dt') },
+          { isActive: true, displayName: this.getLabel('txName'), keyName: this.getLabel('txName') },
+          { isActive: true, displayName: this.getLabel('major'), keyName: this.getLabel('major') },
+          { isActive: true, displayName: this.getLabel('minor'), keyName: this.getLabel('minor') },
+          { isActive: true, displayName: this.getLabel('deviceId'), keyName: this.getLabel('deviceId') },
+          { isActive: true, displayName: this.getLabel('locationName'), keyName: this.getLabel('locationName') },
+          { isActive: true, displayName: this.getLabel('area'), keyName: this.getLabel('area') },
         ]
       case 'positionHistoryExc':
         return [
@@ -551,6 +549,13 @@ export default {
           { isActive: true, displayName: this.getLabel('potName'), keyName: 'potName' },
           { isActive: true, displayName: this.getLabel('potCategoryType'), keyName: 'potCategoryType' },
         ]
+      case 'meetingGraph':
+        return [
+          { isActive: true, displayName: this.getLabel('datetime'), keyName: this.getLabel('datetime') },
+          { isActive: true, displayName: this.getLabel('id'), keyName: this.getLabel('id') },
+          { isActive: true, displayName: this.getLabel('locationName'), keyName: this.getLabel('locationName') },
+          { isActive: true, displayName: this.getLabel('count'), keyName: this.getLabel('count') },
+        ]
       default:
         return null
       }
@@ -596,6 +601,10 @@ hr {
 }
 .fields {
   font-size: 14px !important;
+}
+.keyFields {
+  font-size: 14px !important;
+  width: 20%;
 }
 .items {
   font-size: 14px !important;
