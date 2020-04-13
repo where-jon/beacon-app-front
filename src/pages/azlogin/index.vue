@@ -151,7 +151,9 @@ export default {
       const left = (screen.width - 600) / 2
       const top = ( screen.height - 535) / 2
       const adminConsentUrl = APP.AUTH.ADMINCONSENT_URL_BASE + '?client_id=' + APP.AUTH.APP_ID + '&redirect_uri=' + APP.AUTH.REDIRECT_URL
-      const popupWindow = window.open(adminConsentUrl, '_blank', `toolbar=no,location=yes,status=no,menubar=no,scrollbars=yes,top=${top},left=${left},width=350,height=600`)
+      var link = document.createElement('a');
+      link.href = adminConsentUrl
+      const popupWindow = window.open(link.href, '_blank', `toolbar=no,location=yes,status=no,menubar=no,scrollbars=yes,top=${top},left=${left},width=350,height=600`)
       if (!popupWindow) {
         console.error('window open error')
         alert('Opening popupWindow failed.')
