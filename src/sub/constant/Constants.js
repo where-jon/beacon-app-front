@@ -632,7 +632,7 @@ export const SETTING = {
   PASSWORD: 'password',
   SELECT: 'select',
   OTHER_CATEGORY: 'OTHER_CATEGORY',
-  DATE_NOTATION: 'YYYY-MM-DD HH:mm:ss',
+  DATE_NOTATION: 'YYYY/MM/DD HH:mm:ss', // ハイフォンはIE11非対応
   getOptions(){
     return [
       {text: i18n.tnl('label.string'), value: 'string'},
