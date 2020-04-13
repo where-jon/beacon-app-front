@@ -26,7 +26,7 @@ export const APP = { // 機能面に関する設定
     USE_AD: true, // ActiveDirectoryで認証
     // APP_ID: 'fcfc143f-c8c8-454e-ab72-fdf2e49f862f',
     // REDIRECT_URL: 'https://xxx.saas.msteams.exbeacon.com/azlogin/adminend/',
-    REDIRECT_URL: 'http://localhost:3000/azlogin/end/', // 認証後redirect先
+    REDIRECT_URL: 'https://msteams.dev.exbeacon.com/azlogin/end/', // 認証後redirect先
     APP_ID: '8a3c94dd-df78-4b59-b18f-656f6370dc2a', // AAD clientId
     ADMINCONSENT_URL_BASE: 'https://login.microsoftonline.com/common/adminconsent' // 管理者承認ページURL
   },  
