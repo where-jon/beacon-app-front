@@ -151,16 +151,8 @@ export default {
       const left = (screen.width - 600) / 2
       const top = ( screen.height - 535) / 2
       const adminConsentUrl = APP.AUTH.ADMINCONSENT_URL_BASE + '?client_id=' + APP.AUTH.APP_ID + '&redirect_uri=' + APP.AUTH.REDIRECT_URL
-      // var popupWindow = window.open(adminConsentUrl, 'width=600, height=535, top= ' + top + ", left=" + left)
-      // globalVars_1.GlobalVars.childWindow = globalVars_1.GlobalVars.currentWindow.open(link.href, '_blank', 'toolbar=no, location=yes, status=no, menubar=no, scrollbars=yes, top=' +
-      //       top +
-      //       ', left=' +
-      //       left +
-      //       ', width=' +
-      //       width +
-      //       ', height=' +
-      //       height);
-      const popupWindow = window.open(adminConsentUrl, '_blank', `toolbar=no,location=yes,status=no,menubar=no,scrollbars=yes,top=${top},left=${left},width=350,height=600`)
+      // const popupWindow = window.open(adminConsentUrl, '_blank', `toolbar=no,location=yes,status=no,menubar=no,scrollbars=yes,top=${top},left=${left},width=350,height=600`)
+      window.location.assign(adminConsentUrl)
       if (!popupWindow) {
         console.error('window open error')
         alert('Opening popupWindow failed.')
