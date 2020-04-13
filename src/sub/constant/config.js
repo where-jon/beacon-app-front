@@ -360,8 +360,8 @@ export const APP = { // 機能面に関する設定
 
 // URL関連設定
 export const APP_SERVICE = {
-  // BASE_URL: 'https://msteams-data.dev.exbeacon.com',
-  BASE_URL: 'http://localhost:8080',
+  BASE_URL: 'https://msteams-data.dev.exbeacon.com',
+  // BASE_URL: 'http://localhost:8080',
 }
 
 export const EXCLOUD = {
