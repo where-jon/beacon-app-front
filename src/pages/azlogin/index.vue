@@ -152,7 +152,8 @@ export default {
       const top = ( screen.height - 535) / 2
       const adminConsentUrl = APP.AUTH.ADMINCONSENT_URL_BASE + '?client_id=' + APP.AUTH.APP_ID + '&redirect_uri=' + APP.AUTH.REDIRECT_URL
       // var popupWindow = window.open(adminConsentUrl, 'width=600, height=535, top= ' + top + ", left=" + left)
-      const popupWindow = window.open(adminConsentUrl, '', "width=350,height=600,scrollbars=no,resizable=no,status=no,location=no")
+      // const popupWindow = window.open(adminConsentUrl, '', "width=350,height=600,scrollbars=no,resizable=no,status=no,location=no")
+      const popupWindow = window.open('https://www.yahoo.co.jp', '', "width=350,height=600,scrollbars=no,resizable=no,status=no,location=no")
       if (!popupWindow) {
         console.error('window open error')
         alert('Opening popupWindow failed.')
