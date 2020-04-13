@@ -68,8 +68,7 @@ export const loadPosition = async (count, allShow = false, fixSize = false, show
   const locationIdMap = store.state.app_service.locationIdMap
   const mRoomPlans = showMRoom ? store.state.main.mRoomPlans : null
 
-  positions = _(positions).filter(pos => allShow || DEV.NOT_FILTER_TX || txIdMap[pos.txId])
-    .filter(pos => allShow || Util.hasValue(pos.locationId) && locationIdMap[pos.locationId] && (txIdMap[pos.txId] && NumberUtil.bitON(txIdMap[pos.txId].disp, TX.DISP.POS)))
+  positions = _(positions).filter(pos => shoudTxShow(pos, allShow, txIdMap, locationIdMap))
     .map(pos => {
       // if (pos.minor == 603) { // 開発目的：矯正ポジション設定
       //   console.log(pos)
@@ -114,6 +113,24 @@ export const loadPosition = async (count, allShow = false, fixSize = false, show
 
 
 // ----------　フィルタリング ------------
+
+/**
+ * TXを位置表示（地図）画面に表示するか
+ * 
+ * @param {*} pos 
+ * @param {*} allShow 
+ * @param {*} txIdMap 
+ * @param {*} locationIdMap 
+ */
+export const shoudTxShow = (pos, allShow, txIdMap, locationIdMap) => {
+  if (allShow) return true
+
+  return txIdMap[pos.txId]
+    && pos.locationId
+    && locationIdMap[pos.locationId]
+    && NumberUtil.bitON(txIdMap[pos.txId].disp, TX.DISP.POS)
+}
+
 
 /**
  * 位置情報を絞り込んで返す。
@@ -394,7 +411,7 @@ export const addFixedPosition = (orgPositions, locations = [], selectedMapId = n
         const addPos = _.cloneDeep(pos)
         addPos.isFixedPosition = false
         addPos.location = pos.exb.location
-        addPos.isAddtional = true
+        // addPos.isAddtional = true
         additionalPos.push(addPos)
 
         pos.hasAnother = true

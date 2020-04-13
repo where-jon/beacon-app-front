@@ -750,6 +750,8 @@ export default {
         const alwaysTxs = this.txs.some(tx => Util.v(tx, 'location.areaId') == this.selectedAreaId && NumberUtil.bitON(tx.disp, TX.DISP.ALWAYS))
         if (this.usePositionsCache) {
           this.replaceMain({usePositionsCache: false})
+          const positions = this.$store.state.main.positions.filter(pos => PositionHelper.shoudTxShow(pos, false, this.txIdMap, this.locationIdMap))
+          this.replaceMain({ positions })
         }
         else {
           await PositionHelper.loadPosition(this.count, alwaysTxs, false, this.pShowMRoomStatus)
@@ -1196,14 +1198,13 @@ export default {
       if (selectedAbsentTxPosition) {
         this.showDetail(tx.btxId, selectedAbsentTxPosition.x, selectedAbsentTxPosition.y)
       } else {
-        const selectedTxPosition = positions.find(pos => pos.btxId == tx.btxId)
-        if (!selectedTxPosition || !selectedTxPosition.tx) {
+        const pos = positions.find(pos => pos.btxId == tx.btxId)
+        if (!pos || !pos.tx) {
           return
         }
-        const location = PositionHelper.isFixedPosOnArea(selectedTxPosition.tx, this.selectedAreaId)? selectedTxPosition.tx.location: null
-        const x = location? location.x: selectedTxPosition.x
-        const y = location? location.y: selectedTxPosition.y
-        this.showDetail(tx.btxId, x, y)
+        // 固定座席の場合、固定座席ゾーンにいる場合、固定座席の場所に表示し、それ以外は検知された場所で表示
+        const loc = pos.isFixedPosition? pos.inFixedZone? pos.tx.location: pos.exb.location: pos
+        this.showDetail(tx.btxId, loc.x, loc.y)
       }
       this.resetDetail()
     },
