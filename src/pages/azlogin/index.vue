@@ -166,9 +166,9 @@ export default {
         alert('Opening popupWindow failed.')
         return
       }
-      if (popupWindow.focus) {
-        popupWindow.focus()
-      }
+      // if (popupWindow.focus) {
+      //   popupWindow.focus()
+      // }
     }
   }
 }
