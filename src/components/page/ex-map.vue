@@ -1203,7 +1203,15 @@ export default {
           return
         }
         // 固定座席の場合、固定座席ゾーンにいる場合、固定座席の場所に表示し、それ以外は検知された場所で表示
-        const loc = pos.isFixedPosition? pos.inFixedZone? pos.tx.location: pos.exb.location: pos
+        let loc = pos
+        if(pos.isFixedPosition){
+          if(pos.inFixedZone){
+            loc = pos.tx.location
+          }else{
+            const pos2 = positions.find(pos => pos.btxId == tx.btxId && !pos.isFixedPosition)
+            loc = pos2 ? pos2 : pos
+          }
+        }
         this.showDetail(tx.btxId, loc.x, loc.y)
       }
       this.resetDetail()
