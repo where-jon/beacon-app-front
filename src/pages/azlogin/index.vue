@@ -154,12 +154,10 @@ export default {
       const top = ( screen.height - 535) / 2
       const adminConsentUrl = APP.AUTH.ADMINCONSENT_URL_BASE + '?client_id=' + APP.AUTH.APP_ID + '&redirect_uri=' + APP.AUTH.REDIRECT_URL
       const success = () => {
-        this.finishInit = true
-        this.notRegistered = false
       }
       const failure = () => {
-        console.log('faaaaaaaaaaaaaaaaaaaailure')
       }
+      this.notRegistered = false
       microsoftTeams.authentication.authenticate({
         url: adminConsentUrl,
         width: 600,
