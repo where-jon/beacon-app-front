@@ -176,8 +176,8 @@ export default {
       taskInfo.url = 'https://msteams-data.dev.exbeacon.com/azlogin/adminconsent'
       taskInfo.fallbackUrl = 'https://msteams-data.dev.exbeacon.com/azlogin/adminconsent'
       taskInfo.title = "test"
-      taskInfo.height = 510
-      taskInfo.width = 430
+      taskInfo.height = 1000
+      taskInfo.width = 1000
       const submitHandler = (err, result) => {
         console.log(err)
         console.log(result)
