@@ -325,7 +325,7 @@ export default {
         txViewType: null,
         extValue: null
       }
-
+      //TODO ファイルと同じようにフラットに
       if (this.txIconsDispFormat && this.txIconsHorizon && this.txIconsVertical) {
         entity.txViewType = {
           displayFormat: this.txIconsDispFormat,

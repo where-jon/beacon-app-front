@@ -176,13 +176,13 @@ export default {
   watch: {
     'vueSelected.zoneGuards': {
       handler: function(newVal, oldVal){
-        this.form.zoneGuardList = newVal.map(val => (val.text))
+        this.form.zoneGuardList = newVal.map(val => (val.value)).map(v => this.zones.find(e => e.zoneId == v).zoneCd)
       },
       deep: true,
     },
     'vueSelected.zoneDoors': {
       handler: function(newVal, oldVal){
-        this.form.zoneDoorList = newVal.map(val => (val.text))
+        this.form.zoneDoorList = newVal.map(val => (val.value)).map(v => this.zones.find(e => e.zoneId == v).zoneCd)
       },
       deep: true,
     },
@@ -244,25 +244,18 @@ export default {
         categoryName: this.form.categoryName,
         categoryType: cateTypes.length > 0 ? cateTypes[0] : null,
         description: this.form.description,
-        display: ExtValueHelper.jsonStringfyAndFormatCSV({
-          shape: `${this.form.displayShape}`,
-          color: ColorUtil.colorCd4display(this.form.displayColor),
-          bgColor: ColorUtil.colorCd4display(this.form.displayBgColor),
-        }),
-        guardNames: Util.getValue(this.form, 'zoneGuardList', []).join(";"),
-        doorNames: Util.getValue(this.form, 'zoneDoorList', []).join(";"),
-        extValue: null
+        shape: `${this.form.displayShape}`,
+        color: ColorUtil.colorCd4display(this.form.displayColor),
+        bgColor: ColorUtil.colorCd4display(this.form.displayBgColor),
+        guardIDs: Util.getValue(this.form, 'zoneGuardList', []).join(";"),
+        doorIDs: Util.getValue(this.form, 'zoneDoorList', []).join(";"),
       }
       
-      const extValue = {}
       ExtValueHelper.getExtValueKeys(APP.CATEGORY).forEach(key => {
         if (this.form[key]) {
-          extValue[key] = this.form[key]
+          entity[key] = this.form[key]
         }
       })
-      if (Object.keys(extValue).length > 0) {
-        entity.extValue = ExtValueHelper.jsonStringfyAndFormatCSV(extValue)
-      }
 
       this.oldType = this.form.categoryType
       this.oldShape = this.form.displayShape
