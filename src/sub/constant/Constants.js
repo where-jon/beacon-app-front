@@ -1237,7 +1237,12 @@ export const MENU = [
         path: 'planActual',
         icon: 'chart-bar',
       },
-    ]
+      {
+        key: 'entranceExit',
+        path: 'entranceExit',
+        icon: 'clock',
+      },
+      ]
   },
   {
     key: 'historyTitle',

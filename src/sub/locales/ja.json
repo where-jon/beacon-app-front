@@ -418,6 +418,8 @@
     "meetingRoom": "会議室",
     "meetingRoomId": "会議室ID",
     "meetingRoomName": "会議室名",
+
+    "entranceExit": "入退場管理",
     
     "tenant": "テナント",
     "tenantCd": "テナントコード",
