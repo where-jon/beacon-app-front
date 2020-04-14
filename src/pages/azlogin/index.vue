@@ -148,6 +148,7 @@ export default {
       }
     },
     adminConsent() {
+      microsoftTeams.initialize()
       LocalStorageHelper.setLocalStorage('tenantName', this.tenantName)
       const left = (screen.width - 600) / 2
       const top = ( screen.height - 535) / 2
@@ -174,7 +175,7 @@ export default {
       taskInfo.title = "Custom Form"
       taskInfo.height = 510
       taskInfo.width = 430
-      submitHandler = (err, result) => {
+      const submitHandler = (err, result) => {
         console.log(err)
         console.log(result)
       }
