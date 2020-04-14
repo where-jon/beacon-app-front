@@ -1208,8 +1208,9 @@ export default {
           if(pos.inFixedZone){
             loc = pos.tx.location
           }else{
-            const pos2 = positions.find(pos => pos.btxId == tx.btxId && !pos.isFixedPosition)
-            loc = pos2 ? pos2 : pos
+            // 表示用の場所を検索して見つかれば設定する
+            const viewPos = positions.find(pos => pos.btxId == tx.btxId && !pos.isFixedPosition)
+            loc = viewPos ? viewPos : pos
           }
         }
         this.showDetail(tx.btxId, loc.x, loc.y)
