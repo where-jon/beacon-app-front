@@ -167,15 +167,6 @@ export default {
       this.notRegistered = false
       this.finishInit = true
       this.disabled = true
-      // const popupWindow = window.open(adminConsentUrl, '_blank', `toolbar=no,location=yes,status=no,menubar=no,scrollbars=yes,top=${top},left=${left},width=350,height=600`)
-      // if (!popupWindow) {
-      //   console.error('window open error')
-      //   alert('Opening popupWindow failed.')
-      //   return
-      // }
-      // if (popupWindow.focus) {
-      //   popupWindow.focus()
-      // }
     }
   }
 }
