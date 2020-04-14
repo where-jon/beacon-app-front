@@ -171,7 +171,7 @@ export default {
         fallbackUrl: null,
         completionBotId: null,
       }
-      taskInfo.url = adminConsentUrl
+      taskInfo.url = window.location.origin + '/azlogin/adminconsent',
       taskInfo.title = "Custom Form"
       taskInfo.height = 510
       taskInfo.width = 430
