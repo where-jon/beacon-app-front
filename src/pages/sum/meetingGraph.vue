@@ -78,7 +78,7 @@ export default {
       Util.debug('sum', sum)
 
       const start = new Date(form.datetimeFrom)
-      const end = new Date(form.datetimeTo)
+      const end = new Date(new Date(form.datetimeTo).getTime() - 1000) // 1秒引いておく
       const total = func.getTotal(start, end, true)
 
       const from = start.getTime()
