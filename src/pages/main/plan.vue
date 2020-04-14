@@ -446,7 +446,7 @@ export default {
         return z.categoryList.map(cate => cate.categoryCd=='MEETING_ROOM').includes(true)
       }).map(zone => {
         return {value: zone.zoneId, label: zone.zoneName}
-      })
+      }).sort((a, b) => a.value < b.value ? -1 : 1)
     },
     onClickNavi(e) {
       var action = e.target.dataset ? e.target.dataset.action : e.target.getAttribute('data-action')
