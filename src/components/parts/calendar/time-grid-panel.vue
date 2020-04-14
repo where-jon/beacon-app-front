@@ -37,6 +37,9 @@
             <div class="tui-full-calendar-timegrid-hourmarker-line-today" :style="{left: todaymarkerLeft + '%', width: todaymarkerWidth + '%', 'border-top': styles.currentTimeTodayBorderTop}"></div>
             <div class="tui-full-calendar-timegrid-hourmarker-line-right" :style="{left: todaymarkerRight + '%', 'border-top': styles.currentTimeRightBorderTop}"></div>
           </div>
+          <div v-if="showHourMarker && planMode == 'meetingRoom'" class="tui-full-calendar-timegrid-hourmarker" :style="{top: getTopPercentByTime() + '%'}">
+            <div class="tui-full-calendar-timegrid-hourmarker-line-today" :style="{width: '100%', 'border-top': styles.currentTimeTodayBorderTop}"></div>
+          </div>
       </div>
     </div>
     <div class="tui-full-calendar-timegrid-sticky-container" style="display: none;">
@@ -64,6 +67,7 @@ export default {
     doCompare: null,
     holidays: null,
     working: null,
+    doUpate: null,
   },
   data () {
     return {
@@ -116,13 +120,18 @@ export default {
       }
     }
   },
+  watch: {
+    doUpate: {
+      handler: function(newVal, oldVal) {
+        this.getTodaymarkerLeft()
+        this.setCalendarHeight()
+      },
+      deep: false
+    },
+  },
   mounted() {
     this.theme = new Theme()
     this.styles = this.getStyles()
-  },
-  updated() {
-    this.getTodaymarkerLeft()
-    this.setCalendarHeight()
   },
   methods: {
     handleScroll(e) {
@@ -140,10 +149,16 @@ export default {
     getTodaymarkerLeft() {
       const lw = this.viewModel.timeLineLeftAndWidth
       const today = this.today
-      this.todaymarkerLeft = lw[today] ? lw[today].left : 0
-      this.todaymarkerWidth = lw[today] ? lw[today].width : 0
-      this.todaymarkerRight = this.todaymarkerLeft + this.todaymarkerWidth
-      this.showHourMarker = this.todaymarkerLeft > 0
+      if (this.planMode == 'normal') {
+        this.todaymarkerLeft = lw[today] ? lw[today].left : 0
+        this.todaymarkerWidth = lw[today] ? lw[today].width : 0
+        this.todaymarkerRight = this.todaymarkerLeft + this.todaymarkerWidth
+        this.showHourMarker = this.todaymarkerLeft > 0
+      } else {
+        const picker = this.$parent.$parent.$refs.datePicker
+        const d = moment(picker.value).format('YYYYMMDD')
+        this.showHourMarker = this.today == d
+      }
     },
     getTopPercentByTime() {
       const time = this.now
