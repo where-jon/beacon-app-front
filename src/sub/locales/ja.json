@@ -420,6 +420,9 @@
     "meetingRoomName": "会議室名",
 
     "entranceExit": "入退場管理",
+    "entranceTime": "入室",
+    "exitTime": "退室",
+    "lastDetected": "最終検知",
     
     "tenant": "テナント",
     "tenantCd": "テナントコード",

@@ -45,20 +45,7 @@
 
       <slot />
       <b-row class="mt-3" />
-      <b-table :items="viewList" :fields="getField()" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" :sort-compare="defaultSortCompare" stacked="md" striped hover outlined>
-        <template slot="graph" slot-scope="row">
-          <div style="position: relative;">
-            <div v-for="(bar, index) in row.item.graph" :key="index" :class="bar.name? 'stay-bar': 'lost-bar'" :style="bar.style">
-              <span class="graph-arrow-box">
-                {{ bar.name ? bar.name : $i18n.tnl('label.absence') }} <br>
-                {{ bar.time }} <br>
-                {{ bar.ratio }}%
-              </span>&nbsp;
-            </div>
-            <br>
-          </div>
-        </template>
-      </b-table>
+      <b-table :items="viewList" :fields="getField()" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" :sort-compare="defaultSortCompare" stacked="md" striped hover outlined />
       <b-row>
         <b-col md="6" class="mt-1 mb-3">
           <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" class="my-0" />
@@ -79,9 +66,11 @@ import * as DateUtil from '../../sub/util/DateUtil'
 import * as Util from '../../sub/util/Util'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
+import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import commonmixin from '../../components/mixin/commonmixin.vue'
 import alert from '../../components/parts/alert.vue'
+import moment from 'moment'
 
 export default {
   components: {
@@ -90,12 +79,11 @@ export default {
     alert,
   },
   mixins: [commonmixin],
-  //props: ['page', 'type', 'filter', 'download'],
   data () {
     return {
       breadCrumbs: ViewHelper.createBreadCrumbItems('sumTitle', 'entranceExit'),
       form: {
-        datetime: '',
+        date: '',
       },
       vueSelected: {
         group: null,
@@ -146,16 +134,17 @@ export default {
       return [
         {key: 'name', sortable: true, label: this.$i18n.tnl('label.potName')},
         {key: 'groupName', sortable: true, label: this.$i18n.tnl('label.groupName') },
-        {key: 'graph', sortable: false, label: this.$i18n.tnl('label.graph'), thStyle: {height: '50px !important', width:'400px !important'} },
+        {key: 'entranceTime', sortable: false, label: this.$i18n.tnl('label.entranceTime') },
+        {key: 'exitTime', sortable: false, label: this.$i18n.tnl('label.exitTime') },
+        {key: 'lastDetected', sortable: false, label: this.$i18n.tnl('label.lastDetected') },
         {key: 'stayTime', sortable: false, label: this.$i18n.tnl('label.stayTime') },
-        {key: 'lostTime', sortable: false, label: this.$i18n.tnl('label.lostTime') },
       ]
     },
     async display(isDownload) {
       this.replace({showAlert: false})
       this.showProgress()
       try {
-        if ( !Util.hasValue(this.form.datetimeFrom) || !Util.hasValue(this.form.datetimeTo) ) {
+        if ( !Util.hasValue(this.form.date) ) {
           this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
           this.replace({showAlert: true})
           this.hideProgress()
@@ -163,22 +152,30 @@ export default {
         }
 
         // データ取得
-        const data = await this.$parent.fetchData(this.form)
-        if (_.isEmpty(data)) {
+        const res = await this.fetchData(this.form)
+        if (_.isEmpty(res)) {
           this.message = this.$i18n.t('message.listEmpty')
           this.replace({showAlert: true})
           this.hideProgress()
           return
         }
 
-        // グラフ作成
-        if(isDownload){
-          this.$parent.download(this.form, data)
-        }else{
-          const func = {getTotal: this.getTotal}
-          this.viewList = this.$parent.createGraph(this.form, data, func)
-        }
-
+        this.viewList = res.map( e => {
+          const pot = this.potIdMap[e.potId]
+          console.log('pot', pot)
+          const group = pot.group ? this.groupIdMap[pot.group.groupId] : null
+          const location = this.locationIdMap[e.locationId]
+          console.log('location', location)
+          const zoneName = location ? location.zoneList.length>0 && location.zoneList[0].zoneName : null
+          return {
+            name: e.potName, 
+            groupName: group ? group.groupName : null,
+            entranceTime: DateUtil.formatDate(e.inDt),
+            exitTime: DateUtil.formatDate(e.outDt),
+            lastDetected: zoneName,
+            stayTime: DateUtil.toHHmm( (e.outDt - e.inDt)/1000)
+          }
+        })
         Util.debug("viewList", this.viewList)
 
         this.totalRows = this.viewList.length
@@ -190,53 +187,14 @@ export default {
         this.hideProgress()
       }
     },
-    getTotal(fromDt, toDt, doRound=false){
-      let fromDate = fromDt.getYear()*10000 + fromDt.getMonth()*100 + fromDt.getDate()
-      let toDate = toDt.getYear()*10000 + toDt.getMonth()*100 + toDt.getDate()
-      const start = (Math.floor(APP.SVC.STAY_SUM.START / 100)*60 + APP.SVC.STAY_SUM.START % 100) * 60
-      const end = (Math.floor(APP.SVC.STAY_SUM.END / 100)*60 + APP.SVC.STAY_SUM.END % 100) * 60
-
-      // 開始と終了時間を丸める
-      let fromTime = fromDt.getHours() * 3600 + fromDt.getMinutes() * 60 + fromDt.getSeconds()
-      let toTime = toDt.getHours() * 3600 + toDt.getMinutes() * 60 + toDt.getSeconds()
-      if(fromTime > end){
-        fromTime = start
-        fromDate++        
-      }
-      fromTime = Math.max(fromTime, start)
-      if(toTime < start){
-        toTime = end
-        toDate--
-      }
-      toTime = Math.min(toTime, end)
-
-      // 指定時間を丸める
-      if(doRound){
-        fromTime = this.round(fromTime)
-        toTime = this.round(toTime)
-      }
-
-      // 1日の場合
-      let total = 0
-      if(fromDate == toDate){
-        total = toTime - fromTime
-      }else{
-        // 2日以上の場合
-        total += end - fromTime
-        total += toTime - start
-        total += (toDate - fromDate - 1) * (end - start)
-      }
-      if(doRound){
-        total += APP.POSITION_SUMMARY_INTERVAL * 60
-      }
-      Util.debug('total', total)
-      return total
+    async fetchData(form){
+      const date = moment(form.date).format('YYYYMMDD')
+      const url = `/office/entranceExit/list/${date}`
+      Util.debug('url', url)
+      const data = await HttpHelper.getAppService(url)
+      Util.debug('data', data)
+      return data
     },
-    round(sec){
-      // コマ時間に揃える
-      const interval = APP.POSITION_SUMMARY_INTERVAL * 60
-      return Math.floor(sec / interval) * interval
-    }
   }
 }
 </script>
