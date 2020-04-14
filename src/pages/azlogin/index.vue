@@ -153,6 +153,19 @@ export default {
       const left = (screen.width - 600) / 2
       const top = ( screen.height - 535) / 2
       const adminConsentUrl = APP.AUTH.ADMINCONSENT_URL_BASE + '?client_id=' + APP.AUTH.APP_ID + '&redirect_uri=' + APP.AUTH.REDIRECT_URL
+      const success = () => {
+        console.log('suuuuuuuuuuuuuuuuuuuuucess')
+      }
+      const failure = () => {
+        console.log('faaaaaaaaaaaaaaaaaaaailure')
+      }
+      microsoftTeams.authentication.authenticate({
+        url: adminConsentUrl,
+        width: 600,
+        height: 535,
+        success,
+        failure
+      })
       // const popupWindow = window.open(adminConsentUrl, '_blank', `toolbar=no,location=yes,status=no,menubar=no,scrollbars=yes,top=${top},left=${left},width=350,height=600`)
       // if (!popupWindow) {
       //   console.error('window open error')
@@ -162,27 +175,6 @@ export default {
       // if (popupWindow.focus) {
       //   popupWindow.focus()
       // }
-      let taskInfo = {
-        title: null,
-        height: null,
-        width: null,
-        url: null,
-        card: null,
-        fallbackUrl: null,
-        completionBotId: null,
-      }
-      // taskInfo.url = adminConsentUrl
-      // taskInfo.fallbackUrl = adminConsentUrl
-      taskInfo.url = 'https://msteams-data.dev.exbeacon.com/azlogin/adminconsent'
-      taskInfo.fallbackUrl = 'https://msteams-data.dev.exbeacon.com/azlogin/adminconsent'
-      taskInfo.title = "test"
-      taskInfo.height = 1000
-      taskInfo.width = 1000
-      const submitHandler = (err, result) => {
-        console.log(err)
-        console.log(result)
-      }
-      microsoftTeams.tasks.startTask(taskInfo, submitHandler)
     }
   }
 }
