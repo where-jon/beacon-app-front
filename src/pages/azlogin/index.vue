@@ -154,7 +154,8 @@ export default {
       const top = ( screen.height - 535) / 2
       const adminConsentUrl = APP.AUTH.ADMINCONSENT_URL_BASE + '?client_id=' + APP.AUTH.APP_ID + '&redirect_uri=' + APP.AUTH.REDIRECT_URL
       const success = () => {
-        console.log('suuuuuuuuuuuuuuuuuuuuucess')
+        this.finishInit = true
+        this.disabled = true
       }
       const failure = () => {
         console.log('faaaaaaaaaaaaaaaaaaaailure')
