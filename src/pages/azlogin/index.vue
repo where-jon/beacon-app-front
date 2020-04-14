@@ -35,6 +35,7 @@ import * as Util from '../../sub/util/Util'
 import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
 import { APP } from '../../sub/constant/config'
 import { TENANT } from '../../sub/constant/Constants'
+import * as microsoftTeams from '@microsoft/teams-js'
 
 export default {
   data() {
