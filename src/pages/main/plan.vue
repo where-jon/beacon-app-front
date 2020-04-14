@@ -285,23 +285,22 @@ export default {
         if (this.planMode != newVal.value) {
           this.doCompare = false
           const picker = this.$refs.datePicker
-          let dt = new Date(picker.value)
           if (newVal.value == 'normal') {
+            this.today = moment().day(1).set({hour:0,minute:0,second:0,millisecond:0}).toDate()
             this.filterTypeOpts = this.normalFilterTypeOpts
             this.datePickerType = 'week'
             this.datePickerFormat = this.datePickerFormatWeek
             this.datePickerPlaceholder = this.datePickerPlaceholderWeek
-            dt = moment(dt).day(1).toDate()
-            this.headerOptsWeekSchedule = this.getNormalHeader(moment(dt).day(0).toDate())
+            this.headerOptsWeekSchedule = this.getNormalHeader(moment(this.today).day(0).toDate())
             this.headerOpts = this.headerOptsWeekSchedule
           } else {
+            this.today = moment().set({hour:0,minute:0,second:0,millisecond:0}).toDate()
             this.filterTypeOpts = this.mRoomFilterTypeOpts
             this.datePickerType = 'date'
             this.datePickerFormat = this.datePickerFormatDay
             this.datePickerPlaceholder = this.datePickerPlaceholderDay
             this.headerOpts = this.headerOptsMeetingRoom
           }
-          picker.emitInput(dt)
           this.vueSelected = {
             filterType: newVal.value == 'normal' ? null : 'area',
             filter: null,
