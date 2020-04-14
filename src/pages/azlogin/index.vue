@@ -171,8 +171,11 @@ export default {
         fallbackUrl: null,
         completionBotId: null,
       }
-      taskInfo.url = window.location.origin + '/azlogin/adminconsent',
-      taskInfo.title = "Custom Form"
+      // taskInfo.url = adminConsentUrl
+      // taskInfo.fallbackUrl = adminConsentUrl
+      taskInfo.url = 'https://msteams-data.dev.exbeacon.com/azlogin/adminconsent'
+      taskInfo.fallbackUrl = 'https://msteams-data.dev.exbeacon.com/azlogin/adminconsent'
+      taskInfo.title = "test"
       taskInfo.height = 510
       taskInfo.width = 430
       const submitHandler = (err, result) => {
