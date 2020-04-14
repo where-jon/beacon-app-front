@@ -88,7 +88,7 @@
           </b-form-row>
         </b-form>
       </b-row>
-      <plan-calendar :id="id" :name="name" :appServicePath="appServicePath" :planMode="planMode" :headerOpts="headerOpts" :viewModel="viewModel" :dragHandler="dragHandler" :clickScheduleEvent="clickScheduleEvent" :doCompare="doCompare" :holidays="holidays" :working="working" @doEdit="doEdit" @doDelete="onDeleteSchedule"/>
+      <plan-calendar :id="id" :name="name" :appServicePath="appServicePath" :planMode="planMode" :headerOpts="headerOpts" :viewModel="viewModel" :dragHandler="dragHandler" :clickScheduleEvent="clickScheduleEvent" :doCompare="doCompare" :holidays="holidays" :working="working" :doUpate="doUpate" @doEdit="doEdit" @doDelete="onDeleteSchedule"/>
       <div>
         <b-modal v-model="showEdit" hide-footer :title="$t('label.schedule')" header-class="editPlanHeader">
           <edit-plan :id="id" :name="name" :appServicePath="appServicePath" :currentUser="currentUser" :locale="locale" :plan="targetPlan" :zoneOpts="zoneOpts" :locationOpts="locationOpts" :potPersonOpts="filterPotPersonOpts" :potThingOpts="potThingOpts" :vueSelected="editVueSelected" @doneSave="onEditSave" @delete="onEditDelete" @errorMessage="onEditError"/>
@@ -139,6 +139,7 @@ export default {
       currentUserPotIds: [],
       message: '',
       locale: null,
+      doUpate: false,
 
       clickScheduleEvent: null,
 
@@ -538,6 +539,7 @@ export default {
           this.viewModel = result[1]
           this.dragHandler = new Drag({distance: 10}, document.getElementById('calendar-layout'))
           this.createHandlers()
+          this.doUpate = moment()
         }
       }
       catch(e) {
