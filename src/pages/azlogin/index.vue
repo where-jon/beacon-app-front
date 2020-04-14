@@ -151,17 +151,33 @@ export default {
       const left = (screen.width - 600) / 2
       const top = ( screen.height - 535) / 2
       const adminConsentUrl = APP.AUTH.ADMINCONSENT_URL_BASE + '?client_id=' + APP.AUTH.APP_ID + '&redirect_uri=' + APP.AUTH.REDIRECT_URL
-      var link = document.createElement('a');
-      link.href = adminConsentUrl
-      const popupWindow = window.open(link.href, '_blank', `toolbar=no,location=yes,status=no,menubar=no,scrollbars=yes,top=${top},left=${left},width=350,height=600`)
-      if (!popupWindow) {
-        console.error('window open error')
-        alert('Opening popupWindow failed.')
-        return
+      // const popupWindow = window.open(adminConsentUrl, '_blank', `toolbar=no,location=yes,status=no,menubar=no,scrollbars=yes,top=${top},left=${left},width=350,height=600`)
+      // if (!popupWindow) {
+      //   console.error('window open error')
+      //   alert('Opening popupWindow failed.')
+      //   return
+      // }
+      // if (popupWindow.focus) {
+      //   popupWindow.focus()
+      // }
+      let taskInfo = {
+        title: null,
+        height: null,
+        width: null,
+        url: null,
+        card: null,
+        fallbackUrl: null,
+        completionBotId: null,
       }
-      if (popupWindow.focus) {
-        popupWindow.focus()
+      taskInfo.url = adminConsentUrl
+      taskInfo.title = "Custom Form"
+      taskInfo.height = 510
+      taskInfo.width = 430
+      submitHandler = (err, result) => {
+        console.log(err)
+        console.log(result)
       }
+      microsoftTeams.tasks.startTask(taskInfo, submitHandler)
     }
   }
 }
