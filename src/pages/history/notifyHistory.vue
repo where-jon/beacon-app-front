@@ -158,7 +158,7 @@
 <script>
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import { APP } from '../../sub/constant/config'
+import { APP, APP_SERVICE } from '../../sub/constant/config'
 import { NOTIFY_STATE } from '../../sub/constant/Constants'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as CsvUtil from '../../sub/util/CsvUtil'
@@ -492,45 +492,12 @@ export default {
       }
     },
     async exportCsv() {
-      const records = this.csvList.map(e => {
-        const obj = {}
-        Object.keys(this.csvHeaders)
-          .filter(csvHeader => this.csvHeaders[csvHeader])
-          .forEach(csvHeader => obj[this.csvHeaders[csvHeader]] = e[csvHeader])
-        obj.majors? obj.major=obj.majors:null
-        obj.majors? delete obj.majors:null
-        obj.minors? obj.minor=obj.minors:null
-        obj.minors? delete obj.minors:null
-        return obj
-      })
-      records.forEach((record) => {
-        record.txNames?record.txNames=this.csvColumnBrTag(record.txNames):false
-        record.userName?record.userName=this.csvColumnBrTag(record.userName):false
-        record.notifyTo?record.notifyTo=this.csvColumnBrTag(record.notifyTo):false
-        record.major?record.major=this.csvColumnBrTag(record.major):false
-        record.minor?record.minor=this.csvColumnBrTag(record.minor):false
-        record.potName?record.potName=this.csvColumnBrTag(record.potName):false
-        record.zoneName?record.zoneName=this.csvColumnBrTag(record.zoneName):false
-        record.lastRcvPosName?record.lastRcvPosName=this.csvColumnBrTag(record.lastRcvPosName):false
-        record.deviceIds?record.deviceIds=this.csvColumnBrTag(record.deviceIds):false
-        record.lastRcvDatetimes?record.lastRcvDatetimes= record.lastRcvDatetimes=this.csvColumnBrTag(record.lastRcvDatetimes):false
-        record.lastRcvDatetime?record.lastRcvDatetime=this.csvColumnBrTag(record.lastRcvDatetime):false
-        record.powerLevels?record.powerLevels=this.csvColumnBrTag(record.powerLevels):false
-
-        if(this.form.notifyState == 'TX_BATTERY_ALERT' && record.minor && record.powerLevels){
-          let minors = record.minor.split(';')
-          let powerLevels = record.powerLevels.split(';')
-          let minorPowerLevel = ''
-          minors.forEach((minor,index) => {
-            minorPowerLevel += minor + '(' + powerLevels[index] + ');'
-          })
-          record.minorPowerLevel = minorPowerLevel
-          delete record.minor
-          delete record.minors
-          delete record.powerLevels
-        }
-      })
-      BrowserUtil.fileDL('notifyHistory.csv', CsvUtil.converToCsv(records, null, this.getCsvHeaderList()), getCharSet(this.$store.state.loginId))
+      const state = this.form.notifyState ? this.form.notifyState : 0
+      const txId = this.txId ? "?txId="+this.txId : ""
+      const charset = getCharSet(this.$store.state.loginId)
+      BrowserUtil.executeFileDL(
+        APP_SERVICE.BASE_URL + `/core/rcvexcloud/csvdownload/${state}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/${charset}${txId}`
+      )
     },
     getFields(aNotifyState) {
       if (aNotifyState == NOTIFY_STATE.TX_DELIVERY_NOTIFY) {
