@@ -155,7 +155,7 @@ export default {
       const adminConsentUrl = APP.AUTH.ADMINCONSENT_URL_BASE + '?client_id=' + APP.AUTH.APP_ID + '&redirect_uri=' + APP.AUTH.REDIRECT_URL
       const success = () => {
         this.finishInit = true
-        this.disabled = true
+        this.notRegistered = false
       }
       const failure = () => {
         console.log('faaaaaaaaaaaaaaaaaaaailure')
