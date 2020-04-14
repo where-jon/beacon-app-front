@@ -123,6 +123,7 @@ import { TimeMove } from '../../sub/calendar/handler/time/move'
 import { TimeResize } from '../../sub/calendar/handler/time/resize'
 import {getLogin} from '../../sub/helper/base/LocalStorageHelper'
 import alert from '../../components/parts/alert.vue'
+import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 
 export default {
   components: {
@@ -430,9 +431,10 @@ export default {
       this.groupOpts = this.groups.map(e => {
         return {value: e.groupId, label: e.groupName}
       })
-      this.categoryOpts = this.categories.map(cate => {
-        return {value: cate.categoryId, label: cate.systemUse ? cate.description : cate.categoryName}
-      })
+      this.categoryOpts = MasterHelper.getOptionsFromState('category',
+        category => MasterHelper.getDispCategoryName(category),
+        true
+      )
       this.potOpts = this.pots.map(e => {
         return {value: e.potId, label: e.potName}
       })
