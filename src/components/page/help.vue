@@ -240,6 +240,7 @@ export default {
           { isActive: true, displayName: this.getLabel('txViewType'), keyName: 'txViewType' },
           { isActive: true, displayName: this.getLabel('visible'), keyName: 'visible' },
           { isActive: true, displayName: this.getLabel('zoneClass'), keyName: 'zoneClass' },
+          { isActive: true, displayName: this.getLabel('zoneBlock'), keyName: 'zoneBlock' },
           { isActive: true, displayName: this.getLabel('deviceId'), keyName: 'deviceId' },
           { isActive: true, displayName: this.getLabel('btxId'), keyName: 'btxId' },
           { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
@@ -423,12 +424,12 @@ export default {
         ]
       case 'usageSituation':
         return [
-          { isActive: true, displayName: this.getLabel('date'), keyName: 'date' },
-          { isActive: true, displayName: this.getLabel('zoneCategoryName'), keyName: 'zoneCategoryName' },
-          { isActive: true, displayName: this.getLabel('zoneName'), keyName: 'zoneName' },
-          { isActive: true, displayName: this.getLabel('utilizationRatioP'), keyName: 'rate' },
-          { isActive: true, displayName: this.getLabel('utilizationTime'), keyName: 'cnt' },
-          { isActive: true, displayName: this.getLabel('numOfUsers'), keyName: 'numUse' },
+          { isActive: true, displayName: this.getLabel('date'), keyName: this.getLabel('date') },
+          { isActive: true, displayName: this.getLabel('zoneCategoryName'), keyName: this.getLabel('zoneCategoryName') },
+          { isActive: true, displayName: this.getLabel('zoneName'), keyName: this.getLabel('zoneName') },
+          { isActive: true, displayName: this.getLabel('utilizationRatioP'), keyName: this.getLabel('utilizationRatioP') },
+          { isActive: true, displayName: this.getLabel('utilizationTime'), keyName: this.getLabel('utilizationTime') },
+          { isActive: true, displayName: this.getLabel('numOfUsers'), keyName: this.getLabel('numOfUsers') },
         ]
       case 'sensorGraph':
         return [
@@ -464,31 +465,31 @@ export default {
         ]
       case 'stayRatioGp':
         return [
-          { isActive: true, displayName: this.getLabel('date'), keyName: 'date' },
-          { isActive: true, displayName: this.getLabel('name'), keyName: 'name' },
-          { isActive: true, displayName: this.getLabel('groupName'), keyName: 'groupName' },
-          { isActive: true, displayName: this.getLabel('stayTime'), keyName: 'stayTime' },
+          { isActive: true, displayName: this.getLabel('date'), keyName: this.getLabel('date') },
+          { isActive: true, displayName: this.getLabel('name'), keyName: this.getLabel('name') },
+          { isActive: true, displayName: this.getLabel('groupName'), keyName: this.getLabel('groupName') },
+          { isActive: true, displayName: this.getLabel('stayTime'), keyName: this.getLabel('stayTime') },
           { isActive: true, displayName: this.getLabel('absent1Time'), keyName: this.getLabel('stayRatioAbsent1Time') },
           { isActive: true, displayName: this.getLabel('absent2Time'), keyName: this.getLabel('stayRatioAbsent2Time') },
-          { isActive: true, displayName: this.getLabel('lostTime'), keyName: 'lostTime' },
-          { isActive: true, displayName: this.getLabel('stayRatio'), keyName: 'stayRatio' },
+          { isActive: true, displayName: this.getLabel('lostTime'), keyName: this.getLabel('lostTime') },
+          { isActive: true, displayName: this.getLabel('stayRatio'), keyName: this.getLabel('stayRatio') },
           { isActive: true, displayName: this.getLabel('absent1Ratio'), keyName: this.getLabel('stayRatioAbsent1Ratio') },
           { isActive: true, displayName: this.getLabel('absent2Ratio'), keyName: this.getLabel('stayRatioAbsent2Ratio') },
-          { isActive: true, displayName: this.getLabel('lostRatio'), keyName: 'lostRatio' },
+          { isActive: true, displayName: this.getLabel('lostRatio'), keyName: this.getLabel('lostRatio') },
         ]
       case 'stayRatioBase':
         return [
-          { isActive: true, displayName: this.getLabel('date'), keyName: 'date' },
-          { isActive: true, displayName: this.getLabel('name'), keyName: 'name' },
-          { isActive: true, displayName: this.getLabel('groupName'), keyName: 'groupName' },
-          { isActive: true, displayName: this.getLabel('stayTime'), keyName: 'stayTime' },
+          { isActive: true, displayName: this.getLabel('date'), keyName: this.getLabel('date') },
+          { isActive: true, displayName: this.getLabel('name'), keyName: this.getLabel('name') },
+          { isActive: true, displayName: this.getLabel('groupName'), keyName: this.getLabel('groupName') },
+          { isActive: true, displayName: this.getLabel('stayTime'), keyName: this.getLabel('stayTime') },
           { isActive: true, displayName: this.getLabel('absent1Time'), keyName: this.getLabel('stayRatioAbsent1Time') },
           { isActive: true, displayName: this.getLabel('absent2Time'), keyName: this.getLabel('stayRatioAbsent2Time') },
-          { isActive: true, displayName: this.getLabel('lostTime'), keyName: 'lostTime' },
-          { isActive: true, displayName: this.getLabel('stayRatio'), keyName: 'stayRatio' },
+          { isActive: true, displayName: this.getLabel('lostTime'), keyName: this.getLabel('lostTime') },
+          { isActive: true, displayName: this.getLabel('stayRatio'), keyName: this.getLabel('stayRatio') },
           { isActive: true, displayName: this.getLabel('absent1Ratio'), keyName: this.getLabel('stayRatioAbsent1Ratio') },
           { isActive: true, displayName: this.getLabel('absent2Ratio'), keyName: this.getLabel('stayRatioAbsent2Ratio') },
-          { isActive: true, displayName: this.getLabel('lostRatio'), keyName: 'lostRatio' },
+          { isActive: true, displayName: this.getLabel('lostRatio'), keyName: this.getLabel('lostRatio') },
         ]
       case 'positionHistory':
         return [
@@ -502,39 +503,39 @@ export default {
         ]
       case 'positionHistoryExc':
         return [
-          { isActive: true, displayName: this.getLabel('basetime'), keyName: 'basetime' },
-          { isActive: true, displayName: this.getLabel('receivedtime'), keyName: 'receivedtime' },
-          { isActive: true, displayName: this.getLabel('txId'), keyName: 'txid' },
-          { isActive: true, displayName: this.getLabel('posId'), keyName: 'posid' },
+          { isActive: true, displayName: this.getLabel('basetime'), keyName: this.getLabel('basetime') },
+          { isActive: true, displayName: this.getLabel('receivedtime'), keyName: this.getLabel('receivedtime') },
+          { isActive: true, displayName: this.getLabel('txId'), keyName: this.getLabel('txId') },
+          { isActive: true, displayName: this.getLabel('posId'), keyName: this.getLabel('posId') },
         ]
       case 'sensorHistory':
         return [
-          { isActive: true, displayName: this.getLabel('dt'), keyName: 'sensorDt' },
-          { isActive: true, displayName: this.getLabel('sensorName'), keyName: 'sensorName' },
-          { isActive: true, displayName: this.getLabel('deviceId'), keyName: 'deviceId' },
-          { isActive: true, displayName: this.getLabel('locationZoneName'), keyName: 'locationName' },
-          { isActive: true, displayName: this.getLabel('areaName'), keyName: 'areaName' },
-          { isActive: true, displayName: this.getLabel('temperature'), keyName: 'temperature' },
-          { isActive: true, displayName: this.getLabel('humidity'), keyName: 'humidity' },
+          { isActive: true, displayName: this.getLabel('dt'), keyName: this.getLabel('dt') },
+          { isActive: true, displayName: this.getLabel('sensorName'), keyName: this.getLabel('sensorName') },
+          { isActive: true, displayName: this.getLabel('deviceId'), keyName: this.getLabel('deviceId') },
+          { isActive: true, displayName: this.getLabel('locationZoneName'), keyName: this.getLabel('locationZoneName') },
+          { isActive: true, displayName: this.getLabel('areaName'), keyName: this.getLabel('areaName') },
+          { isActive: true, displayName: this.getLabel('temperature'), keyName: this.getLabel('temperature') },
+          { isActive: true, displayName: this.getLabel('humidity'), keyName: this.getLabel('humidity') },
         ]
       case 'sensorHistoryExc':
         return [
-          { isActive: true, displayName: this.getLabel('receivedtime'), keyName: 'receivedtime' },
-          { isActive: true, displayName: this.getLabel('deviceId'), keyName: 'deviceId' },
-          { isActive: true, displayName: this.getLabel('temperature'), keyName: 'temperature' },
-          { isActive: true, displayName: this.getLabel('humidity'), keyName: 'humidity' },
+          { isActive: true, displayName: this.getLabel('receivedtime'), keyName: this.getLabel('receivedtime') },
+          { isActive: true, displayName: this.getLabel('deviceId'), keyName: this.getLabel('deviceId') },
+          { isActive: true, displayName: this.getLabel('temperature'), keyName: this.getLabel('temperature') },
+          { isActive: true, displayName: this.getLabel('humidity'), keyName: this.getLabel('humidity') },
         ]
       case 'notifyHistory':
         return [
-          { isActive: true, displayName: this.getLabel('dt'), keyName: 'positionDt' },
-          { isActive: true, displayName: this.getLabel('notifyTo'), keyName: 'notifyTo' },
-          { isActive: true, displayName: this.getLabel('major'), keyName: 'majors' },
-          { isActive: true, displayName: this.getLabel('minor'), keyName: 'minor' },
-          { isActive: true, displayName: this.getLabel('minorPowerLevel'), keyName: 'minors' },
-          { isActive: true, displayName: this.getLabel('txName'), keyName: 'txName' },
-          { isActive: true, displayName: this.getLabel('deviceNum'), keyName: 'deviceNum' },
-          { isActive: true, displayName: this.getLabel('finalReceiveTime'), keyName: 'finalReceiveTime' },
-          { isActive: true, displayName: this.getLabel('notifyResult'), keyName: 'notifyResult' },
+          { isActive: true, displayName: this.getLabel('dt'), keyName: this.getLabel('dt') },
+          { isActive: true, displayName: this.getLabel('notifyTo'), keyName: this.getLabel('notifyTo') },
+          { isActive: true, displayName: this.getLabel('major'), keyName: this.getLabel('major') },
+          { isActive: true, displayName: this.getLabel('minor'), keyName: this.getLabel('minor') },
+          { isActive: true, displayName: this.getLabel('minorPowerLevel'), keyName: this.getLabel('minorPowerLevel') },
+          { isActive: true, displayName: this.getLabel('txName'), keyName: this.getLabel('txName') },
+          { isActive: true, displayName: this.getLabel('deviceNum'), keyName: this.getLabel('deviceNum') },
+          { isActive: true, displayName: this.getLabel('finalReceiveTime'), keyName: this.getLabel('finalReceiveTime') },
+          { isActive: true, displayName: this.getLabel('notifyResult'), keyName: this.getLabel('notifyResult') },
         ]
       case 'planActualHistory':
         return [
