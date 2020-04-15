@@ -253,9 +253,13 @@ export default {
       const entity = {
         updateKey: this.form.exbId != null? this.form.exbId: null,
         deviceId: this.deviceId,
-        locationId: this.form.locationId,
         exbType: this.form.exbType,
       }
+
+      if (this.form.locationId) {
+        entity.locationCd = this.locations.find(e => e.locationId == this.form.locationId).locationCd
+      }
+
       this.adjustParams.forEach(param => entity[param.key] = this.form[param.key])
 
       const sensorOptions = OptionHelper.getSensorOptions('exb', false)

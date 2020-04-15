@@ -254,7 +254,6 @@ export default {
       this.vueSelected.role = VueSelectHelper.getVueSelectData(this.roleOptions, this.roleOptions.reduce((prev, cur) => cur).value)
     },
     async onSaving() {
-      let dummyKey = -1
       const entity = {
         updateKey: Util.hasValue(this.form.userId) ? this.form.userId : null,
         name: this.form.name,

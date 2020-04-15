@@ -165,7 +165,6 @@ export default {
     async onSaving() {
       let entity = {
         updateKey: `${this.role.roleId}/${this.featureId}`,
-        mode: Util.hasValue(this.selectedModes)? this.selectedModes.map(v => this.modeOptions.find(opt => opt.value == v).text).join(';') : null
       }
       if (Util.hasValue(this.selectedModes)) {
         entity.mode = this.selectedModes.filter(v => v != '0')

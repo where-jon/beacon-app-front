@@ -200,6 +200,10 @@ export default {
         disp,
       }
 
+      if (this.form.locationId) {
+        entity.locationCd = this.locations.find(e => e.locationId == this.form.locationId).locationCd
+      }
+
       const sensorOptions = this.sensorOptionsTx
       const sensorNames = []
       if (this.form.sensorId) {
