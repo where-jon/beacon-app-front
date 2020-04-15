@@ -423,6 +423,12 @@
     "entranceTime": "入室",
     "exitTime": "退室",
     "lastDetected": "最終検知",
+    "allDayWork": "全日出社",
+    "halfDayWork": "半日出社",
+    "lateTimeWork": "時差出社",
+    "temporaryTimeWork": "一時出社",
+    "allDayWorkPer": "全日出社率",
+    "halfDayWorkPer": "半日出社率",
     
     "tenant": "テナント",
     "tenantCd": "テナントコード",
