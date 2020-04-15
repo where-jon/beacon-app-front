@@ -506,7 +506,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     MIN_COUNT: 0, // PIRでの存在条件の最小カウント値
     BGCOLOR: '#FC7E82', // "#E2A6A5" // PIR表示の円の背景色
     FGCOLOR: '#FFFFFF', // PIR表示時の文字色
-    INUSE_LABEL: 'InUse', // PIRで存在時のラベルキー
+    INUSE_LABEL: 'inUse', // PIRで存在時のラベルキー
     EMPTY_SHOW: true, // PIRで不在時に表示するか否か
     EMPTY_BGCOLOR: '#595959', // PIRで不存時の背景色
     EMPTY_LABEL: 'empty', // PIRで不在時のラベルキー
@@ -516,7 +516,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     VOL_MIN: 1100, // 圧力センサの使用判定値(指定値以下で使用中扱い)
     BGCOLOR: '#FC7E82', // "#E2A6A5" // 圧力センサ表示の円の背景色
     FGCOLOR: '#FFFFFF', // 圧力センサ表示時の文字色
-    INUSE_LABEL: 'InUse', // 圧力センサで使用時のラベルキー
+    INUSE_LABEL: 'inUse', // 圧力センサで使用時のラベルキー
     EMPTY_SHOW: true, // 圧力センサで未使用時に表示するか否か
     EMPTY_BGCOLOR: '#595959', // 圧力センサで不存時の背景色
     EMPTY_LABEL: 'empty', // 圧力センサで未使用時のラベルキー
