@@ -77,9 +77,9 @@ export default {
     getMapScale(){ // p, pir
       return DISP.TX.R_ABSOLUTE ? this.canvasScale : 1
     },
-    // Webサーバーによって#が付与されたときに削除
+    // 最後尾に/が付与されたときに削除
     trimPath(path){
-      return path.slice(-1) == '#' ? path.slice(0, -1) : path
+      return path.slice(-1) == '/' ? path.slice(0, -1) : path
     },
     // リサイズイベント定義
     defineResizeEvent(path) {
