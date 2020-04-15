@@ -190,12 +190,6 @@ export default {
       }
       return null
     },
-    formatTime(time){
-      const date = new Date(time)
-      const h = date.getHours()
-      const m = date.getMinutes()
-      return (h >= 10 ? h : "0" + h) + ":" + (m >= 10 ? m : "0" + m)
-    },
     getUseRatio(posList, total){
       let sum = 0.0
       posList.forEach(pos => {        
