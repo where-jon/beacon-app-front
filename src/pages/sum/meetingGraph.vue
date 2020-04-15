@@ -147,8 +147,8 @@ export default {
         }
       }
 
-      const fromStr = moment(form.datetimeFrom).format('YYYY-MM-DD-hhmmss')
-      const toStr = moment(form.datetimeTo).format('YYYY-MM-DD-hhmmss')
+      const fromStr = moment(form.datetimeFrom).format('YYYYMMDD-HHmmss')
+      const toStr = moment(form.datetimeTo).format('YYYYMMDD-HHmmss')
 
       const areaName = form.areaId ? this.areaIdMap[form.areaId].areaName + "_" : ""
 
