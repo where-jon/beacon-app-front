@@ -87,7 +87,7 @@ export default {
   mixins: [commonmixin],
   data () {
     return {
-      breadCrumbs: ViewHelper.createBreadCrumbItems('sumTitle', 'accessControl'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('sumTitle', 'attendanceKey'),
       form: {
         date: '',
         pot: null,
@@ -145,6 +145,7 @@ export default {
 
         // データ取得
         const res = await this.fetchData(this.form)
+        Util.debug('res', res)
         if (_.isEmpty(res)) {
           this.message = this.$i18n.t('message.listEmpty')
           this.replace({showAlert: true})
@@ -152,47 +153,8 @@ export default {
           return
         }
 
-        let allCount = 0
-        let halfCount = 0
-        this.viewList = res.map( e => {
-          const pot = this.potIdMap[e.potId]
-          const group = pot.group ? this.groupIdMap[pot.group.groupId] : null
-          const location = this.locationIdMap[e.locationId]
-          const zoneName = location ? location.zoneList.length>0 && location.zoneList[0].zoneName : null
-
-          // 勤務時間判定 TODO:仮実装
-          let status = ''
-          if((e.outDt - e.inDt)>=1000*60*60*DISP.ACCESS_CONTROL.ALL_DAY_HOUR){
-            status = this.$i18n.tnl("label.allDayWork")
-            allCount++
-          }else if((e.outDt - e.inDt)>=1000*60*60*DISP.ACCESS_CONTROL.HALF_DAY_HOUR){
-            status = this.$i18n.tnl("label.halfDayWork")
-            halfCount++
-          }else{
-            status = this.$i18n.tnl("label.temporaryTimeWork")
-          }
-          const h = DateUtil.formatDateWithTimeZone(e.inDt, 'H')
-          if(h >= DISP.ACCESS_CONTROL.LATE_HOUR){
-            status += " " + this.$i18n.tnl("label.lateTimeWork")
-          }
-          return {
-            name: e.potName, 
-            groupName: group ? group.groupName : null,
-            entranceTime: DateUtil.formatDate(e.inDt),
-            exitTime: DateUtil.formatDate(e.outDt),
-            lastDetected: zoneName,
-            stayTime: DateUtil.toHHmm( (e.outDt - e.inDt)/1000),
-            status
-          }
-        })
-        Util.debug("viewList", this.viewList)
-
-        if(this.viewList.length > 0){
-          this.allDayWorkPer = Math.floor(allCount / this.viewList.length * 100) + '%'
-          this.halfDayWorkPer = Math.floor(halfCount / this.viewList.length * 100) + '%'
-        }
-
-        this.totalRows = this.viewList.length
+        // リスト作成
+        this.createList(res)
       }
       catch(e) {
         console.error(e)
@@ -205,17 +167,58 @@ export default {
       const date = moment(form.date).format('YYYYMMDD')
       const potId = this.form.pot ? this.form.pot.value : 0
       const groupId = this.form.group ? this.form.group.value : 0
-      const url = `/office/accessControl/list/${date}/${potId}/${groupId}`
-      const data = await HttpHelper.getAppService(url)
-      Util.debug('data', data)
-      return data
+      const url = `/office/attendance/list/${date}/${potId}/${groupId}`
+      return await HttpHelper.getAppService(url)
     },
     async download(){
       let csv = _.map(this.getField(), e => e.label).join(',') + '\n' // ヘッダー
       _.forEach(this.viewList, v => {
         csv += `${v.name},${v.groupName ? v.groupName : ''},${v.entranceTime},${v.exitTime},${v.lastDetected},${v.stayTime},${v.status}\n`
       })
-      BrowserUtil.fileDL('accessControl.csv', csv, CharSetHelper.getCharSet(this.$store.state.loginId))
+      BrowserUtil.fileDL('attendance.csv', csv, CharSetHelper.getCharSet(this.$store.state.loginId))
+    },
+    createList(data){
+      let allCount = 0
+      let halfCount = 0
+      this.viewList = data.map( e => {
+        const pot = this.potIdMap[e.potId]
+        const group = pot.group ? this.groupIdMap[pot.group.groupId] : null
+        const location = this.locationIdMap[e.locationId]
+        const zoneName = location ? location.zoneList.length>0 && location.zoneList[0].zoneName : null
+
+        // 勤務時間判定
+        let status = ''
+        if((e.outDt - e.inDt)>=1000*60*60*DISP.ATTENDANCE.ALL_DAY_HOUR){
+          status = this.$i18n.tnl("label.allDayWork")
+          allCount++
+        }else if((e.outDt - e.inDt)>=1000*60*60*DISP.ATTENDANCE.HALF_DAY_HOUR){
+          status = this.$i18n.tnl("label.halfDayWork")
+          halfCount++
+        }else{
+          status = this.$i18n.tnl("label.temporaryTimeWork")
+        }
+        const h = DateUtil.formatDateWithTimeZone(e.inDt, 'H')
+        if(h >= DISP.ATTENDANCE.LATE_HOUR){
+          status += " " + this.$i18n.tnl("label.lateTimeWork")
+        }
+        return {
+          name: e.potName, 
+          groupName: group ? group.groupName : null,
+          entranceTime: DateUtil.formatDate(e.inDt),
+          exitTime: DateUtil.formatDate(e.outDt),
+          lastDetected: zoneName,
+          stayTime: DateUtil.toHHmm( (e.outDt - e.inDt)/1000),
+          status
+        }
+      })
+      Util.debug("viewList", this.viewList)
+
+      if(this.viewList.length > 0){
+        this.allDayWorkPer = Math.floor(allCount / this.viewList.length * 100) + '%'
+        this.halfDayWorkPer = Math.floor(halfCount / this.viewList.length * 100) + '%'
+      }
+
+      this.totalRows = this.viewList.length
     }
   }
 }
@@ -223,33 +226,4 @@ export default {
 
 <style scoped lang="scss">
 @import "../../sub/constant/input.scss";
-.stay-bar {
-  position: relative;
-  display: inline-block;
-  cursor: default;
-  box-sizing:border-box;
-}
-.lost-bar {
-  position: relative;
-  display: inline-block;
-  background: #ccc;
-  cursor: default;
-  box-sizing:border-box;
-}
-.graph-arrow-box {
-  display: none;
-  position: absolute;
-  top: 100%;
-  padding: 8px;
-  -webkit-border-radius: 5px;
-  -moz-border-radius: 5px;  
-  border-radius: 5px;
-  background: #333;
-  color: #fff;
-  white-space: nowrap;
-  z-index: 5;
-}
-.stay-bar:hover .graph-arrow-box, .lost-bar:hover .graph-arrow-box {
-  display: block;
-}
 </style>

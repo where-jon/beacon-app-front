@@ -1014,8 +1014,8 @@ export const MENU = [
       icon: 'toilet',
     },
     {
-      key: 'accessControl',
-      path: 'accessControl',
+      key: 'attendanceKey',
+      path: 'attendance',
       icon: 'clock',
     },
   ]

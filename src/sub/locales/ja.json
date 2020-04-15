@@ -419,7 +419,7 @@
     "meetingRoomId": "会議室ID",
     "meetingRoomName": "会議室名",
 
-    "accessControl": "入退室管理",
+    "attendanceKey": "入退室管理",
     "entranceTime": "入室",
     "exitTime": "退室",
     "lastDetected": "最終検知",
@@ -1401,7 +1401,7 @@
         "NO_ACTUAL_NO_PLAN_BG_COLOR": "予定無・利用無の背景色",
         "EDIT_PLAN_HEADER_BG_COLOR": "予定のヘッダーの背景色"
       },
-      "ACCESS_CONTROL": {
+      "ATTENDANCE": {
         "ALL_DAY_HOUR": "全日出社とみなす時間",
         "HALF_DAY_HOUR": "半日出社とみなす時間",
         "LATE_HOUR": "時差出社の時刻"
