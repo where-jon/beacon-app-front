@@ -64,7 +64,7 @@ import Vue from 'vue'
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import { APP, DEV } from '../../sub/constant/config'
+import { APP, DEV, DISP } from '../../sub/constant/config'
 import { CATEGORY } from '../../sub/constant/Constants'
 import * as DateUtil from '../../sub/util/DateUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
@@ -156,22 +156,24 @@ export default {
         let halfCount = 0
         this.viewList = res.map( e => {
           const pot = this.potIdMap[e.potId]
-          console.log('pot', pot)
           const group = pot.group ? this.groupIdMap[pot.group.groupId] : null
           const location = this.locationIdMap[e.locationId]
-          console.log('location', location)
           const zoneName = location ? location.zoneList.length>0 && location.zoneList[0].zoneName : null
 
           // 勤務時間判定 TODO:仮実装
           let status = ''
-          if((e.outDt - e.inDt)>=1000*60*60*9){
+          if((e.outDt - e.inDt)>=1000*60*60*DISP.ACCESS_CONTROL.ALL_DAY_HOUR){
             status = this.$i18n.tnl("label.allDayWork")
             allCount++
-          }else if((e.outDt - e.inDt)>=1000*60*60*4){
+          }else if((e.outDt - e.inDt)>=1000*60*60*DISP.ACCESS_CONTROL.HALF_DAY_HOUR){
             status = this.$i18n.tnl("label.halfDayWork")
             halfCount++
           }else{
             status = this.$i18n.tnl("label.temporaryTimeWork")
+          }
+          const h = DateUtil.formatDateWithTimeZone(e.inDt, 'H')
+          if(h >= DISP.ACCESS_CONTROL.LATE_HOUR){
+            status += " " + this.$i18n.tnl("label.lateTimeWork")
           }
           return {
             name: e.potName, 
