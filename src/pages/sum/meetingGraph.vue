@@ -142,7 +142,7 @@ export default {
           sum[time].forEach(pos => {
             const cdName = this.getCdName(pos)
             const name = cdName.name ? (cdName.name + ",") : ""
-            csv += this.formatTime(time) + "," + cdName.cd + "," + name + pos.cnt + "\n"
+            csv += DateUtil.formatDateWithTimeZone(time) + "," + cdName.cd + "," + name + pos.cnt + "\n"
           })
         }
       }
