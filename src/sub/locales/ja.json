@@ -419,7 +419,7 @@
     "meetingRoomId": "会議室ID",
     "meetingRoomName": "会議室名",
 
-    "entranceExit": "入退場管理",
+    "accessControl": "入退室管理",
     "entranceTime": "入室",
     "exitTime": "退室",
     "lastDetected": "最終検知",

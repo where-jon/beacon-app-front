@@ -8,9 +8,9 @@
         <b-form-group>
           <b-form-row class="mr-3">
 
-            <label v-t="'label.name'" class="ml-2" />
-            <span :title="vueSelectTitle(vueSelected.group)">
-              <v-select v-model="vueSelected.group" :options="groupOptions" class="ml-2 inputSelect vue-options">
+            <label v-t="'label.name'" />
+            <span :title="vueSelectTitle(form.pot)">
+              <v-select v-model="form.pot" :options="potOptions" class="ml-2 inputSelect vue-options">
                 <template slot="selected-option" slot-scope="option">
                   {{ vueSelectCutOn(option) }}
                 </template>
@@ -21,8 +21,8 @@
             </span>
             
             <label v-t="'label.group'" class="ml-2" />
-            <span :title="vueSelectTitle(vueSelected.group)">
-              <v-select v-model="vueSelected.group" :options="groupOptions" class="ml-2 inputSelect vue-options">
+            <span :title="vueSelectTitle(form.group)">
+              <v-select v-model="form.group" :options="groupOptions" class="ml-2 inputSelect vue-options">
                 <template slot="selected-option" slot-scope="option">
                   {{ vueSelectCutOn(option) }}
                 </template>
@@ -81,17 +81,15 @@ export default {
   mixins: [commonmixin],
   data () {
     return {
-      breadCrumbs: ViewHelper.createBreadCrumbItems('sumTitle', 'entranceExit'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('sumTitle', 'accessControl'),
       form: {
         date: '',
-      },
-      vueSelected: {
-        group: null,
-        category: null,
+        pot: null,
+        group: null
       },
       message: '',
       viewList: [],
-      name: '',
+      //name: '',
       currentPage: 1,
       perPage: 20,
       sortBy: 'name',
@@ -101,20 +99,6 @@ export default {
     }
   },
   computed: {
-  },
-  watch: {
-    'vueSelected.group': {
-      handler: function(newVal, oldVal){
-        this.form.groupId = Util.getValue(newVal, 'value', null)
-      },
-      deep: true,
-    },
-    'vueSelected.area': {
-      handler: function(newVal, oldVal){
-        this.form.areaId = Util.getValue(newVal, 'value', null)
-      },
-      deep: true,
-    },
   },
   async created() {
     const date = DateUtil.getDefaultDate()
@@ -141,6 +125,8 @@ export default {
       ]
     },
     async display(isDownload) {
+      Util.debug('form', this.form)
+
       this.replace({showAlert: false})
       this.showProgress()
       try {
@@ -189,7 +175,9 @@ export default {
     },
     async fetchData(form){
       const date = moment(form.date).format('YYYYMMDD')
-      const url = `/office/entranceExit/list/${date}`
+      const potId = this.form.pot ? this.form.pot.value : 0
+      const groupId = this.form.group ? this.form.group.value : 0
+      const url = `/office/accessControl/list/${date}/${potId}/${groupId}`
       Util.debug('url', url)
       const data = await HttpHelper.getAppService(url)
       Util.debug('data', data)
