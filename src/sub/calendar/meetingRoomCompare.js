@@ -14,7 +14,7 @@ export function loadTimeLine(data) {
       let npId = 1
       let preIpEnd = plan.startDt
       const inPlanPersons = []
-      const inPlanThing = null
+      let inPlanThing = null
       plan.inPlans.forEach(ip => {
         if (ip.potCategoryType == 2) {
           const obj = {
