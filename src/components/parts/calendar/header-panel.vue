@@ -39,7 +39,8 @@ export default {
         const lw = this.timeLineLeftAndWidth
         const val = headerOpt.value
         return {
-          width: (lw[val] ? lw[val].width : 0) + '%',
+          //width: (lw[val] ? lw[val].width : 0) + '%',
+          width: (lw[val] ? lw[val].headerUnitPx : 0) + 'px',
           left: (lw[val] ? lw[val].left : 0) + '%',
           'line-height': this.styles.height,
           'border-left': this.styles.borderLeft,
