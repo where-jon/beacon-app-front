@@ -102,15 +102,15 @@ export default {
             txId: Util.v(pos, 'tx.txId'),
             potCd: Util.v(pos, 'tx.pot.potCd'),
             tel: Util.v(pos, 'tx.pot.extValue.tel'),
-            locationName: Util.v(pos, 'location.locationName'),
+            locationName: Util.v(pos, 'exb.location.locationName'),
             potName: Util.v(pos, 'tx.pot.potName'),
-            areaName: Util.v(pos, 'location.area.areaName'),
+            areaName: Util.v(pos, 'exb.location.area.areaName'),
             groupName: Util.v(pos, 'tx.pot.group.groupName'),
             categoryName: Util.v(pos, 'tx.pot.category.categoryName'),
             // 追加フィルタ用
             groupId: Util.v(pos, 'tx.pot.group.groupId'),
             categoryId: Util.v(pos, 'tx.pot.category.categoryId'),
-            areaId: Util.v(pos, 'location.areaId'),
+            areaId: Util.v(pos, 'exb.location.areaId'),
             blinking : prohibitCheck? 'blinking' : null,
             isDisableArea: Util.v(pos, 'exb.location.isAbsentZone', false),
           }

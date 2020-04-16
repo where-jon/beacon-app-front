@@ -104,7 +104,7 @@ export default {
           }
         }): false
         pos.isDisableArea = Util.getValue(location, 'isAbsentZone', false)
-        const posMasterIds = this.displayZone? Util.getValue(pos, 'location.zoneIdList', [null]): [Util.getValue(pos, 'location.areaId')]
+        const posMasterIds = this.displayZone? Util.getValue(pos, 'exb.location.zoneIdList', [null]): [Util.getValue(pos, 'exb.location.areaId')]
         posMasterIds.forEach(posMasterId => {
           const hasMasterId = Util.hasValue(posMasterId)
           const obj = hasMasterId ? tempMasterMap[posMasterId]: tempMasterExt

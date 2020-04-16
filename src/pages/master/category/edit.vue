@@ -244,6 +244,7 @@ export default {
     },
     async onSaving() {
       let dummyKey = -1
+      const cateTypes = CATEGORY.getTypes(true).filter(e => e.value == this.form.categoryType).map(e => e.text)
       const entity = {
         categoryId: this.form.categoryId || dummyKey--,
         categoryCd: this.form.categoryCd,

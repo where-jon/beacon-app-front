@@ -78,7 +78,7 @@ export default {
       Util.debug('sum', sum)
 
       const start = new Date(form.datetimeFrom)
-      const end = new Date(form.datetimeTo)
+      const end = new Date(new Date(form.datetimeTo).getTime() - 1000) // 1秒引いておく
       const total = func.getTotal(start, end, true)
 
       const from = start.getTime()
@@ -93,7 +93,6 @@ export default {
           const count = posList.filter(pos => pos.cnt==i || (i==max && pos.cnt>=max)).length
           const second = count * APP.POSITION_SUMMARY_INTERVAL * 60
           const per = second / total * 100.0
-          console.log('test')
           stayRatio += per
           const color = ColorUtil.getStackColor(i)
           if(per > 0){
@@ -108,7 +107,7 @@ export default {
         if(stayRatio < 100){
           const color = 'gray'
           const per = 100 - stayRatio
-          const second = Math.floor(total * stayRatio / 100)
+          const second = Math.floor(total * per / 100)
           graph.push({
             name: 0,
             style: `width: ${per}% !important; background: ${color};`,
@@ -198,7 +197,6 @@ export default {
       return (h >= 10 ? h : "0" + h) + ":" + (m >= 10 ? m : "0" + m)
     },
     getUseRatio(posList, total){
-      console.log(posList)
       let sum = 0.0
       posList.forEach(pos => {        
         sum += pos.cnt / (pos.capacity ? pos.capacity : pos.cnt) * APP.POSITION_SUMMARY_INTERVAL * 60

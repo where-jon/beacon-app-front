@@ -107,6 +107,7 @@ import * as ColorUtil from '../../sub/util/ColorUtil'
 import { APP_SERVICE } from '../../sub/constant/config'
 import alert from '../../components/parts/alert.vue'
 import * as LocaleHelper from '../../sub/helper/base/LocaleHelper'
+import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 
 export default {
   components: {
@@ -243,7 +244,6 @@ export default {
     },
     'vueSelected.filterType': {
       handler: function(newVal, oldVal){
-        console.log('vueSelected')
         this.selectedFilter.filterType = newVal
         this.selectedFilter.filterId = null
         this.vueSelected.filter = null
@@ -319,9 +319,11 @@ export default {
       this.locationOpts = this.locations.map(location => {
         return {value: location.locationId, label: location.locationName}
       })
-      this.zoneCategoryOpts = this.categories.filter(cate => cate.categoryType == CATEGORY.ZONE).map(cate => {
-        return {value: cate.categoryId, label: cate.categoryName}
-      })
+      this.zoneCategoryOpts = MasterHelper.getOptionsFromState('category',
+        category => MasterHelper.getDispCategoryName(category),
+        true,
+        category => !CATEGORY.POT_AVAILABLE.includes(category.categoryType)
+      )
       this.potThingOpts = this.pots.filter(pot => pot.potType == POT_TYPE.THING).map(pot => {
         return {value: pot.potId, label: pot.potName}
       })

@@ -140,7 +140,7 @@ export default {
 
       _(pots).map(pot => {
         let pos = positions.find(pos => pot.txIds.includes(pos.txId)) // potの現在の場所を取得
-        const locationId = Util.v(pos, 'exb.location,locationId')
+        const locationId = Util.v(pos, 'exb.location.locationId')
         const isAbsentZone = _.some(absentLocationList, loc => loc.locationId == locationId)
         return { // potの名前、場所、不在ゾーンかどうか、グループ情報、色等をオブジェクトにして返す
           potId: pot.potId,

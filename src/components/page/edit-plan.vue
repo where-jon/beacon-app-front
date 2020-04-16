@@ -162,7 +162,7 @@
         <!-- ボタン -->
         <b-form-row class="mt-3 mb-0">
           <b-col cols="2"><b-button :variant="theme" type="submit" class="saveBtn">{{ $t('label.save') }}</b-button></b-col>
-          <b-col cols="10"><b-button @click="onDelete" class="delBtn">{{ $t('label.remove') }}</b-button></b-col>
+          <b-col v-if="plan && plan.planId" cols="10"><b-button @click="onDelete" class="delBtn">{{ $t('label.remove') }}</b-button></b-col>
         </b-form-row>
     </b-form>
   </b-container>

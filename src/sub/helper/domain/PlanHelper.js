@@ -82,29 +82,20 @@ export const getBgColorByMRoomStatus = (mRoomPlan, positions) => {
     }
     return DISP.PLAN.ACTUAL_OUT_OF_PLAN_BG_COLOR
   } else {
-    if (positions.length == 0) {
-      return DISP.PLAN.NO_ACTUAL_IN_PLAN_BG_COLOR
+    let hasPos = positions.length > 0 ? true : false
+    let hasPlan = false
+    const now = moment().valueOf()
+    for (let pIdx in plans) {
+      const plan = plans[pIdx]
+      if (plan.startDt <= now && now <= plan.endDt) {
+        hasPlan = true
+        break
+      }
+    }
+    if (hasPlan) {
+      return hasPos ? DISP.PLAN.ACTUAL_IN_PLAN_BG_COLOR : DISP.PLAN.NO_ACTUAL_IN_PLAN_BG_COLOR
     } else {
-      let hasPlan = false
-      for (let idx in positions) {
-        const pos = positions[idx]
-        const updTime = moment(pos.updatetime).valueOf()
-        for (let pIdx in plans) {
-          const plan = plans[pIdx]
-          if (plan.startDt <= updTime && updTime <= plan.endDt) {
-            hasPlan = true
-            break
-          }
-        }
-        if (hasPlan) {
-          break
-        }
-      }
-      if (hasPlan) {
-        return DISP.PLAN.ACTUAL_IN_PLAN_BG_COLOR
-      } else {
-        return DISP.PLAN.ACTUAL_OUT_OF_PLAN_BG_COLOR
-      }
+      return hasPos ? DISP.PLAN.ACTUAL_OUT_OF_PLAN_BG_COLOR : DISP.PLAN.NO_ACTUAL_NO_PLAN_BG_COLOR
     }
   }
 }
