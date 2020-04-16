@@ -392,6 +392,10 @@ export default {
   async mounted() {
     this.locale = LocaleHelper.getSystemLocale()
     domevent.on(document.body, 'mousedown', this.onMouseDown, this)
+    const tgc = document.getElementById('tgc')
+    if (tgc) {
+      domevent.on(tgc, 'scroll', this.onScroll, this)
+    }
     if (!this.currentUser) {
       this.currentUser = await this.getCurrentUser()
       if (this.currentUser.isAd) {
@@ -414,6 +418,12 @@ export default {
         if (popupLayer) {
           return;
         }
+        this.clickScheduleEvent = null
+      }
+    },
+    onScroll(event) {
+      event.stopPropagation()
+      if (this.clickScheduleEvent) {
         this.clickScheduleEvent = null
       }
     },

@@ -364,7 +364,6 @@ const getGridLeftAndWidth = (headerOpts) => {
   
   // const tgc = document.getElementById('tgc')
   // const scrollBarWidth = tgc.offsetWidth - tgc.clientWidth
-  // console.log('!!!1:', scrollBarWidth)
 
   const scrollBarWidthPx = window.innerWidth - document.body.clientWidth
 
