@@ -752,6 +752,7 @@ export const createTxDetailInfo = (x, y, tx, canvasScale, offset, containerRect,
     bgColor: display.bgColor,
     color: display.color,
     isDispRight: x + offset.x + 100 < window.innerWidth,
+    email: Util.getValue(tx, 'pot.user.email')
   }
   const extValue = Util.v(tx, 'pot.extValue')
   if(extValue){

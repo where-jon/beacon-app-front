@@ -44,6 +44,14 @@
               <label v-t="'label.displayName'" />
               <input v-model="form.displayName" :readonly="!isEditable" type="text" maxlength="3" class="form-control">
             </b-form-group>
+            <b-form-group v-show="isShownWith('auth')">
+              <label v-t="'label.auth'" />
+              <v-select v-model="vueSelected.authCategories" :options="authCategoryOptions" :disabled="!isEditable" multiple :close-on-select="false" class="vue-options-multi">
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
+              </v-select>
+            </b-form-group>
             <b-form-group v-show="isShownWith('group')">
               <label v-t="'label.group'" />
               <v-select v-model="vueSelected.group" :options="groupOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options-lg">
@@ -55,14 +63,6 @@
             <b-form-group v-show="isShownWith('category')">
               <label v-t="'label.category'" />
               <v-select v-model="vueSelected.category" :options="categoryOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options-lg">
-                <template slot="no-options">
-                  {{ vueSelectNoMatchingOptions }}
-                </template>
-              </v-select>
-            </b-form-group>
-            <b-form-group v-show="isShownWith('auth')">
-              <label v-t="'label.auth'" />
-              <v-select v-model="vueSelected.authCategories" :options="authCategoryOptions" :disabled="!isEditable" multiple :close-on-select="false" class="vue-options-multi">
                 <template slot="no-options">
                   {{ vueSelectNoMatchingOptions }}
                 </template>
