@@ -418,6 +418,17 @@
     "meetingRoom": "会議室",
     "meetingRoomId": "会議室ID",
     "meetingRoomName": "会議室名",
+
+    "attendanceKey": "入退室管理",
+    "entranceTime": "入室",
+    "exitTime": "退室",
+    "lastDetected": "最終検知",
+    "allDayWork": "全日出社",
+    "halfDayWork": "半日出社",
+    "lateTimeWork": "時差出社",
+    "temporaryTimeWork": "一時出社",
+    "allDayWorkPer": "全日出社率",
+    "halfDayWorkPer": "半日出社率",
     
     "tenant": "テナント",
     "tenantCd": "テナントコード",
@@ -1389,6 +1400,11 @@
         "ACTUAL_OUT_OF_PLAN_BG_COLOR": "予定無・利用有の背景色",
         "NO_ACTUAL_NO_PLAN_BG_COLOR": "予定無・利用無の背景色",
         "EDIT_PLAN_HEADER_BG_COLOR": "予定のヘッダーの背景色"
+      },
+      "ATTENDANCE": {
+        "ALL_DAY_HOUR": "全日出社とみなす時間",
+        "HALF_DAY_HOUR": "半日出社とみなす時間",
+        "LATE_HOUR": "時差出社の時刻"
       }
     },
     "DEV": {

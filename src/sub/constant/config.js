@@ -646,5 +646,11 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     ZONE_OTHER: true // ゾーンその他を表示する
   },
 
+  ATTENDANCE: {
+    ALL_DAY_HOUR: 8,
+    HALF_DAY_HOUR: 4,
+    LATE_HOUR: 10
+  },
+
 }
 
