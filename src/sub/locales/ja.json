@@ -314,6 +314,9 @@
     "post": "役職",
     "ruby": "ふりがな",
     "tel": "電話番号",
+    "departmentEtc": "部門等",
+    "outsideNumber": "外線番号",
+    "extensionNumber": "内線番号",
 
     "positionList": "位置表示(一覧)",
     "positionListShort": "一覧",
