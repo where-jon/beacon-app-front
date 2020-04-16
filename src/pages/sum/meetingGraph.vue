@@ -142,7 +142,7 @@ export default {
           sum[time].forEach(pos => {
             const cdName = this.getCdName(pos)
             const name = cdName.name ? (cdName.name + ",") : ""
-            csv += this.formatTime(time) + "," + cdName.cd + "," + name + pos.cnt + "\n"
+            csv += DateUtil.formatDateWithTimeZone(time, 'YYYY/MM/DD HH:mm') + "," + cdName.cd + "," + name + pos.cnt + "\n"
           })
         }
       }
@@ -189,12 +189,6 @@ export default {
         return null
       }
       return null
-    },
-    formatTime(time){
-      const date = new Date(time)
-      const h = date.getHours()
-      const m = date.getMinutes()
-      return (h >= 10 ? h : "0" + h) + ":" + (m >= 10 ? m : "0" + m)
     },
     getUseRatio(posList, total){
       let sum = 0.0
