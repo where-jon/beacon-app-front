@@ -1013,7 +1013,12 @@ export const MENU = [
       path: 'toilet',
       icon: 'toilet',
     },
-    ]
+    {
+      key: 'attendanceKey',
+      path: 'attendance',
+      icon: 'clock',
+    },
+  ]
   },
   {
     key: 'master',
@@ -1237,7 +1242,7 @@ export const MENU = [
         path: 'planActual',
         icon: 'chart-bar',
       },
-    ]
+      ]
   },
   {
     key: 'historyTitle',
