@@ -422,7 +422,8 @@
     "meetingRoomId": "会議室ID",
     "meetingRoomName": "会議室名",
 
-    "attendanceKey": "入退室管理",
+    "attendanceKey": "入退室管理詳細",
+    "attendanceSum": "入退室管理",
     "entranceTime": "入室",
     "exitTime": "退室",
     "lastDetected": "最終検知",
@@ -430,8 +431,12 @@
     "halfDayWork": "半日出社",
     "lateTimeWork": "時差出社",
     "temporaryTimeWork": "一時出社",
+    "attendancePer": "出社率",
     "allDayWorkPer": "全日出社率",
     "halfDayWorkPer": "半日出社率",
+    "lateTimeWorkPer": "時差出社",
+    "temporaryTimeWorkPer": "一時出社",
+    "companyWide": "全社",
     
     "tenant": "テナント",
     "tenantCd": "テナントコード",

@@ -14,7 +14,8 @@ export const state = () => ({
   positions: [],
   usePositionsCache: false,
   timers: [],
-  mRoomPlans: []
+  mRoomPlans: [],
+  attendanceGroupId: null
 })
 
 const initState = state()
