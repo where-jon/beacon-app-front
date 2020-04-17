@@ -1242,6 +1242,11 @@ export const MENU = [
         path: 'planActual',
         icon: 'chart-bar',
       },
+      {
+        key: 'attendanceSum',
+        path: 'attendanceSum',
+        icon: 'clock',
+      },
       ]
   },
   {

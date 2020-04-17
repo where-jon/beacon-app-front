@@ -104,6 +104,10 @@ export default {
     }
   },
   computed: {
+    ...mapState('main', [
+      'attendanceGroupId',
+      'selectedDate',
+    ]),
   },
   async created() {
     const date = DateUtil.getDefaultDate()
@@ -111,12 +115,17 @@ export default {
   },
   async mounted() {
     ViewHelper.importElementUI()
-    window.addEventListener('resize', () => {
-      this.$forceUpdate()
-    })
-    if (this.categories.length < 1) {
-      return
+
+    // 入退室管理からの遷移
+    if(this.attendanceGroupId){
+      this.form.group = this.groupOptions.find(e => e.value == this.attendanceGroupId)
     }
+    if(this.selectedDate){
+      this.form.date = this.selectedDate
+      this.display()
+    }
+    this.replaceMain({selectedDate: null})
+    this.replaceMain({attendanceGroupId: null})
   },
   methods: {
     getField(){
