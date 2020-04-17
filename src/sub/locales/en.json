@@ -1330,7 +1330,6 @@
           "ENTER_BGCOLOR": "[Entrance and Exit Table] Background color of visitors::[Entrance and Exit Table] Specify the background color of visitors by color name, HEX or RGB."
         },
         "TOILET": {
-          "DISPLAY_MODE": "Toilet display mode::Set up the display method of the empty state displayed on the toilet empty display screen. The values that can be set are as follows.{TOILET_DISPLAY}",
           "BASE_FONT_SIZE": "Standard font size for toilet icons",
           "BASE_MARK_R": "Standard vacancy icon size for toilet icons",
           "MARK_COLUMN_NUM": "Display column of toilet icon"
@@ -1611,10 +1610,6 @@
         "0": "0::Invalid",
         "1": "1::Valid（Default OFF）",
         "2": "2::Valid（Default ON）"
-      },
-      "TOILET_DISPLAY": {
-        "0": "0::Display with numbers",
-        "1": "1::Display with icon"
       },
       "SMTP_AUTH": {
         "true": "true::Do user authentication",
