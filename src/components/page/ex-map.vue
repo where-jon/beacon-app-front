@@ -820,7 +820,11 @@ export default {
     async loadProhibitDetect() {
       if ((this.pShowProhibit || this.pShowLost) && Util.hasValueAny(APP.POS.PROHIBIT_GROUP_ZONE, APP.POS.LOST_GROUP_ZONE)) {
         clearInterval(this.prohibitInterval)  // 点滅クリア
-        Util.merge(this, await ProhibitHelper.loadProhibitDetect(ALERT_STATE.MAP, this.stage, this.icons, this.zones, this.positions, this.pShowProhibit, this.pShowLost))
+        let alertState = ALERT_STATE.MAP
+        if (location.pathname == '/main/guest-access') {
+          alertState = ALERT_STATE.GUEST
+        }
+        Util.merge(this, await ProhibitHelper.loadProhibitDetect(alertState, this.stage, this.icons, this.zones, this.positions, this.pShowProhibit, this.pShowLost))
         this.replace({ showAlert: this.showDismissibleAlert })
       }
     },

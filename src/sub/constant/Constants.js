@@ -517,6 +517,7 @@ export const ALERT_STATE = {
   MAP: 'map',
   LIST: 'list',
   WHOLE: 'whole',
+  GUEST: 'guest',
   MAIL: 'mail',
   LED: 'led',
 }

@@ -1625,14 +1625,18 @@
       },
       "PROHIBIT_ALERT": {
         "screen": "screen::画面上(地図,一覧,全体)に表示",
-        "map": "screen::画面上(地図)に表示",
-        "list": "screen::画面上(一覧)に表示",
-        "whole": "screen::画面上(全体)に表示",
+        "map": "map::画面上(地図)に表示",
+        "list": "list::画面上(一覧)に表示",
+        "whole": "whole::画面上(全体)に表示",
+        "guest": "guest::画面上(来客アクセス管理)に表示",
         "mail": "mail::メール通知",
         "led": "led::LED点滅"
       },
       "LOST_ALERT": {
         "screen": "screen::画面上に表示",
+        "map": "map::画面上(地図)に表示",
+        "list": "list::画面上(一覧)に表示",
+        "whole": "whole::画面上(全体)に表示",
         "mail": "mail::メール通知"
       },
       "ANALYSIS_UNIT": {
