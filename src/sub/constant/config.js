@@ -341,6 +341,12 @@ export const APP = { // 機能面に関する設定
     AXIS_TYPE: 'location', // 表示単位
     MAX_NUM: 6 // 利用人数の最大値
   },
+  // 入退室管理
+  ATTENDANCE: {
+    ALL_DAY_HOUR: 8,
+    HALF_DAY_HOUR: 4,
+    LATE_HOUR: 10
+  },
   
   // その他
   SPLIT_UPLOAD_SIZE: 50 * 1024 * 1024, // 分割アップロードのサイズ閾値（Byte）
@@ -645,12 +651,5 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     TYPE: 1, // 表示方法
     ZONE_OTHER: true // ゾーンその他を表示する
   },
-
-  ATTENDANCE: {
-    ALL_DAY_HOUR: 8,
-    HALF_DAY_HOUR: 4,
-    LATE_HOUR: 10
-  },
-
 }
 

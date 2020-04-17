@@ -36,7 +36,7 @@ import Vue from 'vue'
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import { APP, DEV, DISP } from '../../sub/constant/config'
+import { APP, DEV } from '../../sub/constant/config'
 import { CATEGORY, POT_TYPE } from '../../sub/constant/Constants'
 import * as DateUtil from '../../sub/util/DateUtil'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
@@ -168,14 +168,14 @@ export default {
           const e = attendance[pot.potId]
           if(e){
             attendanceCount++
-            if((e.outDt - e.inDt)>=1000*60*60*DISP.ATTENDANCE.ALL_DAY_HOUR){
+            if((e.outDt - e.inDt)>=1000*60*60*APP.ATTENDANCE.ALL_DAY_HOUR){
               allCount++
-            }else if((e.outDt - e.inDt)>=1000*60*60*DISP.ATTENDANCE.HALF_DAY_HOUR){
+            }else if((e.outDt - e.inDt)>=1000*60*60*APP.ATTENDANCE.HALF_DAY_HOUR){
               halfCount++
             }else{
               tempCount++
             }
-            if(DateUtil.formatDateWithTimeZone(e.inDt, 'H') >= DISP.ATTENDANCE.LATE_HOUR){
+            if(DateUtil.formatDateWithTimeZone(e.inDt, 'H') >= APP.ATTENDANCE.LATE_HOUR){
               lateCount++
             }
           }
