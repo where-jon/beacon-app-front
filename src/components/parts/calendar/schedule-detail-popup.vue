@@ -61,12 +61,12 @@ export default {
   async created() {
   },
   async mounted() {
-    this._setPopupPositionAndArrowDirection()
     const elm = document.getElementById('popup-content')
     if (elm) {
       elm.innerHTML = this.event.schedule.body
       // elm.textContent = this.event.schedule.body
     }
+    this._setPopupPositionAndArrowDirection()
   },
   updated() {
   },
@@ -106,7 +106,7 @@ export default {
         pos = this._calcRenderingData(layerSize, windowSize, scheduleBound);
         pos.x -= parentBounds.left + 4;
         pos.y -= (parentBounds.top + this.ARROW_WIDTH_HALF);
-        domutil.setPosition(layerO, pos.x, pos.y);
+        domutil.setPosition(layerO, pos.x, pos.y)
         this._setArrowDirection(pos.arrow);
     },
     _calcRenderingData(layerSize, parentSize, guideBound) {
