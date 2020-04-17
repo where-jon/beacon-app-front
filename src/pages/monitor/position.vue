@@ -74,6 +74,7 @@ export default {
         ret[this.convertColumnName(val)] = val == 'btxId'? 'btxId': val
       })
       ret['finalReceiveTimestamp'] = 'timestamp'
+      ret['powerLevelTimestamp'] = 'powerLevelTimestamp'
       ret['state'] = 'state'
       return ret
     },
@@ -196,6 +197,7 @@ export default {
         }
       })
       ret.push(this.$i18n.tnl('label.finalReceiveTimestamp'))
+      ret.push(this.$i18n.tnl('label.powerLevelTimestamp'))
       ret.push(this.$i18n.tnl('label.state'))
       ret.push('\n')
       return ret
