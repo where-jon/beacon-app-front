@@ -64,7 +64,7 @@ import Vue from 'vue'
 import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import { APP, DEV, DISP } from '../../sub/constant/config'
+import { APP, DEV } from '../../sub/constant/config'
 import { CATEGORY } from '../../sub/constant/Constants'
 import * as DateUtil from '../../sub/util/DateUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
@@ -197,17 +197,17 @@ export default {
 
         // 勤務時間判定
         let status = ''
-        if((e.outDt - e.inDt)>=1000*60*60*DISP.ATTENDANCE.ALL_DAY_HOUR){
+        if((e.outDt - e.inDt)>=1000*60*60*APP.ATTENDANCE.ALL_DAY_HOUR){
           status = this.$i18n.tnl("label.allDayWork")
           allCount++
-        }else if((e.outDt - e.inDt)>=1000*60*60*DISP.ATTENDANCE.HALF_DAY_HOUR){
+        }else if((e.outDt - e.inDt)>=1000*60*60*APP.ATTENDANCE.HALF_DAY_HOUR){
           status = this.$i18n.tnl("label.halfDayWork")
           halfCount++
         }else{
           status = this.$i18n.tnl("label.temporaryTimeWork")
         }
         const h = DateUtil.formatDateWithTimeZone(e.inDt, 'H')
-        if(h >= DISP.ATTENDANCE.LATE_HOUR){
+        if(h >= APP.ATTENDANCE.LATE_HOUR){
           status += " " + this.$i18n.tnl("label.lateTimeWork")
         }
         return {
