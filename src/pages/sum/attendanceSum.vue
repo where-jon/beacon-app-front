@@ -137,7 +137,7 @@ export default {
     async showDetail(item){
       this.replaceMain({selectedDate: this.form.date})
       this.replaceMain({attendanceGroupId: item.groupId})
-      this.$router.push('/main/attendance')
+      this.$router.push('/sum/attendanceDetail')
     },
     createList(data){
       const pots = this.pots.filter(e => e.potType == POT_TYPE.PERSON).map(e => {

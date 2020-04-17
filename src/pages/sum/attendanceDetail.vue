@@ -87,7 +87,7 @@ export default {
   mixins: [commonmixin],
   data () {
     return {
-      breadCrumbs: ViewHelper.createBreadCrumbItems('sumTitle', 'attendanceKey'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('sumTitle', 'attendanceDetail'),
       form: {
         date: '',
         pot: null,

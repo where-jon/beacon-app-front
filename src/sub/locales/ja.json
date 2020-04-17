@@ -422,7 +422,7 @@
     "meetingRoomId": "会議室ID",
     "meetingRoomName": "会議室名",
 
-    "attendanceKey": "入退室管理詳細",
+    "attendanceDetail": "入退室管理詳細",
     "attendanceSum": "入退室管理",
     "entranceTime": "入室",
     "exitTime": "退室",
