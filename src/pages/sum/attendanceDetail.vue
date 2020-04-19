@@ -87,7 +87,7 @@ export default {
   mixins: [commonmixin],
   data () {
     return {
-      breadCrumbs: ViewHelper.createBreadCrumbItems('sumTitle', 'attendanceKey'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('sumTitle', 'attendanceDetail'),
       form: {
         date: '',
         pot: null,
@@ -193,7 +193,7 @@ export default {
         const pot = this.potIdMap[e.potId]
         const group = pot.group ? this.groupIdMap[pot.group.groupId] : null
         const location = this.locationIdMap[e.locationId]
-        const zoneName = location ? location.zoneList.length>0 && location.zoneList[0].zoneName : null
+        const zoneName = location && location.zoneList.length>0 ? location.zoneList[0].zoneName : ''
 
         // 勤務時間判定
         let status = ''

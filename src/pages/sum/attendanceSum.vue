@@ -18,7 +18,7 @@
       <b-row class="mt-3">
         <b-table :items="viewList" :fields="getField()" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" :sort-compare="defaultSortCompare" stacked="md" striped hover outlined>
           <template slot="detail" slot-scope="row">
-            <b-button v-t="'label.detail'" :variant="theme" size="sm" class="mx-1" @click.stop="showDetail(row.item)" />
+            <b-button v-if="row.item.isDetail" v-t="'label.detail'" :variant="theme" size="sm" class="mx-1" @click.stop="showDetail(row.item)" />
           </template>
         </b-table>
       </b-row>
@@ -137,11 +137,11 @@ export default {
     async showDetail(item){
       this.replaceMain({selectedDate: this.form.date})
       this.replaceMain({attendanceGroupId: item.groupId})
-      this.$router.push('/main/attendance')
+      this.$router.push('/sum/attendanceDetail')
     },
     createList(data){
-      const pots = this.pots.filter(e => e.potType == POT_TYPE.PERSON).map(e => {
-        const groupId = e.group ? e.group.groupId : 0
+      const pots = this.pots.filter(e => e.potType == POT_TYPE.PERSON && e.group).map(e => {
+        const groupId = e.group ? e.group.groupId : 10000
         return {...e, groupId}
       })
 
@@ -158,7 +158,7 @@ export default {
       let halfSum = 0
       let tempSum = 0
       let lateSum = 0
-      this.viewList = groups.map( list => {
+      groups.forEach( list => {
         let attendanceCount = 0
         let allCount = 0
         let halfCount = 0
@@ -185,15 +185,16 @@ export default {
         halfSum += halfCount
         tempSum += tempCount
         lateSum += lateCount
-        return {
+        this.viewList.push({
           groupId: list[0].group ? list[0].group.groupId : 0,
           groupName: list[0].group ? list[0].group.groupName : '',
           attendancePer: NumberUtil.floorVal(attendanceCount / list.length * 100, 1) + '%',
           allDayWorkPer: NumberUtil.floorVal(allCount / list.length * 100, 1) + '%',
           halfDayWorkPer: NumberUtil.floorVal(halfCount / list.length * 100, 1) + '%',
           lateTimeWorkPer: NumberUtil.floorVal(lateCount / list.length * 100, 1) + '%',
-          temporaryTimeWorkPer: NumberUtil.floorVal(tempCount / list.length * 100, 1) + '%'
-        }
+          temporaryTimeWorkPer: NumberUtil.floorVal(tempCount / list.length * 100, 1) + '%',
+          isDetail: true
+        })
       })
       // 全社追加
       this.viewList.unshift({

@@ -1014,11 +1014,6 @@ export const MENU = [
       path: 'toilet',
       icon: 'toilet',
     },
-    {
-      key: 'attendanceKey',
-      path: 'attendance',
-      icon: 'clock',
-    },
   ]
   },
   {
@@ -1246,6 +1241,11 @@ export const MENU = [
       {
         key: 'attendanceSum',
         path: 'attendanceSum',
+        icon: 'clock',
+      },
+      {
+        key: 'attendanceDetail',
+        path: 'attendanceDetail',
         icon: 'clock',
       },
       ]
