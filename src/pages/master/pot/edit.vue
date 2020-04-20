@@ -44,6 +44,14 @@
               <label v-t="'label.displayName'" />
               <input v-model="form.displayName" :readonly="!isEditable" type="text" maxlength="3" class="form-control">
             </b-form-group>
+            <b-form-group v-show="isShownWith('auth')">
+              <label v-t="'label.auth'" />
+              <v-select v-model="vueSelected.authCategories" :options="getAuthCategoryOptions()" :disabled="!isEditable" multiple :close-on-select="false" class="vue-options-multi">
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
+              </v-select>
+            </b-form-group>
             <b-form-group v-show="isShownWith('group')">
               <label v-t="'label.group'" />
               <v-select v-model="vueSelected.group" :options="groupOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options-lg">
@@ -55,14 +63,6 @@
             <b-form-group v-show="isShownWith('category')">
               <label v-t="'label.category'" />
               <v-select v-model="vueSelected.category" :options="categoryOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options-lg">
-                <template slot="no-options">
-                  {{ vueSelectNoMatchingOptions }}
-                </template>
-              </v-select>
-            </b-form-group>
-            <b-form-group v-show="isShownWith('auth')">
-              <label v-t="'label.auth'" />
-              <v-select v-model="vueSelected.authCategories" :options="authCategoryOptions" :disabled="!isEditable" multiple :close-on-select="false" class="vue-options-multi">
                 <template slot="no-options">
                   {{ vueSelectNoMatchingOptions }}
                 </template>
@@ -103,7 +103,7 @@
 import { mapState } from 'vuex'
 import _ from 'lodash'
 import { APP, EXCLOUD, APP_SERVICE } from '../../../sub/constant/config'
-import { POT_TYPE, TYPE_RELATION } from '../../../sub/constant/Constants'
+import { POT_TYPE, TYPE_RELATION, CATEGORY } from '../../../sub/constant/Constants'
 import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
@@ -113,6 +113,7 @@ import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import * as VueSelectHelper from '../../../sub/helper/ui/VueSelectHelper'
+import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import commonmixin from '../../../components/mixin/commonmixin.vue'
 import editmixin from '../../../components/mixin/editmixin.vue'
@@ -272,6 +273,12 @@ export default {
     VueSelectHelper.disabledAllSubmit()
   },
   methods: {
+    getAuthCategoryOptions() {
+      const ret =  _.sortBy(this.categories.filter(e => e.categoryType == CATEGORY.AUTH), 'categoryCd')
+      return ret.map( e => {
+        return { text: e.categoryName, label: e.categoryName, value: e.categoryId }
+      })
+    },
     isShownWith(column) {
       const settingName = PotHelper.getSettingName(this.pName)
       return this.isShown(settingName + '.WITH', column)
@@ -389,55 +396,47 @@ export default {
     async onSaved(){
     },
     async onSaving() {
-      let dummyParam = {dummyKey: -1}
       const entity = {
-        potId: this.form.potId || dummyParam.dummyKey--,
-        potCd: this.form.potCd,
+        updateKey: this.form.potId || null,
+        ID: this.form.potCd,
         potName: this.form.potName,
-        potType: this.form.potType,
-        extValue: {
-          ruby: this.form.ruby,
-          description: this.form.description,
-          minors: this.minors,
-          potNames: [this.form.potName],
-        },
+        potType: this.potTypeOptions.filter(e => e.value == this.form.potType).map(e => e.text),
         displayName: this.form.displayName,
-        potGroupList: this.form.groupId ? [{
-          potGroupPK: {groupId: this.form.groupId}
-        }] : [],
-        potCategoryList: this.form.categoryId ? [{
-          potCategoryPK: {categoryId: this.form.categoryId}
-        }] : [],
-        txId: this.form.txId,
+        groupName: this.form.groupId ? this.groupOptions.filter(e => e.value == this.form.groupId).map(e => e.text).join(";") : null,
+        categoryName: this.form.categoryId ? this.categoryOptions.filter(e => e.value == this.form.categoryId).map(e => e.text).join(";") : null,
         thumbnail: this.form.thumbnail,
         description: this.form.description,
+        extValue: null
       }
-      PotHelper.getPotExtKeys(this.pName).forEach(key => {
-        entity.extValue[key] = this.form[key]
-      })
-      if(Util.hasValue(this.form.authCategoryIdList)){
-        const authCategoryList = this.form.authCategoryIdList.map(authCategoryId => ({ potCategoryPK: { categoryId: authCategoryId } }))
-        entity.potCategoryList.push(...authCategoryList)
-      }
-
-      const minorsMap = {}
-      this.txs.forEach(t => minorsMap[t.txId] = t.minor)
-      const potTxList = []
-      this.form.potTxList.forEach((potTx) => {
-        if(potTx.txId){
-          potTxList.push({
-            potTxPK: {
-              potId: this.form.potId || dummyParam.dummyKey--,
-              txId: potTx.txId
-            },
-            minor: minorsMap[potTx.txId]
-          })
+      
+      const extValue = {}
+      const arr = ['ruby', 'description', 'minors']
+      arr.forEach(key => {
+        if (this.form[key]) {
+          extValue[key] = this.form[key]
         }
       })
-      entity.potTxList = potTxList
+      if (this.form.potName) {
+        extValue['potNames'] = [this.form.potName]
+      }
+      PotHelper.getPotExtKeys(this.pName).forEach(key => {
+        extValue[key] = this.form[key]
+      })
+      if (Object.keys(extValue).length > 0) {
+        entity.extValue = ExtValueHelper.jsonStringfyAndFormatCSV(extValue)
+      }
+
+      if(Util.hasValue(this.form.authCategoryIdList)){
+        const list = this.categoryOptions.filter(e => this.form.authCategoryIdList.includes(e.value)).map(e => e.text)
+        entity.auth = list.length > 0 ? list.join(";") : null
+      }
+
+      entity.minor = this.minors.length > 0 ? this.minors.join(';') : null
       entity.deleteThumbnail = this.form.deleteThumbnail
+
       this.potCdOld = this.form.potCd
-      return await AppServiceHelper.bulkSave(this.pAppServicePath, [entity])
+      
+      return await AppServiceHelper.save2(this.pAppServicePath, entity)
     },
     getNameByteLangth(){
       const fileElement = Util.getValue(document.getElementsByClassName('custom-file'), '0')

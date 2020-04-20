@@ -46,7 +46,7 @@ export default {
       return dummyKey
     },
     async onSaving() {
-      await this.$refs.bulkEdit.bulkSave({numberList: ['regionId', 'meshId']})
+      await this.$refs.bulkEdit.bulkSave2()
     },
     async onSaved(bulkSaveFunc, param){
       const result = await RegionHelper.autoSwitchRegion(this.regions)

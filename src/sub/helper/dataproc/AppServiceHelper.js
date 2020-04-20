@@ -143,6 +143,39 @@ export const bulkSave = async (target, entities, updateOnlyNN = UPDATE_ONLY_NN.N
   return data
 }
 
+export const save2 = async (target, entity, updateOnlyNN = UPDATE_ONLY_NN.NONE, ignoreImage = IGNORE.OFF) => {
+  const csvHeader = Object.keys(entity).map(v => `${v}`).join(",")
+  const csvRecord = Object.values(entity).map(v => v || v == 0 ? `"${v}"` : '""').join(",")
+
+  let formData = new FormData()
+  formData.append('csvHeader', csvHeader)
+  formData.append('csvRecord', csvRecord)
+  
+  const path = `${target}/save/?updateOnlyNN=${updateOnlyNN}&ignoreImage=${ignoreImage}&_=${new Date().getTime()}`
+  const config = {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  }
+  let data = DEV.USE_MOCK_APS? mock[target]:
+    await HttpHelper.postAppService(path, formData, config)
+
+  return data
+}
+
+export const bulkSave2 = async (target, formData, charset, updateOnlyNN = UPDATE_ONLY_NN.NONE, ignoreImage = IGNORE.OFF) => {
+  const path = `${target}/bulk/?charset=${charset}&updateOnlyNN=${updateOnlyNN}&ignoreImage=${ignoreImage}&_=${new Date().getTime()}`
+  const config = {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  }
+  let data = DEV.USE_MOCK_APS? mock[target]:
+    await HttpHelper.postAppService(path, formData, config)
+
+  return data
+}
+
 /**
  * 削除リクエストを行う。
  * @method

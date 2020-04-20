@@ -362,9 +362,15 @@ const getGridLeftAndWidth = (headerOpts) => {
     containerPx = document.getElementById('vlayout-area').getBoundingClientRect().width - leftPx
   }
   
-  let accumulatedWidth = 0
+  // const tgc = document.getElementById('tgc')
+  // const scrollBarWidth = tgc.offsetWidth - tgc.clientWidth
+
+  const scrollBarWidthPx = window.innerWidth - document.body.clientWidth
+
+  let accumulatedWidthPx = 0
   let widthRatio = 100 / headerOpts.length
   widthRatio = widthRatio < MIN_WIDTH_RATIO ? MIN_WIDTH_RATIO : MAX_WIDTH_RATIO < widthRatio ? MAX_WIDTH_RATIO : widthRatio
+  let unitWidthPx = (containerPx - scrollBarWidthPx) / headerOpts.length
 
   switch (widthRatio) {
     case MIN_WIDTH_RATIO:
@@ -372,12 +378,14 @@ const getGridLeftAndWidth = (headerOpts) => {
       const unitPx = containerPx * widthRatio / 100
       const newContainerPx= unitPx * headerOpts.length
       document.getElementById('w-container').style.width = widthRatio == MIN_WIDTH_RATIO ? '100%' : ''
+      document.getElementById('wt-tg-s').style.width = `${newContainerPx}px`
       document.getElementById('tg-h-g').style.width = `${newContainerPx}px`
       document.getElementById('tg-s').style.width = `${newContainerPx}px`
       document.getElementById('day-right').style.width = `${newContainerPx}px`
-      widthRatio = unitPx / newContainerPx * 100
+      unitWidthPx = (newContainerPx - scrollBarWidthPx) / headerOpts.length
       break
     default:
+      document.getElementById('wt-tg-s').style.width = `100%`
       document.getElementById('tg-h-g').style.width = `100%`
       document.getElementById('tg-s').style.width = `100%`
       document.getElementById('day-right').style.width = `100%`
@@ -388,10 +396,10 @@ const getGridLeftAndWidth = (headerOpts) => {
   const leftAndWidthMap = {}
   headerOpts.forEach(opt => {
     leftAndWidthMap[opt.value] = {
-        width: widthRatio,
-        left: accumulatedWidth
+        width: unitWidthPx,
+        left: accumulatedWidthPx
     }
-    accumulatedWidth += widthRatio
+    accumulatedWidthPx += unitWidthPx
   })
   return leftAndWidthMap
 }

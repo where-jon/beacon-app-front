@@ -35,6 +35,7 @@ import * as Util from '../../sub/util/Util'
 import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
 import { APP } from '../../sub/constant/config'
 import { TENANT } from '../../sub/constant/Constants'
+import * as microsoftTeams from '@microsoft/teams-js'
 
 export default {
   data() {
@@ -147,19 +148,25 @@ export default {
       }
     },
     adminConsent() {
+      microsoftTeams.initialize()
       LocalStorageHelper.setLocalStorage('tenantName', this.tenantName)
       const left = (screen.width - 600) / 2
       const top = ( screen.height - 535) / 2
       const adminConsentUrl = APP.AUTH.ADMINCONSENT_URL_BASE + '?client_id=' + APP.AUTH.APP_ID + '&redirect_uri=' + APP.AUTH.REDIRECT_URL
-      var popupWindow = window.open(adminConsentUrl, 'Admin consent', 'width=600, height=535, top= ' + top + ", left=" + left)
-      if (!popupWindow) {
-        console.error('window open error')
-        alert('Opening popupWindow failed.')
-        return
+      const success = () => {
       }
-      if (popupWindow.focus) {
-        popupWindow.focus()
+      const failure = () => {
       }
+      microsoftTeams.authentication.authenticate({
+        url: adminConsentUrl,
+        width: 600,
+        height: 535,
+        success,
+        failure
+      })
+      this.notRegistered = false
+      this.finishInit = true
+      this.disabled = true
     }
   }
 }

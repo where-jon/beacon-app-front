@@ -60,7 +60,7 @@ export function loadTimeLine(data, currentUser, dupMessage, basicColorMap) {
         location: location,
         attendees: attendees,
         thing: thing,
-        body: `[${dupMessage}] ${plan.description}`,
+        body: plan.description,
         hasDup: hasDup,
         data: plan
       }

@@ -37,6 +37,7 @@ export const getMagicNumberList = (features) => {
   retMap.zoneType = createOptionMap(ZONE.getOptions())
   retMap.roleFeatureMode = createOptionMap(ROLE_FEATURE.getModeOptions())
   retMap.featureType = createOptionMap(FEATURE.getTypeOptions())
+  retMap.potType = createOptionMap(POT_TYPE.getTypes())
 
   const modeAll = ROLE_FEATURE.getAllAuthorizationOption()
   retMap.roleFeatureModeMatch = {

@@ -18,6 +18,10 @@ export const getExtValue = masterSetting => {
     .map(w => masterExtDef.find(ed => ed.key == w))
 }
 
+export const jsonStringfyAndFormatCSV = (obj) => {
+  return JSON.stringify(obj).replace(/"/gi, '""')
+}
+
 /**
  * 有効な拡張値カラム情報のキー値を取得する。
  * @method

@@ -176,13 +176,13 @@ export default {
   watch: {
     'vueSelected.zoneGuards': {
       handler: function(newVal, oldVal){
-        this.form.zoneGuardList = newVal.map(val => ({zoneCategoryPK: { zoneId: val.value }}))
+        this.form.zoneGuardList = newVal.map(val => (val.value)).map(v => this.zones.find(e => e.zoneId == v).zoneCd)
       },
       deep: true,
     },
     'vueSelected.zoneDoors': {
       handler: function(newVal, oldVal){
-        this.form.zoneDoorList = newVal.map(val => ({zoneCategoryPK: { zoneId: val.value }}))
+        this.form.zoneDoorList = newVal.map(val => (val.value)).map(v => this.zones.find(e => e.zoneId == v).zoneCd)
       },
       deep: true,
     },
@@ -236,34 +236,33 @@ export default {
         const categoryList = this.categories.filter(category => category.systemUse == 0)
       }
     },
-    structZoneCategory(getDummyKeyFunc){
-      return Util.getValue(this.form, 'zoneGuardList', []).concat(Util.getValue(this.form, 'zoneDoorList', [])).map(zoneCategory => {
-        zoneCategory.zoneCategoryPK.categoryId = getDummyKeyFunc()
-        return zoneCategory
-      })
-    },
     async onSaving() {
-      let dummyKey = -1
+      const cateTypes = CATEGORY.getTypes(true).filter(e => e.value == this.form.categoryType).map(e => e.text)
       const entity = {
-        categoryId: this.form.categoryId || dummyKey--,
-        categoryCd: this.form.categoryCd,
+        updateKey: this.form.categoryId || null,
+        ID: this.form.categoryCd,
         categoryName: this.form.categoryName,
-        categoryType: this.form.categoryType,
-        extValue: {},
+        categoryType: cateTypes.length > 0 ? cateTypes[0] : null,
         description: this.form.description,
-        display: {
-          shape: `${this.form.displayShape}`,
-          color: ColorUtil.colorCd4display(this.form.displayColor),
-          bgColor: ColorUtil.colorCd4display(this.form.displayBgColor),
-        },
-        zoneCategoryList: this.structZoneCategory(() => dummyKey--)
+        shape: `${this.form.displayShape}`,
+        color: ColorUtil.colorCd4display(this.form.displayColor),
+        bgColor: ColorUtil.colorCd4display(this.form.displayBgColor),
+        guardIDs: Util.getValue(this.form, 'zoneGuardList', []).join(";"),
+        doorIDs: Util.getValue(this.form, 'zoneDoorList', []).join(";"),
       }
-      ExtValueHelper.getExtValueKeys(APP.CATEGORY).forEach(key => entity.extValue[key] = this.form[key])
+      
+      ExtValueHelper.getExtValueKeys(APP.CATEGORY).forEach(key => {
+        if (this.form[key]) {
+          entity[key] = this.form[key]
+        }
+      })
+
       this.oldType = this.form.categoryType
       this.oldShape = this.form.displayShape
       this.oldColor = this.form.displayColor
       this.oldBgColor = this.form.displayBgColor
-      return await AppServiceHelper.bulkSave(this.pAppServicePath, [entity])
+
+      return await AppServiceHelper.save2(this.pAppServicePath, entity)
     },
     async onSaved(){
       const categoryList = this.categories.filter(category => category.systemUse == 0)

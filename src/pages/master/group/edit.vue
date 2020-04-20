@@ -120,23 +120,38 @@ export default {
     },
     async onSaving() {
       const entity = {
-        groupId: this.form.groupId || -1,
-        groupCd: this.form.groupCd,
+        updateKey: this.form.groupId || null,
+        ID: this.form.groupCd,
         groupName: this.form.groupName,
         ruby: this.form.ruby,
-        extValue: {},
         description: this.form.description,
-        display: {
+        display: null,
+        extValue: null,
+      }
+
+      if (this.form.displayShape && this.form.displayColor && this.form.displayBgColor) {
+        entity.display = {
           shape: `${this.form.displayShape}`,
           color: ColorUtil.colorCd4display(this.form.displayColor),
           bgColor: ColorUtil.colorCd4display(this.form.displayBgColor),
-        },
+        }
+        entity.display = ExtValueHelper.jsonStringfyAndFormatCSV(entity.display)
       }
-      ExtValueHelper.getExtValueKeys(APP.GROUP).forEach(key => entity.extValue[key] = this.form[key])
+
+      const extValue = {}
+      ExtValueHelper.getExtValueKeys(APP.GROUP).forEach(key => {
+        if (this.form[key]) {
+          extValue[key] = this.form[key]
+        }
+      })
+      if (Object.keys(extValue).length > 0) {
+        entity.extValue = ExtValueHelper.jsonStringfyAndFormatCSV(extValue)
+      }
+
       this.oldShape = this.form.displayShape
       this.oldColor = this.form.displayColor
       this.oldBgColor = this.form.displayBgColor
-      return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
+      return await AppServiceHelper.save2(this.appServicePath, entity)
     },
   },
 }

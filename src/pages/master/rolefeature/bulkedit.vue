@@ -52,6 +52,12 @@ export default {
     await StateHelper.load('feature')
   },
   methods: {
+    async onSaving() {
+      await this.$refs.bulkEdit.bulkSave2()
+    },
+    getConf() {
+      return {allRejectionLabel: this.$i18n.tnl('label.allRejection')}
+    },
     onRestruct(entity, dummyKey){
       let keys = null
       if(Util.hasValue(entity.updateKey) && entity.updateKey.split){

@@ -667,7 +667,7 @@ export default {
             endTime: percent == 100? moment().startOf('days').add(toSecond, 's').format('HH:mm'): moment(stay.end).format('HH:mm'),
             time,
             percent,
-            categoryName: findCategory? findCategory.categoryName: this.$i18n.tnl('label.other'),
+            categoryName: findCategory? this.getDispCategoryName(findCategory): this.$i18n.tnl('label.other'),
             categoryBgColor: findCategory? ColorUtil.colorCd4display(findCategory.bgColor): ColorUtil.colorCd4display(this.otherColor),
             areaBgColor: findArea? ColorUtil.getStackColor(areaIndex): this.otherColor,
             areaName: findArea? findArea.areaName: this.$i18n.tnl('label.other'),

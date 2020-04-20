@@ -517,6 +517,7 @@ export const ALERT_STATE = {
   MAP: 'map',
   LIST: 'list',
   WHOLE: 'whole',
+  GUEST: 'guest',
   MAIL: 'mail',
   LED: 'led',
 }
@@ -632,7 +633,7 @@ export const SETTING = {
   PASSWORD: 'password',
   SELECT: 'select',
   OTHER_CATEGORY: 'OTHER_CATEGORY',
-  DATE_NOTATION: 'YYYY-MM-DD HH:mm:ss',
+  DATE_NOTATION: 'YYYY/MM/DD HH:mm:ss', // ハイフォンはIE11非対応
   getOptions(){
     return [
       {text: i18n.tnl('label.string'), value: 'string'},
@@ -1013,7 +1014,7 @@ export const MENU = [
       path: 'toilet',
       icon: 'toilet',
     },
-    ]
+  ]
   },
   {
     key: 'master',
@@ -1237,7 +1238,17 @@ export const MENU = [
         path: 'planActual',
         icon: 'chart-bar',
       },
-    ]
+      {
+        key: 'attendanceSum',
+        path: 'attendanceSum',
+        icon: 'clock',
+      },
+      {
+        key: 'attendanceDetail',
+        path: 'attendanceDetail',
+        icon: 'clock',
+      },
+      ]
   },
   {
     key: 'historyTitle',

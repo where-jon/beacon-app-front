@@ -145,6 +145,23 @@ export default {
       this.form.csvFile = null
       window.scrollTo(0, 0)
     },
+    async bulkSave2() {
+      if (!this.form.csvFile) {
+        throw new Error(this.$t('message.emptyFile'))
+      }
+      const getConf = this.$parent.$options.methods.getConf
+      let formData = new FormData()
+      formData.append('csvFile', this.form.csvFile)
+      if (getConf) {
+        const conf = getConf.call(this.$parent)
+        formData.append('conf', JSON.stringify(conf))
+      }
+      const charSet = CHAR_SET.find(e => e.id == this.csvCharSet)
+      let result = await AppServiceHelper.bulkSave2(this.appServicePath, formData, charSet.name, UPDATE_ONLY_NN.NONE, IGNORE.ON)
+      if(this.$parent.$options.methods && this.$parent.$options.methods.onSaved) {
+        this.$parent.$options.methods.onSaved.call(this.$parent)
+      }
+    },
     async bulkSave(option) {
       if (!this.form.csvFile) {
         throw new Error(this.$t('message.emptyFile'))

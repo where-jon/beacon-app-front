@@ -185,7 +185,7 @@ export default {
     async onSaved(){
     },
     async onSaving() {
-      const txId = Util.hasValue(this.form.txId)? this.form.txId: -1
+      const updateKey = Util.hasValue(this.form.txId)? this.form.txId: -1
       switch(APP.TX.BTX_MINOR) {
       case 'minor':
         this.form.btxId = this.form.minor
@@ -196,13 +196,22 @@ export default {
       const disp = this.form.dispPos |  this.form.dispPir | this.form.dispAlways
       const entity = {
         ...this.form,
-        txId,
+        updateKey,
         disp,
-        txSensorList: this.form.sensorId? [
-          {txSensorPK: {sensorId: this.form.sensorId}}
-        ]: null
       }
-      return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
+
+      if (this.form.locationId) {
+        entity.locationCd = this.locations.find(e => e.locationId == this.form.locationId).locationCd
+      }
+
+      const sensorOptions = this.sensorOptionsTx
+      const sensorNames = []
+      if (this.form.sensorId) {
+        const opt = sensorOptions.filter(opt => opt.value == this.form.sensorId)[0]
+        sensorNames.push(opt.text)
+      }
+      entity.sensorNames = sensorNames.join(";")
+      return await AppServiceHelper.save2(this.appServicePath, entity)
     },
   }
 }

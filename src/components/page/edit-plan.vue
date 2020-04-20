@@ -299,6 +299,23 @@ export default {
         this.isDateTimeEmpty = (!this.plan.date)
         if (!this.isDateTimeEmpty) this.isDateTimeEmpty = (!this.plan.timeRange)
       }
+      if (!this.isDateTimeEmpty) {
+        if (this.plan.zoneId) {
+          this.isDuplicate('zones', this.plan.zoneId, (v) => this.isZoneDuplicate = v)
+        }
+        if (this.plan.locationId) {
+          this.isDuplicate('locations', this.plan.locationId, (v) => this.isLocationDuplicate = v)
+        }
+        if (this.plan.potThingId) {
+          this.isDuplicate('pots', this.plan.potThingId, (v) => this.isPotThingDuplicate = v)
+        }
+        this.isPotPersonDuplicate = false
+        this.plan.potPersonIds.map(id => {
+          this.isDuplicate('pots', id, (v) => {
+            if (!this.isPotPersonDuplicate) this.isPotPersonDuplicate = v
+          })
+        })
+      }
     },
     onChangeToggle(e) {
       this.plan.isLocation = !this.plan.isLocation

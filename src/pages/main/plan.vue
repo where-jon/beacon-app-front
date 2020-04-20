@@ -88,7 +88,7 @@
           </b-form-row>
         </b-form>
       </b-row>
-      <plan-calendar :id="id" :name="name" :appServicePath="appServicePath" :planMode="planMode" :headerOpts="headerOpts" :viewModel="viewModel" :dragHandler="dragHandler" :clickScheduleEvent="clickScheduleEvent" :doCompare="doCompare" :holidays="holidays" :working="working" @doEdit="doEdit" @doDelete="onDeleteSchedule"/>
+      <plan-calendar :id="id" :name="name" :appServicePath="appServicePath" :planMode="planMode" :headerOpts="headerOpts" :viewModel="viewModel" :dragHandler="dragHandler" :clickScheduleEvent="clickScheduleEvent" :doCompare="doCompare" :holidays="holidays" :working="working" :doUpate="doUpate" @doEdit="doEdit" @doDelete="onDeleteSchedule"/>
       <div>
         <b-modal v-model="showEdit" hide-footer :title="$t('label.schedule')" header-class="editPlanHeader">
           <edit-plan :id="id" :name="name" :appServicePath="appServicePath" :currentUser="currentUser" :locale="locale" :plan="targetPlan" :zoneOpts="zoneOpts" :locationOpts="locationOpts" :potPersonOpts="filterPotPersonOpts" :potThingOpts="potThingOpts" :vueSelected="editVueSelected" @doneSave="onEditSave" @delete="onEditDelete" @errorMessage="onEditError"/>
@@ -123,6 +123,7 @@ import { TimeMove } from '../../sub/calendar/handler/time/move'
 import { TimeResize } from '../../sub/calendar/handler/time/resize'
 import {getLogin} from '../../sub/helper/base/LocalStorageHelper'
 import alert from '../../components/parts/alert.vue'
+import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 
 export default {
   components: {
@@ -139,6 +140,7 @@ export default {
       currentUserPotIds: [],
       message: '',
       locale: null,
+      doUpate: false,
 
       clickScheduleEvent: null,
 
@@ -284,23 +286,22 @@ export default {
         if (this.planMode != newVal.value) {
           this.doCompare = false
           const picker = this.$refs.datePicker
-          let dt = new Date(picker.value)
           if (newVal.value == 'normal') {
+            this.today = moment().day(1).set({hour:0,minute:0,second:0,millisecond:0}).toDate()
             this.filterTypeOpts = this.normalFilterTypeOpts
             this.datePickerType = 'week'
             this.datePickerFormat = this.datePickerFormatWeek
             this.datePickerPlaceholder = this.datePickerPlaceholderWeek
-            dt = moment(dt).day(1).toDate()
-            this.headerOptsWeekSchedule = this.getNormalHeader(moment(dt).day(0).toDate())
+            this.headerOptsWeekSchedule = this.getNormalHeader(moment(this.today).day(0).toDate())
             this.headerOpts = this.headerOptsWeekSchedule
           } else {
+            this.today = moment().set({hour:0,minute:0,second:0,millisecond:0}).toDate()
             this.filterTypeOpts = this.mRoomFilterTypeOpts
             this.datePickerType = 'date'
             this.datePickerFormat = this.datePickerFormatDay
             this.datePickerPlaceholder = this.datePickerPlaceholderDay
             this.headerOpts = this.headerOptsMeetingRoom
           }
-          picker.emitInput(dt)
           this.vueSelected = {
             filterType: newVal.value == 'normal' ? null : 'area',
             filter: null,
@@ -391,6 +392,10 @@ export default {
   async mounted() {
     this.locale = LocaleHelper.getSystemLocale()
     domevent.on(document.body, 'mousedown', this.onMouseDown, this)
+    const tgc = document.getElementById('tgc')
+    if (tgc) {
+      domevent.on(tgc, 'scroll', this.onScroll, this)
+    }
     if (!this.currentUser) {
       this.currentUser = await this.getCurrentUser()
       if (this.currentUser.isAd) {
@@ -416,6 +421,12 @@ export default {
         this.clickScheduleEvent = null
       }
     },
+    onScroll(event) {
+      event.stopPropagation()
+      if (this.clickScheduleEvent) {
+        this.clickScheduleEvent = null
+      }
+    },
     // マスタ
     async loadMaster() {
       this.areaOpts = this.areas.map(area => {
@@ -430,9 +441,10 @@ export default {
       this.groupOpts = this.groups.map(e => {
         return {value: e.groupId, label: e.groupName}
       })
-      this.categoryOpts = this.categories.map(cate => {
-        return {value: cate.categoryId, label: cate.systemUse ? cate.description : cate.categoryName}
-      })
+      this.categoryOpts = MasterHelper.getOptionsFromState('category',
+        category => MasterHelper.getDispCategoryName(category),
+        true
+      )
       this.potOpts = this.pots.map(e => {
         return {value: e.potId, label: e.potName}
       })
@@ -446,7 +458,7 @@ export default {
         return z.categoryList.map(cate => cate.categoryCd=='MEETING_ROOM').includes(true)
       }).map(zone => {
         return {value: zone.zoneId, label: zone.zoneName}
-      })
+      }).sort((a, b) => a.value < b.value ? -1 : 1)
     },
     onClickNavi(e) {
       var action = e.target.dataset ? e.target.dataset.action : e.target.getAttribute('data-action')
@@ -538,6 +550,7 @@ export default {
           this.viewModel = result[1]
           this.dragHandler = new Drag({distance: 10}, document.getElementById('calendar-layout'))
           this.createHandlers()
+          this.doUpate = moment()
         }
       }
       catch(e) {
@@ -824,7 +837,6 @@ export default {
   font-weight: bold;
 }
 .tui-full-calendar-week-container {
-  width: 100%;
   height: inherit;
   display: inline-block;
   font-size: 10px;

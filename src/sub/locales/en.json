@@ -80,6 +80,7 @@
     "status": "Status",
     "less": "Less",
     "more": "More",
+    "overview": "Overview",
     
     "---------------- App exbeacon ---------------":"",
 
@@ -97,6 +98,7 @@
     "locationList": "Location list",
     "develop": "Developer",
     "env": "Environment Variables",
+    "execTask": "Batch execution",
     "detectedProhibitZone": "Detected ProhibitZone",
     "detectedLostZone": "Detected LostZone",
     "exbId": "EXB ID",
@@ -192,6 +194,7 @@
     "led_type3": "LED(Type3)",
     "ambientLight":"Brightness",
     "soundNoise":"Noise",
+    "led": "LED",
     "meditag": "MEDiTAG",
     "magnet": "Magnet",
     "omr-env": "Environmental sensor",
@@ -218,26 +221,25 @@
     "participant": "Participant",
     "registeredPerson": "Registered person",
     "indicator": "Indicator",
-    "reservationRate": "Reserve rate",
-    "reservationHours": "Reserve hours",
-    "workingHours": "Working hours",
-    "operatingRate": "Usage rate",
-    "operatingHours": "Usage hours",
-    "reserveOperatingRate": "Reserved usage rate",
-    "reserveOperatingHours": "Reserved usage hours",
-    "unreserveOperatingRate": "Unreserved usage rate",
-    "unreserveOperatingHours": "Unreserved usage hours",
-    "emptyReservationCount": "Unused reserve count",
+    "reservationRate": "Reservation rate",
+    "reservationHours": "Reservation time",
+    "workingHours": "Working time",
+    "operatingRate": "Operation rate",
+    "operatingHours": "Operation time",
+    "reserveOperatingRate": "Operation rate in reservation",
+    "reserveOperatingHours": "Operation time in reservation",
+    "unreserveOperatingRate": "Non-reserved operation rate",
+    "unreserveOperatingHours": "Non-reserved operation time",
+    "emptyReservationCount": "Number of empty reservations",
     "planNormalMode": "Normal",
     "planMeetingRoomMode": "Meeting room",
     "syncWithOutlook": "Sync with Outlook",
     "capacity": "Capacity",
-    "normalGraph": "Graph",
     "planned": "Planned",
     "noPlan": "No plan",
     "used": "Used",
     "noUse": "No use",
-    "useRatio": "useRatio",
+    "useRatio": "Operation rate",
     "sunday": "sunday",
     "monday": "monday",
     "tuesday": "tuesday",
@@ -335,7 +337,7 @@
     "total_enter": "Total enter",
     "elapsed_time": "Records of no accidents",
 
-    "toiletStatus": "Toilet status",
+    "toiletStatus": "Toilet empty display",
     "toilet": "Toilet",
     "male": "Male",
     "female": "Female",
@@ -343,6 +345,10 @@
     "multip": "Multipurpose",
     "empty": "｜",
     "occupy": "ー",
+
+    "guestAccess": "Vistor access management",
+
+    "meeting_room": "Meeting room",
 
     "password": "Password",
     "passwordCurrent": "Current password",
@@ -422,6 +428,7 @@
     "changePassword": "Change password",
 
     "system": "System setting (for administration)",
+    "systemJson": "System setting(definition)",
     "systemChild": "System settings",
 
     "region": "Region",
@@ -494,7 +501,13 @@
     "stay": "Stay",
     "absence": "Absence",
     "graph": "Stay rate graph",
+    "normalGraph": "Graph",
     
+    "stayRatioAbsent1Time": "Absence 1 hour",
+    "stayRatioAbsent1Ratio": "Absence 1 rate",
+    "stayRatioAbsent2Time": "Absense 2 hours",
+    "stayRatioAbsent2Ratio": "Absense 2 rate",
+
     "positionSummary": "Position summary",
 
     "processSum": "Process management",
@@ -615,7 +628,6 @@
     "positionMap": "Position(Map)",
     "pirMenu": "Usage",
     "thermohumidityMain": "Thermohumidity(Main)",
-    "led": "LED",
     "masterRegion": "Region",
     "masterArea": "Area",
     "masterExb": "EXB",
@@ -646,6 +658,7 @@
     "sumUtilizationRatio": "Used ratio",
     "sumNumUsers": "Used number",
     "history": "History",
+    "targetZone": "Target zone",
     "meta": "Meta",
     "metaSetting": "Setting",
     "currentUser": "Current User",
@@ -722,8 +735,6 @@
     "objectNum": "Object:",
     "locationTypeName": "Location type name",
 
-    "guestAccess": "Guest access",
-
     "---------------- Pot Extension sample ---------------": "",
     "sex": "Sex",
     "address": "Address",
@@ -742,11 +753,32 @@
     "planActual": "Plan result compare",
     "actual": "Actual",
     "planUserNum": "Planed user num",
-    "userNum": "User num"
+    "userNum": "User num",
+
+    "startDt": "Start time",
+    "endDt": "End time",
+    "receivedtime": "Transmission time",
+    "potCategoryType": "Category",
+    "posId": "Positioning ID",
+    "planId": "Plan ID",
+    "planDetailId": "Detailed plan ID",
+    "basetime": "Standard time"
 
   },
   "config": {
     "APP": {
+      "SAAS_DOMAIN": "SAAS domain::Set up the SAAS domain string to continue tenantCd of url. ",
+      "POSITION_WITH_AREA": "Position(list) display screen area column display::The area column is displayed on the position (list) display screen. true: Display, false: Hide.",
+      "SPLIT_UPLOAD_SIZE": "Division upload size threshold（Byte）:: Set up the division upload size threshold（Byte）. ",
+      "SPLIT_UPLOAD_SIZE_IE": "Division upload size threshold（Byte）（for IE）::Set up the division upload size threshold（Byte）for IE",
+      "MAX_IMAGE_SIZE": "Maximum image size that can be uploaded(Byte)::Set up the maximum image size that can be uploaded(Byte).",
+      "MAX_IMAGE_ZIP_SIZE": "Maximum image zip size(Byte)::Set up the maximum image zip size(Byte)",
+      "AREA_THUMBNAIL_MAX": "Maximum width / height for thumbnail resizing (area)::Set up the the maximum width / height for thumbnail resizing (area)",
+      "POT_THUMBNAIL_MAX": "Maximum width / height for thumbnail resizing(pot)::Set up the maximum width / height for thumbnail resizing (pot)",
+      "POSITION_SUMMARY_START": "Positioning csv download start time（hours）::Set up the positioning csv download（hours）.",
+      "POSITION_SUMMARY_END": "Positioning csv download end time（hours）:: Set up the positioning csv download end time（hours）",
+      "POSITION_SUMMARY_INTERVAL": "Positioning csv download interval（minutes）::Set up the positioning csv download interval（minutes）",
+      "POSITION_SUMMARY_RECEIVE_COUNT": "Transmission frequency threshold in positioning ::Set up the transmission frequency threshold in positioning.",
       "COMMON": {
         "VERSION": "Version information::Set up the version information.",
         "TIME_ZONE": "Time Zone::Set up the time zone to determine midnight.",
@@ -759,7 +791,10 @@
       "MENU": {
         "SHOW_MENU_LINK": "Menu link::Add a link to the menu. If an image file is specified, the link will be an image file link.",
         "SHOW_MENU_LINK_URL": "Menu link URL::Set up the link URL that was set in the Menu link.",
-        "TOP_PAGE": "Top page::Set up the Top screen to be display after log in."
+        "TOP_PAGE": "Top page::Set up the Top screen to be display after log in.",
+        "LOGIN_PAGE": "login page path::Set up the login page path. ",
+        "AZLOGIN_PAGE": "AD login page path::Set up the AD login page path.",
+        "ERROR_PAGE": "Error page path::Set up the error page path."
       },
       "GATEWAY": {
         "LOST_TIME": "Not received status decision time(Gateway):: Devices which have passed the set time from the last received time will be lost.Set up in milliseconds.",
@@ -793,23 +828,28 @@
         "PROHIBIT_ALERT": "Use prohibited area::Use prohibited alert area",
         "PROHIBIT_GROUP_ZONE": "Prohibited area inaccessible group setting::Set up the group CD with zone CDs that can not enter in the prohibited area.",
         "LOST_ALERT": "Use critical parts carrying out detection alert::Set up the method for notifying the critical parts carrying out detection alert. Possible to set up values are{LOST_ALERT}",
+        "LOST_ALERT_TIME": "Important goods removal detection alert threshold::Specify the conditions for alerting detection of important goods removal detection. Notifies when the threshold (milliseconds) is exceeded after moving from the specified zone.",
         "LOST_GROUP_ZONE": "Critical parts group setting::Set up the group CD with zone CDs to be handled a critical parts.",
         "USE_LEGEND": "Use legend::Display the legend on the position (map) screen.★",
         "SHOW_DETECTED_COUNT": "Display the number of detections::Display the number of detected device on the position(map)screen.★",
+        "SHOW_TOILET": "Display toilet information::Display the status of toilet empty on the position(map)★",
         "SHOW_TX_NO_OWNER": "Display Tx not related to person & thing::Display Tx not relate to person & thing",
         "WITH": {
           "CATEGORY": "Use category in position (map) screen::Display category in position (map) screen",
           "GROUP": "Use group in position (map) screen::Display group in position (map) screen"
         },
         "PROHIBIT": {
-          "DUPLICATE_MAIL_TIME": "Duplicate alert notification limit (E-mail)::Prevents notification by e-mail when an alert with the same content is sent within the set up time. Set up in milliseconds."
+          "DUPLICATE_MAIL_TIME": "Duplicate alert notification limit (E-mail)::Prevents notification by e-mail when an alert with the same content is sent within the set up time. Set up in milliseconds.",
+          "LED_ON_TIME": "Absense LED lighting time::Set up the absense LED lighting time(milliseconds). ",
+          "LED_STOP_TIME": "Absense LED lighting end time::Set up the lighting end time (millisecond) of the absence LED."
         },
         "LOST": {
           "DUPLICATE_MAIL_TIME": "Duplicate alert notification limit (E-mail)::Prevents notification by e-mail when an alert with the same content is sent within the set up time. Set up in milliseconds."
         },
         "$PLUGIN": {
           "FILTER": "Use detailed filter on position screen::Use plug-in to display detailed filter on position screen"
-        }
+        },
+        "HIDE_TIME": "Absense interval setting::Set up the interval (milliseconds) to be considered as absent"
       },
       "SENSOR": {
         "TX_SENSOR": "Tx sensor type::Set up the type of Tx sesor. Possible to set up value are as follows.★{SENSOR}",
@@ -855,7 +895,8 @@
         "SENSOR": "Type of EXBeacon sensor::Set up the type of EXBeacon sensor.The possible to set up values are as follows. ★{SENSOR}",
         "DEVICEID_TYPE": "Use device ID and device ID (hexadecimal) on EXBeacon screen::Use device ID, device ID (hexadecimal) or both on EXBeacon screen. Set up deviceId, deviceIdX, or both",
         "MULTI_SENSOR": "Set up multiple sensors in EXBeacon::Multiple sensors can be set on the EXBeacon screen.",
-        "SENSOR_MAX": "Maximum number of sensors set in EXBeacon::Set up the maximum number of sensors that can be set on the EXBeacon screen."
+        "SENSOR_MAX": "Maximum number of sensors set in EXBeacon::Set up the maximum number of sensors that can be set on the EXBeacon screen.",
+        "WITH": "Items to be added to ExService MasterRequestExService::Set up items to be added to MasterRequest in a character string list (separated by commas)."
       },
       "LOCATION": {
         "WITH": "Items used in the location layout screen::Set up the items used in the location layout screen. Possible to set up values ​​are ★{LOCATION}",
@@ -884,6 +925,12 @@
         "MULTI_TX": "Register multiple Tx to the object :: Enable multiple Tx to be registered on the object screen",
         "TX_MAX": "Maximum number of Tx registered in the object :: Set up the maximum number of Tx that can be registered in the object screen.",
         "EXT_DEF": "Expansion Item :: Defines the extension items that can be set for the object in JSON format."
+      },
+      "OTHER": {
+        "WITH": "Items used on the thing (other) screen::Set up the items to be used on the thing (other) screen. The values that can be set are as follows.★{POT}",
+        "MULTI_TX": "Register multiple Tx in thing(other)::Multiple Tx can be registered on the thing (other) screen.",
+        "TX_MAX": "Maximum number of Tx to be registered in the thing (other)::Set the maximum number of Tx that can be registered on the Things(other) screen.",
+        "EXT_DEF": "Product (other) extension items::Define the extension items that can be set for thing (other) in JSON format."
       },
       "CATEGORY": {
         "TYPES": "Types that can be selected on the category details screen :: Set up the types that can be used on the category details screen. Possible to set up values ​​are{CATEGORY_TYPES}",
@@ -921,7 +968,12 @@
         "UNIT_HOUR": "Display setting for stay time summary (hour)::If the maximum value in axis units exceeds the set second, the display of stay time total is displayed in time units.",
         "UNIT_MINUTE": "Display setting for stay time summary (minute)::If the maximum value in axis units exceeds the set second, the display of stay time total is displayed in time units.",
         "SCALE_TIMES": "Stay rate screen graph scale time (hours)::Set up time (hours) to be displayed on stay rate screen graph scale (ignore if not match).",
-        "GRAPH_LIMIT": "Actual value of daily stay analysis graph (%) :: If the data time for the total time to be aggregated is less than the set percentage, it will not be displayed on the graph."
+        "GRAPH_LIMIT": "Actual value of daily stay analysis graph (%) :: If the data time for the total time to be aggregated is less than the set percentage, it will not be displayed on the graph.",
+        "OTHER_COLOR": "Stay rate and other colors::Set up the color of the stay rate in other cases.",
+        "PROCESS_ZONE_IDS": "Zone ID list for stay time calculation::Set up the zone ID for total stay time in a numerical list (separated by commas).",
+        "WORKING_END": "Work end time for stay time calculation::Set up the work end time for total stay time in hhmm format.",
+        "WORKING_HOURS_PER_DAY": "Working hours for total stay time::Set up the working hours (hours) per day for total stay time.",
+        "WORKING_START": "Work start time for stay time aggregation::Set up the work start time for total stay time in hhmm format."
       },
       "TX_MON": {
         "WITH": "Item used Tx monitoring screen:: Set up the item used Tx monitor screen. The possible to set up values are as follows.★{TX_MON}",
@@ -971,7 +1023,13 @@
           "USE_MEETING_ROOM": "Transactional analysis per conference room ::Set up whether to do exchange analysis per conference room",
           "EXCLOUD_RAWLOG_DIR": "File path syslog:: Set up the file path to the mounted syslog.",
           "BLANK_RANGE": "Continues transaction time::Set up the transaction time of the transactional analysis batch in milliseconds",
-          "MIN_RANGE": "Minimum transcation time::Set up the minimum transaction time of the transactional analysis batch in milliseconds."
+          "MIN_RANGE": "Minimum transcation time::Set up the minimum transaction time of the transactional analysis batch in milliseconds.",
+          "UNIT_HOUR": "Aggregation unit (time) of stay time aggregation::When the maximum value of the axis unit exceeds the specified seconds, the display of total stay time is displayed in units of hours.",
+          "UNIT_MINUTE": "Total unit of stay time total (minutes)::When the maximum value in the axis unit exceeds the specified seconds, the display of the total stay time is displayed in minutes."
+        },
+        "PROXIMITY_TASK": {
+          "BLANK_RANGE": "Time when the exchange time is considered broken::Set up the time (milliseconds) for which the AC time is considered to be interrupted.",
+          "MIN_RANGE": "Minimum exchange time::Set up the minimum AC time (milliseconds)."
         },
         "WORKLOAD": {
           "PAUSE_TIMEOUT": "Time for judging interruption of AC tabulation :: If the OUT time has not been updated for the specified number of seconds, it is considered to be interrupted."
@@ -992,7 +1050,8 @@
       },
       "SVCONLY": {
         "EXCLOUD": {
-          "AUTH_HEADER": "EXCloud API key::Set up the API key when using EXCloud API. The content is not displayed because it is confidential information. Only setting is possible."
+          "AUTH_HEADER": "EXCloud API key::Set up the API key when using EXCloud API. The content is not displayed because it is confidential information. Only setting is possible.",
+          "TX_REG": "Use EXCloud TX registration API::Whether to use EXCloud's TX registration API."
         }
       },
       "ENTER": {
@@ -1061,9 +1120,57 @@
       },
       "TOILET": {
         "AUTO_RELOAD": "Perform automatic reload on the toilet full vacancy display screen::Automatic reloading is performed on the toilet vacancy display screen."
+      },
+      "PROXIMITY": {
+        "UNIT_HOUR": "Aggregation unit (time) of stay time aggregation::When the maximum value of the axis unit exceeds the specified seconds, the display of total stay time is displayed in units of hours.",
+        "UNIT_MINUTE": "Total unit of stay time total (minutes)::When the maximum value in the axis unit exceeds the specified seconds, the display of the total stay time is displayed in minutes."        
+      },
+      "PROCESS_SUM": {
+        "TIME": {
+          "SUCCESS_COMPLETE": "Normal end time of process management screen (seconds)::If the last step is longer than the set time, it is regarded as a normal end.",
+          "LATE": "Excess error time of process control screen (seconds)::If the time other than the last step is longer than the set time, it is regarded as an excess error."
+        }
       }
     },
     "DISP": {
+      "FONT_ICON_ADJUST_SCALE": "Font size factor for text in icon",
+      "IS_SCALE_ICON_TEXT": "Auto-scale setting of text in icon::If set to true, the text in the icon will be automatically scaled.",
+      "DUMMY_ICON_TEXT": "Dummy text when auto scaling is not set::Set the text to be displayed in the icon when the text auto scale setting in the icon is set to false.",
+      "MAP_FIT": "Map fit settings::Whether the map fits within the screen display range.width or height or both",
+      "MAP_FIT_MOBILE": "Map fit settings (for mobile)::Whether the map fits within the screen display range.width or height or both",
+      "TEMPERATURE_LINE_COLOR": "Temperature graph line color",
+      "HUMIDITY_LINE_COLOR": "Line color of humidity graph",
+      "PIR_LINE_COLOR": "Line color of human sensor graph",
+      "THERMOPILE_LINE_COLOR": "Line color of thermopile sensor graph",
+      "LED_LINE_COLOR": "LED sensor graph line color",
+      "MAGNET_LINE_COLOR": "Line color of magnet sensor graph",
+      "PRESSURE_LINE_COLOR": "Line color of pressure sensor graph",
+      "AMBIENT_LIGHT_COLOR": "Line color of illuminance sensor graph",
+      "SOUND_NOISE_COLOR": "Line color of noise sensor graph",
+      "H_BLOOD_PRESSURE_LINE_COLOR": "MEDiTAG sensor graph line color (high)",
+      "L_BLOOD_PRESSURE_LINE_COLOR": "MEDiTAG sensor graph line color (low)",
+      "HEART_RATE_LINE_COLOR": "MEDiTAG sensor graph line color (heart rate)",
+      "STEP_LINE_COLOR": "Line color of step count graph",
+      "DOWN_COUNT_LINE_COLOR": "Line color of falling number graph",
+      "SUM_STACK_BORDER_COLOR": "Aggregation (stacking) line color",
+      "BLOOD_PRESSURE_MAX": "Blood pressure maximum scale",
+      "BLOOD_PRESSURE_STEP": "Blood pressure interval",
+      "HEART_RATE_MAX": "Heart rate maximum scale",
+      "HEART_RATE_STEP": "Heart rate scale interval",
+      "THERMOPILE_S_SIZE": "Size of thermopile icon S",
+      "THERMOPILE_M_SIZE": "Thermopile icon M size",
+      "THERMOPILE_L_SIZE": "Thermopile icon L size",
+      "TXDETAIL_DIFF": "Display position difference of Tx details::Distance from left edge of popup to center of balloon",
+      "TXDETAIL_POPUP_SIZE": "Tx detail display popup height",
+      "TXSENSOR_POPUP_SIZE": "Height of Tx sensor display pop-up",
+      "TXMEDITAG_POPUP_SIZE": "TxMEDiTAG display popup height",
+      "INSTALLATION.FONT_SIZE": "Text size of RSSI icon on installation support screen",
+      "PROHIBIT": {
+        "TWINKLE_TIME": "Blink interval at detection of prohibited area :: Set up the blink interval in milliseconds.",
+        "FONT_COLOR": "Forbidden area display text color.",
+        "FONT_SIZE": "Character size of prohibited area display",
+        "BG_COLOR": "Background color when displaying prohibited areas :: Set up including alpha value."
+      },
       "MENU": {
         "SHOW_NAV": "Display Top menu::Display menu at the top of the screen.",
         "SHOW_SIDEBAR": "Display side menu.:: Display menu on the left of the screen.",
@@ -1081,7 +1188,23 @@
         "ALPHA": "Absent time Tx Icon Transmissive Value::Set up the transmit value when Tx is absence.Set up as a decimal value from 0 (transparent) to 1 (opaque).",
         "LOST_ALPHA": "Absent Tx Icon Transmissive Value::Set up the transmit value when Tx is absent. Set up it as a decimal value from 0 (transparent) to 1 (opaque).",
         "DISPLAY_PRIORITY": "Tx icon display color::Set up the color to be applied to the Tx icon display color from the display color set in the category or group. Possible to set up values are {COLOR_TYPE}",
-        "ABSENT_ZONE_DISPLAY_TYPES": "Type of Tx icon to be displayed for absence display zone::undetected: undetected, lost:lost, absent:absent zone"
+        "ABSENT_ZONE_DISPLAY_TYPES": "Type of Tx icon to be displayed for absence display zone::undetected: undetected, lost:lost, absent:absent zone",
+        "R_ABSOLUTE": "Match Tx radius to screen resolution",
+        "STROKE_WIDTH": "Default border width when displaying Tx",
+        "DIV_2": "Magnification to shift when arranging two Txs vertically and horizontally when they overlap",
+        "DIV_3": "Magnification to be shifted when three are arranged side by side when Tx overlaps",
+        "HORIZON": "Number of columns when displaying TX icon tiles",
+        "VERTICAL": "Number of lines when displaying TX icon tiles",
+        "FIXED_POS": {
+          "APPLY_COLOR": "Apply fixed display settings (APP.FIXED_POS): Set up true if you want to apply the settings of colors and shapes set in: APP.FIXED_POS to fixed display.",
+          "SHAPE": "Fixed display Tx icon shape :: Set up the value of SHAPE of Constants.",
+          "R": "Fixed display Tx icon radius",
+          "COLOR": "Fixed display Tx icon color",
+          "IN_ZONE_BGCOLOR": "Color in fixed zone of fixed display Tx icon",
+          "OUT_ZONE_BGCOLOR": "Color outside fixed zone of fixed display Tx icon",
+          "UNDETECT_BGCOLOR": "Undetected color of fixed display Tx icon",
+          "LOST_BGCOLOR": "Fixed display Tx icon disappearing color"
+        }
       },
       "TX_NUM": {
         "R": "Tx quantity icon radius :: Set up the size of Tx displayed on the position (map) screen ★",
@@ -1110,7 +1233,9 @@
         "COLOR": "Set up the font color of the icons displayed on the location setting screen. Set up with a color code including #.",
         "MAX_FONT_SIZE": "Icon maximum font of location arrangement setting screen::Set up the maximum font size of the icons displayed on the location setting screen.",
         "BGCOLOR_PATTERN": "Icon background color of place layout setting screen (Tx related)::Set up the background color of the icon associated with Tx displayed on the place setting screen. It can be specified for each location type and sensor type. Set up a color code that includes a value indicating the location type and #, separated by a colon, such as [1: # FFFFFF, 2: # FFFFFF, pir: # FFFFFF, magnet: #FFFFFF]. The following values can be set for the type of sensor.{SENSOR_TYPE}",
-        "BGCOLOR_PATTERN_NOTX": "Icon background color of the location arrangement setting screen (Tx is not related)::Set up the background color of the icons that are not associated with Tx and displayed on the location setting screen. It can be specified for each location type and sensor type. Set up a color code that includes a value indicating the location type and #, separated by a colon, such as [1: # FFFFFF, 2: # FFFFFF, pir: # FFFFFF, magnet: #FFFFFF]. The following values can be set for the type of sensor.{SENSOR_TYPE}"
+        "BGCOLOR_PATTERN_NOTX": "Icon background color of the location arrangement setting screen (Tx is not related)::Set up the background color of the icons that are not associated with Tx and displayed on the location setting screen. It can be specified for each location type and sensor type. Set up a color code that includes a value indicating the location type and #, separated by a colon, such as [1: # FFFFFF, 2: # FFFFFF, pir: # FFFFFF, magnet: #FFFFFF]. The following values can be set for the type of sensor.{SENSOR_TYPE}",
+        "FONT": "EXB icon display font for location setting",
+        "RSSI_BGCOLOR": "EXB icon color for location placement settings"
       },
       "THERMOH": {
         "TOOLTIP_ITEMS": {
@@ -1133,14 +1258,30 @@
         "COLOR": "Temperature & Humidity screen icon text color::Set up the text color of the icon displayed on the Temperature & Humidity screen. Set up with a color code including #", 
         "CALC": "How to calculate icon state of Temperature & Humidity screen::For the icon displayed on the Temperature & Humidity screen, of the discomfort index or the temperature, which numerical value is used to determine the display color is set. Valid when THERMOH_DISP is color.The possible to set up values are as follows. {THERMOH_CALC}",
         "PATTERN": "Icon display pattern of Temperature and Humidity Screen::Set up the display pattern of the icon displayed on the Temperature & Humidity screen. Valid when DISP.THERMOH.DISP is color.The possible to set up  value are as follows.{THERMOH_PATTERN}",
-        "HUMIDITY_PATTERN": "Humidity alert pattern on Temperature & Humidity screen::Set the humidity alert warning pattern to be displayed on the Temperature & Humidity screen. The possible to set up values are as follows.{HUMIDITY_PATTERN}"
+        "HUMIDITY_PATTERN": "Humidity alert pattern on Temperature & Humidity screen::Set the humidity alert warning pattern to be displayed on the Temperature & Humidity screen. The possible to set up values are as follows.{HUMIDITY_PATTERN}",
+        "TOOLTIP_FONT": "Temperature and humidity tooltip font",
+        "DISCOMFORT_HOT": "Discomfort index when displaying temperature and humidity background color when hot",
+        "DISCOMFORT_COMFORT": "Discomfort index when displaying temperature and humidity Background color when hot",
+        "DISCOMFORT_COLD": "Background color when discomfort index cold when displaying temperature and humidity",
+        "FLASH": {
+          "WARN": "Warning icon flashing cycle when displaying temperature and humidity (milliseconds)",
+          "DANGER": "Danger icon blinking cycle when displaying temperature and humidity (milliseconds)"          
+        },
+        "ALPHA": "Alpha value when displaying temperature and humidity::Set the alpha value (transparency) (0: transparent to 1: opaque). Decimal (0.5) can be set.",
+        "TEMPERATURE_MAX": "Temperature / humidity heat map maximum value when displaying temperature / humidity",
+        "TEMPERATURE_MIN": "Temperature / humidity heat map minimum value when displaying temperature / humidity",
+        "TEMPERATURE_RADIUS": "Temperature / humidity heat map diameter when displaying temperature / humidity",
+        "TEMPERATURE_DECIMAL_DIGITS": "Decimal digit of temperature when displaying temperature and humidity (zero padding)"
       },
       "PIR": {
         "R_SIZE": "Icon radius of the human sensor screen::Set up the size of the icon displayed on the human sensor screen.★",
         "BGCOLOR": "Icon background color of the Usage screen::Set the background color of the icon displayed on the Usage screen. Set up the color code including #.",
         "FGCOLOR": "Icon character color of the Usage screen::Set the character color of the icon displayed on the Usage screen. Set the color code including #。",
         "EMPTY_SHOW": "Display an absent icon on the Usage screen::Display an absent icon on the Usage screen",
-        "EMPTY_BGCOLOR": "Absent icon background for motion sensor screen::Set up the background color of the absent icon displayed on the motion sensor screen. Set up the color code including #."
+        "EMPTY_BGCOLOR": "Absent icon background for motion sensor screen::Set up the background color of the absent icon displayed on the motion sensor screen. Set up the color code including #.",
+        "MIN_COUNT": "Minimum count value of presence condition of human sensor",
+        "INUSE_LABEL": "Label key when motion sensor is present",
+        "EMPTY_LABEL": "Label key when no human sensor is present"
       },
       "PRESSURE": {
         "R_SIZE": "Pressure sensor icon radius of the Usage screen::Set up the size of the pressure sensor displayed on the Usage screen.★",
@@ -1148,7 +1289,9 @@
         "BGCOLOR": "Pressure sensor icon background for Usage screen background color::Set the background color of the pressure sensor icon displayed on the Usage screen. Set up the color code including #.",
         "FGCOLOR": "Pressure sensor icon character color of Usage screen::Color of pressure sensor icon displayed on Usage screen. Set up color code including #",
         "EMPTY_SHOW": "Display pressure sensor icon not used in Usage screen::Display unused pressure sensor icon in Usage screen.",
-        "EMPTY_BGCOLOR": "Pressure sensor icon not used for the Usage screen background color::Set up the background color of the unused pressure sensor icon on the Usage screen. Set up the color code including #. "
+        "EMPTY_BGCOLOR": "Pressure sensor icon not used for the Usage screen background color::Set up the background color of the unused pressure sensor icon on the Usage screen. Set up the color code including #. ",
+        "INUSE_LABEL": "Label key when using pressure sensor",
+        "EMPTY_LABEL": "Label key when pressure sensor is not used"
       },
       "MEDITAG": {
         "STRESS_BG": "MEDiTAG background color of position (map) screen::Set up the background color of MEDiTAG used in position (map) screen in three steps according to the stress level. Set up the color code including #."
@@ -1160,7 +1303,8 @@
         "LINE": {
           "MIN_WEIGHT": "Minimum thickness of flow line displayed on the flow line analysis screen::Set up the minimum thickness of flow line displayed on the flow line analysis screen.",
           "MAX_WEIGHT": "Maximum thickness of flow line displayed on flow line analysis screen::Set up the maximum thickness of flow line displayed on flow line analysis screen.",
-          "COLOR": "Color of flow line to be displayed on flow line analysis screen::Set up the color of flow line to be displayed on flow line analysis screen"
+          "COLOR": "Color of flow line to be displayed on flow line analysis screen::Set up the color of flow line to be displayed on flow line analysis screen",
+          "OPACITY": "Set up the flow line transmittance of the flow line analysis :: Transparency (0: transparent to 1: opaque). Decimal (0.5) can be set."
         },
         "HEATMAP": {
           "RADIUS": "The diameter of the heatmap displayed on the heatmap (position) screen::Set up the size of the heatmap displayed on the heatmap (position) screen"
@@ -1169,6 +1313,9 @@
       "CONTROL": {
         "COMBO_BOX": {
           "W": "Combo Box Width::Set up the width of the combo box in pixels."
+        },
+        "MAP": {
+          "MIN_HEIGHT": "Minimum height of area image"
         }
       },
       "SYSTEM_USE": {
@@ -1177,17 +1324,36 @@
           "PROHIBIT": "Background color (prohibit area) color code:: Sets up the background color of the system setting category (prohibit area)."
         },
         "ENTER": {
-          "COL_CNT": "[Entrance / exit table]Number of display columns::[Entrance / exit table]Specify the number of display columns.",
-          "LOST_COLOR": "[Entrance / exit table]Lost character color::[Entrance / exit table]Specify the text color of the lost person by color name, HEX or RGB.",
-          "ABSENT_BGCOLOR": "Entrance / exit table]Leaver background color::[Entrance / exit table]Specify the exit color as a color name, HEX or RGB.",
-          "ENTER_BGCOLOR": "[Entrance / exit table]Visitor background color::[Entrance / exit table]Specify the background color of the visitors in color name, HEX or RGB."
+          "COL_CNT": "[Entrance and Exit Table] Number of display columns::[Entrance and Exit Table] Specify the number of display columns.",
+          "LOST_COLOR": "[Entrance and Exit Table] Text color of lost person::[Entrance and Exit Table] Specify the text color of the lost person by color name, HEX or RGB.",
+          "ABSENT_BGCOLOR": "[Entrance and Exit Table] Background color of exiters::[Entrance and Exit Table] Specify the background color of the exited person by color name, HEX or RGB.",
+          "ENTER_BGCOLOR": "[Entrance and Exit Table] Background color of visitors::[Entrance and Exit Table] Specify the background color of visitors by color name, HEX or RGB."
         },
         "TOILET": {
-          "DISPLAY_MODE": "Toilet display mode::Set up the display method of the empty state displayed on the toilet full / empty display screen. The values that can be set are as follows.{TOILET_DISPLAY}"
+          "BASE_FONT_SIZE": "Standard font size for toilet icons",
+          "BASE_MARK_R": "Standard vacancy icon size for toilet icons",
+          "MARK_COLUMN_NUM": "Display column of toilet icon"
         },
         "POS_STACK": {
-          "TYPE": "How to display Position (Whole)::Specify how to display Position (Whole). (1: Area 2: Zone)",
-          "ZONE_OTHER": "Zone other display::Display the zone and others in Position(Whole)."
+          "TYPE": "Display method of position (whole) :: Specify the display method of position (whole). (1: Area 2: Zone)",
+          "ZONE_OTHER": "Zone other display::Display the zone and others in the position (whole)."
+        },
+        "ZONE": {
+          "MIN_WIDTH": "The minimum width of the zone",
+          "MIN_HEIGHT": "Minimum height of zone"
+        },
+        "INSTALLATION": {
+          "WIDTH": "RSSI icon width on the installation support screen",
+          "HEIGHT": "RSSI icon height on the installation support screen"
+        },
+        "PLAN": {
+          "PLAN_COLOR": "Event text color",
+          "PLAN_BG_COLOR": "Event background color",
+          "ACTUAL_IN_PLAN_BG_COLOR": "Planned / Used background color",
+          "NO_ACTUAL_IN_PLAN_BG_COLOR": "Planned / unused background color",
+          "ACTUAL_OUT_OF_PLAN_BG_COLOR": "Unplanned / Used background color",
+          "NO_ACTUAL_NO_PLAN_BG_COLOR": "Unplanned / unused background color",
+          "EDIT_PLAN_HEADER_BG_COLOR": "Event header background color"
         }
       },
       "POS": {
@@ -1204,9 +1370,9 @@
       "BASE_URL": "EXCloud URL::Set up EXCloud URL."
     },
     "EXSERVER": {
+      "ENABLE": "Enable EXServer::Enable EXServer.",
       "BASE_URL": "EXServerのURL::Set the EXServer URL.",
       "MULTI_API": "EXServer 3-point positioning API::Use EXServer's three-point positioning API.",
-      "TIME_RANGE": "EXServer acquisition time range::Specify the time range to be obtained from EXServer.",
       "MAX_DEVICES": "EXServer devices::Specify the number of EXBs to measure simultaneously on EXServer."
     },
     "OPTIONS": {
@@ -1349,7 +1515,8 @@
         "locationName": "LocationName::Location name",
         "areaName": "areaName::Area name",
         "x": "x::X",
-        "y": "y::Y"
+        "y": "y::Y",
+        "txName": "Tx Name"
       },
       "POS_LIST": {
         "tel": "tel::Tel",
@@ -1408,6 +1575,9 @@
       },
       "PROHIBIT_ALERT": {
         "screen": "screen::Display on the screen",
+        "map": "screen::Display on the screen (map)",
+        "list": "screen::Display on the screen (list)",
+        "whole": "screen::Display on the screen (whole)",
         "mail": "mail::E-mail Notification",
         "led": "led::LED Blink"
       },
@@ -1440,10 +1610,6 @@
         "0": "0::Invalid",
         "1": "1::Valid（Default OFF）",
         "2": "2::Valid（Default ON）"
-      },
-      "TOILET_DISPLAY": {
-        "0": "0::Display with numbers",
-        "1": "1::Display with icon"
       },
       "SMTP_AUTH": {
         "true": "true::Do user authentication",
@@ -1573,7 +1739,9 @@
     "resetFromTo": "Because{from}has changed,{to}is now unselected",
     "underDegree": "under ℃",
     "overDegree": "over ℃",
-
+    "lostDetected": "<Prohibition of export> {time} {potCd} ({potName}) has not been returned to the specified place.",
+    "prohibitDetected": "<No entry> {time} {groupName} ({potName}) has entered {zoneName}.",
+      
     "MSTEAMS": {
       "USER_GUIDE1": "In order to use EXOffice, you have to grant this application a permission to read your organization's groups and users on your Office365.",
       "USER_GUIDE2": "Enter your organization name, click the button below and sign in with administrator of Office365. This operation should be done on PC.",
@@ -1589,14 +1757,15 @@
     "dummy": "" 
   },
   "helpDescription": {
+    "introduction": "Introduction",
     "empty": "Not displayed",
     "updateKey": "Not displayed. When updating data, it is used to link with registered information. It can not be changed",
     "delFlg": "Not displayed. Use when deleting data when updating data. Set up to 1 ",
     "enabled": "Not displayed. It shows Indicates enabled (1) / disabled (0) status",
     "txXY": "Not displayed. If the setting that uses fixed seat, it shows the location information for the area",
+    "locationXY": "Represents location information for a location",
     "txAreaName": "Not displayed. If the setting that uses fixed seat, it shows the target area name",
-    "helpNone": "No help available",
-    "indexName": "Index",
+    "txLocationName": "In the case of setting using fixed seats, it indicates the target place name",
     "csvDescription": "CSV items may not be displayed even if they are in the following items depending on the contents and options provided",
     "bulkRegister": "Formats and registers data using the downloaded file as a template. It can not change the ID of a master that has been issued uniquely and already linked by batch registration. In case of new registration, please empty the ID and do batch registration. ",
     "bulkUniqueFailed": "Target item name is a non-duplication item. It is already used in another line.",
@@ -1604,16 +1773,52 @@
     "bulkAuthFailed": "Target item name can not be used because it is already used internally.",
     "bulkSystemUseFailed": "The target item name can not be changed because it is a fixed data used in the system. To continue registration, the target data needs to be deleted from the CSV.",
     "bulkSystemUseNameFailed": "The target item name can not be used because it is a fixed name used in the system. It needs to be registered with a different name.",
-    "bulkNotes": "If unreadable characters are displayed, it may be garbled. If you use Excel for CSV editing, set up {charSet} of {personal} to {SJIS}.",
-    "state": "The state is defined as follows. {detected}: Indicates a well-detected state. When the absence time is set, it will be displayed in this status even in the absence indication. {TemporaryUndetect}: It is detected on the current day but it has been undetected for more than the specified time. {Undetect}: Indicates that it has not been detected for a long time beyond the specified time{none}: Indicates that it has not been detected even once after installation.",
-    "systemCategory": "This category has been set up since the system was built. It is assumed to be used by setting it to a zone.",
-    "absent": "The configured zone is the absence determination zone, and if it is set to EXBeacon, the TX detected by the target EXBeacon is treated as being away from the seat.",
-    "prohibit": "Feature not provided ver1.1",
-    "zoneClass": "Create and edit zones that include multiple EXBeacon. The created zones are used for grouping and summary by setting them on the EXBeacon screen. As it can set the category to the zone, it can also classify the zone itself. Refer to the category help for the categories set in the system to utilize in the zone.",
-    "zoneBlock": "{ZoneBlock} can be created by dragging and selecting on the displayed area. EXBeacon in the created zone will be automatically set the zone at the time of registration. ",
-    "stayRatioBaseDownload": "There are two types of download. You can download different data by Total and Stay. In Total, you can download all stay column information except the graph. In Stay, you can download basic data and detailed stay information for each hour.",
-    "regionName": "Region name where the target user can log in",
 
     "dummy": ""
+  },
+  "helpIntroduction": {
+    "overview": "System overview",
+    "notes": "If unreadable characters are displayed, garbled characters may have occurred. When using Excel to edit CSV, set the character code of personal settings to SJIS and try.",
+
+    "dummy": ""
+    
+  },
+  "helpScreenDescription": {
+    "tenant": "You can control the display / non-display of the screen used by the tenant. It is a setting for each tenant.",
+    "news": "You can create and edit the content of the notice displayed on the login screen.",
+    "showPosition": "Displays an icon indicating the location of Tx on the area map image. The Tx icon updates the current position periodically at set time intervals. The items (major, minor, name, etc.) set in advance when the Tx icon is clicked are displayed in a balloon.",
+    "positionList": "Displays a list of Tx location information.Position (map) of the target Tx is displayed from the map display button.The screen location information is updated at regular intervals.",
+    "positionStack": "Displays Tx position information for each area or zone.Click the Tx icon to display (Position (map)) or (display balloon details of Tx information).The behavior when clicking the Tx icon can be switched in the settings.",
+    "enterTable": "Displays Tx position information for each area or zone.Click the Tx icon to display (Position (map)) or (display balloon details of Tx information).The behavior when clicking the Tx icon can be switched in the settings.",
+    "pirMenu": "This screen displays the usage status by area on a map.",
+    "thermohumidity": "Displays the temperature and humidity in the area in a table format.Click the sensor icon on the area to display the room temperature.",
+    "sensorList": "Displays registered sensor information in a list.",
+    "ledOperation": "This screen operate the LED of Beacon.It can control color or blinking.",
+    "plan": "Displays the calendar. Compare actuals and schedules.Achievement: Whether a person or thing was at a scheduled place at a specific time\nPlanned contents: reservation of meeting room, rental of goods, planned places of people, etc.",
+    "toiletStatus": "Shows the availability of toilets.",
+    "region": "This screen displays a list of region information and allows you to create and edit.",
+    "area": "This screen displays a list of area information and allows you to create and edit.",
+    "exb": "This screen displays a list of EXBeacon information and performs creation and editing.",
+    "tx": "This screen displays a list of Tx information and performs creation and editing.",
+    "locationSetting": "This screen is for creating and editing position from the map.You can determine the position by moving while clicking the icon on the map.\nAfter moving the icon, confirm the position with the save button.",
+    "locationList": "This screen displays a list of position and performs creation and editing.",
+    "pot": "This screen displays a list of individual (person, things) information with Tx and creates / edits it.\nConnect Tx with an individual.",
+    "potPerson": "This screen displays a list of individual (person, things) information with Tx and creates / edits it.\nConnect Tx with an individual.",
+    "potThing": "This screem displays a list of information on things with Tx, and creates and edits.\nConnect Tx with things.",
+    "potOther": "This screen displays a list of information on things (others) with Tx, and creates and edits them.\nConnects Tx with the Things (other).",
+    "category": "This screen displays a list of category information and allows you to create and edit.",
+    "categoryPerson": "This screen displays a list of category information (persons), and creates and edits it.",
+    "categoryThing": "This screen displays a list of category information (things) and creates / edits it.",
+    "categoryZone": "This screen displays a list of zone categories and allows you to create and edit them.",
+    "categoryAuth": "This screeen displays a list of authority information of keys and security areas, and to create and edit.",
+    "group": "This screen displays a list of groups and creates and edits them.\nGroup: Setting to separate individuals\nThe display set to the group on the map is possible.",
+    "user": "This screen displays a list of login user information and performs creation and editing.",
+    "role": "This screen displays a list of role information and performs creation and editing.",
+    "zoneClass": "Create and edit zones that include multiple EXBeacons.\nThe created zone is used for grouping and aggregation by setting it on the EXBeacon screen.\nIn addition, since categories can be set for zones, it is also possible to classify zones themselves. Please refer to the category help for the categories set in the system to use in the zone.",
+    "zoneBlock": "{ZoneBlock} can be created by dragging and selecting on the displayed area.\nEXBeacon in the created section will be able to select and set the created zone on the EXBeacon setting screen.",
+    "notifyTemplate": "This screen displays a list of notification information and allows to create and edit it.\nSet up the template to be notified for each type of notification.",
+    "gateway": "This screen displays a list of gateway status.",
+    "position": "This screen displays a list of Tx battery levels and status.",
+    "telemetry": "This screen displays a list of battery level and status of EXB"
   }
 }

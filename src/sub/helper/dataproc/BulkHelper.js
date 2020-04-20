@@ -310,6 +310,13 @@ export const getBulkErrorMessage = (e, name, showLine) => {
     const readingPoint = i18n.tnl(`message.readingPoint`)
     const warnMessageList = craeteBulkWarnMessage(e.bulkError)
     const errorMessageList = _.map(_.orderBy(e.bulkError, ['line'], ['asc']), err => {
+      if (err.type == 'SameKeyLine') {
+        return `${i18n.tnl('message.csvInvalidLine')}${formatBulkErrorLine(err.values)}`
+      }
+      if (err.type == 'InsufficientColumns') {
+        return `${i18n.tnl('message.csvInsufficientColumnsLine')}${formatBulkErrorLine(err.values)}`
+      }
+
       editBulkError(err)
       const cols = err.cols? err.cols: [err.col]
       const value = err.values? err.values.join(readingPoint) : err.value
