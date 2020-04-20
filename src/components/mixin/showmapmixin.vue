@@ -77,17 +77,21 @@ export default {
     getMapScale(){ // p, pir
       return DISP.TX.R_ABSOLUTE ? this.canvasScale : 1
     },
-
+    // 最後尾に/が付与されたときに削除
+    trimPath(path){
+      return path.slice(-1) == '/' ? path.slice(0, -1) : path
+    },
     // リサイズイベント定義
     defineResizeEvent(path) {
-      path = path.slice(-1) == '#' ? path.slice(0, -1) : path // Webサーバーによって#が付与されたときに削除
+      Util.debug('path', this.$route.path)
+      const checkPath = this.trimPath(path)
       if (!StringUtil.startsWithAny(path, ['/main','/sum','/develop/installation'])) {
         return
       }
       let timer = 0
       let currentWidth = window.innerWidth
       this.onResize = () => {
-        if (path != this.$route.path) {
+        if (checkPath != this.trimPath(this.$route.path)) {
           window.removeEventListener('resize', this.onResize)
           clearTimeout(timer)
           return

@@ -44,6 +44,14 @@
               <label v-t="'label.displayName'" />
               <input v-model="form.displayName" :readonly="!isEditable" type="text" maxlength="3" class="form-control">
             </b-form-group>
+            <b-form-group v-show="isShownWith('auth')">
+              <label v-t="'label.auth'" />
+              <v-select v-model="vueSelected.authCategories" :options="getAuthCategoryOptions()" :disabled="!isEditable" multiple :close-on-select="false" class="vue-options-multi">
+                <template slot="no-options">
+                  {{ vueSelectNoMatchingOptions }}
+                </template>
+              </v-select>
+            </b-form-group>
             <b-form-group v-show="isShownWith('group')">
               <label v-t="'label.group'" />
               <v-select v-model="vueSelected.group" :options="groupOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options-lg">
@@ -55,14 +63,6 @@
             <b-form-group v-show="isShownWith('category')">
               <label v-t="'label.category'" />
               <v-select v-model="vueSelected.category" :options="categoryOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options-lg">
-                <template slot="no-options">
-                  {{ vueSelectNoMatchingOptions }}
-                </template>
-              </v-select>
-            </b-form-group>
-            <b-form-group v-show="isShownWith('auth')">
-              <label v-t="'label.auth'" />
-              <v-select v-model="vueSelected.authCategories" :options="authCategoryOptions" :disabled="!isEditable" multiple :close-on-select="false" class="vue-options-multi">
                 <template slot="no-options">
                   {{ vueSelectNoMatchingOptions }}
                 </template>
@@ -103,7 +103,7 @@
 import { mapState } from 'vuex'
 import _ from 'lodash'
 import { APP, EXCLOUD, APP_SERVICE } from '../../../sub/constant/config'
-import { POT_TYPE, TYPE_RELATION } from '../../../sub/constant/Constants'
+import { POT_TYPE, TYPE_RELATION, CATEGORY } from '../../../sub/constant/Constants'
 import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
@@ -273,6 +273,12 @@ export default {
     VueSelectHelper.disabledAllSubmit()
   },
   methods: {
+    getAuthCategoryOptions() {
+      const ret =  _.sortBy(this.categories.filter(e => e.categoryType == CATEGORY.AUTH), 'categoryCd')
+      return ret.map( e => {
+        return { text: e.categoryName, label: e.categoryName, value: e.categoryId }
+      })
+    },
     isShownWith(column) {
       const settingName = PotHelper.getSettingName(this.pName)
       return this.isShown(settingName + '.WITH', column)

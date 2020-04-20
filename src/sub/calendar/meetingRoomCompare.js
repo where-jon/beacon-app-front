@@ -14,7 +14,7 @@ export function loadTimeLine(data) {
       let npId = 1
       let preIpEnd = plan.startDt
       const inPlanPersons = []
-      const inPlanThing = null
+      let inPlanThing = null
       plan.inPlans.forEach(ip => {
         if (ip.potCategoryType == 2) {
           const obj = {
@@ -56,7 +56,7 @@ export function loadTimeLine(data) {
         obj.title = `[${plan.planName}] ${obj.range}`
         inPlanPersons.push(obj)
         ++ipId
-        preIpEnd = moment(ip.endDt).add(1, 's').valueOf()
+        preIpEnd = ip.endDt
       })
       const potPersons = plan.pots.filter(e => e.third == 1).map(e => e.second).join(',')
       const potThing = plan.pots.filter(e => e.third == 2).map(e => e.second).join(',')

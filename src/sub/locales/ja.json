@@ -314,6 +314,9 @@
     "post": "役職",
     "ruby": "ふりがな",
     "tel": "電話番号",
+    "departmentEtc": "部門等",
+    "outsideNumber": "外線番号",
+    "extensionNumber": "内線番号",
 
     "positionList": "位置表示(一覧)",
     "positionListShort": "一覧",
@@ -418,6 +421,22 @@
     "meetingRoom": "会議室",
     "meetingRoomId": "会議室ID",
     "meetingRoomName": "会議室名",
+
+    "attendanceDetail": "入退室管理詳細",
+    "attendanceSum": "入退室管理",
+    "entranceTime": "入室",
+    "exitTime": "退室",
+    "lastDetected": "最終検知",
+    "allDayWork": "全日出社",
+    "halfDayWork": "半日出社",
+    "lateTimeWork": "時差出社",
+    "temporaryTimeWork": "一時出社",
+    "attendancePer": "出社率",
+    "allDayWorkPer": "全日出社率",
+    "halfDayWorkPer": "半日出社率",
+    "lateTimeWorkPer": "時差出社",
+    "temporaryTimeWorkPer": "一時出社",
+    "companyWide": "全社",
     
     "tenant": "テナント",
     "tenantCd": "テナントコード",
@@ -1031,6 +1050,11 @@
         "AXIS_TYPE": "会議室利用実績の表示単位::会議室の表示単位を指定します。(exb location zone)",
         "MAX_NUM": "会議室利用実績集計の最大値"
       },
+      "ATTENDANCE": {
+        "ALL_DAY_HOUR": "全日出社とみなす時間",
+        "HALF_DAY_HOUR": "半日出社とみなす時間",
+        "LATE_HOUR": "時差出社の時刻"
+      },
       "SVC": {
         "SLACK_CHANNEL": "Slackのチャンネル名::通知情報を送信するSlackのチャンネル名を設定します。",
         "SLACK_TOKEN": "Slack APIのトークン::Slack APIで使用するトークンを設定します。",
@@ -1361,7 +1385,6 @@
         "ENTER_BGCOLOR": "[入退場表]入場者の背景色::[入退場表]入場者の背景色を色名、HEXまたはRGBで指定します。"
       },
       "TOILET": {
-        "DISPLAY_MODE": "トイレ表示モード::トイレ満空表示画面に表示される空き状態の表示方法を設定します。設定可能な値は次の通りです。{TOILET_DISPLAY}",
         "BASE_FONT_SIZE": "トイレアイコンの基準フォントサイズ",
         "BASE_MARK_R": "トイレアイコンの基準空室アイコンサイズ",
         "MARK_COLUMN_NUM": "トイレアイコンの表示最大列"        
@@ -1444,6 +1467,7 @@
         "STAY_SUM": "滞在時間集計",
         "ACTIVITY": "活動実績",
         "MEETING": "会議室利用実績",
+        "ATTENDANCE": "入退室管理",
         "HISTORY_EXC": "EXCloudを使用した履歴",
         "SVC": "サーバ",
         "BATCH": "バッチ",
@@ -1606,14 +1630,18 @@
       },
       "PROHIBIT_ALERT": {
         "screen": "screen::画面上(地図,一覧,全体)に表示",
-        "map": "screen::画面上(地図)に表示",
-        "list": "screen::画面上(一覧)に表示",
-        "whole": "screen::画面上(全体)に表示",
+        "map": "map::画面上(地図)に表示",
+        "list": "list::画面上(一覧)に表示",
+        "whole": "whole::画面上(全体)に表示",
+        "guest": "guest::画面上(来客アクセス管理)に表示",
         "mail": "mail::メール通知",
         "led": "led::LED点滅"
       },
       "LOST_ALERT": {
         "screen": "screen::画面上に表示",
+        "map": "map::画面上(地図)に表示",
+        "list": "list::画面上(一覧)に表示",
+        "whole": "whole::画面上(全体)に表示",
         "mail": "mail::メール通知"
       },
       "ANALYSIS_UNIT": {
@@ -1815,7 +1843,7 @@
     "dummy": ""
   },
   "helpIntroduction": {
-    "overview": "システム概要",
+    "overview": "本システムではビーコンタグやセンサー等からログを収集し、人や物の見える化や集計・分析を可能にします。",
     "notes": "読めない文字が表示された場合、文字化けが発生している可能性があります。CSVの編集にエクセルを使用する場合は、個人設定の文字コードをSJISに設定してお試しください。",
 
     "dummy": ""
@@ -1828,7 +1856,7 @@
     "positionStack": "エリア又はゾーン毎のTxの位置情報を表示します。\nTxアイコンクリックで「位置情報（地図）を表示」または「Txの詳細情報をバルーン表示」が可能です。\nTxアイコンクリック時の挙動は設定で切替えができます。",
     "enterTable": "人＆物の入退場を表で表示します。\nグループに所属する人＆物が表示され、入場又は退場の状態を色で表示します。\nまた、現在の入場数者数などの情報も表示します。",
     "pirMenu": "エリア別の利用状況を地図表示する画面です。",
-    "thermohumidity": "エリア内の温湿度を表形式で表示します。\nエリア上のセンサーアイコンをクリックすることで室温度をグラフ表示します。",
+    "thermohumidity": "エリア内の温湿度を表形式で表示します。\nエリア上のセンサーアイコンをクリックすることで温湿度をグラフ表示します。",
     "sensorList": "登録済みのセンサ情報を一覧で表示します。",
     "ledOperation": "BeaconのLEDを操作する画面です。\n色または点滅を操作できます。",
     "plan": "予定表を表示します。実績と予定の比較を行います。\n実績：特定の時間に人・物が予定の場所にいたかどうか\n予定した内容：会議室の予約、物のレンタル、人の予定場所等",

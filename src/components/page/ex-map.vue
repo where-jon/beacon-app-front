@@ -820,7 +820,11 @@ export default {
     async loadProhibitDetect() {
       if ((this.pShowProhibit || this.pShowLost) && Util.hasValueAny(APP.POS.PROHIBIT_GROUP_ZONE, APP.POS.LOST_GROUP_ZONE)) {
         clearInterval(this.prohibitInterval)  // 点滅クリア
-        Util.merge(this, await ProhibitHelper.loadProhibitDetect(ALERT_STATE.MAP, this.stage, this.icons, this.zones, this.positions, this.pShowProhibit, this.pShowLost))
+        let alertState = ALERT_STATE.MAP
+        if (location.pathname == '/main/guest-access') {
+          alertState = ALERT_STATE.GUEST
+        }
+        Util.merge(this, await ProhibitHelper.loadProhibitDetect(alertState, this.stage, this.icons, this.zones, this.positions, this.pShowProhibit, this.pShowLost))
         this.replace({ showAlert: this.showDismissibleAlert })
       }
     },
@@ -1203,7 +1207,16 @@ export default {
           return
         }
         // 固定座席の場合、固定座席ゾーンにいる場合、固定座席の場所に表示し、それ以外は検知された場所で表示
-        const loc = pos.isFixedPosition? pos.inFixedZone? pos.tx.location: pos.exb.location: pos
+        let loc = pos
+        if(pos.isFixedPosition){
+          if(pos.inFixedZone){
+            loc = pos.tx.location
+          }else{
+            // 表示用の場所を検索して見つかれば設定する
+            const viewPos = positions.find(pos => pos.btxId == tx.btxId && !pos.isFixedPosition)
+            loc = viewPos ? viewPos : pos
+          }
+        }
         this.showDetail(tx.btxId, loc.x, loc.y)
       }
       this.resetDetail()

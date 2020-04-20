@@ -3,49 +3,29 @@
   <div class="tui-full-calendar-popup tui-full-calendar-popup-detail">
     <div class="tui-full-calendar-popup-container">
       <!-- <b-card-group deck> -->
-      <b-card no-body header="予定 " style="margin-left: 2px;margin-right: 1px;">
+      <b-card no-body header="予定" style="margin-left: 2px;margin-right: 1px;">
         <b-list-group flush>
           <div v-if="0 == event.schedule.id.indexOf('p-')">
             <b-list-group-item>
-              <b-form-row>
-                <b-col cols="4"><span style="font-weight: bold;">タイトル</span></b-col>
-                <b-col cols="8">
-                  <span>{{ event.schedule.title }}</span>
-                </b-col>
-              </b-form-row>
+              <div><span class="popup-title">タイトル</span></div>
+              <div><span class="tui-full-calendar-content">{{ event.schedule.title }}</span></div>
             </b-list-group-item>
             <b-list-group-item>
-              <b-form-row>
-                <b-col cols="4"><span style="font-weight: bold;">時間</span></b-col>
-                <b-col cols="8">
-                  <span>{{ calendarContent }}</span>
-                </b-col>
-              </b-form-row>
+              <div><span class="popup-title">時間</span></div>
+              <div><span class="tui-full-calendar-content">{{ calendarContent }}</span></div>
             </b-list-group-item>
             <b-list-group-item>
-              <b-form-row>
-                <b-col cols="4"><span style="font-weight: bold;">利用者</span></b-col>
-                <b-col cols="8">
-                  <span>{{ event.schedule.potPersons }}</span>
-                </b-col>
-              </b-form-row>
+              <div><span class="popup-title">利用者</span></div>
+              <div><span class="tui-full-calendar-content">{{ event.schedule.potPersons }}</span></div>
             </b-list-group-item>
             <b-list-group-item>
-              <b-form-row>
-                <b-col cols="4"><span style="font-weight: bold;">物</span></b-col>
-                <b-col cols="8">
-                  <span>{{ event.schedule.potThing }}</span>
-                </b-col>
-              </b-form-row>
+              <div><span class="popup-title">物</span></div>
+              <div><span class="tui-full-calendar-content">{{ event.schedule.potThing }}</span></div>
             </b-list-group-item>
           </div>
           <div v-else>
             <b-list-group-item>
-              <b-form-row>
-                <b-col cols="4"><span>-</span></b-col>
-                <b-col cols="8">
-                </b-col>
-              </b-form-row>
+              <div><span class="tui-full-calendar-content">-</span></div>
             </b-list-group-item>
           </div>
         </b-list-group>
@@ -54,50 +34,50 @@
         <b-list-group flush>
           <b-list-group-item>
             <b-form-row>
-              <b-col cols="4"><span style="font-weight: bold;">利用者</span></b-col>
-              <b-col cols="8">
+              <div>
+                <div><span class="popup-title">利用者</span></div>
                 <div v-if="0 == event.schedule.id.indexOf('p-')">
                   <div v-if="event.schedule.inPlanPersons.length > 0">
                     <div v-for="(p, personIdx) in event.schedule.inPlanPersons" :key="personIdx">
-                      <span>{{ p.range + ' ... ' + p.potName }}<br></span>
+                      <span class="tui-full-calendar-content">{{ p.range + '&nbsp;...&nbsp;' + p.potName }}</span>
                     </div>
                   </div>
                   <div v-else>
-                    <span>-</span>
+                    <span class="tui-full-calendar-content">-</span>
                   </div>
                 </div>
                 <div v-else>
                   <div v-if="event.schedule.outOfPlanPersons.length > 0">
                     <div v-for="(opp, oppIdx) in event.schedule.outOfPlanPersons" :key="oppIdx">
-                      <span>{{ opp.range + ' ... ' + opp.potName }}<br></span>
+                      <span class="tui-full-calendar-content">{{ opp.range + '&nbsp;...&nbsp;' + opp.potName }}</span>
                     </div>
                   </div>
                   <div v-else>
-                    <span>-</span>
+                    <span class="tui-full-calendar-content">-</span>
                   </div>
                 </div>
-              </b-col>
+              </div>
             </b-form-row>
           </b-list-group-item>
           <b-list-group-item>
             <b-form-row>
-              <b-col cols="4"><span style="font-weight: bold;">物</span></b-col>
-              <b-col cols="8">
+              <div>
+                <div><span class="popup-title">物</span></div>
                 <div v-if="0 == event.schedule.id.indexOf('p-')">
-                  <span v-if="event.schedule.inPlanThing">{{ event.schedule.inPlanThing.range + ' ... ' + event.schedule.inPlanThing.potName }}<br></span>
-                  <span v-else>-</span>
+                  <span v-if="event.schedule.inPlanThing" class="tui-full-calendar-content">{{ event.schedule.inPlanThing.range + '&nbsp;...&nbsp;' + event.schedule.inPlanThing.potName }}</span>
+                  <span v-else class="tui-full-calendar-content">-</span>
                 </div>
                 <div v-else>
                   <div v-if="event.schedule.outOfPlanThings.length > 0">
                     <div v-for="(opt, optIdx) in event.schedule.outOfPlanThings" :key="optIdx">
-                      <span>{{ opt.range + ' ... ' + opt.potName }}<br></span>
+                      <span class="tui-full-calendar-content">{{ opt.range + '&nbsp;...&nbsp;' + opt.potName }}</span>
                     </div>
                   </div>
                   <div v-else>
-                    <span>-</span>
+                    <span class="tui-full-calendar-content">-</span>
                   </div>
                 </div>
-              </b-col>
+              </div>
             </b-form-row>
           </b-list-group-item>
         </b-list-group>
@@ -144,7 +124,6 @@ export default {
     this._setPopupPositionAndArrowDirection()
   },
   methods: {
-    
     onClickEdit(e) {
       this.$emit('edit', {schedule: this.event.schedule})
     },
@@ -180,7 +159,7 @@ export default {
         pos = this._calcRenderingData(layerSize, windowSize, scheduleBound);
         pos.x -= parentBounds.left + 4;
         pos.y -= (parentBounds.top + this.ARROW_WIDTH_HALF);
-        domutil.setPosition(layerO, pos.x, pos.y);
+        domutil.setPosition(layerO, pos.x, pos.y)
         this._setArrowDirection(pos.arrow);
     },
     _calcRenderingData(layerSize, parentSize, guideBound) {
@@ -240,4 +219,9 @@ export default {
 }
 </script>
 <style>
+.popup-title {
+  font-size: 1rem;
+  font-weight: bold;
+  line-height: 2;
+}
 </style>

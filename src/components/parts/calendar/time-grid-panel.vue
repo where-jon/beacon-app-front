@@ -1,7 +1,7 @@
 <template>
   <!-- height設定 -->
   <div id="vlayout-area" class="tui-full-calendar-vlayout-area tui-full-calendar-vlayout-container">
-    <div class="tui-full-calendar-timegrid-container">
+    <div id="tgc" class="tui-full-calendar-timegrid-container">
       <!-- left -->
       <div id="tg-left" class="tui-full-calendar-timegrid-left" :style="{width: styles.leftWidth, 'font-size': styles.leftFontSize}">
         <div class="tui-full-calendar-timegrid-timezone" :style="{position: 'absolute', top: 0, width: '100%', left: '0%', 'border-right': styles.leftBorderRight, 'background-color': styles.displayTimezoneLabelBackgroundColor}">
@@ -12,7 +12,7 @@
       </div>
       <!-- right -->
       <div id='tgScrl' class="tui-full-calendar-timegrid-right sync-scroll" :style="{'margin-left': styles.leftWidth}" @scroll="handleScroll">
-          <div class="wt-timegrid-schedules">
+          <div id="wt-tg-s" class="wt-timegrid-schedules">
             <div v-for="(headerOpt, idx) in headerOpts" :key="idx" class="wt-time-date" :style="workingTimeDateStyle(headerOpt.value)">
             </div>
           </div>
@@ -32,10 +32,13 @@
             </div>
           </div>
           <div v-if="showHourMarker && planMode == 'normal'" class="tui-full-calendar-timegrid-hourmarker" :style="{top: getTopPercentByTime() + '%'}">
-            <div class="tui-full-calendar-timegrid-hourmarker-line-left" :style="{width: todaymarkerLeft + '%', 'border-top': styles.currentTimeLeftBorderTop}"></div>
-            <div class="tui-full-calendar-timegrid-todaymarker" :style="{left: todaymarkerLeft + '%', 'background-color': styles.currentTimeBulletBackgroundColor}">today</div>
-            <div class="tui-full-calendar-timegrid-hourmarker-line-today" :style="{left: todaymarkerLeft + '%', width: todaymarkerWidth + '%', 'border-top': styles.currentTimeTodayBorderTop}"></div>
-            <div class="tui-full-calendar-timegrid-hourmarker-line-right" :style="{left: todaymarkerRight + '%', 'border-top': styles.currentTimeRightBorderTop}"></div>
+            <div class="tui-full-calendar-timegrid-hourmarker-line-left" :style="{width: todaymarkerLeft + 'px', 'border-top': styles.currentTimeLeftBorderTop}"></div>
+            <div class="tui-full-calendar-timegrid-todaymarker" :style="{left: todaymarkerLeft + 'px', 'background-color': styles.currentTimeBulletBackgroundColor}">today</div>
+            <div class="tui-full-calendar-timegrid-hourmarker-line-today" :style="{left: todaymarkerLeft + 'px', width: todaymarkerWidth + 'px', 'border-top': styles.currentTimeTodayBorderTop}"></div>
+            <div class="tui-full-calendar-timegrid-hourmarker-line-right" :style="{left: todaymarkerRight + 'px', 'border-top': styles.currentTimeRightBorderTop}"></div>
+          </div>
+          <div v-if="showHourMarker && planMode == 'meetingRoom'" class="tui-full-calendar-timegrid-hourmarker" :style="{top: getTopPercentByTime() + '%'}">
+            <div class="tui-full-calendar-timegrid-hourmarker-line-today" :style="{width: '100%', 'border-top': styles.currentTimeTodayBorderTop}"></div>
           </div>
       </div>
     </div>
@@ -64,6 +67,7 @@ export default {
     doCompare: null,
     holidays: null,
     working: null,
+    doUpate: null,
   },
   data () {
     return {
@@ -83,8 +87,8 @@ export default {
       return (headerId, isLast) => {
         const lw = this.viewModel.timeLineLeftAndWidth
         return {
-          left: (lw[headerId] ? lw[headerId].left : 0) + '%',
-          width: (lw[headerId] ? lw[headerId].width : 0) + '%',
+          left: (lw[headerId] ? lw[headerId].left : 0) + 'px',
+          width: (lw[headerId] ? lw[headerId].width : 0) + 'px',
           'border-right': isLast ? 'none' : this.styles.borderRight,
         }
       }
@@ -107,8 +111,8 @@ export default {
 
         const lw = this.viewModel.timeLineLeftAndWidth
         return {
-          left: (lw[headerId] ? lw[headerId].left : 0) + '%',
-          width: (lw[headerId] ? lw[headerId].width : 0) + '%',
+          left: (lw[headerId] ? lw[headerId].left : 0) + 'px',
+          width: (lw[headerId] ? lw[headerId].width : 0) + 'px',
           top: `${top}px`,
           height: `${height}px`,
           backgroundColor: this.workingBgColor
@@ -116,13 +120,18 @@ export default {
       }
     }
   },
+  watch: {
+    doUpate: {
+      handler: function(newVal, oldVal) {
+        this.getTodaymarkerLeft()
+        this.setCalendarHeight()
+      },
+      deep: false
+    },
+  },
   mounted() {
     this.theme = new Theme()
     this.styles = this.getStyles()
-  },
-  updated() {
-    this.getTodaymarkerLeft()
-    this.setCalendarHeight()
   },
   methods: {
     handleScroll(e) {
@@ -140,10 +149,16 @@ export default {
     getTodaymarkerLeft() {
       const lw = this.viewModel.timeLineLeftAndWidth
       const today = this.today
-      this.todaymarkerLeft = lw[today] ? lw[today].left : 0
-      this.todaymarkerWidth = lw[today] ? lw[today].width : 0
-      this.todaymarkerRight = this.todaymarkerLeft + this.todaymarkerWidth
-      this.showHourMarker = this.todaymarkerLeft > 0
+      if (this.planMode == 'normal') {
+        this.todaymarkerLeft = lw[today] ? lw[today].left : 0
+        this.todaymarkerWidth = lw[today] ? lw[today].width : 0
+        this.todaymarkerRight = this.todaymarkerLeft + this.todaymarkerWidth
+        this.showHourMarker = this.todaymarkerLeft > 0
+      } else {
+        const picker = this.$parent.$parent.$refs.datePicker
+        const d = moment(picker.value).format('YYYYMMDD')
+        this.showHourMarker = this.today == d
+      }
     },
     getTopPercentByTime() {
       const time = this.now

@@ -49,13 +49,9 @@ export const createAllMRoomIcons = (scale) => {
         posList = posList.concat(list)
       }
     })
-    const bgColor = getBgColorByMRoomStatus(mp, posList)
-    const planUserNum = mp.plans.reduce((accum, plan) => {
-      accum += plan.attendeeNum
-      return accum 
-    }, 0)
-    if (mp.x & mp.y){
-      arr.push({zoneName: mp.zoneName, planUserNum: planUserNum, userNum: posList.length, x: mp.x, y: mp.y, bgColor: bgColor})
+    const obj = getIconPropsByMRoomStatus(mp, posList)
+    if (obj) {
+      arr.push(obj)
     }
     return arr
   }, []).map(e => {
@@ -74,37 +70,33 @@ export const showMRoom = (scale, zoneName, planUserNum, userNum, x, y, bgColor) 
   return icon
 }
 
-export const getBgColorByMRoomStatus = (mRoomPlan, positions) => {
+export const getIconPropsByMRoomStatus = (mRoomPlan, positions) => {
+  if (mRoomPlan.x <= 0 || mRoomPlan.y <= 0) {
+    return null
+  }
+
+  let bgColor = DISP.PLAN.NO_ACTUAL_NO_PLAN_BG_COLOR
+  let planUserNum = 0
   const plans = mRoomPlan.plans
+
   if (plans.length == 0) {
     if (positions.length == 0) {
-      return DISP.PLAN.NO_ACTUAL_NO_PLAN_BG_COLOR
-    }
-    return DISP.PLAN.ACTUAL_OUT_OF_PLAN_BG_COLOR
-  } else {
-    if (positions.length == 0) {
-      return DISP.PLAN.NO_ACTUAL_IN_PLAN_BG_COLOR
+      bgColor = DISP.PLAN.NO_ACTUAL_NO_PLAN_BG_COLOR
     } else {
-      let hasPlan = false
-      for (let idx in positions) {
-        const pos = positions[idx]
-        const updTime = moment(pos.updatetime).valueOf()
-        for (let pIdx in plans) {
-          const plan = plans[pIdx]
-          if (plan.startDt <= updTime && updTime <= plan.endDt) {
-            hasPlan = true
-            break
-          }
-        }
-        if (hasPlan) {
-          break
-        }
-      }
-      if (hasPlan) {
-        return DISP.PLAN.ACTUAL_IN_PLAN_BG_COLOR
-      } else {
-        return DISP.PLAN.ACTUAL_OUT_OF_PLAN_BG_COLOR
-      }
+      bgColor = DISP.PLAN.ACTUAL_OUT_OF_PLAN_BG_COLOR
+    }
+  } else {
+    let hasPos = positions.length > 0 ? true : false
+    const now = moment().valueOf()
+    const validPlans = plans.filter(plan => plan.startDt <= now && now <= plan.endDt)
+    const hasPlan = validPlans.length > 0 ? true : false
+    validPlans.forEach(plan => planUserNum += plan.attendeeNum)
+
+    if (hasPlan) {
+      bgColor = hasPos ? DISP.PLAN.ACTUAL_IN_PLAN_BG_COLOR : DISP.PLAN.NO_ACTUAL_IN_PLAN_BG_COLOR
+    } else {
+      bgColor = hasPos ? DISP.PLAN.ACTUAL_OUT_OF_PLAN_BG_COLOR : DISP.PLAN.NO_ACTUAL_NO_PLAN_BG_COLOR
     }
   }
+  return {zoneName: mRoomPlan.zoneName, planUserNum: planUserNum, userNum: positions.length, x: mRoomPlan.x, y: mRoomPlan.y, bgColor: bgColor}
 }

@@ -446,7 +446,7 @@ export const createExbIconForMagnet = (tx, magnetSensorList, mapScale) => {
 
   const magnetOn = magnet.magnet == SENSOR.MAGNET_STATUS.ON
   const count = APP.SENSOR.MAGNET_ON_IS_USED && magnetOn || !APP.SENSOR.MAGNET_ON_IS_USED && !magnetOn? 1: 0
-  const txBtn = createUseStateIcon(tx.sensorId, count, mapScale)
+  const txBtn = createUseStateIcon(SENSOR.MAGNET, count, mapScale)
 
   txBtn.sensorName = i18n.tnl('label.magnet')
   txBtn.x = tx.location.x
@@ -579,12 +579,12 @@ export const createExbIcon = (exb, exbSensorIdList, mapScale, stage) => {
     exbBtn.sensorName = i18n.tnl('label.thermopile')
   }
   else if (SensorHelper.match(exb.sensorIdList, SENSOR.PRESSURE, exbSensorIdList) && exb.pressVol != null) {
-    exbBtn = createUseStateIcon(exb.sensorId, exb.pressVol, mapScale)
+    exbBtn = createUseStateIcon(SENSOR.PRESSURE, exb.pressVol, mapScale)
     exbBtn.cursor = ''
     exbBtn.sensorName = i18n.tnl('label.pressure')
   }
   else if (SensorHelper.match(exb.sensorIdList, SENSOR.PIR, exbSensorIdList)) {
-    exbBtn = createUseStateIcon(exb.sensorId, exb.count, mapScale)
+    exbBtn = createUseStateIcon(SENSOR.PIR, exb.count, mapScale)
     exbBtn.cursor = ''
     exbBtn.sensorName = i18n.tnl('label.pir')
   }

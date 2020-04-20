@@ -78,7 +78,7 @@ export default {
       Util.debug('sum', sum)
 
       const start = new Date(form.datetimeFrom)
-      const end = new Date(form.datetimeTo)
+      const end = new Date(new Date(form.datetimeTo).getTime() - 1000) // 1秒引いておく
       const total = func.getTotal(start, end, true)
 
       const from = start.getTime()
@@ -142,13 +142,13 @@ export default {
           sum[time].forEach(pos => {
             const cdName = this.getCdName(pos)
             const name = cdName.name ? (cdName.name + ",") : ""
-            csv += this.formatTime(time) + "," + cdName.cd + "," + name + pos.cnt + "\n"
+            csv += DateUtil.formatDateWithTimeZone(time, 'YYYY/MM/DD HH:mm') + "," + cdName.cd + "," + name + pos.cnt + "\n"
           })
         }
       }
 
-      const fromStr = moment(form.datetimeFrom).format('YYYY-MM-DD-hhmmss')
-      const toStr = moment(form.datetimeTo).format('YYYY-MM-DD-hhmmss')
+      const fromStr = moment(form.datetimeFrom).format('YYYYMMDD-HHmmss')
+      const toStr = moment(form.datetimeTo).format('YYYYMMDD-HHmmss')
 
       const areaName = form.areaId ? this.areaIdMap[form.areaId].areaName + "_" : ""
 
@@ -189,12 +189,6 @@ export default {
         return null
       }
       return null
-    },
-    formatTime(time){
-      const date = new Date(time)
-      const h = date.getHours()
-      const m = date.getMinutes()
-      return (h >= 10 ? h : "0" + h) + ":" + (m >= 10 ? m : "0" + m)
     },
     getUseRatio(posList, total){
       let sum = 0.0
