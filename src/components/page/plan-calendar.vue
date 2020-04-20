@@ -4,7 +4,7 @@
     <div class="tui-full-calendar-layout">
       <!-- week -->
       <div id="w-container" class="tui-full-calendar-week-container">
-        <header-panel :planMode="planMode" :timeLineLeftAndWidth="viewModel.timeLineLeftAndWidth" :headerOpts="headerOpts" @handleScroll="handleScroll"></header-panel>
+        <header-panel :planMode="planMode" :timeLineLeftAndWidth="viewModel.timeLineLeftAndWidth" :scrollBarWidthLeft="viewModel.scrollBarWidthLeft" :headerOpts="headerOpts" @handleScroll="handleScroll"></header-panel>
         <time-grid-panel :planMode="planMode" :timeSlots="timeSlots" :viewModel="viewModel" :headerOpts="headerOpts" :doCompare="doCompare" :holidays="holidays" :working="working" :doUpate="doUpate" @handleScroll="handleScroll"></time-grid-panel>
       </div>
       <div>
