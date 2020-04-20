@@ -36,33 +36,6 @@ export default {
     ]),
   },
   methods: {
-    restructRegion(entity, dummyKey){
-      if(!Util.hasValue(entity.regionNames)){
-        entity.userRegionList = []
-        return dummyKey
-      }
-      entity.userRegionList = entity.regionNames.split(BULK.SPLITTER).map(regionName => ({
-        userRegionPK: {userId: dummyKey--, regionId: dummyKey--},
-        regionName: regionName,
-      }))
-      return dummyKey
-    },
-    onRestruct(entity, dummyKey){
-      if(Util.hasValue(entity.roleName)) {
-        const role = this.roles.find(role => role.roleName == entity.roleName)
-        entity.roleId = role? role.roleId: null
-      }
-      if(Util.hasValue(entity.regionNames)) {
-        entity.userRegionList = entity.regionNames.split(BULK.SPLITTER).map(regionName => ({
-          userRegionPK: {userId: dummyKey--, regionId: dummyKey--},
-          regionName: regionName,
-        }))
-      }
-      else{
-        entity.userRegionList = []
-      }
-      return dummyKey
-    },
     async onSaving() {
       await this.$refs.bulkEdit.bulkSave2()
     },

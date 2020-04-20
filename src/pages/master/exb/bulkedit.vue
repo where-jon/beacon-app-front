@@ -45,34 +45,6 @@ export default {
     getConf() {
       return {nullLabel: this.$i18n.tnl('label.null'), normalLabel: this.$i18n.tnl('label.normal')}
     },
-    onRestruct(entity, dummyKey){
-      if(Util.hasValue(entity.deviceId) || Util.hasValue(entity.deviceIdX)){
-        if(ConfigHelper.includesDeviceType('deviceIdX') && !ConfigHelper.includesDeviceType('deviceId') && !entity.deviceIdXName){
-          entity.deviceId = parseInt(entity.deviceIdX, 16)
-        }
-        if(!ConfigHelper.includesDeviceType('deviceId')){
-          BulkHelper.removeInvalid(entity, 'deviceId')
-        }
-        if(!ConfigHelper.includesDeviceType('deviceIdX')){
-          BulkHelper.removeInvalid(entity, 'deviceIdX')
-        }
-      }
-
-      if(Util.hasValue(entity.exbType)) { // TODO: 要動作確認
-        const target = EXB.getTypes().find(val => val.text == entity.exbType)
-        if(target){
-          entity.exbType = target.value
-        }
-      }
-      if(Util.hasValue(entity.sensorNames)) {
-        const param = BulkHelper.createParamSensor('exb', entity.sensorNames, dummyKey)
-        if(param.sensorList.length != 0){
-          entity.exbSensorList = param.sensorList
-        }
-        dummyKey = param.dummyKey
-      }
-      return dummyKey
-    },
   }
 }
 </script>

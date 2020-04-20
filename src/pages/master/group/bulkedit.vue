@@ -39,16 +39,6 @@ export default {
     async onSaving() {
       await this.$refs.bulkEdit.bulkSave2()
     },
-    onRestruct(entity, dummyKey){
-      if(Util.hasValueAny(entity.shape, entity.color, entity.bgColor)){
-        Util.setValue(entity, 'display.shape', entity.shape)
-        Util.setValue(entity, 'display.color', entity.color)
-        Util.setValue(entity, 'display.bgColor', entity.bgColor)
-      }
-      ExtValueHelper.copyToChild(entity, APP.GROUP)
-      entity.groupCd = entity.ID
-      return dummyKey
-    },
     async onSaved(){
     },
   }

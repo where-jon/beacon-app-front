@@ -63,22 +63,6 @@ export default {
     async onSaving() {
       await this.$refs.bulkEdit.bulkSave2()
     },
-    onRestruct(entity, dummyKey){
-      const zoneType = ZONE.getOptions().filter(option => APP.ZONE.TYPES.includes(option.value)).find(option => option.text == entity.zoneType)
-      if(!zoneType) {
-        entity.zoneType = 0
-      } else {
-        entity.zoneType = zoneType.value
-      }
-      if(Util.hasValue(entity.areaName)) {
-        entity.area = {areaId: dummyKey--, areaName: entity.areaName}
-      }
-      if(Util.hasValue(entity.ID)){
-        BulkHelper.setStringKey(entity, 'zoneCd', entity.ID, PATTERN.REGEXP.MASTER_CD)
-      }
-      ExtValueHelper.copyToChild(entity, APP.ZONE)
-      return dummyKey
-    },
     async onSaved(){
     },
   }
