@@ -11,6 +11,12 @@
           <b-alert v-model="isPlanNameEmpty" variant="danger" class="mb-0">
             {{ planNameMessage }}
           </b-alert>
+          <b-alert v-model="isPlanNameSizeError" variant="danger" class="mb-0">
+            {{ planNameSizeErrorMessage }}
+          </b-alert>
+          <b-alert v-model="hasServerError" variant="danger" class="mb-0">
+            {{ $t('message.error') }}
+          </b-alert>
           </b-col>
         </b-form-row>
         <!-- 出席者 -->
@@ -186,6 +192,7 @@ export default {
     DatePicker, TimePicker, ToggleButton
   },
   props: {
+    showEdit: null,
     name: null,
     id: null,
     appServicePath: null,
@@ -207,9 +214,26 @@ export default {
       isPotPersonDuplicate: false,
       isPlanNameEmpty: false,
       isDateTimeEmpty: false,
+      isPlanNameSizeError: false,
+      hasServerError: false
     }
   },
   watch: {
+    showEdit: {
+      handler: function(newVal, oldVal){
+        if (newVal) {
+          this.isZoneDuplicate = false
+          this.isLocationDuplicate = false
+          this.isPotThingDuplicate = false
+          this.isPotPersonDuplicate = false
+          this.isPlanNameEmpty = false
+          this.isDateTimeEmpty = false
+          this.isPlanNameSizeError = false
+          this.hasServerError = false
+        }
+      },
+      deep: false,
+    },
     'vueSelected.zone': {
       handler: function(newVal, oldVal){
         this.isZoneDuplicate = false
@@ -262,6 +286,9 @@ export default {
     },
     planNameMessage() {
       return this.$t('message.required', {target: this.$t('label.planName')})
+    },
+    planNameSizeErrorMessage() {
+      return this.$t('message.bulkSizeFailed', {col: this.$t('label.planName'), min: 1, max: 40})
     },
     participantMessage() {
       return this.$t('message.required', {target: this.$t('label.participant')})
@@ -340,7 +367,7 @@ export default {
       }
       catch(e) {
         console.error(e)
-        this.$emit('errorMessage', e.response.data);
+        this.hasServerError = true
       }
     },
     async onSaving() {
@@ -361,7 +388,7 @@ export default {
       }
       catch(e) {
         console.error(e)
-        this.$emit('errorMessage', e.response.data);
+        this.hasServerError = true
       }
     },
     async onDelete(event) {
@@ -378,9 +405,20 @@ export default {
     },
     validate() {
       this.isPlanNameEmpty = (!this.plan.planName || !this.plan.planName.trim())
+
+      this.isPlanNameSizeError = false
+      if (!this.isPlanNameEmpty) {
+        const title = this.plan.planName.trim()
+        if (title.length > 40) {
+          this.isPlanNameSizeError = true
+        }
+      }
+
       this.isDateTimeEmpty = (!this.plan.date)
+
       if (!this.isDateTimeEmpty) this.isDateTimeEmpty = (!this.plan.timeRange)
-      return (!this.isPlanNameEmpty && !this.isDateTimeEmpty)
+
+      return (!this.isPlanNameEmpty && !this.isDateTimeEmpty && !this.isPlanNameSizeError)
     }
   }
 }

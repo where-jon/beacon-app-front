@@ -91,7 +91,7 @@
       <plan-calendar :id="id" :name="name" :appServicePath="appServicePath" :planMode="planMode" :headerOpts="headerOpts" :viewModel="viewModel" :dragHandler="dragHandler" :clickScheduleEvent="clickScheduleEvent" :doCompare="doCompare" :holidays="holidays" :working="working" :doUpate="doUpate" @doEdit="doEdit" @doDelete="onDeleteSchedule"/>
       <div>
         <b-modal v-model="showEdit" hide-footer :title="$t('label.schedule')" header-class="editPlanHeader">
-          <edit-plan :id="id" :name="name" :appServicePath="appServicePath" :currentUser="currentUser" :locale="locale" :plan="targetPlan" :zoneOpts="zoneOpts" :locationOpts="locationOpts" :potPersonOpts="filterPotPersonOpts" :potThingOpts="potThingOpts" :vueSelected="editVueSelected" @doneSave="onEditSave" @delete="onEditDelete" @errorMessage="onEditError"/>
+          <edit-plan :showEdit="showEdit" :id="id" :name="name" :appServicePath="appServicePath" :currentUser="currentUser" :locale="locale" :plan="targetPlan" :zoneOpts="zoneOpts" :locationOpts="locationOpts" :potPersonOpts="filterPotPersonOpts" :potThingOpts="potThingOpts" :vueSelected="editVueSelected" @doneSave="onEditSave" @delete="onEditDelete"/>
         </b-modal>
       </div>
     </div>
