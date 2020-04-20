@@ -132,8 +132,9 @@ export default {
       const interval = APP.POSITION_SUMMARY_INTERVAL * 60 * 1000
       const from = Math.floor(new Date(form.datetimeFrom).getTime() / interval) * interval
       const to = Math.floor(new Date(form.datetimeTo).getTime() / interval) * interval
+      const areaData = data.filter(e => !form.areaId || e.areaId == form.areaId)
 
-      const sum = ArrayUtil.sumData(data, 'timestamp')
+      const sum = ArrayUtil.sumData(areaData, 'timestamp')
       Util.debug('sum', sum)
 
       let csv = this.$i18n.tnl("label.positionDt") + "," + this.getCol() + "," + this.$i18n.tnl("label.count") + "\n"
