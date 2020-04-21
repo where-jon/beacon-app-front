@@ -26,7 +26,7 @@ export const fetchMRoomPlan = async (selectedAreaId) => {
   const now = moment()
   const startDt = now.format('YYYY-MM-DDT00:00:00.000')
   const endDt = now.format('YYYY-MM-DDT23:59:59.999')
-  const url = `/office/plans/m-rooms?startDt=${startDt}&endDt=${endDt}&filterType=area&filterId=${selectedAreaId}`
+  const url = `/office/plans/m-rooms?startDt=${startDt}&endDt=${endDt}&filterType=areas&filterId=${selectedAreaId}`
   const data = await HttpHelper.getAppService(url)
   store.commit('main/replaceMain', {mRoomPlans: data})
 }

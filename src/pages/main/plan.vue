@@ -205,6 +205,7 @@ export default {
         {value:'potPersons', text: this.$t('label.potPerson')},
       ],
       mRoomFilterTypeOpts: [
+        {value:null, text: ''},
         {value:'areas', text: this.$t('label.area')},
       ],
       filterTypeOpts: [],
