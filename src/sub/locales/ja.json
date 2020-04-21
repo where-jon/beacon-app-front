@@ -1798,8 +1798,8 @@
     "resetFromTo": "{from}が変更されたため、{to}が未選択状態になりました。",
     "underDegree": "℃未満",
     "overDegree": "℃以上",
-    "lostDetected": "<持出禁止> {time} {potCd}「{potName}」が所定の場所に戻されていません。",
-    "prohibitDetected": "<進入禁止> {time} {groupName}（{potName}）が、{zoneName}に立ち入りました。",
+    "lostDetected": "<持出検知> {time} {potCd}「{potName}」が所定の場所に戻されていません。",
+    "prohibitDetected": "<進入検知> {time} {groupName}（{potName}）が、{zoneName}に立ち入りました。",
 
     "MSTEAMS": {
       "USER_GUIDE1": "EXOfficeを利用するには、お客様のOffice365におけるグループおよびユーザ情報へ本アプリがアクセスすることを許可していただく必要があります。",
