@@ -317,7 +317,6 @@ export default {
       handler: function(newVal, oldVal){
         this.selectedFilter.filterType = newVal
         this.selectedFilter.filterId = null
-        this.selectedFilter.filterId = null
         this.selectedFilter.filterIds = []
         this.vueSelected.filter = null
         this.vueSelected.filters = []
