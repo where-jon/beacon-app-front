@@ -110,8 +110,8 @@ export function loadTimeLine(data) {
       const card =  {
         id: `op-${opId}`,
         title: zone.zoneName,
-        start: out.startDt,
-        end: out.endDt,
+        start: new Date(out.startDt),
+        end: new Date(out.endDt),
         color: DISP.PLAN.PLAN_COLOR,
         bgColor: DISP.PLAN.ACTUAL_OUT_OF_PLAN_BG_COLOR,
         dragBgColor: DISP.PLAN.ACTUAL_OUT_OF_PLAN_BG_COLOR,
