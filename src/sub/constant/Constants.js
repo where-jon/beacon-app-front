@@ -683,6 +683,7 @@ export const SETTING = {
           WITH: SETTING.STRING_LIST,
         },
         EXB: {
+          WITH: SETTING.STRING_LIST,
           SENSOR: SETTING.NUMBER_LIST,
         },
         LOCATION: {
