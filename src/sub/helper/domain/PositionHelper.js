@@ -714,6 +714,9 @@ export const calcCoordinatesForMultiPosition = (positions, selectedAreaId) => {
 
 // --------- TX詳細 ---------
 
+export const getLabel = key => {
+  return APP.TXDETAIL.SHOW_LABEL ? i18n.tnl('label.' + key) + ":" : ""
+}
 
 /**
  * 位置表示のTx詳細に必要な情報を取得する。
@@ -743,16 +746,16 @@ export const createTxDetailInfo = (x, y, tx, canvasScale, offset, containerRect,
     containerWidth: containerRect.width,
     containerHeight: containerRect.height,
     class: !tx.btxId ? '': 'balloon-u', // 上表示のみに固定,
-    name: Util.getValue(tx, 'pot.potName', ''),
-    tel: Util.getValue(tx, 'pot.extValue.tel', ''),
+    name: getLabel('name') + Util.getValue(tx, 'pot.potName', ''),
+    tel: getLabel('tel') + Util.getValue(tx, 'pot.extValue.tel', ''),
     timestamp: position ? DateUtil.formatDate(new Date(position.timestamp)) : '',
     thumbnail: Util.getValue(preloadThumbnail, 'src', ''),
-    category: Util.getValue(tx, 'pot.cateogry.categoryName', ''),
-    group: Util.getValue(tx, 'pot.group.groupName', ''),
+    category: getLabel('category') + Util.getValue(tx, 'pot.cateogry.categoryName', ''),
+    group: getLabel('group') + Util.getValue(tx, 'pot.group.groupName', ''),
     bgColor: display.bgColor,
     color: display.color,
     isDispRight: x + offset.x + 100 < window.innerWidth,
-    email: Util.getValue(tx, 'pot.user.email')
+    email: getLabel('email') + Util.getValue(tx, 'pot.user.email', '')
   }
   const extValue = Util.v(tx, 'pot.extValue')
   if(extValue){
