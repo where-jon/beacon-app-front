@@ -205,6 +205,7 @@ export default {
         {value:'potPersons', text: this.$t('label.potPerson')},
       ],
       mRoomFilterTypeOpts: [
+        {value:null, text: ''},
         {value:'areas', text: this.$t('label.area')},
       ],
       filterTypeOpts: [],
@@ -316,7 +317,6 @@ export default {
     'vueSelected.filterType': {
       handler: function(newVal, oldVal){
         this.selectedFilter.filterType = newVal
-        this.selectedFilter.filterId = null
         this.selectedFilter.filterId = null
         this.selectedFilter.filterIds = []
         this.vueSelected.filter = null

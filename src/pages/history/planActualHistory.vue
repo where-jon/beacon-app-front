@@ -19,6 +19,19 @@
             </v-select>
           </span>
         </b-form-row>
+        <b-form-row class="my-1 ml-2 ml-sm-0">
+          <label class="ml-sm-4 ml-2 mr-1">
+            {{ $t('label.area') }}
+          </label>
+          <b-form-select v-model="vueSelected.filterType" :options="filterTypeOpts" class="ml-2 inputSelect" />
+          <span :title="vueSelectTitle(vueSelected.filter)">
+            <v-select v-model="vueSelected.filter" :options="filterOpts" class="ml-2 inputSelect vue-options" style="width: 400px;">
+              <template slot="selected-option" slot-scope="option">
+                {{ vueSelectCutOnWithWidth(option, 400) }}
+              </template>
+            </v-select>
+          </span>
+        </b-form-row>
       </b-form>
     </b-row>
     <b-row class="mt-2 mb-2">
@@ -66,6 +79,7 @@ import moment from 'moment'
 import { APP, DISP, APP_SERVICE } from '../../sub/constant/config'
 import * as DateUtil from '../../sub/util/DateUtil'
 import alert from '../../components/parts/alert.vue'
+import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 
 export default {
   mixins: [commonmixin],
@@ -88,6 +102,20 @@ export default {
         datetimeFrom: null,
         datetimeTo: null,
       },
+      filterTypeOpts: [
+        {value:null, text: ''},
+        {value:'areas', text: this.$t('label.area')},
+      ],
+      vueSelected: {
+        filterType: null,
+        filter: null,
+      },
+      selectedFilter: {
+        filterType: null,
+        filterId: null,
+      },
+      filterOpts: [],
+      areaOpts: [],
 
       footerMessage: null,
       tItems: [],
@@ -128,8 +156,32 @@ export default {
       },
       deep: false,
     },
+    'vueSelected.filterType': {
+      handler: function(newVal, oldVal){
+        this.selectedFilter.filterType = newVal
+        this.selectedFilter.filterId = null
+        this.vueSelected.filter = null
+        switch (newVal) {
+          case 'areas':
+            this.filterOpts = this.areaOpts
+            break;
+          default:
+            this.filterOpts = []
+        }
+      },
+      deep: false,
+    },
+    'vueSelected.filter': {
+      handler: function(newVal, oldVal){
+        if (this.selectedFilter.filterType && newVal) {
+          this.selectedFilter.filterId = newVal.value
+        }
+      },
+      deep: false,
+    },
   },
   created() {
+    this.loadMaster()
     this.planModeFilter = this.planModeOpts[0]
   },
   mounted() {
@@ -140,12 +192,21 @@ export default {
     this.form.datetimeTo = now.set({hour:23,minute:59,second:59,millisecond:999}).toDate()
   },
   methods: {
+    async loadMaster() {
+      this.areaOpts = MasterHelper.getOptionsFromState('area', null, true)
+    },
     async display() {
       try {
         const df = 'YYYY-MM-DDTHH:mm:ss.SSS'
         const startDt = moment(this.form.datetimeFrom).format(df)
         const endDt = moment(this.form.datetimeTo).format(df)
-        const data = await HttpHelper.getAppService(`${this.appServicePath}?startDt=${startDt}&endDt=${endDt}&isActual=${this.planModeFilter.value}&limit=${this.rowlimit}`)
+
+        let query = this.selectedFilter.filterId
+            ? `filterType=${this.selectedFilter.filterType}&filterId=${this.selectedFilter.filterId}` 
+            : ''
+        query = `startDt=${startDt}&endDt=${endDt}&isActual=${this.planModeFilter.value}&limit=${this.rowlimit}&${query}`
+        
+        const data = await HttpHelper.getAppService(`${this.appServicePath}?${query}`)
         if (Array.isArray(data)) {
           if (data.length == 0) {
             this.message = this.$i18n.tnl('message.notFoundData', {target: this.planModeFilter.label})
