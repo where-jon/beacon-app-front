@@ -359,6 +359,8 @@ const MAX_WIDTH_RATIO = 33
 let containerPx = 0
 
 const getScrollBarWidthPx = () => {
+  // const tgc = document.getElementById('tgc')
+  // return tgc.offsetWidth - tgc.clientWidth
   return window.innerWidth - document.body.clientWidth
 }
 
@@ -373,19 +375,18 @@ const getGridLeftAndWidth = (headerOpts) => {
   let accumulatedWidthPx = 0
   let widthRatio = 100 / headerOpts.length
   widthRatio = widthRatio < MIN_WIDTH_RATIO ? MIN_WIDTH_RATIO : MAX_WIDTH_RATIO < widthRatio ? MAX_WIDTH_RATIO : widthRatio
-  let unitWidthPx = (containerPx - scrollBarWidthPx) / headerOpts.length
+  let unitWidthPx = containerPx / headerOpts.length
 
   switch (widthRatio) {
     case MIN_WIDTH_RATIO:
     case MAX_WIDTH_RATIO:
-      const unitPx = containerPx * widthRatio / 100
-      const newContainerPx= unitPx * headerOpts.length
+      unitWidthPx = containerPx * widthRatio / 100
+      const newContainerPx = unitWidthPx * headerOpts.length
       document.getElementById('w-container').style.width = widthRatio == MIN_WIDTH_RATIO ? '100%' : ''
       document.getElementById('wt-tg-s').style.width = `${newContainerPx}px`
       document.getElementById('tg-h-g').style.width = `${newContainerPx}px`
       document.getElementById('tg-s').style.width = `${newContainerPx}px`
-      document.getElementById('day-right').style.width = `${newContainerPx}px`
-      unitWidthPx = (newContainerPx - scrollBarWidthPx) / headerOpts.length
+      document.getElementById('day-right').style.width = `${newContainerPx + scrollBarWidthPx}px`
       break
     default:
       document.getElementById('wt-tg-s').style.width = `100%`

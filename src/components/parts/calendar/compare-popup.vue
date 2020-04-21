@@ -112,12 +112,8 @@ export default {
   computed: {
     calendarContent() {
       const start = moment(this.event.schedule.start).format("HH:mm")
-      const end = moment(this.event.schedule.end).format("HH:mm")
+      const end = moment(this.event.schedule.planEnd).format("HH:mm")
       return `${start} - ${end}`
-    },
-    aaa() {
-      const a = this.event.schedule.ips.map( p => p.potName + ' ' + p.range).join(',')
-      return a
     },
   },
   async mounted() {

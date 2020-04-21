@@ -156,6 +156,7 @@ export default {
       },
       deep: false,
     },
+<<<<<<< HEAD
     'vueSelected.filterType': {
       handler: function(newVal, oldVal){
         this.selectedFilter.filterType = newVal
@@ -179,6 +180,8 @@ export default {
       },
       deep: false,
     },
+=======
+>>>>>>> develop/1.3.2
   },
   created() {
     this.loadMaster()

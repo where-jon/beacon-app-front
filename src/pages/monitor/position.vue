@@ -64,8 +64,8 @@ export default {
         key: this.convertColumnName(val), sortable: true, tdClass: 'action-rowdata'
       })).concat([
         { key: 'finalReceiveTimestamp', sortable: true, tdClass: 'action-rowdata' },
-        { key: 'state' , sortable: true, tdClass: 'action-rowdata'},
         { key: 'powerLevelTimestamp' , sortable: true, tdClass: 'action-rowdata'},
+        { key: 'state' , sortable: true, tdClass: 'action-rowdata'},
       ]).filter(val => val))
     },
     getCsvHeaders(){

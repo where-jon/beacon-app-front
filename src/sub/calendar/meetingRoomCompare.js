@@ -2,6 +2,7 @@ import moment from 'moment'
 import {DISP} from '../constant/config'
 
 export function loadTimeLine(data) {
+  const boundaryTime = moment().add(-1, 'h').toDate()
   const planMap = {}
   const timeLineMap = {}
   const timeFormat = 'HH:mm'
@@ -10,6 +11,11 @@ export function loadTimeLine(data) {
       timeLineMap[zone.zoneId] = []
     }
     zone.plans.forEach(plan => {
+      const planStartDt = new Date(plan.startDt)
+      const planEndDt = new Date(plan.endDt)
+      if (boundaryTime <= planStartDt) {
+        return
+      }
       let ipId = 1
       let npId = 1
       let preIpEnd = plan.startDt
@@ -63,8 +69,9 @@ export function loadTimeLine(data) {
       const card =  {
         id: `p-${plan.planId}`,
         title: plan.planName,
-        start: new Date(plan.startDt),
-        end: new Date(plan.endDt),
+        start: planStartDt,
+        planEnd: planEndDt,
+        end: boundaryTime <= planEndDt ? boundaryTime : planEndDt,
         color: DISP.PLAN.PLAN_COLOR,
         bgColor: DISP.PLAN.NO_ACTUAL_IN_PLAN_BG_COLOR,
         dragBgColor: DISP.PLAN.NO_ACTUAL_IN_PLAN_BG_COLOR,
