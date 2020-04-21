@@ -185,6 +185,11 @@ export default {
   async mounted() {
     this.reloadState.isLoad = false
   },
+  async beforeDestroy() {
+    if(!this.isPause){
+      this.stopAutoReload()
+    }
+  },
   methods: {
     initMap() {
       if (this.rssiCon) {
