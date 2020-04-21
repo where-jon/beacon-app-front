@@ -299,7 +299,9 @@ export const APP = { // 機能面に関する設定
   TXDETAIL: {
     // TX詳細表示項目
     ITEMS: ['minor', 'major', 'name', 'group', 'category', 'tel', 'timestamp'],
-    NO_UNREGIST_THUMB: false, // TX詳細サムネイル非表示（未登録の場合）
+    NO_UNREGIST_THUMB: false, // TX詳細サムネイル非表示（未登録の場合）,
+    SHOW_LABEL: true, // 標準項目にラベルを表示する,
+    TEXT_MAX: 38 // 指定文字数を超えたら...表示にする
   },
   PROCESS_SUM: {
     TIME: {

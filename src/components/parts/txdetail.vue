@@ -146,7 +146,7 @@ export default {
       return APP.TXDETAIL.ITEMS.map(key => {
         return {
           key,
-          val: StringUtil.cutOnLongByte(this.selectedTx[key], 38)
+          val: StringUtil.cutOnLongByte(this.selectedTx[key], APP.TXDETAIL.TEXT_MAX)
         }
       })
     },
@@ -291,7 +291,7 @@ export default {
 
 .description {
   float: left;
-  width: 170px;
+  min-width: 170px;
   height: 125px;
   font-weight: bold;
   padding-left: 10px;
