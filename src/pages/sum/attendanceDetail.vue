@@ -65,7 +65,7 @@ import { mapState } from 'vuex'
 import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import { APP, DEV } from '../../sub/constant/config'
-import { CATEGORY } from '../../sub/constant/Constants'
+import { CATEGORY, POT_TYPE } from '../../sub/constant/Constants'
 import * as DateUtil from '../../sub/util/DateUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as Util from '../../sub/util/Util'
@@ -223,8 +223,9 @@ export default {
       Util.debug("viewList", this.viewList)
 
       if(this.viewList.length > 0){
-        this.allDayWorkPer = Math.floor(allCount / this.viewList.length * 100) + '%'
-        this.halfDayWorkPer = Math.floor(halfCount / this.viewList.length * 100) + '%'
+        const potNum = this.pots.filter(e => e.potType == POT_TYPE.PERSON && !this.form.group || Util.v(e, 'group.groupId') == Util.v(this.form, 'group.value'))
+        this.allDayWorkPer = Math.floor(allCount / potNum.length * 100) + '%'
+        this.halfDayWorkPer = Math.floor(halfCount / potNum.length * 100) + '%'
       }
 
       this.totalRows = this.viewList.length
