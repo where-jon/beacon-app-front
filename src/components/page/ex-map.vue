@@ -1210,7 +1210,7 @@ export default {
         let loc = pos
         if(pos.isFixedPosition){
           if(pos.inFixedZone){
-            loc = pos.tx.location
+            loc = pos
           }else{
             // 表示用の場所を検索して見つかれば設定する
             const viewPos = positions.find(pos => pos.btxId == tx.btxId && !pos.isFixedPosition)
