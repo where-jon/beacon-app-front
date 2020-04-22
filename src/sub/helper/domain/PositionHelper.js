@@ -737,8 +737,6 @@ export const createTxDetailInfo = (x, y, tx, canvasScale, offset, containerRect,
   const position = filterPositions().find(e => e.btxId === tx.btxId)
   const ret = {
     btxId: tx.btxId,
-    minor: i18n.tnl('label.minor') + ':' + tx.btxId,
-    major: tx.major? i18n.tnl('label.major') + ':' + tx.major : '',
     // TX詳細ポップアップ内部で表示座標計算する際に必要
     orgLeft: x * canvasScale + offset.x,
     orgTop: y * canvasScale + offset.y,
@@ -746,22 +744,24 @@ export const createTxDetailInfo = (x, y, tx, canvasScale, offset, containerRect,
     containerWidth: containerRect.width,
     containerHeight: containerRect.height,
     class: !tx.btxId ? '': 'balloon-u', // 上表示のみに固定,
-    name: getLabel('name') + Util.getValue(tx, 'pot.potName', ''),
-    tel: getLabel('tel') + Util.getValue(tx, 'pot.extValue.tel', ''),
     timestamp: position ? DateUtil.formatDate(new Date(position.timestamp)) : '',
     thumbnail: Util.getValue(preloadThumbnail, 'src', ''),
-    category: getLabel('category') + Util.getValue(tx, 'pot.cateogry.categoryName', ''),
-    group: getLabel('group') + Util.getValue(tx, 'pot.group.groupName', ''),
     bgColor: display.bgColor,
     color: display.color,
     isDispRight: x + offset.x + 100 < window.innerWidth,
+    minor: getLabel('minor') + Util.getValue(tx, 'btxId', ''),
+    major: getLabel('major') + Util.getValue(tx, 'major', ''),
+    name: getLabel('name') + Util.getValue(tx, 'pot.potName', ''),
+    tel: getLabel('tel') + Util.getValue(tx, 'pot.extValue.tel', ''),
+    category: getLabel('category') + Util.getValue(tx, 'pot.cateogry.categoryName', ''),
+    group: getLabel('group') + Util.getValue(tx, 'pot.group.groupName', ''),
     email: getLabel('email') + Util.getValue(tx, 'pot.user.email', '')
   }
   const extValue = Util.v(tx, 'pot.extValue')
   if(extValue){
     Object.keys(extValue).forEach( key => { 
       if(!ret[key] && extValue[key] ){ // 既にあるキーは書き換えないかつ値が存在する拡張キーのみ表示対象にする
-        ret[key] = i18n.tnl('label.' + key) + ':' + extValue[key] 
+        ret[key] = getLabel(key) + extValue[key] 
       }
     } )
   }

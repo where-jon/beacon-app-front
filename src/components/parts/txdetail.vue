@@ -146,7 +146,7 @@ export default {
       return APP.TXDETAIL.ITEMS.map(key => {
         return {
           key,
-          val: StringUtil.cutOnLongByte(this.selectedTx[key], APP.TXDETAIL.TEXT_MAX)
+          val: StringUtil.cutOnLong(this.selectedTx[key], APP.TXDETAIL.TEXT_MAX)
         }
       })
     },
