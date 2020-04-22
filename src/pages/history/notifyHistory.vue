@@ -312,9 +312,9 @@ export default {
       isProviderUser? this.userState = 'ALL_REGION':this.userState = null
     }
 
-    this.userState == 'ALL_REGION'? this.bTx = true: this.bTx = false
-    this.userState == 'ALL_REGION'? this.bUserCheck = true: this.bUserCheck = false
-    this.userState == 'ALL_REGION'? null: this.userMinor = user.minor
+    this.bTx = this.userState == 'ALL_REGION'? true: false
+    this.bUserCheck = this.userState == 'ALL_REGION'?  true: false
+    this.userMinor = this.userState == 'ALL_REGION'? null: user.minor
     this.fields = this.fields1
 
   },
@@ -454,34 +454,17 @@ export default {
         }
         let count = 0
         this.csvList = []
+        // 変更:ログインユーザーでフィルタしない仕様とする
         fetchList.forEach((notifyData) => {
           const d = new Date(notifyData.notifyDatetime)
           notifyData.positionDt = DateUtil.formatDate(d.getTime())
           notifyData.notifyResult = this.$i18n.tnl('label.' + (notifyData.notifyResult == 0? 'success': 'failed'))
-          if(this.userState == 'ALL_REGION' || aNotifyState == 'GW_ALERT' || aNotifyState == 'EXB_ALERT'){
-            let arNotifyto = this.getNotifyTo(notifyData.notifyTo)
-            arNotifyto ? notifyData.notifyTo = arNotifyto: null
-            if (++count <= this.limitViewRows) {
-              this.viewList.push(notifyData)
-            }
-            this.csvList.push(notifyData)
-          }else{
-            let tempIndex = 0
-            notifyData.minors.find((tval,index) =>
-              tval == this.userMinor ? tempIndex = index:null
-            )
-            notifyData.minors = notifyData.minors && notifyData.minors.length > 0 ? notifyData.minors[tempIndex] : null
-            this.gPowerLevel= notifyData.powerLevels && notifyData.powerLevels.length > 0 ? notifyData.powerLevels[tempIndex] : null
-            notifyData.majors = notifyData.majors && notifyData.majors > 0 ? notifyData.majors[tempIndex] : null
-            notifyData.txNames = notifyData.txNames && notifyData.txNames > 0 ? notifyData.txNames[tempIndex] : null
-            let arNotifyto = this.getNotifyTo(notifyData.notifyTo)
-            arNotifyto ? notifyData.notifyTo = arNotifyto: null
-            if (++count <= this.limitViewRows) {
-              notifyData.minors == this.userMinor? this.viewList.push(notifyData) : null
-            }
-            notifyData.minors == this.userMinor? this.csvList.push(notifyData) : null
-            notifyData.minors == this.userMinor? count++:null
+          let arNotifyto = this.getNotifyTo(notifyData.notifyTo)
+          arNotifyto ? notifyData.notifyTo = arNotifyto: null
+          if (++count <= this.limitViewRows) {
+            this.viewList.push(notifyData)
           }
+          this.csvList.push(notifyData)
         })
         this.totalRows = this.viewList.length
         this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`
@@ -497,25 +480,25 @@ export default {
         Object.keys(this.csvHeaders)
           .filter(csvHeader => this.csvHeaders[csvHeader])
           .forEach(csvHeader => obj[this.csvHeaders[csvHeader]] = e[csvHeader])
-        obj.majors? obj.major=obj.majors:null
+        obj.majors = obj.major ? obj.majors : null
         obj.majors? delete obj.majors:null
-        obj.minors? obj.minor=obj.minors:null
+        obj.minors = obj.minor ? obj.minors : null
         obj.minors? delete obj.minors:null
         return obj
       })
       records.forEach((record) => {
-        record.txNames?record.txNames=this.csvColumnBrTag(record.txNames):false
-        record.userName?record.userName=this.csvColumnBrTag(record.userName):false
-        record.notifyTo?record.notifyTo=this.csvColumnBrTag(record.notifyTo):false
-        record.major?record.major=this.csvColumnBrTag(record.major):false
-        record.minor?record.minor=this.csvColumnBrTag(record.minor):false
-        record.potName?record.potName=this.csvColumnBrTag(record.potName):false
-        record.zoneName?record.zoneName=this.csvColumnBrTag(record.zoneName):false
-        record.lastRcvPosName?record.lastRcvPosName=this.csvColumnBrTag(record.lastRcvPosName):false
-        record.deviceIds?record.deviceIds=this.csvColumnBrTag(record.deviceIds):false
-        record.lastRcvDatetimes?record.lastRcvDatetimes= record.lastRcvDatetimes=this.csvColumnBrTag(record.lastRcvDatetimes):false
-        record.lastRcvDatetime?record.lastRcvDatetime=this.csvColumnBrTag(record.lastRcvDatetime):false
-        record.powerLevels?record.powerLevels=this.csvColumnBrTag(record.powerLevels):false
+        record.txNames = record.txNames ? this.csvColumnBrTag(record.txNames) : false
+        record.userName = record.userName ? this.csvColumnBrTag(record.userName) : false
+        record.notifyTo = record.notifyTo ? this.csvColumnBrTag(record.notifyTo) : false
+        record.major = record.major ? this.csvColumnBrTag(record.major) : false
+        record.minor = record.minor ? this.csvColumnBrTag(record.minor) : false
+        record.potName = record.potName ? this.csvColumnBrTag(record.potName) : false
+        record.zoneName = record.zoneName ? this.csvColumnBrTag(record.zoneName) : false
+        record.lastRcvPosName = record.lastRcvPosName ? this.csvColumnBrTag(record.lastRcvPosName) : false
+        record.deviceIds = record.deviceIds ? this.csvColumnBrTag(record.deviceIds) : false
+        record.lastRcvDatetimes = record.lastRcvDatetimes ? this.csvColumnBrTag(record.lastRcvDatetimes) : false
+        record.lastRcvDatetime = record.lastRcvDatetime ? this.csvColumnBrTag(record.lastRcvDatetime) : false
+        record.powerLevels = record.powerLevels ? this.csvColumnBrTag(record.powerLevels) : false
 
         if(this.form.notifyState == 'TX_BATTERY_ALERT' && record.minor && record.powerLevels){
           let minors = record.minor.split(';')
