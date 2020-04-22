@@ -126,44 +126,39 @@ export default {
     },
     async margeSensorRecords(positions){
       const sensorHistories = await this.fetchSensorHistory()
-      const ret = positions.map(position => {
-        if(!Util.hasValue(position.sensorIdList)){
-          return position
-        }
-        const sensorDataList = []
-        position.sensorIdList.forEach(sensorId => {
-          const mergeData = sensorHistories[`${sensorId}`]? sensorHistories[`${sensorId}`].find(sensorHistory => sensorHistory.btxId == position.btxId): null
-          if(mergeData){
-            sensorDataList.push(mergeData)
+      for(let sensorId in sensorHistories) {
+        const hist = sensorHistories[sensorId]
+        hist.forEach(e => {
+          const pos = positions.find(pos => pos.btxId == e.btx_id || pos.btxId == e.btxId)
+          if(pos){
+            // 測位結果にセンサー情報をマージ
+            if(e.power_level){
+              pos.power_level = e.power_level
+              pos.powerLevelTimestamp = this.getTimestamp(EXCloudHelper.getDispTime(e))
+            }else if(e.battery_level){
+              pos.power_level = e.battery_level
+              pos.powerLevelTimestamp = this.getTimestamp(EXCloudHelper.getDispTime(e))
+            }            
+          }else{
+            // 測位がない場合は追加
+            const btxId = e.btxId ? e.btxId : e.btx_id
+            if(btxId){
+              const tx = this.btxIdMap[btxId]
+              const powerLevel = e.power_level ? e.power_level : e.battery_level
+              positions.push({
+                ...e,
+                btxId,
+                name: Util.getValue(tx, 'pot.potName'),
+                power_level: powerLevel,
+                powerLevelTimestamp: this.getTimestamp(EXCloudHelper.getDispTime(e)),
+                finalReceiveTimestamp: this.getTimestamp(EXCloudHelper.getDispTime(e)),
+                state: this.$refs.monitorTable.getStateLabel('tx', EXCloudHelper.getDispTime(e)),
+              })
+            }
           }
         })
-        if(!Util.hasValue(sensorDataList)){
-          return position
-        }
-        const target = sensorDataList.reduce((prev, cur) => EXCloudHelper.getDispTime(prev) > EXCloudHelper.getDispTime(cur)? prev: cur)
-        position.powerLevel = this.$refs.monitorTable.getPositionPowerLevelLabel(target.power_level),
-        position.power_level = target.power_level
-        position.finalReceiveTimestamp = this.getTimestamp(EXCloudHelper.getDispTime(target))
-        return position
-      })
-      if(!Util.hasValue(ret)){
-        const sRet = []
-        Object.keys(sensorHistories).forEach(key => {
-          sensorHistories[key].forEach(sensorHistory => {
-            const tx = this.btxIdMap[sensorHistory.btxId]
-            sRet.push({
-              ...sensorHistory,
-              btxId: sensorHistory.btxId,
-              name: Util.getValue(tx, 'pot.potName'),
-              powerLevel: this.$refs.monitorTable.getPositionPowerLevelLabel(sensorHistory.power_level),
-              finalReceiveTimestamp: this.getTimestamp(EXCloudHelper.getDispTime(sensorHistory)),
-              state: this.$refs.monitorTable.getStateLabel('tx', EXCloudHelper.getDispTime(sensorHistory)),
-            })
-          })
-        })
-        return sRet
       }
-      return ret
+      return positions
     },
     getTimestamp(timestamp) {
       if (timestamp) {
