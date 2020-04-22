@@ -591,6 +591,9 @@ export default {
     document.removeEventListener('touchstart', this.touchEnd)
     this.resetDetail()
     this.removeTick()
+    if(!this.isPause){
+      this.stopAutoReload()
+    }
   },
   methods: {
 
