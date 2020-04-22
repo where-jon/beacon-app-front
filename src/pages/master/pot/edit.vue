@@ -113,7 +113,6 @@ import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import * as VueSelectHelper from '../../../sub/helper/ui/VueSelectHelper'
-import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import commonmixin from '../../../components/mixin/commonmixin.vue'
 import editmixin from '../../../components/mixin/editmixin.vue'
@@ -402,8 +401,8 @@ export default {
         potName: this.form.potName,
         potType: this.potTypeOptions.filter(e => e.value == this.form.potType).map(e => e.text),
         displayName: this.form.displayName,
-        groupName: this.form.groupId ? this.groupOptions.filter(e => e.value == this.form.groupId).map(e => e.text).join(";") : null,
-        categoryName: this.form.categoryId ? this.categoryOptions.filter(e => e.value == this.form.categoryId).map(e => e.text).join(";") : null,
+        groupCd: this.form.groupId ? this.groups.filter(e => e.groupId == this.form.groupId).map(e => e.groupCd).join(";") : null,
+        categoryCd: this.form.categoryId ? this.categories.filter(e => e.categoryId == this.form.categoryId).map(e => e.categoryCd).join(";") : null,
         thumbnail: this.form.thumbnail,
         description: this.form.description,
         extValue: null
@@ -423,11 +422,11 @@ export default {
         extValue[key] = this.form[key]
       })
       if (Object.keys(extValue).length > 0) {
-        entity.extValue = ExtValueHelper.jsonStringfyAndFormatCSV(extValue)
+        entity.extValue = JSON.stringify(extValue)
       }
 
       if(Util.hasValue(this.form.authCategoryIdList)){
-        const list = this.categoryOptions.filter(e => this.form.authCategoryIdList.includes(e.value)).map(e => e.text)
+        const list = this.categories.filter(e => this.form.authCategoryIdList.includes(e.categoryId)).map(e => e.categoryCd)
         entity.auth = list.length > 0 ? list.join(";") : null
       }
 
@@ -436,7 +435,7 @@ export default {
 
       this.potCdOld = this.form.potCd
       
-      return await AppServiceHelper.save2(this.pAppServicePath, entity)
+      return await AppServiceHelper.save2(this.pAppServicePath, [entity])
     },
     getNameByteLangth(){
       const fileElement = Util.getValue(document.getElementsByClassName('custom-file'), '0')

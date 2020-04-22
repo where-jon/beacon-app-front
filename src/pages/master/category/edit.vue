@@ -247,8 +247,8 @@ export default {
         shape: `${this.form.displayShape}`,
         color: ColorUtil.colorCd4display(this.form.displayColor),
         bgColor: ColorUtil.colorCd4display(this.form.displayBgColor),
-        guardIDs: Util.getValue(this.form, 'zoneGuardList', []).join(";"),
-        doorIDs: Util.getValue(this.form, 'zoneDoorList', []).join(";"),
+        guardCds: Util.getValue(this.form, 'zoneGuardList', []).join(";"),
+        doorCds: Util.getValue(this.form, 'zoneDoorList', []).join(";"),
       }
       
       ExtValueHelper.getExtValueKeys(APP.CATEGORY).forEach(key => {
@@ -262,7 +262,7 @@ export default {
       this.oldColor = this.form.displayColor
       this.oldBgColor = this.form.displayBgColor
 
-      return await AppServiceHelper.save2(this.pAppServicePath, entity)
+      return await AppServiceHelper.save2(this.pAppServicePath, [entity])
     },
     async onSaved(){
       const categoryList = this.categories.filter(category => category.systemUse == 0)

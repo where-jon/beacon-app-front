@@ -92,7 +92,7 @@ export default {
         description: this.form.description,
       }
       this.oldRegionCd = this.form.regionCd
-      return await AppServiceHelper.save2(this.appServicePath, entity)
+      return await AppServiceHelper.save2(this.appServicePath, [entity])
     },
     async onSaved(){
       await AuthHelper.switchAppService()

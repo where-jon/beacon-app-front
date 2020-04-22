@@ -172,7 +172,7 @@ export default {
       } else {
         entity.mode = null
       }
-      const saveId =  await AppServiceHelper.save2(this.appServicePath, entity)
+      const saveId =  await AppServiceHelper.save2(this.appServicePath, [entity])
       return saveId
     },
     async onSaved(){
