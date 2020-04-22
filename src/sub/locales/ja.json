@@ -947,7 +947,7 @@
         "DEVICEID_TYPE": "EXBeacon画面でデバイスIDとデバイスID(16進数)を使用する::EXBeacon画面でデバイスIDかデバイスID(16進数)のどちらか、または両方を使用します。deviceId、deviceIdX、bothのいずれかを設定します。",
         "MULTI_SENSOR": "EXBeaconに複数のセンサを設定する::EXBeacon画面で複数のセンサを設定可能にします。",
         "SENSOR_MAX": "EXBeaconに設定するセンサの最大数::EXBeacon画面で設定可能なセンサの最大数を設定します。",
-        "WITH": "ExServiceのMasterRequestに追加する項目::MasterRequestに追加する項目を文字列リスト（カンマ区切り）で設定する。"
+        "WITH": "EXBeacon画面に追加する項目::EXBeacon画面に追加する項目を文字列リスト（カンマ区切り）で設定する。"
       },
       "LOCATION": {
         "WITH": "場所画面で使用する項目::場所画面で使用する項目を設定します。設定可能な値は次の通りです。★{LOCATION}",
