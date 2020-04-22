@@ -332,7 +332,7 @@ export default {
           horizon: this.txIconsHorizon,
           vertical: this.txIconsVertical
         }
-        entity.txViewType = ExtValueHelper.jsonStringfyAndFormatCSV(entity.txViewType)
+        entity.txViewType = JSON.stringify(entity.txViewType)
       }
 
       const extValue = {}
@@ -342,13 +342,13 @@ export default {
         }
       })
       if (Object.keys(extValue).length > 0) {
-        entity.extValue = ExtValueHelper.jsonStringfyAndFormatCSV(extValue)
+        entity.extValue = JSON.stringify(extValue)
       }
 
       entity.zoneClass = Util.getValue(this.form, 'locationZoneList', []).map(locationZone => {
         return this.zones.find(zone => zone.zoneId == locationZone.locationZonePK.zoneId).zoneCd
       }).join(";")
-      return await AppServiceHelper.save2(this.appServicePath, entity)
+      return await AppServiceHelper.save2(this.appServicePath, [entity])
     },
     async onSaved(){
       this.oldLocationCd = this.form.locationCd

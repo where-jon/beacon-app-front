@@ -65,6 +65,7 @@
 
 <script>
 import { mapState } from 'vuex'
+import { APP } from '../../../sub/constant/config'
 import { CATEGORY, PATTERN } from '../../../sub/constant/Constants'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
@@ -78,6 +79,7 @@ import showmapmixin from '../../../components/mixin/showmapmixin.vue'
 import alert from '../../../components/parts/alert.vue'
 import autoAlert from '../../../components/parts/autoAlert.vue'
 import ZoneCanvas from '../../../components/parts/zonecanvas.vue'
+import * as ExtValueHelper from '../../../sub/helper/domain/ExtValueHelper'
 
 export default {
   components: {
@@ -196,7 +198,8 @@ export default {
       await this.deletedIds.forEach((id) => AppServiceHelper.deleteEntity(path, id))
       let saveId = -1
       try {
-        saveId = await AppServiceHelper.bulkSave(this.appServicePath + '/edit', zones, 0)
+        const entities = zones.map(e => this.createCsvEntity(e))
+        saveId = await await AppServiceHelper.save2(this.appServicePath, entities)
         this.isRegist = false
         this.message = this.$i18n.t('message.updateCompleted', { target: this.$i18n.t('label.zone') })
         this.switchMessageType('showInfo')
@@ -211,6 +214,43 @@ export default {
       }
       this.isRegist = false
       return saveId
+    },
+    createCsvEntity(zone) {
+      const entity = {
+        updateKey: Util.hasValue(zone.zoneId)? zone.zoneId: null,
+        ID: zone.zoneCd,
+        zoneName: zone.zoneName,
+        zoneType: zone.zoneType,
+        x: zone.x | 0,
+        y: zone.y | 0,
+        w: zone.w | 0,
+        h: zone.h | 0,
+        extValue: null,
+      }
+
+      const extValue = {}
+      ExtValueHelper.getExtValueKeys(APP.ZONE).forEach(key => {
+        if (zone[key]) {
+          extValue[key] = zone[key]
+        }
+      })
+      if (Object.keys(extValue).length > 0) {
+        entity.extValue = JSON.stringify(extValue)
+      }
+
+      entity.categoryCd = zone.zoneCategoryList.map(zc => {
+        const category = this.categories.find(category => category.categoryId == zc.zoneCategoryPK.categoryId)
+        if (category) {
+          entity.categoryCd = category.categoryCd
+        }
+        return category.categoryCd
+      }).join(';')
+
+      const area = this.areas.find(ar => ar.areaId == zone.areaId)
+      if (area) {
+        entity.areaCd = area.areaCd
+      }
+      return entity
     },
     reloaded() {
       this.isCompleteRegist = false

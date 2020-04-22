@@ -211,7 +211,7 @@ export default {
         sensorNames.push(opt.text)
       }
       entity.sensorNames = sensorNames.join(";")
-      return await AppServiceHelper.save2(this.appServicePath, entity)
+      return await AppServiceHelper.save2(this.appServicePath, [entity])
     },
   }
 }

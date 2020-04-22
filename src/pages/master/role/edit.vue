@@ -83,7 +83,7 @@ export default {
         updateKey: Util.hasValue(this.form.roleId)? this.form.roleId: null,
         roleName: this.form.roleName,
       }
-      return await AppServiceHelper.save2(this.appServicePath, entity)
+      return await AppServiceHelper.save2(this.appServicePath, [entity])
     },
   }
 }

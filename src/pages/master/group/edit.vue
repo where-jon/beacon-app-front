@@ -135,7 +135,7 @@ export default {
           color: ColorUtil.colorCd4display(this.form.displayColor),
           bgColor: ColorUtil.colorCd4display(this.form.displayBgColor),
         }
-        entity.display = ExtValueHelper.jsonStringfyAndFormatCSV(entity.display)
+        entity.display = JSON.stringify(entity.display)
       }
 
       const extValue = {}
@@ -145,13 +145,13 @@ export default {
         }
       })
       if (Object.keys(extValue).length > 0) {
-        entity.extValue = ExtValueHelper.jsonStringfyAndFormatCSV(extValue)
+        entity.extValue = JSON.stringify(extValue)
       }
 
       this.oldShape = this.form.displayShape
       this.oldColor = this.form.displayColor
       this.oldBgColor = this.form.displayBgColor
-      return await AppServiceHelper.save2(this.appServicePath, entity)
+      return await AppServiceHelper.save2(this.appServicePath, [entity])
     },
   },
 }

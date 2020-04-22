@@ -241,7 +241,7 @@ export default {
         }
       })
       if (Object.keys(extValue).length > 0) {
-        entity.extValue = ExtValueHelper.jsonStringfyAndFormatCSV(extValue)
+        entity.extValue = JSON.stringify(extValue)
       }
 
       const category = this.categories.find(category => category.categoryId == this.form.categoryId)
@@ -259,7 +259,7 @@ export default {
         entity.zoneType = zoneType.text
       }
 
-      return await AppServiceHelper.save2(this.pAppServicePath, entity)
+      return await AppServiceHelper.save2(this.pAppServicePath, [entity])
     },
   }
 }
