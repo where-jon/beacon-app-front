@@ -68,6 +68,7 @@ import { APP, DEV } from '../../sub/constant/config'
 import { CATEGORY, POT_TYPE } from '../../sub/constant/Constants'
 import * as DateUtil from '../../sub/util/DateUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
+import * as NumberUtil from '../../sub/util/NumberUtil'
 import * as Util from '../../sub/util/Util'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
@@ -224,12 +225,12 @@ export default {
 
       if(this.viewList.length > 0){
         const potNum = this.pots.filter(e => e.potType == POT_TYPE.PERSON && !this.form.group || Util.v(e, 'group.groupId') == Util.v(this.form, 'group.value'))
-        this.allDayWorkPer = Math.floor(allCount / potNum.length * 100) + '%'
-        this.halfDayWorkPer = Math.floor(halfCount / potNum.length * 100) + '%'
+        this.allDayWorkPer = NumberUtil.getPercent(allCount, potNum.length)
+        this.halfDayWorkPer = NumberUtil.getPercent(halfCount, potNum.length)
       }
 
       this.totalRows = this.viewList.length
-    }
+    },
   }
 }
 </script>

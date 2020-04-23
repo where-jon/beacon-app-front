@@ -191,11 +191,11 @@ export default {
         this.viewList.push({
           groupId: list[0].group ? list[0].group.groupId : 0,
           groupName: list[0].group ? list[0].group.groupName : '',
-          attendancePer: NumberUtil.floorVal(attendanceCount / list.length * 100, 1) + '%',
-          allDayWorkPer: NumberUtil.floorVal(allCount / list.length * 100, 1) + '%',
-          halfDayWorkPer: NumberUtil.floorVal(halfCount / list.length * 100, 1) + '%',
-          lateTimeWorkPer: NumberUtil.floorVal(lateCount / list.length * 100, 1) + '%',
-          temporaryTimeWorkPer: NumberUtil.floorVal(tempCount / list.length * 100, 1) + '%',
+          attendancePer: NumberUtil.getPercent(attendanceCount, list.length),
+          allDayWorkPer: NumberUtil.getPercent(allCount, list.length),
+          halfDayWorkPer: NumberUtil.getPercent(halfCount, list.length),
+          lateTimeWorkPer: NumberUtil.getPercent(lateCount, list.length),
+          temporaryTimeWorkPer: NumberUtil.getPercent(tempCount, list.length),
           isDetail: true
         })
       })
@@ -203,15 +203,19 @@ export default {
       this.viewList.unshift({
           groupId: 0,
           groupName: this.$i18n.tnl('label.companyWide'),
-          attendancePer: NumberUtil.floorVal(attendanceSum / pots.length * 100, 1) + '%',
-          allDayWorkPer: NumberUtil.floorVal(allSum / pots.length * 100, 1) + '%',
-          halfDayWorkPer: NumberUtil.floorVal(halfSum / pots.length * 100, 1) + '%',
-          lateTimeWorkPer: NumberUtil.floorVal(lateSum / pots.length * 100, 1) + '%',
-          temporaryTimeWorkPer: NumberUtil.floorVal(tempSum / pots.length * 100, 1) + '%'
+          attendancePer: NumberUtil.getPercent(attendanceSum, pots.length),
+          allDayWorkPer: NumberUtil.getPercent(allSum, pots.length),
+          halfDayWorkPer: NumberUtil.getPercent(halfSum, pots.length),
+          lateTimeWorkPer: NumberUtil.getPercent(lateSum, pots.length),
+          temporaryTimeWorkPer: NumberUtil.getPercent(tempSum, pots.length)
       })
       Util.debug('viewList', this.viewList)
       this.totalRows = this.viewList.length
       return
+    },
+    getPercent(val, len){
+      const ret = NumberUtil.floorVal(val / len * 100, 1)
+      return Number.isInteger(ret) ? ret + '.0%' : ret + '%'
     }
   }
 }
