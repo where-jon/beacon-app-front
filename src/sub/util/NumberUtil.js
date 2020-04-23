@@ -44,6 +44,18 @@ export const floorVal = (val, decimalPoint = 2) => {
 }
 
 /**
+ * 小数点付きのパーセント表示を取得する
+ * @method
+ * @param {Number} val
+ * @param {Number} len 分母
+ * @return {Number}
+ */
+export const getPercent = (val, len) => {
+  const ret = floorVal(val / len * 100, 1)
+  return Number.isInteger(ret) ? ret + '.0%' : ret + '%'
+}
+
+/**
  * 輝度を取得する。
  * @method
  * @param {String} hex rbgを16進数の数値6桁で表した文字列
