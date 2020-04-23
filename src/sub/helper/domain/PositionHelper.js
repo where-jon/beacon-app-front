@@ -150,12 +150,12 @@ export const filterPositions = (positions = store.state.main.positions,
   selectedGroupId = store.state.main.selectedGroupId,
   selectedTxIdList = store.state.main.selectedTxIdList,
   selectedFreeWord = store.state.main.selectedFreeWord) => { // p, position-display, rssimap, position-list, position, ProhibitHelper
-  const txIdMap = store.state.app_service.btxIdMap
+  const txIdMap = store.state.app_service.txIdMap
 
   if (!showTxNoOwner) { // potの所有状態で絞込み(TX未登録やPotと紐付いていない場合は表示しない)
     positions = positions.filter(pos => {
       const tx = txIdMap[pos.txId]
-      return tx && tx.potId
+      return tx && tx.pot && tx.pot.potId
     })
   }
   return showAllTime ? positions : positionFilter(positions, selectedGroupId, selectedCategoryId, selectedTxIdList, selectedFreeWord)
