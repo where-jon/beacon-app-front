@@ -49,7 +49,7 @@
         </b-form-group>
 
         <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
-        <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="beforeSubmit($event, false)">
+        <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="doBeforeSubmit(false)">
           {{ $i18n.tnl(`label.${isUpdate? 'update': 'register'}`) }}
         </b-button>
         <b-button v-if="isRegistable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" @click="doBeforeSubmit(true)" />
@@ -162,55 +162,19 @@ export default {
         this.bSubject = true
       }
     },
-    notifyToValidationCheck(){
-      let result = false
-      if(this.form.notifyMedium == 0
-          && ( this.form.notifyTemplateKey != this.deliveryState && this.form.notifyTemplateKey != this.userMailState )){
-        let re = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i
-        let emailList = this.form.notifyTo.split(',')
-        if(emailList.length > 1){
-          emailList.some(email => {
-            result = re.test(email)? true: false
-            if(!result) return true
-          })
-        }else{
-          result = re.test(this.form.notifyTo)
-        }
-      }else{ // slackやTXボタン押下とユーザ登録通知場合
-        result = true
-      }
-      return  result
-    },
-    beforeSubmit(event, again){
-      if(!this.notifyToValidationCheck()){
-        this.errorMessages.email = []
-        this.replace({showAlert: false})
-        this.errorMessages.email.push(this.$i18n.tnl('message.notMatchedEmail'))
-        this.message = this.$i18n.tnl('message.error')
-        this.replace({showAlert: true})
-        if(this.showAlert){
-          window.scrollTo(0, 0)
-          event.preventDefault()
-          return false
-        }
-      }
-      this.doBeforeSubmit(again)
-    },
     async onSaving() {
-      const notifyTemplateId = Util.hasValue(this.form.notifyTemplateId)? this.form.notifyTemplateId: -1
-      const aNotifyState = (this.form.notifyTemplateKey != null)? this.form.notifyTemplateKey: ""
       const entity = {
-        notifyTemplateId: notifyTemplateId,
-        notifyTemplateKey: aNotifyState,
-        notifyMedium: this.form.notifyMedium? this.form.notifyMedium: '' ,
-        notifyTo: this.form.notifyTo? this.form.notifyTo: '',
-        subject: this.form.subject? this.form.subject: '',
-        mailFrom: this.form.mailFrom? this.form.mailFrom: '',
-        template: this.form.template? this.form.template: '',
+        updateKey: Util.hasValue(this.form.notifyTemplateId) ? this.form.notifyTemplateId: null,
+        notifyTemplateKey: this.form.notifyTemplateKey ? this.form.notifyTemplateKey : null,
+        notifyMedium: this.form.notifyMedium != null ? this.form.notifyMedium : null ,
+        notifyTo: this.form.notifyTo ? this.form.notifyTo : null,
+        subject: this.form.subject ? this.form.subject : null,
+        mailFrom: this.form.mailFrom ? this.form.mailFrom : null,
+        template: this.form.template ? this.form.template : null,
       }
       this.errorMessages.email = []
       this.replace({showAlert: false})
-      return await AppServiceHelper.bulkSave(this.appServicePath, [entity])
+      return await AppServiceHelper.save2(this.appServicePath, [entity])
     },
   }
 }

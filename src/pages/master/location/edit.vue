@@ -310,7 +310,6 @@ export default {
       this.$set(this.form, 'locationCd', MasterHelper.nextCd(this.oldLocationCd))
     },
     async onSaving() {
-      let dummyKey = -1
       const entity = {
         updateKey: this.form.locationId? this.form.locationId: null,
         ID: this.form.locationCd,
