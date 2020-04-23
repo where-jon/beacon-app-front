@@ -140,6 +140,9 @@ export default {
       this.$router.push('/sum/attendanceDetail')
     },
     createList(data){
+      this.viewList = []
+      this.totalRows = 0
+
       const pots = this.pots.filter(e => e.potType == POT_TYPE.PERSON && e.group).map(e => {
         const groupId = e.group ? e.group.groupId : 10000
         return {...e, groupId}
