@@ -72,7 +72,17 @@ export default {
       return ret
     },
     async getSavePromise(areas){
-      await AppServiceHelper.bulkSave(this.appServicePath, areas)
+      const entities = areas.map(are => {
+        const entity = {
+          updateKey: are.areaId || null,
+          ID: are.areaCd,
+        }
+        Object.keys(this.form).forEach(key => {
+          entity[key] = this.form[key]
+        })
+        return entity
+      })      
+      await AppServiceHelper.save2(this.appServicePath, entities)
       areas.forEach(area => area.thumbnail = area.mapImage = null)
     },
     async saveForIe(thumbnails) {

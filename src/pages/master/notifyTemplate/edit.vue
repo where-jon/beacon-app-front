@@ -166,7 +166,7 @@ export default {
       const entity = {
         updateKey: Util.hasValue(this.form.notifyTemplateId) ? this.form.notifyTemplateId: null,
         notifyTemplateKey: this.form.notifyTemplateKey ? this.form.notifyTemplateKey : null,
-        notifyMedium: this.form.notifyMedium != null ? this.form.notifyMedium : null ,
+        notifyMedium: this.form.notifyMedium,
         notifyTo: this.form.notifyTo ? this.form.notifyTo : null,
         subject: this.form.subject ? this.form.subject : null,
         mailFrom: this.form.mailFrom ? this.form.mailFrom : null,

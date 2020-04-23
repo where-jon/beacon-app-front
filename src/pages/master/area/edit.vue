@@ -54,6 +54,7 @@ import * as ImageHelper from '../../../sub/helper/base/ImageHelper'
 import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ValidateHelper from '../../../sub/helper/dataproc/ValidateHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
+import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import commonmixin from '../../../components/mixin/commonmixin.vue'
 import editmixin from '../../../components/mixin/editmixin.vue'
@@ -168,6 +169,16 @@ export default {
     async onSaved(){
       this.$set(this.form, 'areaCd', MasterHelper.createMasterCd('area', this.areas, this.area))
       this.$store.commit('main/replaceMain', {selectedAreaId: null})
+    },
+    async onSaving() {
+      const entity = {
+        updateKey: this.form.areaId || null,
+        ID: this.form.areaCd,
+      }
+      Object.keys(this.form).forEach(key => {
+        entity[key] = this.form[key]
+      })
+      return await AppServiceHelper.save2(this.appServicePath, [entity])
     },
     beforeSubmit(again){
       if(this.mapUpdate){
