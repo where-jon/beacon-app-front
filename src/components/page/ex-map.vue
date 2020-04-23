@@ -1303,13 +1303,24 @@ export default {
 
       this.detectedCount = 0
       // Txアイコンを表示する
-      positions.forEach(pos => this.showTx(pos))
+      const btns = positions.map(pos => this.createBtn(pos))
+      this.txCont.removeAllChildren()
+      btns.forEach(b => {
+        if(b.isFixed){
+          this.txCont.addChild(b) // 固定座席、固定ゾーンを先に表示
+        }
+      })
+      btns.forEach(b => {
+        if(!b.isFixed){
+          this.txCont.addChild(b)
+        }        
+      })
       this.positions = positions
       this.stage.update()
       this.reShowTxDetail(positions)
 
     },    
-    showTx(pos) {
+    createBtn(pos) {
       let {res, temperature, meditag, magnet} = this.checkTxSensor(pos)
       if (!res) {
         return
@@ -1335,7 +1346,7 @@ export default {
         this.showDetail(txBtn.btxId, txBtn.x, txBtn.y)
       }
       this.txIcons.push({ button: txBtn, device: pos.tx, config: txBtn.iconInfo, sign: -1 })
-      this.txCont.addChild(txBtn)
+      return txBtn
     },
     checkTxSensor(pos) { // 表示指定（通常位置表示、センサー表示）に合致しないposの場合、res:falseをセットして返す
       let tx = pos.tx
@@ -1397,6 +1408,7 @@ export default {
         txBtn.x = pos.x
         txBtn.y = pos.y
       }
+      txBtn.isFixed = pos.isFixedPosition || pos.inFixedZone || pos.isFixedPosZone
       // if (PositionHelper.isFixedPosOnArea(tx, this.selectedAreaId)) {
       //   Util.debug('fixed location', tx)
       //   txBtn.x = tx.location.x

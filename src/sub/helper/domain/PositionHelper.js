@@ -465,7 +465,10 @@ export const calcScreenCoordinates = (positions, ratio, locations = [], selected
     const samePos = targetPos.filter(pos => pos.location.locationId == location.locationId)
     // console.error('samePos', samePos.map(e => e.minor))
     const txR = (location.isFixedPosZone && DISP.TX.FIXED_POS.APPLY_COLOR)? DISP.TX.FIXED_POS.R: DISP.TX.R
-    samePos.forEach(pos => pos.txR = txR)
+    samePos.forEach(pos => {
+      pos.txR = txR
+      pos.isFixedPosZone = location.isFixedPosZone
+    })
     return calcCoordinatesWhenOverlap(location, ratio, samePos, txR)
   }).compact().flatMap(e => e).tap(Util.debug).value()
 }
