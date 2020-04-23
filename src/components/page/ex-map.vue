@@ -1303,7 +1303,7 @@ export default {
 
       this.detectedCount = 0
       // Txアイコンを表示する
-      const btns = positions.map(pos => this.createBtn(pos))
+      const btns = positions.map(pos => this.createBtn(pos)).filter(pos => pos)
       this.txCont.removeAllChildren()
       btns.forEach(b => {
         if(b.isFixed){
