@@ -18,6 +18,7 @@ const loginRequest = {
 let myMSALObj
 
 export const init = () => {
+  console.log('msal initi', APP.AUTH.APP_ID)
   myMSALObj = new Msal.UserAgentApplication({
     auth: {
       clientId: APP.AUTH.APP_ID,
@@ -48,12 +49,13 @@ export const init = () => {
 
 // signin and acquire a token silently with POPUP flow. Fall back in case of failure with silent acquisition to popup
 export const signIn = (callback) => {
+  console.log('msal siginIn')
   myMSALObj.loginPopup(loginRequest).then((loginResponse) => {
     //Login Success
-    Util.debug(loginResponse)
+    console.debug(loginResponse)
     const account = myMSALObj.getAccount()
     if (account) {// avoid duplicate code execution on page load in case of iframe and popup window.
-      Util.debug(account)
+      console.debug(account)
       callback(account.idToken, account.userName)
     }
     else {
@@ -86,7 +88,7 @@ export const getCachedToken = () => {
   }
   const account = myMSALObj.getAccount()
   if (account && (!isIE || !myMSALObj.isCallback(window.location.hash))) {// avoid duplicate code execution on page load in case of iframe and popup window.
-    Util.debug(account)
+    console.debug(account)
     if (account.idToken.exp * 1000 < new Date().getTime()) {
       console.warn('id token exipired')
       return null

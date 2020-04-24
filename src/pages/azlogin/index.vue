@@ -57,7 +57,7 @@ export default {
     }
   },
   mounted() {
-    Util.debug('@@@@@@@@@@@@@@@@@ azLogin')
+    console.log('@@@@@@@@@@@@@@@@@ azLogin')
     this.tenantName = this.tenantName || LocalStorageHelper.getLocalStorage('tenantName')
     APP.MENU.LOGIN_PAGE = APP.MENU.AZLOGIN_PAGE
     let token
@@ -78,11 +78,11 @@ export default {
   },
   methods: {
     signIn() {
-      Util.debug('azLogin SignIn. inIframe=', BrowserUtil.inIframe(), 'isMobile=', BrowserUtil.isMobile())
+      console.log('azLogin SignIn. inIframe=', BrowserUtil.inIframe(), 'isMobile=', BrowserUtil.isMobile())
       if (BrowserUtil.inIframe() || BrowserUtil.isMobile()) { // Teams内での表z示
         AADHelper.signIn(
           (result) => {
-            Util.debug(result)
+            console.debug(result)
             this.afterGetToken(result.idToken)
           },
           (reason) => {
@@ -144,7 +144,8 @@ export default {
     adminConsent() {
       microsoftTeams.initialize()
       LocalStorageHelper.setLocalStorage('tenantName', this.tenantName)
-      const adminConsentUrl = 'https://login.microsoftonline.com/common/adminconsent?client_id=' + APP.AUTH.APP_ID + '&redirect_uri=' + APP.AUTH.REDIRECT_URL
+      const redirectUrl = encodeURIComponent(APP.AUTH.REDIRECT_URL.split('end').join('adminend'))
+      const adminConsentUrl = 'https://login.microsoftonline.com/common/adminconsent?client_id=' + APP.AUTH.APP_ID + '&redirect_uri=' + redirectUrl
       microsoftTeams.authentication.authenticate({
         url: adminConsentUrl,
         width: 600,
