@@ -102,9 +102,11 @@ export default {
       this.hasToken = true
       AuthHelper.setApp(this.$router, this.$store)
       let tenantStatus = await AuthHelper.getADTenantStatus(idToken)
+      console.log(tenantStatus)
       if (tenantStatus == TENANT.STATUS.NOT_REGISTERED && location.search.includes('admin_consent=True')) {
         // eslint-disable-next-line require-atomic-updates
         tenantStatus = await AuthHelper.getADTenantStatus(idToken, 1, this.tenantName)
+        console.log(tenantStatus)
       }
       switch (tenantStatus) {
       case TENANT.STATUS.REGISTERED:
