@@ -317,6 +317,8 @@
     "departmentEtc": "部門等",
     "outsideNumber": "外線番号",
     "extensionNumber": "内線番号",
+    "fax": "FAX",
+    "officeLink": "オフィスリンク",
 
     "positionList": "位置表示(一覧)",
     "positionListShort": "一覧",
