@@ -101,3 +101,32 @@ export const getThumbnailUrl = (tx, thumbnailUrl) => {
   }  
   return '/default.png'
 }
+
+export const createEntity = (form, minors, potTypeOptions, groups, categories) => {
+  const entity = {}
+  Object.keys(form).forEach(key => {
+    entity[key] = form[key]
+  })
+
+  entity.updateKey = form.potId || null
+  entity.ID = form.potCd
+  entity.potType = potTypeOptions.filter(e => e.value == form.potType).map(e => e.text)
+  entity.groupCd = form.groupId ? groups.filter(e => e.groupId == form.groupId).map(e => e.groupCd).join(";") : null
+  entity.categoryCd = form.categoryId ? categories.filter(e => e.categoryId == form.categoryId).map(e => e.categoryCd).join(";") : null
+
+  if(Util.hasValue(form.authCategoryIdList)){
+    const list = categories.filter(e => form.authCategoryIdList.includes(e.categoryId)).map(e => e.categoryCd)
+    entity.auth = list.length > 0 ? list.join(";") : null
+  }
+
+  entity.minor = minors.length > 0 ? minors.join(';') : null
+  entity.btxId = null
+
+  entity.potUserList = null
+  entity.potCategoryList = null
+  entity.potTxList = null
+  entity.potGroupList = null
+  entity.attendanceList = null
+  
+  return entity
+}
