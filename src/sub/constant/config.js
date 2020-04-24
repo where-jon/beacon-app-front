@@ -27,7 +27,6 @@ export const APP = { // 機能面に関する設定
     // REDIRECT_URL: 'https://xxx.saas.msteams.exbeacon.com/azlogin/adminend/',
     REDIRECT_URL: 'http://localhost:3000/azlogin/end/', // 認証後redirect先
     APP_ID: 'dd3ea682-9b02-49ec-9d15-c63cee38c792', // AAD clientId
-    ADMINCONSENT_URL_BASE: 'https://login.microsoftonline.com/common/adminconsent' // 管理者承認ページURL
   },  
   MENU: {
     SHOW_MENU_LINK: '',

@@ -756,6 +756,9 @@ export const SETTING = {
             ADJUST_TIME: SETTING.NUMBER,
             REAL_TIME: SETTING.BOOLEAN,
           },
+          PRESENCE: {
+            INTERVAL: SETTING.NUMBER,
+          },
           POS: {
             CACHE_TIME: SETTING.NUMBER,
           },
@@ -816,6 +819,9 @@ export const SETTING = {
             CRON: SETTING.STRING,
           },
           AD_SYNC: {
+            CRON: SETTING.STRING,
+          },
+          PRESENCE: {
             CRON: SETTING.STRING,
           },
           ENTER_COUNT: {
@@ -884,7 +890,7 @@ export const SETTING = {
             START: 0,
             END: 2400,
             INTERVAL: 60,
-            CALC_BY: "location",
+            CALC_BY: 'location',
             ADJUST_TIME: 4,
           },
           PROXIMITY:{
@@ -1386,6 +1392,7 @@ export const TENANT = {
     INVALID_TOKEN: -2,
     NOT_REGISTERED: -1,
     REGISTERED: 1,
+    REQUIRE_TOKEN: 9,
     DISABLED: 0
   }
 }

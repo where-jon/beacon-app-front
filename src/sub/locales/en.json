@@ -1015,6 +1015,9 @@
           "ADJUST_TIME": "Maximum time to be corrected for stay-time summary batch::Set up the data in seconds not to be corrected in stay-time summary batch. Stay time data exceeding this number will not be corrected.",
           "REAL_TIME": "Update stay time real time::Calculate stay time after positioning process in real time. If this setting is TRUE, periodic batch process is basically turned off."
         },
+        "PRESENCE": {
+          "INTERVAL": "Time to consider presence batch as same status::Set up the threshold of time to be judged as same data in presence batch in seconds. When staying for a set time or more,it will be judged as same data."
+        },
         "POS": {
           "CACHE_TIME": "Server cache effective time::Set up the effective time of cache data accumulated by the server in milliseconds."
         },
@@ -1110,6 +1113,9 @@
         },
         "PROHIBIT_ZONE": {
           "INTERVAL": "Prohibited Zone Alert Batch Execution Interval :: Set up the prohibited interval alert batch execution interval in milliseconds."
+        },
+        "PRESENCE": {
+          "INTERVAL": "Teams presence batch processing time specification :: Set up the execution interval of fetching presence data with Microsoft Graph."
         },
         "AD_SYNC": {
           "CRON": "AD synchronous batch processing time specification :: Synchronize with Active Directory at the specified time."
