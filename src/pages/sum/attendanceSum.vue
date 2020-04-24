@@ -177,12 +177,11 @@ export default {
         let lateCount = 0
         list.forEach(pot => {
           const e = attendance[pot.potId]
-          const time = e.outDt - e.inDt
-          if(e && time >= 1000*60*60*APP.ATTENDANCE.TEMP_MIN_HOUR){
+          if(e && (e.outDt - e.inDt) >= 1000*60*60*APP.ATTENDANCE.TEMP_MIN_HOUR){
             attendanceCount++
-            if(time >= 1000*60*60*APP.ATTENDANCE.ALL_DAY_HOUR){
+            if((e.outDt - e.inDt) >= 1000*60*60*APP.ATTENDANCE.ALL_DAY_HOUR){
               allCount++
-            }else if(time >= 1000*60*60*APP.ATTENDANCE.HALF_DAY_HOUR){
+            }else if((e.outDt - e.inDt) >= 1000*60*60*APP.ATTENDANCE.HALF_DAY_HOUR){
               halfCount++
             }else{
               tempCount++
