@@ -513,7 +513,7 @@ export default {
           delete record.powerLevels
         }
       })
-      BrowserUtil.fileDL('notifyHistory.csv', CsvUtil.converToCsv(records, null, this.getCsvHeaderList()), getCharSet(this.$store.state.loginId))
+      BrowserUtil.fileDL('notifyHistory.csv', CsvUtil.converToCsv(records, this.getFieldKeys(), this.getCsvHeaderList()), getCharSet(this.$store.state.loginId))
     },
     getFields(aNotifyState) {
       if (aNotifyState == NOTIFY_STATE.TX_DELIVERY_NOTIFY) {
@@ -538,6 +538,9 @@ export default {
       return  this.getFields(this.form.notifyState).map((record) => {
         return record.label
       }).join(',') + '\n'
+    },
+    getFieldKeys() {
+      return  this.getFields(this.form.notifyState).map(record => record.key)
     }
   }
 }
