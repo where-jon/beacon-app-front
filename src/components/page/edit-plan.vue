@@ -288,7 +288,7 @@ export default {
       return this.$t('message.required', {target: this.$t('label.planName')})
     },
     planNameSizeErrorMessage() {
-      return this.$t('message.bulkSizeFailed', {col: this.$t('label.planName'), min: 1, max: 40})
+      return this.$t('message.bulkSizeFailed', {col: this.$t('label.planName'), value: this.plan.planName,min: 1, max: 40})
     },
     participantMessage() {
       return this.$t('message.required', {target: this.$t('label.participant')})
