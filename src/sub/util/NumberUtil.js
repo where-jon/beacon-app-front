@@ -51,6 +51,7 @@ export const floorVal = (val, decimalPoint = 2) => {
  * @return {Number}
  */
 export const getPercent = (val, len) => {
+  len = Math.max(len, 1)
   const ret = floorVal(val / len * 100, 1)
   return Number.isInteger(ret) ? ret + '.0%' : ret + '%'
 }

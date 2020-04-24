@@ -1057,7 +1057,8 @@
       "ATTENDANCE": {
         "ALL_DAY_HOUR": "全日出社とみなす時間",
         "HALF_DAY_HOUR": "半日出社とみなす時間",
-        "LATE_HOUR": "時差出社の時刻"
+        "LATE_HOUR": "時差出社の時刻",
+        "TEMP_MIN_HOUR": "出社とみなす最低時間"
       },
       "SVC": {
         "SLACK_CHANNEL": "Slackのチャンネル名::通知情報を送信するSlackのチャンネル名を設定します。",

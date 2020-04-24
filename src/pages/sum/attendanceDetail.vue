@@ -147,9 +147,7 @@ export default {
         this.replace({showAlert: false})
         this.showProgress()
         if ( !Util.hasValue(this.form.date) ) {
-          this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
-          this.replace({showAlert: true})
-          this.hideProgress()
+          this.alert('pleaseEnterSearchCriteria')
           return
         }
 
@@ -157,9 +155,7 @@ export default {
         const res = await this.fetchData(this.form)
         Util.debug('res', res)
         if (_.isEmpty(res)) {
-          this.message = this.$i18n.t('message.listEmpty')
-          this.replace({showAlert: true})
-          this.hideProgress()
+          this.alert('listEmpty')
           return
         }
 
@@ -173,6 +169,11 @@ export default {
         this.hideProgress()
       }
     },
+    async alert(key){
+      this.message = this.$i18n.t('message.' + key)
+      this.replace({showAlert: true})
+      this.hideProgress()
+    },
     async fetchData(form){
       const date = moment(form.date).format('YYYYMMDD')
       const potId = this.form.pot ? this.form.pot.value : 0
@@ -185,12 +186,14 @@ export default {
       _.forEach(this.viewList, v => {
         csv += `${v.name},${v.groupName ? v.groupName : ''},${v.entranceTime},${v.exitTime},${v.lastDetected},${v.stayTime},${v.status}\n`
       })
-      BrowserUtil.fileDL('attendance.csv', csv, CharSetHelper.getCharSet(this.$store.state.loginId))
+      BrowserUtil.fileDL('attendanceDetail.csv', csv, CharSetHelper.getCharSet(this.$store.state.loginId))
     },
     createList(data){
       let allCount = 0
       let halfCount = 0
-      this.viewList = data.map( e => {
+      this.viewList = data.filter( e => {
+        return (e.outDt - e.inDt) >= 1000*60*60*APP.ATTENDANCE.TEMP_MIN_HOUR
+      }).map( e => {
         const pot = this.potIdMap[e.potId]
         const group = pot.group ? this.groupIdMap[pot.group.groupId] : null
         const location = this.locationIdMap[e.locationId]
@@ -198,10 +201,10 @@ export default {
 
         // 勤務時間判定
         let status = ''
-        if((e.outDt - e.inDt)>=1000*60*60*APP.ATTENDANCE.ALL_DAY_HOUR){
+        if((e.outDt - e.inDt) >= 1000*60*60*APP.ATTENDANCE.ALL_DAY_HOUR){
           status = this.$i18n.tnl("label.allDayWork")
           allCount++
-        }else if((e.outDt - e.inDt)>=1000*60*60*APP.ATTENDANCE.HALF_DAY_HOUR){
+        }else if((e.outDt - e.inDt) >= 1000*60*60*APP.ATTENDANCE.HALF_DAY_HOUR){
           status = this.$i18n.tnl("label.halfDayWork")
           halfCount++
         }else{
@@ -227,6 +230,8 @@ export default {
         const potNum = this.pots.filter(e => e.potType == POT_TYPE.PERSON && !this.form.group || Util.v(e, 'group.groupId') == Util.v(this.form, 'group.value'))
         this.allDayWorkPer = NumberUtil.getPercent(allCount, potNum.length)
         this.halfDayWorkPer = NumberUtil.getPercent(halfCount, potNum.length)
+      }else{
+        this.alert('listEmpty')
       }
 
       this.totalRows = this.viewList.length
