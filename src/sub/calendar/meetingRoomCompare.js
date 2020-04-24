@@ -6,6 +6,7 @@ export function loadTimeLine(data) {
   const planMap = {}
   const timeLineMap = {}
   const timeFormat = 'HH:mm'
+  let opId = 1
   data.forEach(zone => {
     if (!timeLineMap.hasOwnProperty(zone.zoneId)) {
       timeLineMap[zone.zoneId] = []
@@ -86,7 +87,6 @@ export function loadTimeLine(data) {
       planMap[card.id] = card
       timeLineMap[zone.zoneId].push(card)
     })
-    let opId = 1
     zone.outOfPlans.forEach(out => {
       const outOfPlanPersons = []
       const outOfPlanThings = []
