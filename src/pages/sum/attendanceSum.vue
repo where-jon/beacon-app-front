@@ -11,6 +11,7 @@
             <date-picker v-model="form.date" :clearable="false" type="date" class="ml-2 inputdatefrom" required />
 
             <b-button v-t="'label.display'" type="submit" :variant="theme" @click="display" class="ml-2" />
+            <b-button v-t="'label.download'" type="submit" :variant="theme" @click="download" class="ml-2" />
           </b-form-row>
         </b-form-group>
       </b-form>
@@ -91,8 +92,8 @@ export default {
         {key: 'attendancePer', sortable: false, label: this.$i18n.tnl('label.attendancePer') },
         {key: 'allDayWorkPer', sortable: false, label: this.$i18n.tnl('label.allDayWorkPer') },
         {key: 'halfDayWorkPer', sortable: false, label: this.$i18n.tnl('label.halfDayWorkPer') },
-        {key: 'lateTimeWorkPer', sortable: false, label: this.$i18n.tnl('label.lateTimeWorkPer') },
         {key: 'temporaryTimeWorkPer', sortable: false, label: this.$i18n.tnl('label.temporaryTimeWorkPer') },
+        {key: 'lateTimeWorkPer', sortable: false, label: this.$i18n.tnl('label.lateTimeWorkPer') },
         {key: 'detail', label: ''}
       ]
     },
@@ -128,6 +129,13 @@ export default {
       finally {
         this.hideProgress()
       }
+    },
+    async download(){
+      let csv = ',' + this.getField().filter(e => e.label && e.label != '').map(e => e.label).join(',') + '\n' // ヘッダー
+      _.forEach(this.viewList, v => {
+        csv += `${v.groupName},${v.attendancePer},${v.allDayWorkPer},${v.halfDayWorkPer},${v.temporaryTimeWorkPer},${v.lateTimeWorkPer}\n`
+      })
+      BrowserUtil.fileDL('attendanceSum.csv', csv, CharSetHelper.getCharSet(this.$store.state.loginId))
     },
     async fetchData(form){
       const date = moment(form.date).format('YYYYMMDD')
@@ -169,11 +177,12 @@ export default {
         let lateCount = 0
         list.forEach(pot => {
           const e = attendance[pot.potId]
-          if(e){
+          const time = e.outDt - e.inDt
+          if(e && time >= 1000*60*60*APP.ATTENDANCE.TEMP_MIN_HOUR){
             attendanceCount++
-            if((e.outDt - e.inDt)>=1000*60*60*APP.ATTENDANCE.ALL_DAY_HOUR){
+            if(time >= 1000*60*60*APP.ATTENDANCE.ALL_DAY_HOUR){
               allCount++
-            }else if((e.outDt - e.inDt)>=1000*60*60*APP.ATTENDANCE.HALF_DAY_HOUR){
+            }else if(time >= 1000*60*60*APP.ATTENDANCE.HALF_DAY_HOUR){
               halfCount++
             }else{
               tempCount++
@@ -213,10 +222,6 @@ export default {
       this.totalRows = this.viewList.length
       return
     },
-    getPercent(val, len){
-      const ret = NumberUtil.floorVal(val / len * 100, 1)
-      return Number.isInteger(ret) ? ret + '.0%' : ret + '%'
-    }
   }
 }
 </script>

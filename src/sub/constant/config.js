@@ -346,7 +346,8 @@ export const APP = { // 機能面に関する設定
   ATTENDANCE: {
     ALL_DAY_HOUR: 8,
     HALF_DAY_HOUR: 4,
-    LATE_HOUR: 10
+    LATE_HOUR: 10,
+    TEMP_MIN_HOUR: 1,
   },
   
   // その他
