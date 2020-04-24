@@ -829,6 +829,7 @@ export default {
         }
         Util.merge(this, await ProhibitHelper.loadProhibitDetect(alertState, this.stage, this.icons, this.zones, this.positions, this.pShowProhibit, this.pShowLost))
         this.replace({ showAlert: this.showDismissibleAlert })
+        this.reShowTxDetail(this.positions) // アラートが非同期処理なので、ポップアップを再表示する
       }
     },
     async showToilet() { // トイレを表示する
