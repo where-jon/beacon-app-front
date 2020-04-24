@@ -10,6 +10,7 @@
               <span v-if="planMode == 'normal'" class="tui-full-calendar-dayname-name">{{ headerOpt.label }}</span>
             </span>
           </div>
+          <div class="tui-full-calendar-dayname" :style="styleScrollArea()"></div>
         </div>
       </div>
     </div>
@@ -25,6 +26,7 @@ export default {
     planMode: null,
     headerOpts: null,
     timeLineLeftAndWidth: null,
+    scrollBarWidthLeft: null,
   },
   data () {
     return {
@@ -34,6 +36,22 @@ export default {
     }
   },
   computed: {
+    styleScrollArea() {
+      return () => {
+        const lw = this.scrollBarWidthLeft
+        if (lw) {
+          if (lw.width > 0) {
+            return {
+              width: lw.width + 'px',
+              left: lw.left + 'px',
+              'line-height': this.styles.height,
+            }
+          } else {
+            return {}
+          }
+        }
+      }
+    },
     style() {
       return (headerOpt) => {
         const lw = this.timeLineLeftAndWidth

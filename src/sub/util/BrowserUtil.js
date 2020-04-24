@@ -91,6 +91,33 @@ export const inIframe = () => {
 }
 
 /**
+ * URLのクエリパラメタを取得する
+ * 
+ * @param {*} pKey 
+ */
+export const getParam = (pKey) => {
+  let ret
+  location.search.split('&').some(e => {
+    const keyVal = e.split('=')
+    let key = keyVal[0]
+    if (key.startsWith('?')) {
+      key = key.substr(1)
+    }
+    if (key == pKey) {
+      if (keyVal.length == 2) {
+        ret = keyVal[1]
+      }
+      else {
+        ret = null
+      }
+      return true
+    }
+  })
+  return ret
+}
+
+
+/**
  * ブラウザの言語設定を取得する。
  * @method
  * @return {String}

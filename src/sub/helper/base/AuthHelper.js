@@ -41,6 +41,7 @@ export const setApp = (pRouter, pStore) => {
  * @param {Function} err 認証失敗時に実行するメソッド
  */
 export const auth = async (loginId, password, success, err) => {
+  console.log('call auth', loginId)
   await authByAppService(loginId, password, success, err)
 }
 

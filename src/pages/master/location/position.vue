@@ -204,8 +204,8 @@ export default {
         color: DISP.EXB_LOC.COLOR,
         shape: SHAPE.SQUARE,
       }
-      return Object.keys(patternMap).filter(type => {
-        return patternMap[type].bgColor != null || patternMap[type].bgColorNoTx != null
+      return Object.keys(patternMap).filter(locationType => {
+        return patternMap[locationType].key && (patternMap[locationType].bgColor != null || patternMap[locationType].bgColorNoTx != null)
       }).map(locationType => {
         const relationTxLabel = this.$i18n.tnl('label.' + patternMap[locationType].key)
         return {

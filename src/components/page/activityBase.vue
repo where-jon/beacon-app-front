@@ -205,6 +205,7 @@ export default {
         toTime = end
         toDate--
       }
+      const isEnd = toTime > end // endで丸めたか？
       toTime = Math.min(toTime, end)
 
       // 指定時間を丸める
@@ -223,7 +224,7 @@ export default {
         total += toTime - start
         total += (toDate - fromDate - 1) * (end - start)
       }
-      if(doRound){
+      if(doRound && !isEnd){
         total += APP.POSITION_SUMMARY_INTERVAL * 60
       }
       Util.debug('total', total)

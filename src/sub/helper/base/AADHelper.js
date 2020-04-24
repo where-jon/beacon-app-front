@@ -167,3 +167,8 @@ const getHashParameters = () => {
   })
   return hashParams
 }
+
+export const decodeJwt = (token) => {
+  const base64 = token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')
+  return JSON.parse(decodeURIComponent(escape(window.atob(base64))))
+}

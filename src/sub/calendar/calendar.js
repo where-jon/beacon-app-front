@@ -27,7 +27,9 @@ export function loadTimeLine(planMode, data, currentUser, dupMessage, headerOpts
   }
   const viewModel = {}
   viewModel.timeLineMap = timeLineMap
-  viewModel.timeLineLeftAndWidth = getGridLeftAndWidth(headerOpts)
+  const lw = getGridLeftAndWidth(headerOpts)
+  viewModel.timeLineLeftAndWidth = lw[0]
+  viewModel.scrollBarWidthLeft = lw[1]
   viewModel.scheduleViewBoundsMap = getScheduleViewBoundsMap(timeLineMap)
   return [planMap, viewModel]
 }
@@ -356,33 +358,35 @@ const MAX_WIDTH_RATIO = 33
 
 let containerPx = 0
 
+const getScrollBarWidthPx = () => {
+  // const tgc = document.getElementById('tgc')
+  // return tgc.offsetWidth - tgc.clientWidth
+  return window.innerWidth - document.body.clientWidth
+}
+
 const getGridLeftAndWidth = (headerOpts) => {
   if (containerPx == 0) {
     const leftPx = document.getElementById('tg-left').style.width.split('px')[0]
     containerPx = document.getElementById('vlayout-area').getBoundingClientRect().width - leftPx
   }
   
-  // const tgc = document.getElementById('tgc')
-  // const scrollBarWidth = tgc.offsetWidth - tgc.clientWidth
-
-  const scrollBarWidthPx = window.innerWidth - document.body.clientWidth
+  const scrollBarWidthPx = getScrollBarWidthPx()
 
   let accumulatedWidthPx = 0
   let widthRatio = 100 / headerOpts.length
   widthRatio = widthRatio < MIN_WIDTH_RATIO ? MIN_WIDTH_RATIO : MAX_WIDTH_RATIO < widthRatio ? MAX_WIDTH_RATIO : widthRatio
-  let unitWidthPx = (containerPx - scrollBarWidthPx) / headerOpts.length
+  let unitWidthPx = containerPx / headerOpts.length
 
   switch (widthRatio) {
     case MIN_WIDTH_RATIO:
     case MAX_WIDTH_RATIO:
-      const unitPx = containerPx * widthRatio / 100
-      const newContainerPx= unitPx * headerOpts.length
+      unitWidthPx = containerPx * widthRatio / 100
+      const newContainerPx = unitWidthPx * headerOpts.length
       document.getElementById('w-container').style.width = widthRatio == MIN_WIDTH_RATIO ? '100%' : ''
       document.getElementById('wt-tg-s').style.width = `${newContainerPx}px`
       document.getElementById('tg-h-g').style.width = `${newContainerPx}px`
       document.getElementById('tg-s').style.width = `${newContainerPx}px`
-      document.getElementById('day-right').style.width = `${newContainerPx}px`
-      unitWidthPx = (newContainerPx - scrollBarWidthPx) / headerOpts.length
+      document.getElementById('day-right').style.width = `${newContainerPx + scrollBarWidthPx}px`
       break
     default:
       document.getElementById('wt-tg-s').style.width = `100%`
@@ -401,7 +405,13 @@ const getGridLeftAndWidth = (headerOpts) => {
     }
     accumulatedWidthPx += unitWidthPx
   })
-  return leftAndWidthMap
+
+  const scrollBarWidthLeft = {
+    width: scrollBarWidthPx,
+    left: accumulatedWidthPx
+  }
+
+  return [leftAndWidthMap, scrollBarWidthLeft]
 }
 
 const getScheduleViewBoundsMap = (timeLineMap) => {

@@ -312,9 +312,9 @@ export default {
       isProviderUser? this.userState = 'ALL_REGION':this.userState = null
     }
 
-    this.userState == 'ALL_REGION'? this.bTx = true: this.bTx = false
-    this.userState == 'ALL_REGION'? this.bUserCheck = true: this.bUserCheck = false
-    this.userState == 'ALL_REGION'? null: this.userMinor = user.minor
+    this.bTx = this.userState == 'ALL_REGION'? true: false
+    this.bUserCheck = this.userState == 'ALL_REGION'?  true: false
+    this.userMinor = this.userState == 'ALL_REGION'? null: user.minor
     this.fields = this.fields1
 
   },
@@ -454,34 +454,17 @@ export default {
         }
         let count = 0
         this.csvList = []
+        // 変更:ログインユーザーでフィルタしない仕様とする
         fetchList.forEach((notifyData) => {
           const d = new Date(notifyData.notifyDatetime)
           notifyData.positionDt = DateUtil.formatDate(d.getTime())
           notifyData.notifyResult = this.$i18n.tnl('label.' + (notifyData.notifyResult == 0? 'success': 'failed'))
-          if(this.userState == 'ALL_REGION' || aNotifyState == 'GW_ALERT' || aNotifyState == 'EXB_ALERT'){
-            let arNotifyto = this.getNotifyTo(notifyData.notifyTo)
-            arNotifyto ? notifyData.notifyTo = arNotifyto: null
-            if (++count <= this.limitViewRows) {
-              this.viewList.push(notifyData)
-            }
-            this.csvList.push(notifyData)
-          }else{
-            let tempIndex = 0
-            notifyData.minors.find((tval,index) =>
-              tval == this.userMinor ? tempIndex = index:null
-            )
-            notifyData.minors = notifyData.minors && notifyData.minors.length > 0 ? notifyData.minors[tempIndex] : null
-            this.gPowerLevel= notifyData.powerLevels && notifyData.powerLevels.length > 0 ? notifyData.powerLevels[tempIndex] : null
-            notifyData.majors = notifyData.majors && notifyData.majors > 0 ? notifyData.majors[tempIndex] : null
-            notifyData.txNames = notifyData.txNames && notifyData.txNames > 0 ? notifyData.txNames[tempIndex] : null
-            let arNotifyto = this.getNotifyTo(notifyData.notifyTo)
-            arNotifyto ? notifyData.notifyTo = arNotifyto: null
-            if (++count <= this.limitViewRows) {
-              notifyData.minors == this.userMinor? this.viewList.push(notifyData) : null
-            }
-            notifyData.minors == this.userMinor? this.csvList.push(notifyData) : null
-            notifyData.minors == this.userMinor? count++:null
+          let arNotifyto = this.getNotifyTo(notifyData.notifyTo)
+          arNotifyto ? notifyData.notifyTo = arNotifyto: null
+          if (++count <= this.limitViewRows) {
+            this.viewList.push(notifyData)
           }
+          this.csvList.push(notifyData)
         })
         this.totalRows = this.viewList.length
         this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`

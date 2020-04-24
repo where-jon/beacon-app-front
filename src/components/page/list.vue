@@ -93,7 +93,7 @@
         :current-page="compactMode? 1: currentPage" :per-page="perPage"
         :filter="compactMode? () => true: executeFilter" :bordered="params.bordered"
         :sort-by.sync="sortBy" :sort-compare="compactMode? () => 0: sortCompare" :sort-desc.sync="sortDesc" :empty-filtered-text="emptyMessage"
-        show-empty stacked="md" striped hover outlined caption-top
+        show-empty striped hover outlined caption-top responsive
         @filtered="onFiltered"
         @sort-changed="compactMode? fetchCompactListOnNext(): () => {}"
       >

@@ -52,17 +52,17 @@
                 </template>
               </v-select>
             </b-form-group>
-            <b-form-group v-show="isShownWith('group')">
-              <label v-t="'label.group'" />
-              <v-select v-model="vueSelected.group" :options="groupOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options-lg">
+            <b-form-group v-show="isShownWith('category')">
+              <label v-t="'label.category'" />
+              <v-select v-model="vueSelected.category" :options="categoryOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options-lg">
                 <template slot="no-options">
                   {{ vueSelectNoMatchingOptions }}
                 </template>
               </v-select>
             </b-form-group>
-            <b-form-group v-show="isShownWith('category')">
-              <label v-t="'label.category'" />
-              <v-select v-model="vueSelected.category" :options="categoryOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options-lg">
+            <b-form-group v-show="isShownWith('group')">
+              <label v-t="'label.group'" />
+              <v-select v-model="vueSelected.group" :options="groupOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options-lg">
                 <template slot="no-options">
                   {{ vueSelectNoMatchingOptions }}
                 </template>

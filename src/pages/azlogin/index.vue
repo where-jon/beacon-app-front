@@ -57,7 +57,7 @@ export default {
     }
   },
   mounted() {
-    Util.debug('@@@@@@@@@@@@@@@@@ azLogin')
+    console.log('@@@@@@@@@@@@@@@@@ azLogin')
     this.tenantName = this.tenantName || LocalStorageHelper.getLocalStorage('tenantName')
     APP.MENU.LOGIN_PAGE = APP.MENU.AZLOGIN_PAGE
     let token
@@ -78,11 +78,11 @@ export default {
   },
   methods: {
     signIn() {
-      Util.debug('azLogin SignIn. inIframe=', BrowserUtil.inIframe(), 'isMobile=', BrowserUtil.isMobile())
-      if (BrowserUtil.inIframe()) { // Teams内での表z示
+      console.log('azLogin SignIn. inIframe=', BrowserUtil.inIframe(), 'isMobile=', BrowserUtil.isMobile())
+      if (BrowserUtil.inIframe() || BrowserUtil.isMobile()) { // Teams内での表z示
         AADHelper.signIn(
           (result) => {
-            Util.debug(result)
+            console.debug(result)
             this.afterGetToken(result.idToken)
           },
           (reason) => {
@@ -91,43 +91,37 @@ export default {
           }
         )
       }
-      else if (BrowserUtil.isMobile()) { // モバイル版の場合 UserAgentにTeamsが入っていないのでTeamsアプリかブラウザかは判断できない
-        this.mobileLogin()
-      }
       else { // Webページでの表示
         MsalHelper.signIn((token, user) => {
           this.afterGetToken(localStorage.getItem('msal.idtoken'))
         })
       }
     },
-    mobileLogin() {
-      AADHelper.getContextForMobile((context) => {
-        context.authTimestamp = new Date().getTime()
-        const base64 = btoa(unescape(encodeURIComponent(JSON.stringify(context))))
-        AuthHelper.auth('MOBILE:' + base64, 'password',
-          ()=>{
-            this.$router.push(APP.MENU.TOP_PAGE)
-          },
-          (e)=>{
-            alert(e.message)
-            alert(e.toString())
-            console.error(e)
-          }
-        )
-      })
-    },
     async afterGetToken(idToken) {
+      const token = AADHelper.decodeJwt(idToken)
       this.hasToken = true
       AuthHelper.setApp(this.$router, this.$store)
       let tenantStatus = await AuthHelper.getADTenantStatus(idToken)
+      console.log(tenantStatus)
       if (tenantStatus == TENANT.STATUS.NOT_REGISTERED && location.search.includes('admin_consent=True')) {
+        // eslint-disable-next-line require-atomic-updates
         tenantStatus = await AuthHelper.getADTenantStatus(idToken, 1, this.tenantName)
+        console.log(tenantStatus)
       }
       switch (tenantStatus) {
       case TENANT.STATUS.REGISTERED:
+      case TENANT.STATUS.REQUIRE_TOKEN:
         await AuthHelper.auth(idToken, 'password',
           ()=>{
-            this.$router.push(APP.MENU.TOP_PAGE)
+            if (tenantStatus == TENANT.STATUS.REQUIRE_TOKEN) {
+              console.log('open aquire token')
+              const redirectUrl = encodeURIComponent(APP.AUTH.REDIRECT_URL.split('end').join('tokenEnd'))
+              const url = `https://login.microsoftonline.com/${token.tid}/oauth2/v2.0/authorize?client_id=${APP.AUTH.APP_ID}&response_type=code&redirect_uri=${redirectUrl}&response_mode=query&scope=offline_access%20user.read%20presence.read%20presence.read.all&state=12345` // stateはダミー、scopeは!?
+              location.href = url
+            }
+            else {
+              this.$router.push(APP.MENU.TOP_PAGE)
+            }
           },
           (e)=>{
             console.error(e)
@@ -150,19 +144,14 @@ export default {
     adminConsent() {
       microsoftTeams.initialize()
       LocalStorageHelper.setLocalStorage('tenantName', this.tenantName)
-      const left = (screen.width - 600) / 2
-      const top = ( screen.height - 535) / 2
-      const adminConsentUrl = APP.AUTH.ADMINCONSENT_URL_BASE + '?client_id=' + APP.AUTH.APP_ID + '&redirect_uri=' + APP.AUTH.REDIRECT_URL
-      const success = () => {
-      }
-      const failure = () => {
-      }
+      const redirectUrl = encodeURIComponent(APP.AUTH.REDIRECT_URL.split('end').join('adminend'))
+      const adminConsentUrl = 'https://login.microsoftonline.com/common/adminconsent?client_id=' + APP.AUTH.APP_ID + '&redirect_uri=' + redirectUrl
       microsoftTeams.authentication.authenticate({
         url: adminConsentUrl,
         width: 600,
         height: 535,
-        success,
-        failure
+        success: () => {},
+        failure: () => {}
       })
       this.notRegistered = false
       this.finishInit = true

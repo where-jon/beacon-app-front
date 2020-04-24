@@ -150,12 +150,12 @@ export const filterPositions = (positions = store.state.main.positions,
   selectedGroupId = store.state.main.selectedGroupId,
   selectedTxIdList = store.state.main.selectedTxIdList,
   selectedFreeWord = store.state.main.selectedFreeWord) => { // p, position-display, rssimap, position-list, position, ProhibitHelper
-  const txIdMap = store.state.app_service.btxIdMap
+  const txIdMap = store.state.app_service.txIdMap
 
   if (!showTxNoOwner) { // potの所有状態で絞込み(TX未登録やPotと紐付いていない場合は表示しない)
     positions = positions.filter(pos => {
       const tx = txIdMap[pos.txId]
-      return tx && tx.potId
+      return tx && tx.pot && tx.pot.potId
     })
   }
   return showAllTime ? positions : positionFilter(positions, selectedGroupId, selectedCategoryId, selectedTxIdList, selectedFreeWord)
@@ -465,7 +465,10 @@ export const calcScreenCoordinates = (positions, ratio, locations = [], selected
     const samePos = targetPos.filter(pos => pos.location.locationId == location.locationId)
     // console.error('samePos', samePos.map(e => e.minor))
     const txR = (location.isFixedPosZone && DISP.TX.FIXED_POS.APPLY_COLOR)? DISP.TX.FIXED_POS.R: DISP.TX.R
-    samePos.forEach(pos => pos.txR = txR)
+    samePos.forEach(pos => {
+      pos.txR = txR
+      pos.isFixedPosZone = location.isFixedPosZone
+    })
     return calcCoordinatesWhenOverlap(location, ratio, samePos, txR)
   }).compact().flatMap(e => e).tap(Util.debug).value()
 }
@@ -714,6 +717,9 @@ export const calcCoordinatesForMultiPosition = (positions, selectedAreaId) => {
 
 // --------- TX詳細 ---------
 
+export const getLabel = key => {
+  return APP.TXDETAIL.SHOW_LABEL ? i18n.tnl('label.' + key) + ":" : ""
+}
 
 /**
  * 位置表示のTx詳細に必要な情報を取得する。
@@ -734,8 +740,6 @@ export const createTxDetailInfo = (x, y, tx, canvasScale, offset, containerRect,
   const position = filterPositions().find(e => e.btxId === tx.btxId)
   const ret = {
     btxId: tx.btxId,
-    minor: i18n.tnl('label.minor') + ':' + tx.btxId,
-    major: tx.major? i18n.tnl('label.major') + ':' + tx.major : '',
     // TX詳細ポップアップ内部で表示座標計算する際に必要
     orgLeft: x * canvasScale + offset.x,
     orgTop: y * canvasScale + offset.y,
@@ -743,22 +747,24 @@ export const createTxDetailInfo = (x, y, tx, canvasScale, offset, containerRect,
     containerWidth: containerRect.width,
     containerHeight: containerRect.height,
     class: !tx.btxId ? '': 'balloon-u', // 上表示のみに固定,
-    name: Util.getValue(tx, 'pot.potName', ''),
-    tel: Util.getValue(tx, 'pot.extValue.tel', ''),
     timestamp: position ? DateUtil.formatDate(new Date(position.timestamp)) : '',
     thumbnail: Util.getValue(preloadThumbnail, 'src', ''),
-    category: Util.getValue(tx, 'pot.cateogry.categoryName', ''),
-    group: Util.getValue(tx, 'pot.group.groupName', ''),
     bgColor: display.bgColor,
     color: display.color,
     isDispRight: x + offset.x + 100 < window.innerWidth,
-    email: Util.getValue(tx, 'pot.user.email')
+    minor: getLabel('minor') + Util.getValue(tx, 'btxId', ''),
+    major: getLabel('major') + Util.getValue(tx, 'major', ''),
+    name: getLabel('name') + Util.getValue(tx, 'pot.potName', ''),
+    tel: getLabel('tel') + Util.getValue(tx, 'pot.extValue.tel', ''),
+    category: getLabel('category') + Util.getValue(tx, 'pot.cateogry.categoryName', ''),
+    group: getLabel('group') + Util.getValue(tx, 'pot.group.groupName', ''),
+    email: getLabel('email') + Util.getValue(tx, 'pot.user.email', '')
   }
   const extValue = Util.v(tx, 'pot.extValue')
   if(extValue){
     Object.keys(extValue).forEach( key => { 
       if(!ret[key] && extValue[key] ){ // 既にあるキーは書き換えないかつ値が存在する拡張キーのみ表示対象にする
-        ret[key] = i18n.tnl('label.' + key) + ':' + extValue[key] 
+        ret[key] = getLabel(key) + extValue[key] 
       }
     } )
   }

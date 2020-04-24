@@ -31,14 +31,17 @@
               </div>
             </div>
           </div>
-          <div v-if="showHourMarker && planMode == 'normal'" class="tui-full-calendar-timegrid-hourmarker" :style="{top: getTopPercentByTime() + '%'}">
+          <div v-if="showHourMarker && planMode == 'normal'" class="tui-full-calendar-timegrid-hourmarker" :style="getTopWidthByTime()">
             <div class="tui-full-calendar-timegrid-hourmarker-line-left" :style="{width: todaymarkerLeft + 'px', 'border-top': styles.currentTimeLeftBorderTop}"></div>
             <div class="tui-full-calendar-timegrid-todaymarker" :style="{left: todaymarkerLeft + 'px', 'background-color': styles.currentTimeBulletBackgroundColor}">today</div>
             <div class="tui-full-calendar-timegrid-hourmarker-line-today" :style="{left: todaymarkerLeft + 'px', width: todaymarkerWidth + 'px', 'border-top': styles.currentTimeTodayBorderTop}"></div>
             <div class="tui-full-calendar-timegrid-hourmarker-line-right" :style="{left: todaymarkerRight + 'px', 'border-top': styles.currentTimeRightBorderTop}"></div>
           </div>
-          <div v-if="showHourMarker && planMode == 'meetingRoom'" class="tui-full-calendar-timegrid-hourmarker" :style="{top: getTopPercentByTime() + '%'}">
+          <div v-if="showHourMarker && planMode == 'meetingRoom'" class="tui-full-calendar-timegrid-hourmarker" :style="getTopWidthByTime()">
             <div class="tui-full-calendar-timegrid-hourmarker-line-today" :style="{width: '100%', 'border-top': styles.currentTimeTodayBorderTop}"></div>
+          </div>
+          <div v-if="showHourMarker && planMode == 'meetingRoom' && doCompare" class="tui-full-calendar-timegrid-hourmarker" :style="getTopWidthByTime(true)">
+            <div :style="{width: '100%', height: styles.oneHourHeight, backgroundColor: '#e5e5e5'}"></div>
           </div>
       </div>
     </div>
@@ -160,8 +163,14 @@ export default {
         this.showHourMarker = this.today == d
       }
     },
-    getTopPercentByTime() {
-      const time = this.now
+    getTopWidthByTime(isUnavailable
+ = false) {
+      const lw = this.viewModel.timeLineLeftAndWidth
+      const w = Object.keys(lw).reduce((accum, k) => {
+        accum += lw[k] ? lw[k].width : 0
+        return accum
+      }, 0)
+      const time = isUnavailable ? moment(this.now).add(-1, 'h').toDate() : this.now
       const maxMilliseconds = 24 * 3600000
       const hmsMilliseconds = time.getHours() * 60 * 60 * 1000 
         + time.getMinutes() * 60 * 1000 
@@ -170,7 +179,7 @@ export default {
       let topPercent = 100 * hmsMilliseconds / maxMilliseconds
       topPercent = topPercent < 0 ? 0 : topPercent
       topPercent = 100 < topPercent ? 100 : topPercent
-      return topPercent
+      return {top: topPercent + '%', width: w + 'px'}
     },
     getStyles() {
       const theme = this.theme

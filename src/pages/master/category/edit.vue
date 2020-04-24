@@ -24,7 +24,7 @@
           <label v-t="'label.shape'" />
           <b-form-select v-model="form.displayShape" :options="shapes" :disabled="!isEditable" :readonly="!isEditable" required />
         </b-form-group>
-        <span v-if="!selectZone && pShowIcon">
+        <span v-if="pShowIcon">
           <color-picker :caption="'label.textColor'" :name="'displayColor'" />
           <color-picker :caption="'label.bgColor'" :name="'displayBgColor'" />
         </span>

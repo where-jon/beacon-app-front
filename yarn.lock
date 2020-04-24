@@ -9110,9 +9110,10 @@ vue-scrolling-table@^0.2.2:
   version "0.2.2"
   resolved "https://registry.yarnpkg.com/vue-scrolling-table/-/vue-scrolling-table-0.2.2.tgz#068b74894df578749dfd6b13acfac9e3a7230a47"
 
-vue-select@^3.1.0:
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/vue-select/-/vue-select-3.1.0.tgz#ccebbc17e48f1e3be5f082224a0c45ceb07b8551"
+vue-select@^3.10.1:
+  version "3.10.1"
+  resolved "https://registry.yarnpkg.com/vue-select/-/vue-select-3.10.1.tgz#3731af25c9ab59ff9d6122dbda3dee628f07ddfa"
+  integrity sha512-rmE19MPS8emN8eLWg6YSqAhrVO4nwD9cr9jeA4LjnJY0QPxqQTNHLl38ovCz23yttvBns57gjiOddsf/pxwPjQ==
 
 vue-server-renderer@^2.6.10:
   version "2.6.10"

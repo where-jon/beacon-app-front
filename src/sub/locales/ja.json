@@ -317,6 +317,8 @@
     "departmentEtc": "部門等",
     "outsideNumber": "外線番号",
     "extensionNumber": "内線番号",
+    "fax": "FAX",
+    "officeLink": "オフィスリンク",
 
     "positionList": "位置表示(一覧)",
     "positionListShort": "一覧",
@@ -947,7 +949,7 @@
         "DEVICEID_TYPE": "EXBeacon画面でデバイスIDとデバイスID(16進数)を使用する::EXBeacon画面でデバイスIDかデバイスID(16進数)のどちらか、または両方を使用します。deviceId、deviceIdX、bothのいずれかを設定します。",
         "MULTI_SENSOR": "EXBeaconに複数のセンサを設定する::EXBeacon画面で複数のセンサを設定可能にします。",
         "SENSOR_MAX": "EXBeaconに設定するセンサの最大数::EXBeacon画面で設定可能なセンサの最大数を設定します。",
-        "WITH": "ExServiceのMasterRequestに追加する項目::MasterRequestに追加する項目を文字列リスト（カンマ区切り）で設定する。"
+        "WITH": "EXBeacon画面に追加する項目::EXBeacon画面に追加する項目を文字列リスト（カンマ区切り）で設定する。"
       },
       "LOCATION": {
         "WITH": "場所画面で使用する項目::場所画面で使用する項目を設定します。設定可能な値は次の通りです。★{LOCATION}",
@@ -1040,7 +1042,9 @@
       },
       "TXDETAIL": {
         "ITEMS": "位置表示(地図)画面の詳細ポップアップに表示する項目::位置表示(地図)画面の詳細ポップアップに表示する項目を設定します。設定可能な値は次の通りです。★{TXDETAIL}",
-        "NO_UNREGIST_THUMB": "位置表示(地図)画面の詳細ポップアップに未登録のサムネイルは表示しない::位置表示(地図)画面で、選択したTxにサムネイルが登録されていない場合は詳細ポップアップにサムネイルを表示しないように設定します。"
+        "NO_UNREGIST_THUMB": "位置表示(地図)画面の詳細ポップアップに未登録のサムネイルは表示しない::位置表示(地図)画面で、選択したTxにサムネイルが登録されていない場合は詳細ポップアップにサムネイルを表示しないように設定します。",
+        "SHOW_LABEL": "項目名を表示する",
+        "TEXT_MAX": "項目の最大文字数::項目の最大文字数を設定します。最大文字数を超えた分は...で表示されます。"
       },
       "ACTIVITY": {
         "STACK_TYPE": "活動実績の集計方法::活動実績の集計方法を指定します。(location zoneCategory)"
@@ -1065,6 +1069,9 @@
           "CALC_BY": "滞在時間集計バッチの集計単位::滞在時間集計バッチで集計するデータの単位を設定します。設定可能な値は次の通りです。{STAY_SUM_CALC_BY}",
           "ADJUST_TIME": "滞在時間集計バッチの補正対象最大時間::滞在時間集計バッチで補正を行わないデータを秒単位で設定します。この数値を超過する滞在時間データは補正しません。",
           "REAL_TIME": "滞在時間リアルタイム更新::測位処理のあとで滞在時間をリアルタイムに計算します。この設定をtrueにする場合、基本的に定期バッチ処理はオフにします。"
+        },
+        "PRESENCE": {
+          "INTERVAL": "プレゼンス集計バッチが同一とみなす時間::プレゼンス集計バッチで同一状態と判定する時間の閾値を秒単位で設定します。設定した時間以上滞在している場合に異なるデータとして判定されます。"
         },
         "POS": {
           "CACHE_TIME": "サーバキャッシュ有効時間::サーバが蓄積しているキャッシュデータの有効時間をミリ秒単位で設定します。"
@@ -1163,6 +1170,9 @@
         },
         "PROHIBIT_ZONE": {
           "INTERVAL": "禁止区域アラートバッチの実行間隔::禁止区域アラートバッチの実行間隔をミリ秒単位で設定します。"
+        },
+        "PRESENCE": {
+          "INTERVAL": "プレゼンスバッチ処理実行間隔::Teams presence API呼び出しのバッチの実行間隔をミリ秒単位で設定します。"
         },
         "AD_SYNC": {
           "CRON": "AD同期バッチ処理時間指定::指定された時刻にActive Directoryとの同期処理を行います。"
@@ -1804,8 +1814,8 @@
     "resetFromTo": "{from}が変更されたため、{to}が未選択状態になりました。",
     "underDegree": "℃未満",
     "overDegree": "℃以上",
-    "lostDetected": "<持出禁止> {time} {potCd}「{potName}」が所定の場所に戻されていません。",
-    "prohibitDetected": "<進入禁止> {time} {groupName}（{potName}）が、{zoneName}に立ち入りました。",
+    "lostDetected": "<持出検知> {time} {potCd}「{potName}」が所定の場所に戻されていません。",
+    "prohibitDetected": "<進入検知> {time} {groupName}（{potName}）が、{zoneName}に立ち入りました。",
 
     "MSTEAMS": {
       "USER_GUIDE1": "EXOfficeを利用するには、お客様のOffice365におけるグループおよびユーザ情報へ本アプリがアクセスすることを許可していただく必要があります。",
