@@ -194,7 +194,7 @@ export default {
           attendancePer: NumberUtil.getPercent(attendanceCount, list.length),
           allDayWorkPer: NumberUtil.getPercent(allCount, list.length),
           halfDayWorkPer: NumberUtil.getPercent(halfCount, list.length),
-          lateTimeWorkPer: NumberUtil.getPercent(lateCount, list.length),
+          lateTimeWorkPer: NumberUtil.getPercent(lateCount, attendanceCount),
           temporaryTimeWorkPer: NumberUtil.getPercent(tempCount, list.length),
           isDetail: true
         })
@@ -206,7 +206,7 @@ export default {
           attendancePer: NumberUtil.getPercent(attendanceSum, pots.length),
           allDayWorkPer: NumberUtil.getPercent(allSum, pots.length),
           halfDayWorkPer: NumberUtil.getPercent(halfSum, pots.length),
-          lateTimeWorkPer: NumberUtil.getPercent(lateSum, pots.length),
+          lateTimeWorkPer: NumberUtil.getPercent(lateSum, attendanceSum),
           temporaryTimeWorkPer: NumberUtil.getPercent(tempSum, pots.length)
       })
       Util.debug('viewList', this.viewList)
