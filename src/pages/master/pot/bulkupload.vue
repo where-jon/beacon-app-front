@@ -1,27 +1,30 @@
 <template>
   <div class="container-fluid">
     <breadcrumb :items="breadCrumbs" />
-    <bulkupload :id="id" :name="name" :back-path="backPath" :app-service-path="appServicePath" />
+    <bulkupload :id="id" :name="name" :back-path="backPath" :app-service-path="pAppServicePath" />
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
 import { APP } from '../../../sub/constant/config'
-import { CATEGORY } from '../../../sub/constant/Constants'
+import { POT_TYPE, CATEGORY } from '../../../sub/constant/Constants'
 import * as BrowserUtil from '../../../sub/util/BrowserUtil'
 import * as StringUtil from '../../../sub/util/StringUtil'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
 import * as ImageHelper from '../../../sub/helper/base/ImageHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
+import * as PotHelper from '../../../sub/helper/domain/PotHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkupload from '../../../components/page/bulkupload.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
 
 export default {
   components: {
     breadcrumb,
     bulkupload,
   },
+  mixins: [commonmixin],
   props: {
     pName: {
       type: String,
@@ -44,6 +47,7 @@ export default {
     return {
       name: 'pot',
       id: 'potId',
+      potTypeOptions: POT_TYPE.getTypes().filter(val => APP.POT.TYPES.includes(val.value) && this.pTypeList.includes(val.value)),
     }
   },
   computed: {
@@ -81,6 +85,7 @@ export default {
         potTxList: target.txList? target.txList.map(e => ({ potTxPK: {txId: e.txId} })): [],
         thumbnail: target.thumbnail,
         description: target.description,
+        target: target,
       }: null
     },
     addLoadImage(imgInfo) {
@@ -90,7 +95,13 @@ export default {
       }, APP.POT_THUMBNAIL_MAX)
     },
     async save(thumbnails) {
-      return await AppServiceHelper.bulkSave(this.pAppServicePath, thumbnails)
+      const entities = thumbnails.map(e => {
+        const obj = e.target
+        const minors = obj.txList ? obj.txList.map(tx => tx.minor): []
+        obj.txList = null
+        return PotHelper.createEntity(obj, minors, this.potTypeOptions, this.groups, this.categories)
+      })
+      return await AppServiceHelper.save2(this.pAppServicePath, entities)
     },
   }
 }

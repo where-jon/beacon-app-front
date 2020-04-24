@@ -395,46 +395,8 @@ export default {
     async onSaved(){
     },
     async onSaving() {
-      const entity = {
-        updateKey: this.form.potId || null,
-        ID: this.form.potCd,
-        potName: this.form.potName,
-        potType: this.potTypeOptions.filter(e => e.value == this.form.potType).map(e => e.text),
-        displayName: this.form.displayName,
-        groupCd: this.form.groupId ? this.groups.filter(e => e.groupId == this.form.groupId).map(e => e.groupCd).join(";") : null,
-        categoryCd: this.form.categoryId ? this.categories.filter(e => e.categoryId == this.form.categoryId).map(e => e.categoryCd).join(";") : null,
-        thumbnail: this.form.thumbnail,
-        description: this.form.description,
-        extValue: null
-      }
-      
-      const extValue = {}
-      const arr = ['ruby', 'description', 'minors']
-      arr.forEach(key => {
-        if (this.form[key]) {
-          extValue[key] = this.form[key]
-        }
-      })
-      if (this.form.potName) {
-        extValue['potNames'] = [this.form.potName]
-      }
-      PotHelper.getPotExtKeys(this.pName).forEach(key => {
-        extValue[key] = this.form[key]
-      })
-      if (Object.keys(extValue).length > 0) {
-        entity.extValue = JSON.stringify(extValue)
-      }
-
-      if(Util.hasValue(this.form.authCategoryIdList)){
-        const list = this.categories.filter(e => this.form.authCategoryIdList.includes(e.categoryId)).map(e => e.categoryCd)
-        entity.auth = list.length > 0 ? list.join(";") : null
-      }
-
-      entity.minor = this.minors.length > 0 ? this.minors.join(';') : null
-      entity.deleteThumbnail = this.form.deleteThumbnail
-
+      const entity = PotHelper.createEntity(this.form, this.minors, this.potTypeOptions, this.groups, this.categories)
       this.potCdOld = this.form.potCd
-      
       return await AppServiceHelper.save2(this.pAppServicePath, [entity])
     },
     getNameByteLangth(){
