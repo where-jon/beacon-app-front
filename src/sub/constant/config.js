@@ -13,7 +13,7 @@ export const DEV = { // 開発デバッグ関連
 export const APP = { // 機能面に関する設定
   SAAS_DOMAIN: '.saas.',
   COMMON: {
-    VERSION: 'Version 1.3.3', // バージョン　this application version
+    VERSION: 'Version 1.3.2', // バージョン　this application version
     TIME_ZONE: 'JST', // 午前0時を決定するためのタイムゾーン
     AUTO_RELOAD: 60000, // 自動リロード間隔(ミリ秒)
   },
