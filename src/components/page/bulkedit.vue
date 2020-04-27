@@ -129,7 +129,11 @@ export default {
         }
         catch(e) {
           console.error(e)
-          this.message = BulkHelper.getBulkErrorMessage(e, dispName, this.showLine)
+          if (e.message == 'Network Error') {
+            this.message = this.$i18n.tnl('message.errUploadFileChanged')
+          } else {
+            this.message = BulkHelper.getBulkErrorMessage(e, dispName, this.showLine)
+          }
           this.replace({showAlert: true})
           window.scrollTo(0, 0)
         }
