@@ -78,6 +78,10 @@ export default {
         this.countFile(zip)
         this.uploadMessage()
         Object.keys(zip.files).forEach(key => {
+          const f = zip.file(key)
+          if (!f) {
+            return
+          }
           zip.file(key).internalStream('arraybuffer').accumulate(() => {}).then(val => {
             if(!this.isImageFile(key)){
               return
@@ -93,7 +97,6 @@ export default {
               this.afterLoadFile()
               return
             }
-
             const target = this.$parent.$options.methods.search.call(this.$parent, id)
             if(target){
               zip.file(key).async('base64').then(bVal =>{

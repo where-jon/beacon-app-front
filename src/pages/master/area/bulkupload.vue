@@ -17,12 +17,14 @@ import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkupload from '../../../components/page/bulkupload.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
 
 export default {
   components: {
     breadcrumb,
     bulkupload,
   },
+  mixins: [commonmixin],
   data() {
     return {
       name: 'area',
@@ -72,14 +74,16 @@ export default {
       return ret
     },
     async getSavePromise(areas){
-      const entities = areas.map(are => {
+      const entities = areas.map(area => {
         const entity = {
-          updateKey: are.areaId || null,
-          ID: are.areaCd,
+          updateKey: area.areaId || null,
+          ID: area.areaCd,
+          areaName: area.areaName,
+          mapWidth: area.mapWidth,
+          mapHeight: area.mapHeight,
+          mapImage: area.mapImage,
+          thumbnail: area.thumbnail
         }
-        Object.keys(this.form).forEach(key => {
-          entity[key] = this.form[key]
-        })
         return entity
       })      
       await AppServiceHelper.save2(this.appServicePath, entities)

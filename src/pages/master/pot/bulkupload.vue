@@ -8,7 +8,7 @@
 <script>
 import { mapState } from 'vuex'
 import { APP } from '../../../sub/constant/config'
-import { POT_TYPE, CATEGORY } from '../../../sub/constant/Constants'
+import { POT_TYPE, CATEGORY, BULK } from '../../../sub/constant/Constants'
 import * as BrowserUtil from '../../../sub/util/BrowserUtil'
 import * as StringUtil from '../../../sub/util/StringUtil'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
@@ -70,23 +70,19 @@ export default {
     async onSaved(){
     },
     search(key) {
+      console.log('!!!',this.pots)
       const target = this.pots.find(val => val.potCd == key && this.pTypeList.includes(val.potType))
-      return target? {
-        id: target.potId,
-        name: target.potName,
-        potId: target.potId,
-        potCd: target.potCd,
-        potName: target.potName,
-        potType: target.potType,
-        extValue: target.extValue,
-        displayName: target.displayName,
-        potGroupList: target.groupId? [{ potGroupPK: {groupId: target.groupId} }]: [],
-        potCategoryList: target.categoryId? [{ potCategoryPK: {categoryId: target.categoryId} }]: [],
-        potTxList: target.txList? target.txList.map(e => ({ potTxPK: {txId: e.txId} })): [],
-        thumbnail: target.thumbnail,
-        description: target.description,
-        target: target,
-      }: null
+      let obj = null
+      if (target) {
+        obj = {
+          potId: target.potId,
+          potType: target.potType,
+          potCd: target.potCd,
+          potName: target.potName,
+          thumbnail: target.thumbnail,
+        }
+      }
+      return obj
     },
     addLoadImage(imgInfo) {
       const blob = ImageHelper.base64ToBlob(imgInfo.thumbnail)
@@ -96,10 +92,9 @@ export default {
     },
     async save(thumbnails) {
       const entities = thumbnails.map(e => {
-        const obj = e.target
-        const minors = obj.txList ? obj.txList.map(tx => tx.minor): []
-        obj.txList = null
-        return PotHelper.createEntity(obj, minors, this.potTypeOptions, this.groups, this.categories)
+        delete e.size
+        delete e.type
+        return PotHelper.createEntity(e, [], this.potTypeOptions)
       })
       return await AppServiceHelper.save2(this.pAppServicePath, entities)
     },
