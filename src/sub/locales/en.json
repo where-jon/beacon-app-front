@@ -1683,6 +1683,7 @@
     "bulkSizeFailed": "{col} ({value}) must be the number of characters {min} to {max}.",
     "bulkSizeSameFailed": "{col} ({value}) must be no less than {min} characters",
     "bulkNotNullFailed": "{col} is mandatory.",
+    "bulkPipeUsedFailed": "Pipe（|） is prohibited at {col} ({value}).",
     "bulkExistFailed": "{col} ({value}) does not exist.",
     "bulkInvalidFailed": "{col} ({value}) is invalid form",
     "bulkAuthFailed": "{col}（{value}） cannot be used.",
