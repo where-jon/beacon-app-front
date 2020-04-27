@@ -56,7 +56,10 @@ export default {
       await this.$refs.bulkEdit.bulkSave2()
     },
     getConf() {
-      return {allRejectionLabel: this.$i18n.tnl('label.allRejection')}
+      return {
+        allAuthorizationLabel: this.$i18n.tnl('label.allAuthorization'), 
+        allRejectionLabel: this.$i18n.tnl('label.allRejection')
+      }
     },
     onRestruct(entity, dummyKey){
       let keys = null

@@ -84,6 +84,7 @@ export default {
       selectedModes: [],
       selectedAll: false,
       modeOptions: ROLE_FEATURE.getModeOptions(),
+      allOpt: ROLE_FEATURE.getAllAuthorizationOption(),
     }
   },
   computed: {
@@ -97,7 +98,7 @@ export default {
       return !this.isEditable || Util.hasValue(this.form.featureId)
     },
     selectedAllText(){
-      return ROLE_FEATURE.getAllAuthorizationOption().text
+      return this.allOpt.text
     },
     selectFeature(){
       return this.featureId && this.featureId > 0
@@ -115,7 +116,7 @@ export default {
       this.form.path = feature != null? feature.path: ''
     },
     selectedAll: function(newVal, oldVal) {
-      this.selectedModes = newVal? [ ROLE_FEATURE.getAllAuthorizationOption().value ]: []
+      this.selectedModes = newVal? [ this.allOpt.value ]: []
     },
   },
   async created() {
@@ -162,17 +163,27 @@ export default {
       await this.resetFeatureNames()
       this.vueSelected.feature = VueSelectHelper.getVueSelectData(this.featureNames, null, true)
     },
+    getConf() {
+      return {
+        allAuthorizationLabel: this.$i18n.tnl('label.allAuthorization'), 
+        allRejectionLabel: this.$i18n.tnl('label.allRejection')
+      }
+    },
     async onSaving() {
       let entity = {
         updateKey: `${this.role.roleId}/${this.featureId}`,
       }
       if (Util.hasValue(this.selectedModes)) {
-        entity.mode = this.selectedModes.filter(v => v != '0')
-          .map(v => this.modeOptions.find(opt => opt.value == v).text).join(';')
+        const v = this.selectedModes[0]
+        if (v == this.allOpt.value) {
+          entity.mode = this.allOpt.text
+        } else {
+          entity.mode = this.selectedModes.map(v => this.modeOptions.find(opt => opt.value == v).text).join(';')
+        }
       } else {
         entity.mode = null
       }
-      const saveId =  await AppServiceHelper.save2(this.appServicePath, [entity])
+      const saveId =  await AppServiceHelper.save2(this.appServicePath, [entity], this.getConf())
       return saveId
     },
     async onSaved(){
