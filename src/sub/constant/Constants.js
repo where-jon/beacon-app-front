@@ -487,6 +487,18 @@ export const THERMOHUMIDITY = {
   },
 }
 
+export const PRESENCE = {
+  STATUS: { // あえてキャメルに
+    Available: 1,
+    Busy: 2,
+    DoNotDisturb: 3,
+    Away: 4,
+    BeRightBack: 5,
+    Offline: 6,
+    PresenceUnknown: 7,
+  }
+}
+
 export const DISCOMFORT = {
   HOT: 'hot',
   COMFORT: 'comfort',
@@ -1255,7 +1267,12 @@ export const MENU = [
         path: 'attendanceDetail',
         icon: 'clock',
       },
-      ]
+      {
+        key: 'presenceSum',
+        path: 'presenceSum',
+        icon: 'user-clock',
+      },
+    ]
   },
   {
     key: 'historyTitle',

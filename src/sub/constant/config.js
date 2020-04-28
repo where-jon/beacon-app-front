@@ -533,6 +533,9 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   MEDITAG: {
     STRESS_BG: ['#85A9D1', '#F0C864', '#F49696'], // ストレスレベルに応じた背景色
   },
+  PRESENCE: {
+    BG: ['#92C353', '#C4314B', '#FF314B', '#FCD116', '#CCE116', '#ccc', '#F6f6F6'], // 1 -7
+  },
   ANALYSIS: { // 分析
     LINE: {
       MIN_WEIGHT: 3,    // 動線の最小太さ

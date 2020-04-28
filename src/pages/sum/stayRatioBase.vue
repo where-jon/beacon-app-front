@@ -100,7 +100,7 @@
             <date-picker v-model="form.date" type="date" value-format="yyyyMMdd" class="mr-2 mb-2 inputdatefrom" @change="pickerChanged" />
           </b-form-row>
         </b-form-group>
-        <b-form-group class="mr-4">
+        <b-form-group v-if="!pPresence" class="mr-4">
           <b-form-row class="mb-3 mr-3">
             <b-form-row class="mr-3">
               <span v-t="'label.filter'" class="d-flex align-items-center" />
@@ -141,7 +141,7 @@
           </b-form-row>
         </b-form-group>
         <b-form-group>
-          <b-form-row v-if="isCategoryEnabled" class="mb-3 mr-2">
+          <b-form-row v-if="isCategoryEnabled && !pPresence" class="mb-3 mr-2">
             <label v-t="'label.category'" class="mr-2" />
             <span :title="vueSelectTitle(vueSelected.category)">
               <v-select v-model="vueSelected.category" :options="categoryOptions" class="inputSelect vue-options">
@@ -174,7 +174,7 @@
                 {{ $t('label.detail') + $t('label.downloadMonth') }}
               </b-dropdown-item>
             </b-dropdown>
-            <b-button v-if="isDisplaySpecifiedBtn" v-t="'label.displaySpecified'" :variant="theme" class="ml-2" @click="showModal=true" />
+            <b-button v-if="isDisplaySpecifiedBtn && !pPresence" v-t="'label.displaySpecified'" :variant="theme" class="ml-2" @click="showModal=true" />
           </b-form-row>
         </b-form-group>
       </b-form>
@@ -227,7 +227,7 @@ import { DatePicker } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import moment from 'moment'
 import { APP, DISP, DEV } from '../../sub/constant/config'
-import { SHAPE, CATEGORY, SYSTEM_ZONE_CATEGORY_NAME, STAY_RATIO_BASE_FILTER_KIND } from '../../sub/constant/Constants'
+import { SHAPE, CATEGORY, SYSTEM_ZONE_CATEGORY_NAME, STAY_RATIO_BASE_FILTER_KIND, PRESENCE } from '../../sub/constant/Constants'
 import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as ColorUtil from '../../sub/util/ColorUtil'
@@ -239,7 +239,6 @@ import * as StyleHelper from '../../sub/helper/ui/StyleHelper'
 import { getCharSet } from '../../sub/helper/base/CharSetHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
-import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as StayTimeHelper from '../../sub/helper/domain/StayTimeHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
@@ -254,6 +253,12 @@ export default {
     alert,
   },
   mixins: [commonmixin],
+  props: {
+    pPresence: { // プレゼンス表示として使う場合
+      type: Boolean,
+      default: false,
+    },
+  },
   data () {
     return {
       breadCrumbs: ViewHelper.createBreadCrumbItems('sumTitle', 'stayRatioBase'),
@@ -285,7 +290,7 @@ export default {
       perPage: 20,
       sortBy: 'name',
       totalRows: 0,
-      historyType: 'area',
+      historyType: this.pPresence? 'category': 'area',
       isCategorySelected: false,
       checkboxLimit: 6,
       showModal: false,
@@ -373,13 +378,26 @@ export default {
       let lastIndex = 0
       this.legendItems = []
 
+      if (this.pPresence) { // プレゼンスの場合
+        _.forEach(PRESENCE.STATUS, (value, key) => {
+          console.log(key, value)
+          this.legendItems.push({id: value, items: [
+            { id: 1, text: '', style: StyleHelper.getStyleDisplay1(
+              { shape:SHAPE.SQUARE, bgColor: DISP.PRESENCE.BG[value - 1], color: '#000000', fixSize: true }
+            ) },
+            { id: 2, text: this.$i18n.tnl('label.' + key), style: null },
+          ]})
+        })
+        return
+      }
+
       if (this.isCategorySelected) {
         _.filter(this.categories, category => { return category.systemUse != 1 })
           .forEach((category, index) => {
             this.legendItems.push({id:index, items:[
               { id: 1, text: '', style: StyleHelper.getStyleDisplay1(
                 { shape:SHAPE.SQUARE, bgColor: category.bgColor, color: '#000000', fixSize: true }
-                ) },
+              ) },
               { id: 2, text: category.categoryName, style: null },
             ]})
             lastIndex = index
@@ -608,7 +626,11 @@ export default {
           let findCategory
           let findArea
           let areaIndex = 0
-          const isAbsentZone = this.isAbsentZoneData(stay.byId)
+          if (this.pPresence && stay.byId == -1) { // プレゼンスの場合、-1はオフライン扱い
+            stay.byId = PRESENCE.STATUS.Offline
+            stay.byName = 'Offline'
+          }
+          const isAbsentZone = this.pPresence? (stay.byId == PRESENCE.STATUS.Offline): this.isAbsentZoneData(stay.byId)
           if (this.isLostData(stay.byId) || isAbsentZone) {
             lostTime += stay.period
             time = moment().startOf('days').add(stay.period, 's').format('HH:mm')
@@ -618,15 +640,22 @@ export default {
             isExistStayData = true
           }
           // カテゴリ毎の滞在時間を加算
-          findCategory = _.find(this.categories, (category) => {
-            return category.categoryType == CATEGORY.ZONE && category.categoryId == stay.byId
-          })
-          if (findCategory) {
-            categoryData[findCategory.categoryId].value += stay.period
-          } else if (stay.byId == 0) {
-            categoryData[0].value += stay.period
+          if (this.pPresence) { // プレゼンスの場合、プレゼンス情報をカテゴリとして設定する。
+            if (!categoryData[stay.byId]) {
+              categoryData[stay.byId] = {name:stay.byName, value:stay.byId}
+            }
+            categoryData[stay.byId].value += stay.period
           }
-
+          else {
+            findCategory = _.find(this.categories, (category) => {
+              return category.categoryType == CATEGORY.ZONE && category.categoryId == stay.byId
+            })
+            if (findCategory) {
+              categoryData[findCategory.categoryId].value += stay.period
+            } else if (stay.byId == 0) {
+              categoryData[0].value += stay.period
+            }
+          }
           // エリア毎の滞在時間を加算
           let zone = findCategory? _.find(this.zones, (zone) => { return zone.categoryId == findCategory.categoryId}): null
           findArea = _.find(this.areaArray, (area, index) => {
@@ -667,8 +696,8 @@ export default {
             endTime: percent == 100? moment().startOf('days').add(toSecond, 's').format('HH:mm'): moment(stay.end).format('HH:mm'),
             time,
             percent,
-            categoryName: findCategory? this.getDispCategoryName(findCategory): this.$i18n.tnl('label.other'),
-            categoryBgColor: findCategory? ColorUtil.colorCd4display(findCategory.bgColor): ColorUtil.colorCd4display(this.otherColor),
+            categoryName: this.pPresence? this.$i18n.tnl('label.' + stay.byName): findCategory? this.getDispCategoryName(findCategory): this.$i18n.tnl('label.other'),
+            categoryBgColor: this.pPresence? DISP.PRESENCE.BG[stay.byId - 1]: findCategory? ColorUtil.colorCd4display(findCategory.bgColor): ColorUtil.colorCd4display(this.otherColor),
             areaBgColor: findArea? ColorUtil.getStackColor(areaIndex): this.otherColor,
             areaName: findArea? findArea.areaName: this.$i18n.tnl('label.other'),
             zoneCategory: stay.byName,
@@ -792,6 +821,9 @@ export default {
       const targetDate = moment(param.date).format('YYYYMMDD')
       const groupBy = param.groupId? '&groupId=' + param.groupId: ''
       const categoryBy = param.categoryId? '&categoryId=' + param.categoryId: ''
+      if (this.pPresence) { // プレゼンスの場合
+        return '/office/presence/sumByDay/' + targetDate + '?from=' + APP.SVC.STAY_SUM.START + '&to=' + APP.SVC.STAY_SUM.END + groupBy + categoryBy
+      }
       const potBy = param.filterId? '&filterKind=' + param.filterKind + '&filterId=' + param.filterId : ''
       return '/office/stayTime/sumByDay/' + targetDate + '/zoneCategory?from=' + APP.SVC.STAY_SUM.START + '&to=' + APP.SVC.STAY_SUM.END + groupBy + categoryBy + potBy
     },

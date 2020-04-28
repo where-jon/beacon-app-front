@@ -810,7 +810,17 @@
     "dtDiff": "差分(秒)",
     "toDbOnlyMode": "DBオンリーモードへ",
     "toNomalMode": "通常モードへ",
-            
+
+    "---------------- Presence ---------------":"",
+    "presenceSum":"プレゼンス日単位グラフ",
+    "Available":"連絡可能",
+    "Busy":"取り込み中",
+    "DoNotDisturb":"応答不可",
+    "Away":"退席中",
+    "BeRightBack":"一時退席中",
+    "Offline":"オフライン",
+    "PresenceUnknown":"状態不明",
+
     "dummy": ""
   },
   "config": {

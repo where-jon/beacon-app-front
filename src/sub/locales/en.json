@@ -748,7 +748,6 @@
     "sample": "Sample",
     "adminConsent": "Admin Consent",
 
-    "dummy": "",
     "plan": "Plan",
     "planActual": "Plan result compare",
     "actual": "Actual",
@@ -762,8 +761,19 @@
     "posId": "Positioning ID",
     "planId": "Plan ID",
     "planDetailId": "Detailed plan ID",
-    "basetime": "Standard time"
+    "basetime": "Standard time",
 
+    "---------------- Presence ---------------":"",
+    "presenceSum":"Presence daily summary graph",
+    "Available":"Available",
+    "Busy":"Busy",
+    "DoNotDisturb":"DoNotDisturb",
+    "Away":"Away",
+    "BeRightBack":"BeRightBack",
+    "Offline":"Offline",
+    "PresenceUnknown":"PresenceUnknown",
+
+    "dummy": ""
   },
   "config": {
     "APP": {
