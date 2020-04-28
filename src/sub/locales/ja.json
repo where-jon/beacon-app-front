@@ -1773,6 +1773,7 @@
     "uploadWarnData": "{val}件のデータは登録できません。",
     "loadingFile": "ファイルを読み込んでいます。({now} / {all} 件)",
     "networkError": "サーバに接続できません。",
+    "errUploadFileChanged": "ファイルの内容が変わったため、読込みが失敗しました。画面をリロードして下さい。",
     "noLedDevice": "操作できるLEDデバイスがありません。",
     "providerUserNotAllowed": "プロバイダユーザではこの機能は利用できません。",
     "noPersonAssociated": "このユーザは人と関連付けがないため、この機能は使用できません。",

@@ -188,12 +188,12 @@ export const getExCloud = async (url, config) => {
  * @param {Object} config axiosの設定
  * @return {Any}
  */
-export const postAppService = async (path, param, config) => {
+export const postAppService = async (path, param, config, skipModalRootError = false) => {
   try {
     let res = await apServiceClient.post(APP_SERVICE.BASE_URL + path, param, addApiKey(config))
     return res.data
   } catch (e) {
-    handleError(e, path)
+    handleError(e, path, skipModalRootError)
   }
 }
 
@@ -283,7 +283,7 @@ const convertDuplicateErrorInfo = e => {
  * @param {Error} e 
  * @param {String} url 
  */
-const handleError = (e, url) => {
+const handleError = (e, url, skipModalRootError = false) => {
   console.error({e, url})
   if (e.response && e.response.status == 401) {
     AuthHelper.logout()
@@ -315,7 +315,7 @@ const handleError = (e, url) => {
 
     if (context) {
       let ignore = !url.endsWith('/') && context.route.path.indexOf('/login') != -1 // Loginエラーでポップアップが表示されるのを防ぐ
-      if (e.message && (e.message == 'Network Error' || e.message.startsWith('timeout of ')) && !ignore) {
+      if (!skipModalRootError && e.message && (e.message == 'Network Error' || e.message.startsWith('timeout of ')) && !ignore) {
         e.key = 'networkError'
         context.app.store.commit('replace', {error: e})
         context.app.router.app.$root.$emit('bv::show::modal', 'modalRootError')

@@ -181,8 +181,7 @@ export const bulkSave2 = async (target, formData, charset, updateOnlyNN = UPDATE
     }
   }
   let data = DEV.USE_MOCK_APS? mock[target]:
-    await HttpHelper.postAppService(path, formData, config)
-
+    await HttpHelper.postAppService(path, formData, config, true)
   return data
 }
 

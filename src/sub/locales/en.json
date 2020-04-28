@@ -1704,6 +1704,7 @@
     "uploadWarnData": "{val}data cannot be registered",
     "loadingFile": "Loading file. ({now} / {all})",
     "networkError": "Unable to connect to the server.",
+    "errUploadFileChanged": "Reading failed because the file contents have changed. Please reload the screen.",
     "noLedDevice": "There are no LED devices to operate.",
     "providerUserNotAllowed": "This function is not available for provider users.",
     "noPersonAssociated": "This feature is not available because this user has no person associated with it.",
