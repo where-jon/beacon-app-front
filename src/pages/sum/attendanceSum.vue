@@ -139,7 +139,7 @@ export default {
     },
     async fetchData(form){
       const date = moment(form.date).format('YYYYMMDD')
-      const url = `/office/attendance/list/${date}/0/0`
+      const url = `/office/attendance/sum/${date}`
       return await HttpHelper.getAppService(url)
     },
     async showDetail(item){
@@ -148,6 +148,21 @@ export default {
       this.$router.push('/sum/attendanceDetail')
     },
     createList(data){
+      this.viewList = data.map( e => {
+
+        return {
+          groupId: e.groupId ? e.groupId : 0,
+          groupName: e.groupName ? e.groupName : '',
+          attendancePer: e.total,
+          allDayWorkPer: e.all,
+          halfDayWorkPer: e.half,
+          lateTimeWorkPer: e.late,
+          temporaryTimeWorkPer: e.temp,
+          isDetail: true
+        }
+      })
+    },
+    createListOld(data){
       this.viewList = []
       this.totalRows = 0
 
