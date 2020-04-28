@@ -261,7 +261,7 @@ export default {
   },
   data () {
     return {
-      breadCrumbs: ViewHelper.createBreadCrumbItems('sumTitle', 'stayRatioBase'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('sumTitle', this.pPresence? 'presenceSum': 'stayRatioBase'),
       legendItems: [],
       fields: this.getFields(true),
       form: {

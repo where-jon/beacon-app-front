@@ -764,7 +764,7 @@
     "basetime": "Standard time",
 
     "---------------- Presence ---------------":"",
-    "presenceSum":"Presence daily summary graph",
+    "presenceSum":"Presence daily summary",
     "Available":"Available",
     "Busy":"Busy",
     "DoNotDisturb":"DoNotDisturb",

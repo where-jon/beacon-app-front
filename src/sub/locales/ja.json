@@ -812,7 +812,7 @@
     "toNomalMode": "通常モードへ",
 
     "---------------- Presence ---------------":"",
-    "presenceSum":"プレゼンス日単位グラフ",
+    "presenceSum":"プレゼンス日単位分析",
     "Available":"連絡可能",
     "Busy":"取り込み中",
     "DoNotDisturb":"応答不可",
