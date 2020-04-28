@@ -1747,6 +1747,7 @@
     "bulkSizeFailed": "{col}（{value}）は{min}から{max}の文字数である必要があります。",
     "bulkSizeSameFailed": "{col}（{value}）は{min}文字である必要があります。",
     "bulkNotNullFailed": "{col}は必須です。",
+    "bulkPipeUsedFailed": "{col} ({value}) でパイプ（|） は使用禁止です.",
     "bulkExistFailed": "{col}（{value}）は存在していません。",
     "bulkInvalidFailed": "{col}（{value}）の形式が不正です。",
     "bulkInvalidTypeFailed": "{col}（{value}）の型が不正です。",
