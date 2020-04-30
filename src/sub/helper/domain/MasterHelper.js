@@ -537,8 +537,7 @@ const storeCommitAll = (masters, idmaps) => {
 }
 
 const storeCommit = (key, val) => {
-  StateHelper.storeCommit(key, val)
-  // StateHelper.setMaster(key, val)
+  StateHelper.storeCommit(key, val)    
 }
 
 
@@ -646,7 +645,7 @@ export const getOptionsFromState = (key, textField, notNull, filterCallback) => 
   if (!key.endsWith('s')) {
     keys = key.endsWith('y')? key.slice(0, -1) + 'ies' : key + 's'
   }
-  const masterList = store.state.app_service[keys]
+  const masterList = StateHelper.getMaster(keys)
 
   Util.debug('masterList:', masterList)
   Util.debug('typeof textField: ', typeof textField)

@@ -14,12 +14,14 @@ import * as MasterHelper from '../../../sub/helper/domain/MasterHelper'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import bulkedit from '../../../components/page/bulkedit.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
 
 export default {
   components: {
     breadcrumb,
     bulkedit,
   },
+  mixins: [commonmixin],
   data() {
     return {
       name: 'user',
@@ -32,7 +34,6 @@ export default {
   computed: {
     ...mapState('app_service', [
       'user',
-      'roles',
     ]),
   },
   methods: {

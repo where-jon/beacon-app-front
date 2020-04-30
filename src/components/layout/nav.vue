@@ -163,7 +163,7 @@ export default {
       return DISP.MENU.SHOW_HELP
     },
     ...mapState('app_service', [
-      'pots', 'regions', 'features'
+      'features'
     ]),
     navbarClasses() {
       // use for update theme-color

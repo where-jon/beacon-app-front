@@ -10,6 +10,12 @@ import { str2Array } from './StringUtil'
 let locale
 
 /**
+ * 現在の実行環境が開発環境か運用環境かを返す。
+ * （※運用環境では、ポート指定がないことを前提にする簡易実装）
+ */
+export const isDev = () => location.port != '' && false
+
+/**
  * ios端末か判定する。
  * @method
  * @return {Boolean}

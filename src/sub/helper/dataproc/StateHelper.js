@@ -4,12 +4,14 @@
  */
 
 import _ from 'lodash'
+import { mapState } from 'vuex'
 import { APP } from '../../constant/config'
 import { FEATURE } from '../../constant/Constants'
 import * as DateUtil from '../../util/DateUtil'
 import * as StringUtil from '../../util/StringUtil'
 import * as AppServiceHelper from './AppServiceHelper'
 import * as Util from '../../util/Util'
+import * as BrowserUtil from '../../util/BrowserUtil'
 
 const areaImages = [] // Use normal variable instead of state
 
@@ -27,12 +29,39 @@ export const setApp = (pStore, pi18n) => {
   i18n = pi18n
 }
 
-/** 実験 not work yet */
+/** 
+ * 本番環境ではマスタについてはVuexを使用しない。
+ */
 const master = {}
 export const setMaster = (key, val) => {
   master[key] = val
 }
-export const getMaster = (key) => master[key]
+export const getMaster = (key) => {
+  if (BrowserUtil.isDev()) {
+    return key? store.state.app_service[key]: store.state.app_service
+  }
+  else {
+    return key? master[key]: master
+  }
+}
+
+export const exMapState = (namespace, map) => {
+  if (BrowserUtil.isDev()) {
+    return mapState(namespace, map)
+  }
+  else { // 本番ではマスタではVuexを使用しない
+    let ret = {}
+    map.forEach(e => {
+      ret[e] = {
+        get: function() {return master[e]},
+        set: function(val) {
+          console.warn('This should not be called.', e, val)
+        }
+      }
+    })
+    return ret
+  }
+}
 
 /**
  * マスタデータの強制更新フラグを取得する。
@@ -135,8 +164,20 @@ export const load = async (target, force, option) => {
   }
 }
 
+/**
+ * ストアにコミットする。
+ * ※本番環境ではストアに保存しない。
+ * 
+ * @param {}} key 
+ * @param {*} val 
+ */
 export const storeCommit = (key, val) => {
-  store.commit('app_service/replaceAS', {[key]:val})
+  if (BrowserUtil.isDev()) {
+    store.commit('app_service/replaceAS', {[key]:val})
+  }
+  else {
+    setMaster(key, val)
+  }
 }
 
 /**

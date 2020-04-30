@@ -38,7 +38,7 @@ export default {
         'bulkRegister'
       ),
       roleFeature:{
-        roleId: this.$store.state.app_service.role.roleId
+        roleId: StateHelper.getMaster().role.roleId
       },
     }
   },

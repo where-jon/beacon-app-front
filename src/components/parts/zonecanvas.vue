@@ -444,7 +444,7 @@ export default {
   },
   methods: {
     getNewZoneCd(){
-      const zones = this.$store.state.app_service.zones
+      const zones = StateHelper.getMaster().zones
       const dispZones = zones.concat(this.zones.list.map(zone => ({zoneCd: zone.cd})))
       return MasterHelper.createMasterCd('zone', dispZones)
     },

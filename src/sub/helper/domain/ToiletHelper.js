@@ -7,6 +7,7 @@ import _ from 'lodash'
 import { SENSOR, LOCATION, SYSTEM_ZONE_CATEGORY_NAME } from '../../constant/Constants'
 import * as Util from '../../util/Util'
 import * as EXCloudHelper from '../../helper/dataproc/EXCloudHelper'
+import * as StateHelper from '../dataproc/StateHelper'
 
 let store
 let i18n
@@ -75,9 +76,9 @@ const mergeToiletData = (pirDataList, magnetDataList) => {
  */
 const fetchSensorData = async (sensorId, deviceKind) => {
   const config = deviceKind == 'exb'? { // センサーがexbかtxに紐付いたものかで値の処理の仕方を変える
-    pKey: 'exbId', idMap: store.state.app_service.deviceIdMap, excloudIdKey: 'deviceId', valKey: 'count' 
+    pKey: 'exbId', idMap: StateHelper.getMaster().deviceIdMap, excloudIdKey: 'deviceId', valKey: 'count' 
   }: {
-    pKey: 'txId', idMap: store.state.app_service.btxIdMap, excloudIdKey: 'btxId', valKey: 'magnet'
+    pKey: 'txId', idMap: StateHelper.getMaster().btxIdMap, excloudIdKey: 'btxId', valKey: 'magnet'
   }
 
   const exCloudSensors = await EXCloudHelper.fetchSensor(sensorId) // センサー情報を取得

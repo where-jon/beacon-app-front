@@ -12,6 +12,7 @@ import * as NumberUtil from '../../util/NumberUtil'
 import * as Util from '../../util/Util'
 import * as EXCloudHelper from '../dataproc/EXCloudHelper'
 import * as MenuHelper from '../dataproc/MenuHelper'
+import * as StateHelper from '../dataproc/StateHelper'
 import * as StyleHelper from '../ui/StyleHelper'
 import * as DetectStateHelper from './DetectStateHelper'
 import * as SensorHelper from './SensorHelper'
@@ -63,9 +64,9 @@ export const loadPosition = async (count, allShow = false, fixSize = false, show
   Util.debug('fetchPositionHistory', positions)
   const now = !DEV.USE_MOCK_EXC ? new Date().getTime(): mock.positions_conf.start + count++ * mock.positions_conf.interval
 
-  const txIdMap = store.state.app_service.txIdMap
-  const exbIdMap = store.state.app_service.exbIdMap
-  const locationIdMap = store.state.app_service.locationIdMap
+  const txIdMap = StateHelper.getMaster().txIdMap
+  const exbIdMap = StateHelper.getMaster().exbIdMap
+  const locationIdMap = StateHelper.getMaster().locationIdMap
   const mRoomPlans = showMRoom ? store.state.main.mRoomPlans : null
 
   positions = _(positions).filter(pos => shoudTxShow(pos, allShow, txIdMap, locationIdMap))
@@ -150,7 +151,7 @@ export const filterPositions = (positions = store.state.main.positions,
   selectedGroupId = store.state.main.selectedGroupId,
   selectedTxIdList = store.state.main.selectedTxIdList,
   selectedFreeWord = store.state.main.selectedFreeWord) => { // p, position-display, rssimap, position-list, position, ProhibitHelper
-  const txIdMap = store.state.app_service.txIdMap
+  const txIdMap = StateHelper.getMaster().txIdMap
 
   if (!showTxNoOwner) { // potの所有状態で絞込み(TX未登録やPotと紐付いていない場合は表示しない)
     positions = positions.filter(pos => {
@@ -189,7 +190,7 @@ const positionFilterFreeWord = (pos, freeWord) => {
  * @return {Object[]}
  */
 const positionFilter = (positions, groupId, categoryId, txIdList, freeWord) => { //p
-  const txIdMap = store.state.app_service.txIdMap
+  const txIdMap = StateHelper.getMaster().txIdMap
   return _(positions).filter(pos => {
     const tx = txIdMap[pos.txId]
     let grpHit = true
@@ -221,7 +222,7 @@ const positionFilter = (positions, groupId, categoryId, txIdList, freeWord) => {
  */
 export const filterPositionsOnlyGuest = (positions) => {
   return positions.filter(pos => {
-    const tx = store.state.app_service.txIdMap[pos.txId]
+    const tx = StateHelper.getMaster().txIdMap[pos.txId]
     const groupCd = Util.getValue(tx, 'pot.group.groupCd')
     return APP.POS.GUEST_GROUP_CD_LIST.includes(groupCd)
   })
