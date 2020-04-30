@@ -164,13 +164,13 @@
               <b-dropdown-item @click="downloadDay('sum')">
                 {{ $t('label.sum') + $t('label.download') }}
               </b-dropdown-item>
-              <b-dropdown-item @click="downloadMonth('sum')">
+              <b-dropdown-item v-if="!pPresence" @click="downloadMonth('sum')">
                 {{ $t('label.sum') + $t('label.downloadMonth') }}
               </b-dropdown-item>
               <b-dropdown-item @click="downloadDay('detail')">
                 {{ $t('label.detail') + $t('label.download') }}
               </b-dropdown-item>
-              <b-dropdown-item @click="downloadMonth('detail')">
+              <b-dropdown-item v-if="!pPresence" @click="downloadMonth('detail')">
                 {{ $t('label.detail') + $t('label.downloadMonth') }}
               </b-dropdown-item>
             </b-dropdown>
@@ -380,7 +380,6 @@ export default {
 
       if (this.pPresence) { // プレゼンスの場合
         _.forEach(PRESENCE.STATUS, (value, key) => {
-          console.log(key, value)
           this.legendItems.push({id: value, items: [
             { id: 1, text: '', style: StyleHelper.getStyleDisplay1(
               { shape:SHAPE.SQUARE, bgColor: DISP.PRESENCE.BG[value - 1], color: '#000000', fixSize: true }
@@ -479,6 +478,18 @@ export default {
         {key: 'graph', sortable: false, label: this.$i18n.tnl('label.graph'), thStyle: {height: '50px !important', width:'400px !important'} },
       ]
 
+      // 選択されている総合時間を追加する
+      const stayClassName = isInit || this.isDisplayStayColumn('stay')? '': disableClassName
+      const lostClassName = isInit || this.isDisplayStayColumn('lost')? '': disableClassName
+      fields.push({key: 'stayTime', sortable: true, label: this.$i18n.tnl('label.stayTime'), thStyle: {width:'100px !important'}
+        , thClass: this.getThClassName() + ' ' + stayClassName, tdClass: stayClassName})
+      fields.push({key: 'lostTime', sortable: true, label: this.$i18n.tnl('label.lostTime'), thStyle: {width:'100px !important'}
+        , thClass: this.getThClassName() + ' ' + lostClassName, tdClass: lostClassName})
+
+      if (this.pPresence) {
+        return fields.map(val => ({ ...val, originLabel: val.label}))
+      }
+
       // カテゴリを追加する
       let selectedCategories = _.filter(this.categories, (category) => {
         return _.some(this.displayCheckList.category, (id) => { return id == category.categoryId })
@@ -523,14 +534,6 @@ export default {
       const areaOtherClassName = isSelectedAreaOther? '': disableClassName
       fields.push({key: 'areaOther', sortable: true, label: i18n.tnl('label.other')+i18n.tnl('label.area'), bgColor: this.otherColor
         , thStyle: {width:'100px !important'}, thClass: this.getThClassName() + ' ' + areaOtherClassName, tdClass: areaOtherClassName})
-
-      // 選択されている総合時間を追加する
-      const stayClassName = isInit || this.isDisplayStayColumn('stay')? '': disableClassName
-      const lostClassName = isInit || this.isDisplayStayColumn('lost')? '': disableClassName
-      fields.push({key: 'stayTime', sortable: true, label: this.$i18n.tnl('label.stayTime'), thStyle: {width:'100px !important'}
-        , thClass: this.getThClassName() + ' ' + stayClassName, tdClass: stayClassName})
-      fields.push({key: 'lostTime', sortable: true, label: this.$i18n.tnl('label.lostTime'), thStyle: {width:'100px !important'}
-        , thClass: this.getThClassName() + ' ' + lostClassName, tdClass: lostClassName})
 
       return fields.map(val => ({ ...val, originLabel: val.label}))
     },
@@ -607,17 +610,24 @@ export default {
         let graphListId = 0
 
         // カテゴリ用データ保持変数を初期化
-        categoryData[0] = {name: 'categoryOther', value: 0}
-        this.categories.forEach((category) => {
-          let categoryName = MasterHelper.getDispCategoryName(category)
-          if (category.categoryType == CATEGORY.ZONE) categoryData[category.categoryId] = {name: categoryName, value: 0}
-        })
+        if (this.pPresence) {
+          _.forEach(PRESENCE.STATUS, (value, key) => {
+            categoryData[value] = {name: key, value: 0}
+          })
+        }
+        else {
+          categoryData[0] = {name: 'categoryOther', value: 0}
+          this.categories.forEach((category) => {
+            let categoryName = MasterHelper.getDispCategoryName(category)
+            if (category.categoryType == CATEGORY.ZONE) categoryData[category.categoryId] = {name: categoryName, value: 0}
+          })
 
-        // エリア用データ保持変数を初期化
-        areaData[0] = {name: 'areaOther', value: 0}
-        this.areaArray.forEach((area) => {
-          areaData[area.areaId] = {name: area.areaName, value: 0}
-        })
+          // エリア用データ保持変数を初期化
+          areaData[0] = {name: 'areaOther', value: 0}
+          this.areaArray.forEach((area) => {
+            areaData[area.areaId] = {name: area.areaName, value: 0}
+          })
+        }
 
         // 各時間の集計
         let graphList = data.stayList.map((stay, index) => {
@@ -655,27 +665,28 @@ export default {
             } else if (stay.byId == 0) {
               categoryData[0].value += stay.period
             }
-          }
-          // エリア毎の滞在時間を加算
-          let zone = findCategory? _.find(this.zones, (zone) => { return zone.categoryId == findCategory.categoryId}): null
-          findArea = _.find(this.areaArray, (area, index) => {
-            if (zone) {
-              if (area.areaId == zone.areaId) {
-                areaIndex = index
-                return true
+
+            // エリア毎の滞在時間を加算
+            let zone = findCategory? _.find(this.zones, (zone) => { return zone.categoryId == findCategory.categoryId}): null
+            findArea = _.find(this.areaArray, (area, index) => {
+              if (zone) {
+                if (area.areaId == zone.areaId) {
+                  areaIndex = index
+                  return true
+                }
+              } else {
+                if (area.areaId == stay.areaId) {
+                  areaIndex = index
+                  return true
+                }
               }
+              return false
+            })
+            if (findArea) {
+              areaData[findArea.areaId].value += stay.period
             } else {
-              if (area.areaId == stay.areaId) {
-                areaIndex = index
-                return true
-              }
+              if (isExistStayData) areaData[0].value += stay.period
             }
-            return false
-          })
-          if (findArea) {
-            areaData[findArea.areaId].value += stay.period
-          } else {
-            if (isExistStayData) areaData[0].value += stay.period
           }
           //グラフ表示欠け対応のため、小数点1桁まで固定
           const parcentDigit = 10
@@ -728,7 +739,7 @@ export default {
 
         // グラフのズレ対応。100%と実際のpercentとの差分を全体に分配する
         const perDiff = 100 - stayPercentSum
-        var graphTemp = result.graph.slice();
+        var graphTemp = result.graph.slice()
         graphTemp.sort((a, b) => {
           if (a.percent < b.percent) {
             return 1
@@ -812,7 +823,7 @@ export default {
 
       const convertedCsvData = this.convertCsvData(key, csvList)
       BrowserUtil.fileDL(
-        searchDate + groupName + categoryName + '_stayRatio.csv',
+        searchDate + groupName + categoryName + (this.pPresence? '_presence_': '_stayRatio_') + key + '.csv',
         convertedCsvData,
         getCharSet(this.$store.state.loginId)
       )
@@ -837,6 +848,12 @@ export default {
         })
       }).forEach((field) => { keys.push(field) })
 
+      if (this.pPresence) {
+        _.forEach(PRESENCE.STATUS, (value, key) => {
+          keys.push({key, label: this.$i18n.tnl('label.' + key), bgColor: '#' + DISP.PRESENCE.BG[value - 1]})
+        })
+      }
+
       // キーの一致するデータのみのリストを作成。その際、％データがある場合は分ける
       return viewList.map((viewData) => {
         let objectData = {}
@@ -858,6 +875,13 @@ export default {
       // キーの一致するデータのみのリストを作成。その際、％データがある場合は分ける
       const result = detailList.map((viewData) => {
         return viewData.graph.map((graph) => {
+          const add = this.pPresence?
+            {state: this.$i18n.tnl('label.' + graph.zoneCategory)}:
+            {
+              state: graph.isStay? this.$i18n.tnl('label.detected'): this.$i18n.tnl('label.undetect'),
+              areaName: graph.areaName,
+              zoneCategory: graph.zoneCategory,
+            }
           return {
             date: viewData.date,
             name: viewData.name,
@@ -866,16 +890,14 @@ export default {
             start: graph.startTime,
             end: graph.endTime,
             stayTime: graph.period,
-            state: graph.isStay? this.$i18n.tnl('label.detected'): this.$i18n.tnl('label.undetect'),
-            areaName: graph.areaName,
-            zoneCategory: graph.zoneCategory,
+            ...add
           }
         })
       })
       return result.flatMap((data) => data)
     },
     getCsvDetailHeaderList() {
-      return [
+      const common = [
         this.$i18n.tnl('label.date'),
         this.$i18n.tnl('label.name'),
         this.$i18n.tnl('label.groupName'),
@@ -883,10 +905,17 @@ export default {
         this.$i18n.tnl('label.start'),
         this.$i18n.tnl('label.end'),
         this.$i18n.tnl('label.stayTime'),
-        this.$i18n.tnl('label.state'),
-        this.$i18n.tnl('label.areaName'),
-        this.$i18n.tnl('label.zoneCategory') + '\n'
       ]
+      if (this.pPresence) {
+        return [...common, this.$i18n.tnl('label.state') + '\n']
+      }
+      else {
+        return [...common, 
+          this.$i18n.tnl('label.state'),
+          this.$i18n.tnl('label.areaName'),
+          this.$i18n.tnl('label.zoneCategory') + '\n'
+        ]
+      }
     },
     updateColumnName(){
       if(Util.hasValue(this.fields)){
