@@ -75,7 +75,6 @@ export const setMain = (key, val) => {
     store.commit('main/replaceMain', {[key]: val})
   }
   else {
-    console.error(val)
     main[key] = val
   }
 }

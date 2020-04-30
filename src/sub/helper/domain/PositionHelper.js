@@ -96,6 +96,7 @@ export const loadPosition = async (count, allShow = false, fixSize = false, show
         display
       }
     }).compact().value()
+
   if (showMRoom) {
     const locationIds = mRoomPlans.reduce((arr, e) => {
       arr = arr.concat(e.locationIds)
@@ -397,9 +398,7 @@ export const getDoubleDefaultTxId = (btxId) => btxId - zoneBtxIdAddNumber
  * @param {*} selectedMapId 
  */
 export const addFixedPosition = (orgPositions, locations = [], selectedMapId = null) => {
-  console.log('before addFixedPosition cloneDeep', new Date())
   let positions = _.cloneDeep(orgPositions)
-  console.log('after addFixedPosition cloneDeep', new Date())
   // エリア上の場所を抽出
   const additionalPos = []
   // 表示対象となるTxのposを抽出
@@ -411,9 +410,7 @@ export const addFixedPosition = (orgPositions, locations = [], selectedMapId = n
       pos.inFixedZone = isInFixedPosZone(pos)
       // 固定場所ゾーンにいず、かつ検知状態の場合、フリーアドレスとしても表示
       if (!pos.inFixedZone && pos.detectState == DETECT_STATE.DETECTED && !SensorHelper.isFixedSensorTx(pos.tx)) {
-        console.log('before addPos cloneDeep', new Date())
-        const addPos = _.cloneDeep(pos)
-        console.log('after addPos cloneDeep', new Date())
+        const addPos = Object.assign({}, pos)
         addPos.isFixedPosition = false
         addPos.location = pos.exb.location
         // addPos.isAddtional = true
