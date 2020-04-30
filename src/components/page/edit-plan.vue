@@ -1,5 +1,5 @@
 <template>
-  <b-container :style="cssVars">
+  <b-container>
     <b-form @submit.prevent="onSave">
         <!-- タイトル -->
         <b-form-row class="mt-3 mb-3">
@@ -83,7 +83,7 @@
         <toggle-button :value="plan.isLocation"
                :color="{checked: '#66cdaa', unchecked: '#87cefa', disabled: '#cccccc'}"
                :sync="true"
-               :labels="{checked: $t('label.initLocation'), unchecked: $t('label.meetingRoom')}"
+               :labels="{checked: $t('label.initLocation'), unchecked: $t('label.zone')}"
                :width="locationToggleWidth" @change="onChangeToggle"/>
           </div>
         </b-form-row>
@@ -167,7 +167,7 @@
         </b-form-row>
         <!-- ボタン -->
         <b-form-row class="mt-3 mb-0">
-          <b-col cols="2"><b-button :variant="theme" type="submit" class="saveBtn">{{ $t('label.save') }}</b-button></b-col>
+          <b-col cols="2"><b-button :variant="theme" type="submit" :style="saveBtnStyle">{{ $t('label.save') }}</b-button></b-col>
           <b-col v-if="plan && plan.planId" cols="10"><b-button @click="onDelete" class="delBtn">{{ $t('label.remove') }}</b-button></b-col>
         </b-form-row>
     </b-form>
@@ -215,7 +215,7 @@ export default {
       isPlanNameEmpty: false,
       isDateTimeEmpty: false,
       isPlanNameSizeError: false,
-      hasServerError: false
+      hasServerError: false,
     }
   },
   watch: {
@@ -230,6 +230,18 @@ export default {
           this.isDateTimeEmpty = false
           this.isPlanNameSizeError = false
           this.hasServerError = false
+        }
+      },
+      deep: false,
+    },
+    'plan.planName': {
+      handler: function(newVal, oldVal){
+        this.isPlanNameSizeError = false
+        if (this.plan) {
+          const title = this.plan.planName.trim()
+          if (title.length > 40) {
+            this.isPlanNameSizeError = true
+          }
         }
       },
       deep: false,
@@ -288,7 +300,7 @@ export default {
       return this.$t('message.required', {target: this.$t('label.planName')})
     },
     planNameSizeErrorMessage() {
-      return this.$t('message.bulkSizeFailed', {col: this.$t('label.planName'), value: this.plan.planName,min: 1, max: 40})
+      return this.$t('message.bulkSizeFailed', {col: this.$t('label.planName'), value: this.plan.planName, min: 1, max: 40})
     },
     participantMessage() {
       return this.$t('message.required', {target: this.$t('label.participant')})
@@ -308,9 +320,12 @@ export default {
     descriptionMessage() {
       return this.$t('message.required', {target: this.$t('label.description')})
     },
-    cssVars() {
+    saveBtnStyle() {
       return {
-      '--editPlanHeaderBgColor': DISP.PLAN.EDIT_PLAN_HEADER_BG_COLOR,
+        'color': '#ffffff',
+        'background-color': DISP.PLAN.EDIT_PLAN_HEADER_BG_COLOR,
+        'border-color': DISP.PLAN.EDIT_PLAN_HEADER_BG_COLOR,
+        'font-weight': 'bold',
       }
     },
   },
@@ -406,14 +421,6 @@ export default {
     validate() {
       this.isPlanNameEmpty = (!this.plan.planName || !this.plan.planName.trim())
 
-      this.isPlanNameSizeError = false
-      if (!this.isPlanNameEmpty) {
-        const title = this.plan.planName.trim()
-        if (title.length > 40) {
-          this.isPlanNameSizeError = true
-        }
-      }
-
       this.isDateTimeEmpty = (!this.plan.date)
 
       if (!this.isDateTimeEmpty) this.isDateTimeEmpty = (!this.plan.timeRange)
@@ -424,12 +431,6 @@ export default {
 }
 </script>
 <style>
-.saveBtn {
-  color: #ffffff;
-  background-color: var(--editPlanHeaderBgColor);
-  border-color: var(--editPlanHeaderBgColor);
-  font-weight: bold;
-}
 .delBtn {
   color: #000000;
   background-color: #ffffff;
