@@ -753,8 +753,8 @@ export default {
         const alwaysTxs = this.txs.some(tx => Util.v(tx, 'location.areaId') == this.selectedAreaId && NumberUtil.bitON(tx.disp, TX.DISP.ALWAYS))
         if (this.usePositionsCache) {
           this.replaceMain({usePositionsCache: false})
-          const positions = this.$store.state.main.positions.filter(pos => PositionHelper.shoudTxShow(pos, false, this.txIdMap, this.locationIdMap))
-          this.replaceMain({ positions })
+          const positions = StateHelper.getPositions().filter(pos => PositionHelper.shoudTxShow(pos, false, this.txIdMap, this.locationIdMap))
+          StateHelper.setPositions(positions)
         }
         else {
           await PositionHelper.loadPosition(this.count, alwaysTxs, false, this.pShowMRoomStatus)
@@ -1252,7 +1252,7 @@ export default {
         this.showAbsentZoneTxAll()
       }
 
-      let positions = this.$store.state.main.positions
+      let positions = StateHelper.getPositions()
       if (!this.pInstallation && !this.pShowOnlyGuest) {
         positions = PositionHelper.addFixedPosition(positions, this.locations, this.selectedAreaId) // 固定位置追加
       }

@@ -30,9 +30,11 @@ export const setApp = (pStore, pi18n) => {
 }
 
 /** 
- * 本番環境ではマスタについてはVuexを使用しない。
+ * 本番環境ではマスタ, positionsについてはVuexを使用しない。
  */
 const master = {}
+const main = {}
+
 export const setMaster = (key, val) => {
   master[key] = val
 }
@@ -44,6 +46,53 @@ export const getMaster = (key) => {
     return key? master[key]: master
   }
 }
+
+/**
+ * ストアにコミットする。
+ * ※本番環境ではストアに保存しない。
+ * 
+ * @param {}} key 
+ * @param {*} val 
+ */
+export const storeCommit = (key, val) => {
+  if (BrowserUtil.isDev()) {
+    store.commit('app_service/replaceAS', {[key]:val})
+  }
+  else {
+    setMaster(key, val)
+  }
+}
+
+/**
+ * mainのデータをセット
+ * ※本番環境ではストアに保存しない。
+ * 
+ * @param {*} key 
+ * @param {*} val 
+ */
+export const setMain = (key, val) => {
+  if (BrowserUtil.isDev()) {
+    store.commit('main/replaceMain', {[key]: val})
+  }
+  else {
+    console.error(val)
+    main[key] = val
+  }
+}
+
+export const setPositions = (positions) => {
+  setMain('positions', positions)
+}
+
+export const getPositions = () => {
+  if (BrowserUtil.isDev()) {
+    return store.state.main.positions
+  }
+  else {
+    return main.positions
+  }
+}
+
 
 export const exMapState = (namespace, map) => {
   if (BrowserUtil.isDev()) {
@@ -161,22 +210,6 @@ export const load = async (target, force, option) => {
     const expiredTime = (new Date()).getTime() + APP.SYS.STATE_EXPIRE_TIME
     store.commit('app_service/replaceAS', {[expiredKey]: expiredTime})
     setForceFetch(forceFetchTarget, false)
-  }
-}
-
-/**
- * ストアにコミットする。
- * ※本番環境ではストアに保存しない。
- * 
- * @param {}} key 
- * @param {*} val 
- */
-export const storeCommit = (key, val) => {
-  if (BrowserUtil.isDev()) {
-    store.commit('app_service/replaceAS', {[key]:val})
-  }
-  else {
-    setMaster(key, val)
   }
 }
 

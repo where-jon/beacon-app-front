@@ -107,7 +107,7 @@ export const loadPosition = async (count, allShow = false, fixSize = false, show
     })
   }
 
-  store.commit('main/replaceMain', {positions})
+  StateHelper.setPositions(positions)
   return positions
 }
 
@@ -144,7 +144,7 @@ export const shoudTxShow = (pos, allShow, txIdMap, locationIdMap) => {
  * @param {Number} [selectedFreWord]
  * @return {Object[]}
  */
-export const filterPositions = (positions = store.state.main.positions,
+export const filterPositions = (positions = StateHelper.getPositions(),
   showAllTime = false, 
   showTxNoOwner = APP.POS.SHOW_TX_NO_OWNER,
   selectedCategoryId = store.state.main.selectedCategoryId,
