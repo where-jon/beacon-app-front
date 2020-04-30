@@ -1250,17 +1250,22 @@ export default {
 
       // 不在表示用ゾーン
       if (this.pShowAbsent && !this.isQuantity) {
+        console.warn('before showAbsentZoneTxAll', new Date())
         this.showAbsentZoneTxAll()
       }
 
+      console.warn('before getPositions', new Date())
       let positions = StateHelper.getPositions()
+      console.warn('before addFixedPosition', new Date())
       if (!this.pInstallation && !this.pShowOnlyGuest) {
         positions = PositionHelper.addFixedPosition(positions, this.locations, this.selectedAreaId) // 固定位置追加
       }
       // 表示Txのフィルタリング
+      console.warn('before filterPositions', new Date())
       positions = this.pDisabledFilter?
         PositionHelper.filterPositions(positions, false, undefined, null, null, null):
         PositionHelper.filterPositions(positions)
+      console.warn('before filterPositionsOnlyGuest', new Date())
       if (this.pShowOnlyGuest && !this.selectedGroupId) {
         positions = PositionHelper.filterPositionsOnlyGuest(positions)
       }
@@ -1269,10 +1274,12 @@ export default {
         this.showQuantityTx(positions)
       } else { // 個別ボタン押下時
         if (this.pOnlyFixTx && this.sensorMap.temperature) {
+          console.warn('before temperature forEach', new Date())
           this.sensorMap.temperature.forEach(val => { // サンワセンサーはminorを持たずEXCloud側で測位しないため、仮想的に測位情報を作る（あとの処理で必要なものだけセット）
             if (!positions.some(pos => pos.btxId == val.btxId)) {
-              const tx = _.cloneDeep(this.txIdMap[val.txId])
-              if (tx && tx.location) {
+              const orgTx = this.txIdMap[val.txId]
+              if (orgTx && orgTx.location) {
+                const tx = _.cloneDeep(orgTx)
                 tx.disp = 1
                 positions.push({
                   txId: val.txId, btxId: val.btxId, isFixedPosition: true, x: tx.location.x, y: tx.location.y, 
@@ -1299,6 +1306,7 @@ export default {
       else {
         positions = PositionHelper.calcScreenCoordinates(positions, 1 / this.canvasScale, this.locations, this.selectedAreaId, true)
       }
+      console.warn('after calc', new Date())
 
       if (APP.SENSOR.USE_MEDITAG && this.sensorMap.meditag) { // FIXME: 実装場所移す
         positions = SensorHelper.setStress(positions, this.sensorMap.meditag)
@@ -1306,6 +1314,7 @@ export default {
 
       this.detectedCount = 0
       // Txアイコンを表示する
+      console.warn('before createBtn', new Date())
       const btns = positions.map(pos => this.createBtn(pos)).filter(pos => pos)
       // this.txCont.removeAllChildren()
 
