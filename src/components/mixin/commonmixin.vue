@@ -39,8 +39,10 @@ export default {
       'sensors',
       'sensorIdMap',
       'roles',
-      'regions',
       'templates',
+    ]),
+    ...mapState('app_service', [
+      'regions',
     ]),
     ...mapState([
       'showAlert',

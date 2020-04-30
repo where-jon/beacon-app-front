@@ -92,10 +92,10 @@
                     {{ loginId }}
                   </em>
                 </template>
-                <b-dropdown-item href="#" v-if="showSetting" @click="move('/setting/personal')">
+                <b-dropdown-item v-if="showSetting" href="#" @click="move('/setting/personal')">
                   <font-awesome-icon icon="user-cog" fixed-width />&nbsp;&nbsp;{{ $t('label.personal') }}
                 </b-dropdown-item>
-                <b-dropdown-item href="#" v-if="showHelp" @click="openHelp">
+                <b-dropdown-item v-if="showHelp" href="#" @click="openHelp">
                   <font-awesome-icon icon="question-circle" fixed-width />&nbsp;&nbsp;{{ $t('label.help') }}
                 </b-dropdown-item>
                 <b-dropdown-item href="#" @click="logout">
@@ -157,7 +157,7 @@ export default {
     },
     showSetting(){
       const roleFeatureList = this.$store.state.featureList
-      const mode = MenuHelper.getMode("/setting/personal", roleFeatureList) & ROLE_FEATURE.MODE.SYS_ALL
+      const mode = MenuHelper.getMode('/setting/personal', roleFeatureList) & ROLE_FEATURE.MODE.SYS_ALL
       return mode != 0
     },
     showHelp(){
@@ -207,11 +207,9 @@ export default {
       this.adjustLogoOffsetX()
       this.$forceUpdate()
     })
-    // if(LocalStorageHelper.existLocalStorage('login')){
-    //   this.$forceUpdate()
-    // }
-    StateHelper.refreshRegion()
-    this.$nextTick(() => this.$forceUpdate())
+    if(LocalStorageHelper.existLocalStorage('login')){
+      this.$forceUpdate()
+    }
   },
   methods: {
     getVersion(){

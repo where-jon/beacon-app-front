@@ -55,7 +55,7 @@ export const getMaster = (key) => {
  * @param {*} val 
  */
 export const storeCommit = (key, val) => {
-  if (BrowserUtil.isDev()) {
+  if (BrowserUtil.isDev() || key == 'regions') {
     store.commit('app_service/replaceAS', {[key]:val})
   }
   else {
@@ -91,14 +91,6 @@ export const getPositions = () => {
     return main.positions
   }
 }
-
-export const refreshRegion = () => {
-  if (!BrowserUtil.isDev()) {
-    const regions = master.regions
-    master.regions = regions
-  }
-}
-
 
 export const exMapState = (namespace, map) => {
   if (BrowserUtil.isDev()) {
