@@ -1305,14 +1305,19 @@ export default {
       this.detectedCount = 0
       // Txアイコンを表示する
       const btns = positions.map(pos => this.createBtn(pos)).filter(pos => pos)
-      this.txCont.removeAllChildren()
+      // this.txCont.removeAllChildren()
       btns.forEach(b => {
         if(b.isFixed){
           this.txCont.addChild(b) // 固定座席、固定ゾーンを先に表示
         }
       })
-      btns.forEach(b => {
+      const MAX_TX_SHOW_COUNT = 100
+      let count = 0
+      btns.some(b => {
         if(!b.isFixed){
+          if (++count > MAX_TX_SHOW_COUNT) { // 表示するTXの数を制限する
+            return true
+          }
           this.txCont.addChild(b)
         }        
       })

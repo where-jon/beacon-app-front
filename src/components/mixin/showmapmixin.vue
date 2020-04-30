@@ -34,8 +34,9 @@ export default {
       showReady: false, //  pir, positio
       showIconMinWidth: POSITION.SHOW_ICON_MIN_WIDTH, // pir, position
 
-      showTryCount: 0, // p
+      // showTryCount: 0, // p
       loadComplete: false, // p
+      bg: null,
 
       onResize: null,
     }
@@ -109,6 +110,7 @@ export default {
             currentWidth = window.innerWidth
           }
           this.reset()
+          this.resetImage()
           if (this.stage) {
             this.stage.removeAllChildren()
             this.stage.update()
@@ -135,10 +137,12 @@ export default {
         return
       }
       this.icons = {} // キャッシュをクリア
+      if (this.selectedAreaId) {
+        this.resetImage()
+      }
       try {
-        await StateHelper.loadAreaImage(areaId)
-        const area = this.areaIdMap[areaId] // TODO: これ不要
-        if (StateHelper.getMapImage(area.areaId)) {
+        const img = await StateHelper.loadAreaImage(areaId)
+        if (img) {
           if(!Util.v(this, 'selectedTx.btxId')){
             this.reset()
           }
@@ -159,6 +163,29 @@ export default {
       }
     },
 
+    // メモリリーク対策：一旦クリアする　（効果の程は未確定）
+    resetImage() {
+      const canvas = this.$refs.map
+      if (canvas) {
+        const context = canvas.getContext('2d')
+        context.clearRect(0, 0, context.canvas.width, context.canvas.height)
+      }
+
+      if (this.stage) {
+        this.stage.removeAllChildren()
+        this.stage.update()
+      }
+      if (this.bitmap) {
+        this.bitmap.image = null
+        this.bitmap = null
+      }
+
+      if (this.bg) {
+        this.bg.src = ''
+        this.bg = null
+      }
+    },
+
     // マップを表示する際に呼び出す TODO: 現状もっとシンプルで良い
     showMapImageDef(callback, disableErrorPopup) { // rssimap, pir, position, thermohumiidty, loc, tx, flowline
       if(VueUtil.endsWithSlashUrl(this)){
@@ -173,34 +200,23 @@ export default {
         }, 200)
         return
       }
-      this.showTryCount++
-      // if (this.isShownMapImage) {
-      //   if (callback) {
-      //     setTimeout(() => {
-      //       if(!VueUtil.isAuthVuePage(this)){ // 待ち状態の時ページが切り替わっていないかチェック
-      //         return
-      //       }
-      //       callback() // canvasへのdrawImageが完了するとisShownMapImage=trueになる TODO: 下でもcallbackを呼んでいる（重複）
-      //     }, 0)
+
+      // this.showTryCount++
+      // if (!StateHelper.getMapImage(this.getInitAreaOption())) { // TODO: 現状、リトライがなければ不要
+      //   if (this.showTryCount < 10) {
+      //     VueUtil.nextTickEx(this, () => {
+      //       console.warn('again because no image')
+      //       this.showMapImage(disableErrorPopup)
+      //     })
+      //   }
+      //   else {
+      //     Util.debug('No mapImage in showMapImageDef.')
+      //     if (this.$route.path.startsWith('/main') && !disableErrorPopup) {
+      //       this.noImageErrorKey && this.showErrorModal({key: this.noImageErrorKey})
+      //     }
       //   }
       //   return
       // }
-
-      if (!StateHelper.getMapImage(this.getInitAreaOption())) { // TODO: 現状、リトライがなければ不要
-        if (this.showTryCount < 10) {
-          VueUtil.nextTickEx(this, () => {
-            console.warn('again because no image')
-            this.showMapImage(disableErrorPopup)
-          })
-        }
-        else {
-          Util.debug('No mapImage in showMapImageDef.')
-          if (this.$route.path.startsWith('/main') && !disableErrorPopup) {
-            this.noImageErrorKey && this.showErrorModal({key: this.noImageErrorKey})
-          }
-        }
-        return
-      }
       const bg = new Image() // イメージオブジェクト作成
       bg.src = StateHelper.getMapImage(this.getInitAreaOption()) // base64データを設定
       bg.onload = (evt) => { // ロード完了後イベント
@@ -213,6 +229,7 @@ export default {
             callback() // canvasへのdrawImageが完了すると呼び出す
           }, 0)
         }
+        this.bg = bg
       }
     },
     drawMapImage(bg) { // マップイメージをcanvasに描画 p
