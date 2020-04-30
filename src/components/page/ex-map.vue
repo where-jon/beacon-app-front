@@ -1239,6 +1239,7 @@ export default {
       }
     },
     showTxAll() { // TXアイコン個別表示
+      console.warn('showTxAll', new Date())
       if(!Util.hasValue(this.pShowTxSensorIds) || this.pShowMRoomStatus) {
         return
       }
@@ -1289,6 +1290,7 @@ export default {
 
     // 通常のTX表示
     showNomalTx(positions) {
+      console.warn('showNomalTx', new Date())
       // 表示Txの画面上の座標位置の決定
       if(APP.POS.USE_MULTI_POSITIONING){
         // ３点測位はUSE_POSITION_HISTORYには非対応 TODO:要対応
@@ -1306,11 +1308,14 @@ export default {
       // Txアイコンを表示する
       const btns = positions.map(pos => this.createBtn(pos)).filter(pos => pos)
       // this.txCont.removeAllChildren()
+
+      console.warn('before addTx fixed', new Date())
       btns.forEach(b => {
         if(b.isFixed){
           this.txCont.addChild(b) // 固定座席、固定ゾーンを先に表示
         }
       })
+      console.warn('before addTx normal', new Date())
       const MAX_TX_SHOW_COUNT = 100
       let count = 0
       btns.some(b => {
@@ -1322,7 +1327,9 @@ export default {
         }        
       })
       this.positions = positions
+      console.warn('before stage update', new Date())
       this.stage.update()
+      console.warn('after stage update', new Date())
       this.reShowTxDetail(positions)
 
     },    

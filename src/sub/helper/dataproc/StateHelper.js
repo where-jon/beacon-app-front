@@ -93,6 +93,13 @@ export const getPositions = () => {
   }
 }
 
+export const refreshRegion = () => {
+  if (!BrowserUtil.isDev()) {
+    const regions = master.regions
+    master.regions = regions
+  }
+}
+
 
 export const exMapState = (namespace, map) => {
   if (BrowserUtil.isDev()) {

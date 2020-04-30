@@ -126,7 +126,7 @@ import * as ImageHelper from '../../sub/helper/base/ImageHelper'
 import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
 import * as RegionHelper from '../../sub/helper/domain/RegionHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
-// import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
+import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import { getThemeClasses } from '../../sub/helper/ui/ThemeHelper'
 import commonmixin from '../mixin/commonmixin.vue'
 import Help from '../page/help.vue'
@@ -210,6 +210,7 @@ export default {
     // if(LocalStorageHelper.existLocalStorage('login')){
     //   this.$forceUpdate()
     // }
+    StateHelper.refreshRegion()
     this.$nextTick(() => this.$forceUpdate())
   },
   methods: {
