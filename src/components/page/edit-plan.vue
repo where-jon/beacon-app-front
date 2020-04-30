@@ -87,7 +87,7 @@
                :width="locationToggleWidth" @change="onChangeToggle"/>
           </div>
         </b-form-row>
-        <!-- 会議室 -->
+        <!-- ゾーン -->
         <b-form-row v-if="!plan.isLocation" class="mt-3">
           <b-col cols="1" align="middle"><img src="~/assets/icon/location.svg" class="edit-plan-icon"></b-col>
           <b-col cols="11">
@@ -237,7 +237,7 @@ export default {
     'plan.planName': {
       handler: function(newVal, oldVal){
         this.isPlanNameSizeError = false
-        if (this.plan) {
+        if (this.plan && this.plan.planName) {
           const title = this.plan.planName.trim()
           if (title.length > 40) {
             this.isPlanNameSizeError = true
@@ -309,7 +309,7 @@ export default {
       return this.$t('message.required', {target: this.$t('label.dt')})
     },
     meetingRoomMessage() {
-      return this.$t('message.required', {target: this.$t('label.meetingRoom')})
+      return this.$t('message.required', {target: this.$t('label.zone')})
     },
     locationMessage() {
       return this.$t('message.required', {target: this.$t('label.initLocation')})
