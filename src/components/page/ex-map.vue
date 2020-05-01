@@ -1275,7 +1275,7 @@ export default {
             if (!positions.some(pos => pos.btxId == val.btxId)) {
               const orgTx = this.txIdMap[val.txId]
               if (orgTx && orgTx.location) {
-                const tx = _.cloneDeep(orgTx)
+                const tx = Object.assign({}, orgTx)
                 tx.disp = 1
                 positions.push({
                   txId: val.txId, btxId: val.btxId, isFixedPosition: true, x: tx.location.x, y: tx.location.y, 
