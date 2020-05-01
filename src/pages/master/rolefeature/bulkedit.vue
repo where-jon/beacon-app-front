@@ -57,6 +57,7 @@ export default {
     },
     getConf() {
       return {
+        roleId: this.roleFeature.roleId,
         allAuthorizationLabel: this.$i18n.tnl('label.allAuthorization'), 
         allRejectionLabel: this.$i18n.tnl('label.allRejection')
       }

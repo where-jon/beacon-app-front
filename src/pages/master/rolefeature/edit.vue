@@ -165,13 +165,14 @@ export default {
     },
     getConf() {
       return {
+        roleId: this.role.roleId,
         allAuthorizationLabel: this.$i18n.tnl('label.allAuthorization'), 
         allRejectionLabel: this.$i18n.tnl('label.allRejection')
       }
     },
     async onSaving() {
       let entity = {
-        updateKey: `${this.role.roleId}/${this.featureId}`,
+        featureId: this.featureId,
       }
       if (Util.hasValue(this.selectedModes)) {
         const v = this.selectedModes[0]

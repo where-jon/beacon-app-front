@@ -70,7 +70,6 @@ export default {
     async onSaved(){
     },
     search(key) {
-      console.log('!!!',this.pots)
       const target = this.pots.find(val => val.potCd == key && this.pTypeList.includes(val.potType))
       let obj = null
       if (target) {
