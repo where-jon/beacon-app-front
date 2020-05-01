@@ -54,8 +54,8 @@ export const getMaster = (key) => {
  * @param {}} key 
  * @param {*} val 
  */
-export const storeCommit = (key, val) => {
-  if (BrowserUtil.isDev() || key == 'regions') {
+export const storeCommit = (key, val, forceState) => {
+  if (BrowserUtil.isDev() || key == 'regions' || forceState) {
     store.commit('app_service/replaceAS', {[key]:val})
   }
   else {

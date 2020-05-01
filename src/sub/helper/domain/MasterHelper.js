@@ -533,11 +533,11 @@ const storeCommitAll = (masters, idmaps) => {
     }
   })
 
-  storeCommit('lastMasterFetchTime', new Date().getTime())
+  storeCommit('lastMasterFetchTime', new Date().getTime(), true)
 }
 
-const storeCommit = (key, val) => {
-  StateHelper.storeCommit(key, val)    
+const storeCommit = (key, val, forceState) => {
+  StateHelper.storeCommit(key, val, forceState)    
 }
 
 
