@@ -72,9 +72,6 @@ export default {
       return icon
     },
     clickMenuItem(e) {
-      if(window.CollectGarbage){
-        window.CollectGarbage()
-      }
       this.$nuxt.$emit('MENU_ITEM_CLICK', 'test')
     },
     isMenuShow(page) {
