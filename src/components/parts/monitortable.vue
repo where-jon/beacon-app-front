@@ -18,6 +18,9 @@
         <b-col v-if="bulkReferenceable" md="5">
           <b-button v-if="!iosOrAndroid" v-t="'label.download'" :variant="theme" @click="download()" class="download-button float-right" />
         </b-col>
+      </b-row>
+
+      <b-row>
         <b-table
           :fields="fields"
           :items="items" 
@@ -50,12 +53,15 @@
             </span>
           </template>
         </b-table>
-        <!-- pager -->
-        <b-row>
-          <b-col md="6" class="mt-1 mb-3">
-            <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" class="my-0" @input="() => {}" />
-          </b-col>
-        </b-row>
+
+      </b-row>
+
+      <!-- pager -->
+      <b-row>
+        <b-col md="6" class="mt-1 mb-3">
+          <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" class="my-0" @input="() => {}" />
+        </b-col>
+      </b-row>
       </b-row>
     </b-container>
   </b-form>
