@@ -247,6 +247,8 @@ export default {
       const category = this.categories.find(category => category.categoryId == this.form.categoryId)
       if (category) {
         entity.categoryCd = category.categoryCd
+      } else {
+        entity.categoryCd = ""
       }
 
       const area = this.areas.find(ar => ar.areaId == this.form.areaId)

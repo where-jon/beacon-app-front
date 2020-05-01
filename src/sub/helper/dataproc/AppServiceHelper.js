@@ -161,7 +161,7 @@ export const bulkSaveByCsvStr = async (target, entities, conf = null, updateOnly
     formData.append('conf', JSON.stringify(conf))
   }
   
-  const path = `${target}/save/?updateOnlyNN=${updateOnlyNN}&ignoreImage=${ignoreImage}&_=${new Date().getTime()}`
+  const path = `${target}/bulkCsvStr/?updateOnlyNN=${updateOnlyNN}&ignoreImage=${ignoreImage}&_=${new Date().getTime()}`
   const config = {
     headers: {
       'Content-Type': 'multipart/form-data'
@@ -174,7 +174,7 @@ export const bulkSaveByCsvStr = async (target, entities, conf = null, updateOnly
 }
 
 export const bulkSaveByCsvFile = async (target, formData, charset, updateOnlyNN = UPDATE_ONLY_NN.NONE, ignoreImage = IGNORE.OFF) => {
-  const path = `${target}/bulk/?charset=${charset}&updateOnlyNN=${updateOnlyNN}&ignoreImage=${ignoreImage}&_=${new Date().getTime()}`
+  const path = `${target}/bulkCsvFile/?charset=${charset}&updateOnlyNN=${updateOnlyNN}&ignoreImage=${ignoreImage}&_=${new Date().getTime()}`
   const config = {
     headers: {
       'Content-Type': 'multipart/form-data'
