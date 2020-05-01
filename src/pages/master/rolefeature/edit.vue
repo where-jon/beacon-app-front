@@ -183,7 +183,7 @@ export default {
       } else {
         entity.mode = null
       }
-      const saveId =  await AppServiceHelper.save2(this.appServicePath, [entity], this.getConf())
+      const saveId =  await AppServiceHelper.bulkSaveByCsvStr(this.appServicePath, [entity], this.getConf())
       return saveId
     },
     async onSaved(){

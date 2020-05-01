@@ -398,7 +398,7 @@ export default {
     async onSaving() {
       const entity = PotHelper.createEntity(this.form, this.minors, this.potTypeOptions, this.groups, this.categories)
       this.potCdOld = this.form.potCd
-      return await AppServiceHelper.save2(this.pAppServicePath, [entity])
+      return await AppServiceHelper.bulkSaveByCsvStr(this.pAppServicePath, [entity])
     },
     getNameByteLangth(){
       const fileElement = Util.getValue(document.getElementsByClassName('custom-file'), '0')

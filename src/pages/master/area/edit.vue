@@ -178,7 +178,7 @@ export default {
       Object.keys(this.form).forEach(key => {
         entity[key] = this.form[key]
       })
-      return await AppServiceHelper.save2(this.appServicePath, [entity])
+      return await AppServiceHelper.bulkSaveByCsvStr(this.appServicePath, [entity])
     },
     beforeSubmit(again){
       if(this.mapUpdate){

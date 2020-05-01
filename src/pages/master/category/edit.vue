@@ -263,7 +263,7 @@ export default {
       this.oldColor = this.form.displayColor
       this.oldBgColor = this.form.displayBgColor
 
-      return await AppServiceHelper.save2(this.pAppServicePath, [entity])
+      return await AppServiceHelper.bulkSaveByCsvStr(this.pAppServicePath, [entity])
     },
     async onSaved(){
       const categoryList = this.categories.filter(category => category.systemUse == 0)

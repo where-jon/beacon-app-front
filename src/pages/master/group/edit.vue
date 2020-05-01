@@ -152,7 +152,7 @@ export default {
       this.oldShape = this.form.displayShape
       this.oldColor = this.form.displayColor
       this.oldBgColor = this.form.displayBgColor
-      return await AppServiceHelper.save2(this.appServicePath, [entity])
+      return await AppServiceHelper.bulkSaveByCsvStr(this.appServicePath, [entity])
     },
   },
 }

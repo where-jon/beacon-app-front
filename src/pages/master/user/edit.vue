@@ -283,7 +283,7 @@ export default {
         }).join(";")
       }
 
-      return await AppServiceHelper.save2(this.appServicePath, [entity])
+      return await AppServiceHelper.bulkSaveByCsvStr(this.appServicePath, [entity])
     },
     beforeSubmit(event, again){
       this.replace({showAlert: false})

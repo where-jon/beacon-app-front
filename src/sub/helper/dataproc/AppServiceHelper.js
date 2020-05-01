@@ -143,7 +143,7 @@ export const bulkSave = async (target, entities, updateOnlyNN = UPDATE_ONLY_NN.N
   return data
 }
 
-export const save2 = async (target, entities, conf = null, updateOnlyNN = UPDATE_ONLY_NN.NONE, ignoreImage = IGNORE.OFF) => {
+export const bulkSaveByCsvStr = async (target, entities, conf = null, updateOnlyNN = UPDATE_ONLY_NN.NONE, ignoreImage = IGNORE.OFF) => {
   const csvHeader = Object.keys(entities[0]).map(v => `${v}`).join(",")
   const csvRecord = entities.map(e => Object.values(e).map(v => {
     if (v || v == 0) {
@@ -173,7 +173,7 @@ export const save2 = async (target, entities, conf = null, updateOnlyNN = UPDATE
   return data
 }
 
-export const bulkSave2 = async (target, formData, charset, updateOnlyNN = UPDATE_ONLY_NN.NONE, ignoreImage = IGNORE.OFF) => {
+export const bulkSaveByCsvFile = async (target, formData, charset, updateOnlyNN = UPDATE_ONLY_NN.NONE, ignoreImage = IGNORE.OFF) => {
   const path = `${target}/bulk/?charset=${charset}&updateOnlyNN=${updateOnlyNN}&ignoreImage=${ignoreImage}&_=${new Date().getTime()}`
   const config = {
     headers: {

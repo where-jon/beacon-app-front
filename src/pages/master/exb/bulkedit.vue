@@ -40,7 +40,7 @@ export default {
   },
   methods: {
     async onSaving() {
-      await this.$refs.bulkEdit.bulkSave2()
+      await this.$refs.bulkEdit.bulkSaveByCsvFile()
     },
     getConf() {
       return {nullLabel: this.$i18n.tnl('label.null'), normalLabel: this.$i18n.tnl('label.normal')}

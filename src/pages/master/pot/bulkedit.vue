@@ -64,7 +64,7 @@ export default {
   },
   methods: {
     async onSaving() {
-      await this.$refs.bulkEdit.bulkSave2()
+      await this.$refs.bulkEdit.bulkSaveByCsvFile()
     },
     async onSaved(){
     },

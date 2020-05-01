@@ -272,7 +272,7 @@ export default {
       })
       entity.sensorNames = sensorNames.join(";")
 
-      let ret = await AppServiceHelper.save2(this.appServicePath, [entity])
+      let ret = await AppServiceHelper.bulkSaveByCsvStr(this.appServicePath, [entity])
       this.deviceId = null
       this.deviceIdX = null
       return ret

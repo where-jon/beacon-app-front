@@ -86,7 +86,7 @@ export default {
         }
         return entity
       })      
-      await AppServiceHelper.save2(this.appServicePath, entities)
+      await AppServiceHelper.bulkSaveByCsvStr(this.appServicePath, entities)
       areas.forEach(area => area.thumbnail = area.mapImage = null)
     },
     async saveForIe(thumbnails) {
