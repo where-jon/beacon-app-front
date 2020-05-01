@@ -110,10 +110,8 @@ export default {
             currentWidth = window.innerWidth
           }
           this.reset()
-          this.resetImage()
           if (this.stage) {
-            this.stage.removeAllChildren()
-            this.stage.update()
+            this.resetImage()
             this.$nextTick(async () => await this.onChangeAreaDone(null, true))
           }
         }, 200)
@@ -127,7 +125,7 @@ export default {
       } else {
         this.tempMapFitMobile = 'both'
       }
-      if(this.icons)this.icons = []
+      if(this.icons)this.icons = {}
       Util.debug('tempMapFitMobile: ' + this.tempMapFitMobile)
     },
 
@@ -171,9 +169,20 @@ export default {
         context.clearRect(0, 0, context.canvas.width, context.canvas.height)
       }
 
+      if (this.txCont) {
+        this.txCont.removeAllChildren()
+        this.txCont = null
+      }
+
+      if (this.exbCon) {
+        this.exbCon.removeAllChildren()
+        this.exbCon = null
+      }
+
       if (this.stage) {
         this.stage.removeAllChildren()
         this.stage.update()
+        this.stage = null
       }
       if (this.bitmap) {
         this.bitmap.image = null
@@ -239,16 +248,7 @@ export default {
       }
 
       if (this.stage) {
-        this.stage.removeAllChildren()
-        if (this.txCont) {
-          this.txCont.removeAllChildren()
-          this.txCont = null
-        }
-        if (this.exbCon) {
-          this.exbCon.removeAllChildren()
-          this.stage.update()
-          this.exbCon = null
-        }
+        this.resetImage()
       }
 
       this.mapWidth = bg.width

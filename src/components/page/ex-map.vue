@@ -517,6 +517,7 @@ export default {
       if(this.stage){
         this.showTxAll()
         this.stage.update()
+        this.stage.enableMouseOver()
       }
     },
     'vueSelected.area': {
@@ -796,8 +797,8 @@ export default {
       this.replace({ showWarn: Util.hasValue(this.warnMessage) })
 
       this.stage.on('click', evt => this.resetDetail())
-      this.stage.enableMouseOver()
       this.stage.update()
+      this.stage.enableMouseOver()
 
       if(!this.firstTime && reloadButton){
         this.reloadState.isLoad = false
@@ -881,6 +882,8 @@ export default {
         this.isQuantity = true
         this.detectCount = {}
         this.showTxAll()
+        this.stage.update()
+        this.stage.enableMouseOver()
       }
     },
     showQuantityTx(positions) { // 数量アイコン表示
@@ -908,8 +911,6 @@ export default {
         })
 
       this.positions = positions
-      this.stage.update()
-      this.stage.enableMouseOver()
       this.reShowTxDetail(positions)
       // パラメータリセット
       this.detectCount = {}
@@ -1236,6 +1237,8 @@ export default {
       if (this.isQuantity) {
         this.isQuantity = false
         this.showTxAll()
+        this.stage.update()
+        this.stage.enableMouseOver()
       }
     },
     showTxAll() { // TXアイコン個別表示
@@ -1306,7 +1309,6 @@ export default {
       this.detectedCount = 0
       // Txアイコンを表示する
       const btns = positions.map(pos => this.createBtn(pos)).filter(pos => pos)
-      // this.txCont.removeAllChildren()
 
       btns.forEach(b => {
         if(b.isFixed){
@@ -1319,7 +1321,6 @@ export default {
         }        
       })
       this.positions = positions
-      this.stage.update()
       this.reShowTxDetail(positions)
 
     },    
@@ -1399,13 +1400,17 @@ export default {
         return ret
       }
       // 既に該当btxIdのTXアイコンが作成済みか?
-      // console.error(pos.btxId + '_' + pos.isFixedPosition, pos.x, pos.y)
-      let txBtn = this.icons[pos.btxId + '_' + pos.isFixedPosition]
+      const key = pos.btxId + '_' + pos.isFixedPosition
+      let txBtn = this.icons[key]
       if (!txBtn || txBtn.color != color || txBtn.bgColor != bgColor || txBtn.isTransparent != pos.isTransparent) {
         // 作成されていない場合、新規作成してからiconsに登録
+        if (txBtn) {
+          delete this.icons[key]
+        }
         txBtn = IconHelper.createTxBtn(pos, display.shape, color, bgColor, this.getMapScale())
         txBtn.on('click', evt => this.txOnClick(evt))
-        this.icons[pos.btxId + '_' + pos.isFixedPosition] = txBtn
+        txBtn.isTransparent = pos.isTransparent
+        this.icons[key] = txBtn
       } else {
         // 作成済みの場合、座標値のみセットする
         txBtn.x = pos.x

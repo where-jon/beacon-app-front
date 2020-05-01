@@ -398,7 +398,7 @@ export const getDoubleDefaultTxId = (btxId) => btxId - zoneBtxIdAddNumber
  * @param {*} selectedMapId 
  */
 export const addFixedPosition = (orgPositions, locations = [], selectedMapId = null) => {
-  let positions = _.cloneDeep(orgPositions)
+  let positions = orgPositions.map(pos => Object.assign({}, pos))
   // エリア上の場所を抽出
   const additionalPos = []
   // 表示対象となるTxのposを抽出
