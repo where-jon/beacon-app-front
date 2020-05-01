@@ -347,7 +347,7 @@ export default {
       entity.zoneClass = Util.getValue(this.form, 'locationZoneList', []).map(locationZone => {
         return this.zones.find(zone => zone.zoneId == locationZone.locationZonePK.zoneId).zoneCd
       }).join(";")
-      return await AppServiceHelper.save2(this.appServicePath, [entity])
+      return await AppServiceHelper.bulkSaveByCsvStr(this.appServicePath, [entity])
     },
     async onSaved(){
       this.oldLocationCd = this.form.locationCd

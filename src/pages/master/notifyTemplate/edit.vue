@@ -174,7 +174,7 @@ export default {
       }
       this.errorMessages.email = []
       this.replace({showAlert: false})
-      return await AppServiceHelper.save2(this.appServicePath, [entity])
+      return await AppServiceHelper.bulkSaveByCsvStr(this.appServicePath, [entity])
     },
   }
 }

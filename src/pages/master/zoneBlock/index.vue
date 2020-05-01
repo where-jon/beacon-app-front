@@ -199,7 +199,7 @@ export default {
       let saveId = -1
       try {
         const entities = zones.map(e => this.createCsvEntity(e))
-        saveId = await await AppServiceHelper.save2(this.appServicePath, entities)
+        saveId = await await AppServiceHelper.bulkSaveByCsvStr(this.appServicePath, entities)
         this.isRegist = false
         this.message = this.$i18n.t('message.updateCompleted', { target: this.$i18n.t('label.zone') })
         this.switchMessageType('showInfo')

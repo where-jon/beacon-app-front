@@ -53,34 +53,13 @@ export default {
   },
   methods: {
     async onSaving() {
-      await this.$refs.bulkEdit.bulkSave2()
+      await this.$refs.bulkEdit.bulkSaveByCsvFile()
     },
     getConf() {
       return {
         allAuthorizationLabel: this.$i18n.tnl('label.allAuthorization'), 
         allRejectionLabel: this.$i18n.tnl('label.allRejection')
       }
-    },
-    onRestruct(entity, dummyKey){
-      let keys = null
-      if(Util.hasValue(entity.updateKey) && entity.updateKey.split){
-        keys = entity.updateKey.split(BULK.SPLITTER)
-      }
-      else{
-        const targetFeature = this.features.find(feature => this.$i18n.tnl('label.'+ feature.featureName) == entity.featureName)
-        keys = [this.role.roleId, Util.getValue(targetFeature, 'featureId', dummyKey--)]
-      }
-      BulkHelper.setNumberKey(entity, 'roleId', Util.getValue(keys, '0', dummyKey--))
-      BulkHelper.setNumberKey(entity, 'featureId', Util.getValue(keys, '1', dummyKey--))
-      entity.roleFeaturePK = {
-        roleId: entity.roleId,
-        featureId: entity.featureId,
-      }
-      if(Util.hasValue(entity.modeText)) {
-        entity.mode = BulkHelper.getModeValue(entity.modeText)
-      }
-      entity.rootRoleId = this.role.roleId
-      return dummyKey
     },
     async onSaved(){
       const login = LocalStorageHelper.getLogin()

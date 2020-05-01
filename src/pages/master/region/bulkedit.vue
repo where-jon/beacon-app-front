@@ -46,7 +46,7 @@ export default {
       return dummyKey
     },
     async onSaving() {
-      await this.$refs.bulkEdit.bulkSave2()
+      await this.$refs.bulkEdit.bulkSaveByCsvFile()
     },
     async onSaved(bulkSaveFunc, param){
       const result = await RegionHelper.autoSwitchRegion(this.regions)

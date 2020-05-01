@@ -259,7 +259,7 @@ export default {
         entity.zoneType = zoneType.text
       }
 
-      return await AppServiceHelper.save2(this.pAppServicePath, [entity])
+      return await AppServiceHelper.bulkSaveByCsvStr(this.pAppServicePath, [entity])
     },
   }
 }

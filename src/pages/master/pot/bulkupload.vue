@@ -96,7 +96,7 @@ export default {
         delete e.type
         return PotHelper.createEntity(e, [], this.potTypeOptions)
       })
-      return await AppServiceHelper.save2(this.pAppServicePath, entities)
+      return await AppServiceHelper.bulkSaveByCsvStr(this.pAppServicePath, entities)
     },
   }
 }
