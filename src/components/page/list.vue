@@ -415,6 +415,7 @@ export default {
       error: null,
       sortBy: null,
       sortDesc: false,
+      lasteFetched: 0,
       sortCompare: (aData, bData, key) => this.sortCompareCustom(aData, bData, key),
       ...this.params
     }
@@ -641,6 +642,11 @@ export default {
       this.$nextTick(() => this.fetchCompactList())
     },
     async fetchCompactList() { // マスタ一覧をサーバから取得
+      let now = new Date().getTime()
+      if (now - this.lasteFetched < 100) { // IEで2回リクエストを送ってしまう問題への対応
+        return
+      }
+      this.lasteFetched = now
       if(!Util.hasValue(this.sortBy)) {
         this.sortBy = this.old.sortBy
         this.sortDesc = this.old.sortDesc
