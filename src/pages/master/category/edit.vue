@@ -18,7 +18,7 @@
           <b-form-select v-model="form.categoryType" :options="categoryTypes" :disabled="!isEditable" :readonly="!isEditable" required />
         </b-form-group>
 
-        <extform v-if="!pShowAuth" :is-editable="isEditable" :form="form" :p-ext-value="extValue" />
+        <extform v-if="!pShowAuth" :is-editable="isEditable" :form="form" :p-ext-value="extValue" :p-exclude-keys="excludeExtKeys"/>
 
         <b-form-group v-if="!selectZone && pShowIcon">
           <label v-t="'label.shape'" />
@@ -138,7 +138,8 @@ export default {
         zoneGuards: [],
         zoneDoors: [],
       },
-      categoryCdOld: null
+      categoryCdOld: null,
+      excludeExtKeys: ['description'],
     }
   },
   computed: {

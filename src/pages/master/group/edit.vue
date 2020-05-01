@@ -14,7 +14,7 @@
           <input v-model="form.groupName" :readonly="!isEditable || useAd" type="text" maxlength="20" class="form-control" required>
         </b-form-group>
 
-        <extform :is-editable="isEditable" :form="form" :p-ext-value="extValue" />
+        <extform :is-editable="isEditable" :form="form" :p-ext-value="extValue" :p-exclude-keys="excludeExtKeys"/>
 
         <b-form-group>
           <label v-t="'label.shape'" />
@@ -82,6 +82,7 @@ export default {
       oldBgColor: Util.getValue(group, 'display.bgColor'),
       groupCdOld: null,
       useAd: APP.AUTH.USE_AD,
+      excludeExtKeys: ['description'],
     }
   },
   computed: {

@@ -34,6 +34,10 @@ export default {
       type: Array,
       required: true,
     },
+    pExcludeKeys: {
+      type: Array,
+      required: false,
+    }
   },
   data () {
     return {
@@ -42,7 +46,11 @@ export default {
   },
   computed: {
     extList() {
-      this.pExtValue.forEach(e => {
+      let filteredExt = this.pExtValue
+      if (this.pExcludeKeys) {
+        filteredExt = this.pExtValue.filter(e => !this.pExcludeKeys.includes(e.key))
+      }
+      filteredExt.forEach(e => {
         if (!e.format) {
           if (e.type == 'int') {
             e.format = '[-]?[0-9]*'
@@ -82,7 +90,7 @@ export default {
         }
       })
       Vue.set(this, 'firstShow', false)
-      return this.pExtValue
+      return filteredExt
     }, 
   },
   mounted() {
