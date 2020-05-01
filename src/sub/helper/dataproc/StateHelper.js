@@ -36,6 +36,9 @@ const master = {}
 const main = {}
 
 export const setMaster = (key, val) => {
+  if (master[key]) {
+    delete master[key]
+  }
   master[key] = val
 }
 export const getMaster = (key) => {
@@ -75,6 +78,9 @@ export const setMain = (key, val) => {
     store.commit('main/replaceMain', {[key]: val})
   }
   else {
+    if (main[key]) {
+      delete main[key]
+    }
     main[key] = val
   }
 }
