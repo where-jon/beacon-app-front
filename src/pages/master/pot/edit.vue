@@ -68,7 +68,7 @@
                 </template>
               </v-select>
             </b-form-group>
-            <extform :is-editable="isEditable" :form="form" :p-ext-value="extValue" />
+            <extform :is-editable="isEditable" :form="form" :p-ext-value="extValue" :p-exclude-keys="excludeExtKeys"/>
             <b-form-group v-if="isShownWith('thumbnail')">
               <label v-t="'label.thumbnail'" />
               <b-form-file v-if="isEditable" ref="inputThumbnail" v-model="form.thumbnailTemp" :placeholder="$t('message.selectFile') " accept="image/jpeg, image/png, image/gif" @change="readImage" />
@@ -169,6 +169,7 @@ export default {
       thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
       potCdOld: null,
       useAd: APP.AUTH.USE_AD,
+      excludeExtKeys: ['ruby', 'auth', 'category', 'group', 'thumbnail', 'description', 'user']
     }
   },
   computed: {
