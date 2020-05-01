@@ -250,6 +250,9 @@ export default {
       return currentRegionId === regionId
     },
     move(page) {
+      if(window.CollectGarbage){
+        window.CollectGarbage()
+      }
       this.$router.push(page)
     },
     regionOptions(regions){

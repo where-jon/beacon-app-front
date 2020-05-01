@@ -940,6 +940,9 @@ export default {
       }
       this.replaceMain({selectedAreaId})
       this.replaceMain({usePositionsCache: true})
+      if(window.CollectGarbage){
+        window.CollectGarbage()
+      }
       this.$router.push('/main/position')
     },
 
