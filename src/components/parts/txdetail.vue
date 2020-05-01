@@ -291,8 +291,8 @@ export default {
 
 .description {
   float: left;
-  min-width: 170px;
   height: 125px;
+  width: 147px;
   font-weight: bold;
   padding-left: 10px;
   overflow-y: scroll;
