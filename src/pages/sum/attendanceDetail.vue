@@ -228,8 +228,8 @@ export default {
 
       if(this.viewList.length > 0){
         const potNum = this.pots.filter(e => e.potType == POT_TYPE.PERSON && !this.form.group || Util.v(e, 'group.groupId') == Util.v(this.form, 'group.value'))
-        this.allDayWorkPer = NumberUtil.getPercent(allCount, potNum.length)
-        this.halfDayWorkPer = NumberUtil.getPercent(halfCount, potNum.length)
+        this.allDayWorkPer = NumberUtil.getPercent(allCount / potNum.length)
+        this.halfDayWorkPer = NumberUtil.getPercent(halfCount / potNum.length)
       }else{
         this.alert('listEmpty')
       }
