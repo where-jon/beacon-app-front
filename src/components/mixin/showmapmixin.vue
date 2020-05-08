@@ -136,6 +136,9 @@ export default {
       }
       this.icons = {} // キャッシュをクリア
       if (this.selectedAreaId) {
+        if (this.removeTick) {
+          this.removeTick()
+        }
         this.resetImage()
       }
       try {
