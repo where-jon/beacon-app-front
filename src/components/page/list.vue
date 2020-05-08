@@ -960,7 +960,8 @@ export default {
     setupSelectedTx (tx, x, y, isDispThumbnail) { // Txアイコンを選択した場合のポップアップ
       const menuGroup = DomUtil.getRect('.menu-groups')  //  ナビの情報取得：x位置調整
       const navbar = DomUtil.getRect('.navbar')  // ナビの情報取得：y位置調整
-      const selectedTx = PositionHelper.createTxDetailInfoOnStack(x, y, tx,{x: menuGroup.width, y: navbar.height} , isDispThumbnail? this.preloadThumbnail: {})
+      const containerRect = DomUtil.getRect('#bd-page')
+      const selectedTx = PositionHelper.createTxDetailInfoOnStack(x, y, tx,{x: menuGroup.width, y: navbar.height} , isDispThumbnail? this.preloadThumbnail: {}, containerRect)
       this.replaceMain({ selectedTx })
       this.$nextTick(() => this.showReady = true)
       if (this.isShowModal()) {
