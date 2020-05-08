@@ -138,36 +138,41 @@ export default {
     },
     convertPos(pos) {
       return { // b-tableに使うデータに巨大なオブジェクトを渡すとIEが固まるので必要なものだけ抽出
-          display: pos.display,
-          label: pos.label,
-          areaId: Util.v(pos, 'exb.location.areaId'),
-          txId: pos.txId,
-          minor: pos.minor,
-          btxId: pos.btxId,
-          tx: {
-            txId: pos.tx.txId,
-            minor: pos.tx.minor,
-            btxId: pos.tx.btxId,
-            display: pos.tx.display,
-            pot: {
-              potId:  Util.v(pos, 'tx.pot.potId'),
-              potName: Util.v(pos, 'tx.pot.potName'),
-              thumbnailUpdateDt:  Util.v(pos, 'tx.pot.thumbnailUpdateDt'),
-              existThumbnail: Util.v(pos, 'tx.pot.existThumbnail'),
-              extValue: Util.v(pos, 'tx.pot.extValue'),
-              group: {
-                groupId: Util.v(pos, 'tx.pot.group.groupId'), 
-                groupName:  Util.v(pos, 'tx.pot.group.groupName'), 
-                display:  Util.v(pos, 'tx.pot.group.display'),
-              },
-              category: {
-                categoryId: Util.v(pos, 'tx.pot.category.categoryId'),
-                categoryName: Util.v(pos, 'tx.pot.category.categoryName'),
-                display: Util.v(pos, 'tx.pot.category.display'),
-              },
-            }
+        display: pos.display,
+        label: pos.label,
+        areaId: Util.v(pos, 'exb.location.areaId'),
+        txId: pos.txId,
+        minor: pos.minor,
+        btxId: pos.btxId,
+        tx: {
+          txId: pos.tx.txId,
+          minor: pos.tx.minor,
+          btxId: pos.tx.btxId,
+          display: pos.tx.display,
+          pot: {
+            potId:  Util.v(pos, 'tx.pot.potId'),
+            potName: Util.v(pos, 'tx.pot.potName'),
+            thumbnailUpdateDt:  Util.v(pos, 'tx.pot.thumbnailUpdateDt'),
+            existThumbnail: Util.v(pos, 'tx.pot.existThumbnail'),
+            extValue: Util.v(pos, 'tx.pot.extValue'),
+            group: {
+              groupId: Util.v(pos, 'tx.pot.group.groupId'), 
+              groupName:  Util.v(pos, 'tx.pot.group.groupName'), 
+              display:  Util.v(pos, 'tx.pot.group.display'),
+            },
+            category: {
+              categoryId: Util.v(pos, 'tx.pot.category.categoryId'),
+              categoryName: Util.v(pos, 'tx.pot.category.categoryName'),
+              display: Util.v(pos, 'tx.pot.category.display'),
+            },
+          }
+        },
+        exb: {
+          location: {
+            areaId: Util.v(pos, 'exb.location.areaId')
           }
         }
+      }
     },
     async loadProhibitDetect() {
       if (Util.hasValueAny(APP.POS.PROHIBIT_GROUP_ZONE, APP.POS.LOST_GROUP_ZONE)) {

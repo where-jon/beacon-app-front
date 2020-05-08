@@ -106,6 +106,7 @@ export default {
             minor: pos.minor,
             btxId: pos.btxId,
             state:  pos.state,
+            detectState:  pos.detectState,
             updatetime: pos.updatetime,
             noSelectedTx: pos.noSelectedTx,
             // powerLevel: this.getPowerLevel(pos),
@@ -123,6 +124,11 @@ export default {
             areaId: Util.v(pos, 'exb.location.areaId'),
             blinking : prohibitCheck? 'blinking' : null,
             isDisableArea: Util.v(pos, 'exb.location.isAbsentZone', false),
+            exb: {
+              location: {
+                areaId: Util.v(pos, 'exb.location.areaId')
+              }
+            }
           }
         })
         this.totalRows = positions.length
