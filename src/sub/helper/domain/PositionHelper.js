@@ -749,8 +749,14 @@ export const getLabel = key => {
  * @param {Object} preloadThumbnail
  * @return {Object}
  */
-export const createTxDetailInfo = (x, y, tx, canvasScale, offset, containerRect, preloadThumbnail) => {
+export const createTxDetailInfo = (x, y, color, bgColor, tx, canvasScale, offset, containerRect, preloadThumbnail) => {
   const display = StyleHelper.getPositionDisplay(tx)
+  if (!color) {
+    color = display.color
+  }
+  if (!bgColor) {
+    bgColor = display.bgColor
+  }
   const position = filterPositions().find(e => e.btxId === tx.btxId)
   const ret = {
     btxId: tx.btxId,
@@ -763,8 +769,8 @@ export const createTxDetailInfo = (x, y, tx, canvasScale, offset, containerRect,
     class: !tx.btxId ? '': 'balloon-u', // 上表示のみに固定,
     timestamp: position ? DateUtil.formatDate(new Date(position.timestamp)) : '',
     thumbnail: Util.getValue(preloadThumbnail, 'src', ''),
-    bgColor: display.bgColor,
-    color: display.color,
+    bgColor,
+    color,
     isDispRight: x + offset.x + 100 < window.innerWidth,
     minor: getLabel('minor') + Util.getValue(tx, 'btxId', ''),
     major: getLabel('major') + Util.getValue(tx, 'major', ''),

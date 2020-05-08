@@ -1147,13 +1147,13 @@ export default {
       evt.stopPropagation()
       this.showReady = false
       const txBtn = evt.currentTarget
-      this.showDetail(txBtn.btxId, txBtn.x, txBtn.y)
+      this.showDetail(txBtn.btxId, txBtn.x, txBtn.y, txBtn.color, txBtn.bgColor)
     },
-    showDetail(btxId, x, y) {
+    showDetail(btxId, x, y, color, bgColor) {
       // アラート表示でずれるので遅延実行を行う
-      this.$nextTick(() => this.showDetailImp(btxId, x, y))
+      this.$nextTick(() => this.showDetailImp(btxId, x, y, color, bgColor))
     },
-    showDetailImp(btxId, x, y) { // (p,) position
+    showDetailImp(btxId, x, y, color, bgColor) { // (p,) position
       if(!Util.hasValue(this.pShowDetail)){
         return
       }
@@ -1167,23 +1167,23 @@ export default {
       const isNoThumbnail = APP.TXDETAIL.NO_UNREGIST_THUMB && !Util.v(tx, 'pot.existThumbnail')
       if (!isNoThumbnail) {
         // サムネイル表示あり
-        this.preloadThumbnail.onload = () => this.setupSelectedTx(tx, x, y, true)
+        this.preloadThumbnail.onload = () => this.setupSelectedTx(tx, x, y, true, color, bgColor)
         this.preloadThumbnail.src = null // iOSでonloadが一度しか呼ばれないので対策
         this.preloadThumbnail.src = PotHelper.getThumbnailUrl(tx, this.thumbnailUrl) 
       } else {
         // サムネイル表示無し
-        this.setupSelectedTx(tx, x, y, false)
+        this.setupSelectedTx(tx, x, y, false, color, bgColor)
       }
     },
     // Txアイコンを選択した場合のポップアップ
-    setupSelectedTx(tx, x, y, isDispThumbnail) {
+    setupSelectedTx(tx, x, y, isDispThumbnail, color, bgColor) {
       const map = DomUtil.getRect('#map')
       const containerParent = DomUtil.getRect('#mapContainer', 'parentNode')
       const offsetX = map.left - containerParent.left + (!this.pInstallation? 0: 48)
       const navbarY = containerParent.top
       const offsetY = map.top - navbarY + (!this.pInstallation? 0: 20)
 
-      const selectedTx = PositionHelper.createTxDetailInfo(x, y, tx, this.canvasScale, {x: offsetX, y: offsetY}, containerParent, isDispThumbnail? this.preloadThumbnail: {})
+      const selectedTx = PositionHelper.createTxDetailInfo(x, y, color, bgColor, tx, this.canvasScale, {x: offsetX, y: offsetY}, containerParent, isDispThumbnail? this.preloadThumbnail: {})
       this.replaceMain({ selectedTx })
       this.$nextTick(() => this.showReady = true)
       if (this.isShowModal()) {
@@ -1347,7 +1347,7 @@ export default {
       pos.isTransparent = pos.isTransparent || isAbsentZone // TODO: 別の場所に移動
       const txBtn = this.updateTxBtn(pos, pos.tx, meditag, magnet)
       if(this.reloadSelectedTx.btxId == pos.btxId){
-        this.showDetail(txBtn.btxId, txBtn.x, txBtn.y)
+        this.showDetail(txBtn.btxId, txBtn.x, txBtn.y, txBtn.color, txBtn.bgColor)
       }
       this.txIcons.push({ button: txBtn, device: pos.tx, config: txBtn.iconInfo, sign: -1 })
       return txBtn
@@ -1457,7 +1457,7 @@ export default {
       const txBtnInfo = this.updateZoneTxBtn(pos, tx, meditag, magnet)
       const txBtn = txBtnInfo.txBtn
       if(this.reloadSelectedTx.btxId == txBtnInfo.zoneBtxId){
-        this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
+        this.showDetail(txBtn.txId, txBtn.x, txBtn.y, txBtn.color, txBtn.bgColor)
       }
       this.txCont.addChild(txBtn)
     },
