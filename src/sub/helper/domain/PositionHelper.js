@@ -411,6 +411,9 @@ export const addFixedPosition = (orgPositions, locations = [], selectedMapId = n
       // 固定場所ゾーンにいず、かつ検知状態の場合、フリーアドレスとしても表示
       if (!pos.inFixedZone && pos.detectState == DETECT_STATE.DETECTED && !SensorHelper.isFixedSensorTx(pos.tx)) {
         const addPos = Object.assign({}, pos)
+        if (pos.tx) {
+          addPos.tx = Object.assign({}, pos.tx)
+        }
         addPos.isFixedPosition = false
         addPos.location = pos.exb.location
         // addPos.isAddtional = true
