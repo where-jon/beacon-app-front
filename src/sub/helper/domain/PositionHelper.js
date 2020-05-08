@@ -387,6 +387,19 @@ export const isDoubleTx = (btxId) => btxId >= zoneBtxIdAddNumber
 
 export const getDoubleDefaultTxId = (btxId) => btxId - zoneBtxIdAddNumber
 
+/**
+ * posオブジェクトについて変更が必要な部分のみシャローコピーしたオブジェクトを作成
+ * @param {*} pos 
+ */
+const copyPos = (pos) => {
+  const newPos = Object.assign({}, pos)
+  newPos.tx = Object.assign({}, pos.tx)
+  if (pos.tx.display) {
+    newPos.tx.display = Object.assign({}, pos.tx.display)
+  }
+  return newPos
+}
+
 // ------- 固定表示 -------
 
 
@@ -398,7 +411,7 @@ export const getDoubleDefaultTxId = (btxId) => btxId - zoneBtxIdAddNumber
  * @param {*} selectedMapId 
  */
 export const addFixedPosition = (orgPositions, locations = [], selectedMapId = null) => {
-  let positions = orgPositions.map(pos => Object.assign({}, pos))
+  let positions = orgPositions.map(pos => copyPos(pos))
   // エリア上の場所を抽出
   const additionalPos = []
   // 表示対象となるTxのposを抽出
@@ -410,21 +423,11 @@ export const addFixedPosition = (orgPositions, locations = [], selectedMapId = n
       pos.inFixedZone = isInFixedPosZone(pos)
       // 固定場所ゾーンにいず、かつ検知状態の場合、フリーアドレスとしても表示
       if (!pos.inFixedZone && pos.detectState == DETECT_STATE.DETECTED && !SensorHelper.isFixedSensorTx(pos.tx)) {
-        const addPos = Object.assign({}, pos)
-        if (pos.tx) {
-          addPos.tx = Object.assign({}, pos.tx)
-          if (pos.tx.display) {
-            addPos.tx.display = Object.assign({}, pos.tx.display)
-          }
-        }
-        if (pos.location) {
-          addPos.location = Object.assign({}, pos.location)
-        }
+        const addPos = copyPos(pos)
         addPos.isFixedPosition = false
-        addPos.location = pos.exb.location
+        addPos.location = Object.assign({}, pos.exb.location)
         // addPos.isAddtional = true
         additionalPos.push(addPos)
-
         pos.hasAnother = true
       }
       pos.location = pos.tx.location
