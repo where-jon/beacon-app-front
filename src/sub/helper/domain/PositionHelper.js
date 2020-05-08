@@ -785,7 +785,7 @@ export const createTxDetailInfo = (x, y, tx, canvasScale, offset, containerRect,
  * @param {Object} preloadThumbnail
  * @return {Object}
  */
-export const createTxDetailInfoOnStack = (x, y, tx, offset, preloadThumbnail) => {
+export const createTxDetailInfoOnStack = (x, y, tx, offset, preloadThumbnail, containerRect) => {
   const display = StyleHelper.getPositionDisplay(tx)
   const position = filterPositions().find(e => e.btxId === tx.btxId)
   const ret = {
@@ -796,8 +796,8 @@ export const createTxDetailInfoOnStack = (x, y, tx, offset, preloadThumbnail) =>
     orgLeft: x - offset.x + APP.POS_STACK.ADJUST_POPUP.X,
     orgTop: y - offset.y + APP.POS_STACK.ADJUST_POPUP.Y,
     scale:  null ,
-    containerWidth: null,
-    containerHeight: null,
+    containerWidth: containerRect.width,
+    containerHeight: containerRect.height,
     class: !tx.btxId ? '': 'balloon-u', // 上表示のみに固定,
     name: Util.getValue(tx, 'pot.potName', ''),
     tel: Util.getValue(tx, 'pot.extValue.tel', ''),
