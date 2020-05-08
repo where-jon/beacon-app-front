@@ -189,7 +189,7 @@ export default {
       const containerWidth = this.selectedTx.containerWidth
       const items = this.getDispItems()
       const dataLength = items.reduce((accum, e) => {
-        if (e.val.length) {
+        if (e.val && e.val.length) {
           return Math.max(accum, e.val.length)
         }
         return accum
