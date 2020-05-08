@@ -18,6 +18,7 @@ import * as SensorHelper from '../domain/SensorHelper'
 
 let store
 let i18n
+let onRefreshMasterFunc
 
 /**
  * vue.jsで使用するオブジェクトを設定する。
@@ -28,6 +29,15 @@ let i18n
 export const setApp = (pStore, pi18n) => {
   store = pStore
   i18n = pi18n
+}
+
+/**
+ * マスタ取得後のコールバック関数を保存
+ * 
+ * @param {*} pOnRefreshMasterFunc 
+ */
+export const setRefreshMasterCallback = (pOnRefreshMasterFunc) => {
+  onRefreshMasterFunc = pOnRefreshMasterFunc
 }
 
 /**
@@ -534,6 +544,11 @@ const storeCommitAll = (masters, idmaps) => {
   })
 
   storeCommit('lastMasterFetchTime', new Date().getTime(), true)
+
+  if (onRefreshMasterFunc) {
+    onRefreshMasterFunc()
+  }
+
 }
 
 const storeCommit = (key, val, forceState) => {

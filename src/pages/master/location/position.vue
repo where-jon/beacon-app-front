@@ -733,10 +733,11 @@ export default {
         if (this.mapRatioChanged && this.mapRatio != null) {
           await AppServiceHelper.save('/core/area', this.createSendArea(), UPDATE_ONLY_NN.EMPTY_ZERO)
         }
+        await MasterHelper.loadMaster()
         this.message = this.$i18n.tnl('message.completed', {target: this.$i18n.tnl('label.save')})
         this.replace({showInfo: true})
         this.isChanged = false
-        location.reload()
+        await this.fetchData()
       } catch (e) {
         console.error(e)
         this.message = this.createErrorMessage(e)
