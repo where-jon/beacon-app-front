@@ -225,14 +225,14 @@
           <div class="empty-icon d-inline-flex" /><!-- 横幅0の「支柱」 -->
           <div class="d-inline-flex flex-wrap">
             <span v-if="useTxPopup">
-              <div v-for="position in row.item.positions" :key="position.areaId"
+              <div v-for="position in row.item.positions" :key="position.txId"
                    :style="position.display" :class="'d-inline-flex m-1 '+ position.blinking" @click="txOnClick($event,position.tx)"
               >
                 {{ position.label }}
               </div>
             </span>
             <span v-else>
-              <div v-for="position in row.item.positions" :key="position.areaId"
+              <div v-for="position in row.item.positions" :key="position.txId"
                    :style="position.display" :class="'d-inline-flex m-1 '+ position.blinking" @click.stop="mapDisplay(position, true)"
               >
                 {{ position.label }}
@@ -931,12 +931,11 @@ export default {
       if(item.absent){
         return
       }
-      const tx = item.tx
       const selectedTx = {
-        btxId: tx.btxId,
+        btxId: item.btxId,
       }
       const selectedAreaId = Util.getValue(item, 'exb.location.areaId')
-      const txOk = await this.callParentMethod('checkDetectedTx', tx)
+      const txOk = await this.callParentMethod('checkDetectedTx', item.txId)
       if (txOk) {
         this.replaceMain({selectedTx})
       }

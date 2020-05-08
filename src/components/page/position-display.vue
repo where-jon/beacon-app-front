@@ -56,17 +56,20 @@ export default {
       id: this.masterName + 'Id',
       message: '',
       listName: StringUtil.single2multi(this.masterName),
-      eachListName: StringUtil.concatCamel('each', StringUtil.single2multi(this.masterName)),
+      eachListName: StringUtil.concatCamel('each', StringUtil.single2multi(this.masterName)), // TODO: ゾーンかエリアかなのになんでeachListなんて名前つけるんだ！
       prohibitDetectList : null,
       showDismissibleAlert: false,
       positions: [],
+      lasteFetched: 0,
+      eachZones: [],
+      eachAreas: [],
     }
   },
   computed: {
-    ...mapState('main', [ // TODO: stateには定義されていない。この画面でしか使わないのであればstateに入れない
-      'eachAreas',
-      'eachZones',
-    ]),
+    // ...mapState('main', [ // TODO: stateには定義されていない。この画面でしか使わないのであればstateに入れない
+    //   'eachAreas',
+    //   'eachZones',
+    // ]),
     displayZone(){
       return this.masterName == 'zone'
     },
@@ -93,22 +96,22 @@ export default {
       })
 
       const absentZone = _.find(this.zones, zone => zone.categoryName == SYSTEM_ZONE_CATEGORY_NAME.ABSENT_DISPLAY)
-
-      // TODO: 以下の処理要書き直し
-      _.forEach(positions, pos => {
-        const location = this.locationIdMap[pos.locationId]
+      // TODO: 以下の処理要書き直し（この糞ソース書いたの誰だ！[激怒]）
+      _.forEach(positions, orgPos => {
+        const pos = this.convertPos(orgPos)
+        const location = this.locationIdMap[orgPos.locationId]
         prohibitDetectList? prohibitDetectList.some(data => {
-          if(data.minor == pos.minor){
+          if(data.minor == orgPos.minor){
             pos.blinking = 'blinking'
             return true
           }
         }): false
-        pos.isDisableArea = Util.getValue(location, 'isAbsentZone', false)
-        const posMasterIds = this.displayZone? Util.getValue(pos, 'exb.location.zoneIdList', [null]): [Util.getValue(pos, 'exb.location.areaId')]
+        pos.isDisableArea = Util.v(location, 'isAbsentZone', false)
+        const posMasterIds = this.displayZone? Util.v(orgPos, 'exb.location.zoneIdList', [null]): [Util.v(orgPos, 'exb.location.areaId')]
         posMasterIds.forEach(posMasterId => {
           const hasMasterId = Util.hasValue(posMasterId)
           const obj = hasMasterId ? tempMasterMap[posMasterId]: tempMasterExt
-          if(!pos.noSelectedTx && !Util.getValue(location, 'isAbsentZone', false)){
+          if(!orgPos.noSelectedTx && !Util.v(location, 'isAbsentZone', false)){
             obj.positions.push(pos)
           }else if(absentZone){
             // 不在ゾーンへの登録
@@ -117,7 +120,7 @@ export default {
               if (!map.positions) {
                 map.positions = []
               }
-              if( !map.positions.find(p => p.minor == pos.minor) ){
+              if( !map.positions.find(p => p.minor == orgPos.minor) ){
                 pos.absent = true
                 map.positions.push(pos)
               }
@@ -125,6 +128,7 @@ export default {
           }
         })
       })
+
       const ret = _.sortBy(tempMasterMap, tmm => this.displayArea? tmm.areaCd : tmm.zoneCd)
       Util.debug('tempMasterMap', tempMasterMap)
       if(showExt){
@@ -132,28 +136,67 @@ export default {
       }
       return ret
     },
+    convertPos(pos) {
+      return { // b-tableに使うデータに巨大なオブジェクトを渡すとIEが固まるので必要なものだけ抽出
+          display: pos.display,
+          label: pos.label,
+          areaId: Util.v(pos, 'exb.location.areaId'),
+          txId: pos.txId,
+          minor: pos.minor,
+          btxId: pos.btxId,
+          tx: {
+            txId: pos.tx.txId,
+            minor: pos.tx.minor,
+            btxId: pos.tx.btxId,
+            display: pos.tx.display,
+            pot: {
+              potId:  Util.v(pos, 'tx.pot.potId'),
+              potName: Util.v(pos, 'tx.pot.potName'),
+              thumbnailUpdateDt:  Util.v(pos, 'tx.pot.thumbnailUpdateDt'),
+              existThumbnail: Util.v(pos, 'tx.pot.existThumbnail'),
+              extValue: Util.v(pos, 'tx.pot.extValue'),
+              group: {
+                groupId: Util.v(pos, 'tx.pot.group.groupId'), 
+                groupName:  Util.v(pos, 'tx.pot.group.groupName'), 
+                display:  Util.v(pos, 'tx.pot.group.display'),
+              },
+              category: {
+                categoryId: Util.v(pos, 'tx.pot.category.categoryId'),
+                categoryName: Util.v(pos, 'tx.pot.category.categoryName'),
+                display: Util.v(pos, 'tx.pot.category.display'),
+              },
+            }
+          }
+        }
+    },
     async loadProhibitDetect() {
       if (Util.hasValueAny(APP.POS.PROHIBIT_GROUP_ZONE, APP.POS.LOST_GROUP_ZONE)) {
         clearInterval(this.prohibitInterval)  // 点滅クリア
         Util.merge(this, await ProhibitHelper.loadProhibitDetect(ALERT_STATE.WHOLE, this.stage, this.icons, this.zones))
+        this.alertData.message = this.message
+        this.alertData.isAlert = this.showDismissibleAlert ? true: false
+        this.replace({showAlert: this.alertData.isAlert})
       }
     },
     async fetchData(payload) {
       try {
+        let now = new Date().getTime()
+        if (now - this.lasteFetched < 100) { // IEで2回リクエストを送ってしまう問題への対応
+          return
+        }
+        this.lasteFetched = now
         this.replace({showAlert:false})
         this.showProgress()
         // positionデータ取得
         await PositionHelper.loadPosition(null, true, true)
         this.positions = PositionHelper.filterPositions(undefined, false, true, null, null, null, null).filter(p => p.tx && p.tx.disp==1)
 
-        await this.loadProhibitDetect()
+        this.loadProhibitDetect()
 
-        this.alertData.message = this.message
-        this.alertData.isAlert = this.showDismissibleAlert ? true: false
-        this.replace({showAlert: this.alertData.isAlert})
         // 分類checkProhibitZone
         const tempMaster = this.splitMaster(this.positions, this.prohibitDetectList)
-        this.replaceMain({[this.eachListName]: tempMaster}) // TODO: 意味不明、Stateに入れる必要ある？
+        // this.replaceMain({[this.eachListName]: tempMaster}) // TODO: 意味不明、Stateに入れる必要ある？
+        this[this.eachListName] = tempMaster
         if (payload && payload.done) {
           payload.done()
         }
@@ -162,9 +205,9 @@ export default {
       }
       this.hideProgress()
     },
-    async checkDetectedTx(tx) {
+    async checkDetectedTx(txId) {
       //await this.fetchData()
-      return _.some(this.positions, pos => pos.tx.txId == tx.txId)
+      return _.some(this.positions, pos => pos.txId == txId)
     }
   }
 }
