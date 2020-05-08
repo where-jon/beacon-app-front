@@ -776,7 +776,7 @@ export const createTxDetailInfo = (x, y, color, bgColor, tx, canvasScale, offset
     major: getLabel('major') + Util.getValue(tx, 'major', ''),
     name: getLabel('name') + Util.getValue(tx, 'pot.potName', ''),
     tel: getLabel('tel') + Util.getValue(tx, 'pot.extValue.tel', ''),
-    category: getLabel('category') + Util.getValue(tx, 'pot.cateogry.categoryName', ''),
+    category: getLabel('category') + Util.getValue(tx, 'pot.category.categoryName', ''),
     group: getLabel('group') + Util.getValue(tx, 'pot.group.groupName', ''),
     email: getLabel('email') + Util.getValue(tx, 'pot.user.email', '')
   }
