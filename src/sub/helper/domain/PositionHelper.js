@@ -808,7 +808,7 @@ export const createTxDetailInfoOnStack = (x, y, tx, offset, preloadThumbnail, co
   const position = filterPositions().find(e => e.btxId === tx.btxId)
   const ret = {
     btxId: tx.btxId,
-    minor: i18n.tnl('label.minor') + ':' + tx.btxId,
+    minor: i18n.tnl('label.minor') + ':' + tx.minor,
     major: tx.major? i18n.tnl('label.major') + ':' + tx.major : '',
     // TX詳細ポップアップ内部で表示座標計算する際に必要
     orgLeft: x - offset.x + APP.POS_STACK.ADJUST_POPUP.X,
