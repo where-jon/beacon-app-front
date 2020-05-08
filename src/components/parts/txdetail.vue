@@ -4,7 +4,7 @@
       v-if="!isShowModal"
       id="txDetail"
       class="balloon"
-      :style="txDetailStyle"
+      :style="txDetailStyle()"
     >
       <div v-if="selectedSensor.length == 0" class="potBox" @click="$emit('resetDetail')">
         <div class="clearfix">
@@ -12,7 +12,7 @@
             <img v-if="selectedTx.thumbnail.length > 0" id="img" :src="selectedTx.thumbnail" :height="imageHeight" width="auto">
             <img v-else src="/default.png" width="auto" :height="imageHeight">
           </div>
-          <div class="description" :style="descriptionStyle">
+          <div class="description" :style="descriptionStyle()">
             <div v-for="item in getDispItems()" :key="item.key">
               <div v-if="item.key !== 'name' || !inMsTeams">
                 {{ item.val }}
@@ -25,7 +25,7 @@
         </div>
       </div>
       <meditag :sensors="selectedSensor" :is-popup="true" />
-      <div id="popup-arrow" :style="arrowStyle"></div>
+      <div id="popup-arrow" :style="arrowStyle" />
     </div>
     <txdetailmodal
       v-else
@@ -113,15 +113,62 @@ export default {
       return !this.isDisableThumbnail()
     },
     descriptionSP() {
-      return APP.TXDETAIL.NO_UNREGIST_THUMB ? "descriptionSPNoThumbnail" : "descriptionSP"
+      return APP.TXDETAIL.NO_UNREGIST_THUMB ? 'descriptionSPNoThumbnail' : 'descriptionSP'
     },
+    arrowStyle() {
+      const left = this.selectedTx.orgLeft - this.txDetailLeft - 8
+      const borderColor = this.selectedSensor.length == 0 ? this.selectedTx.bgColor : this.selectedSensor[0].bg
+      let obj = {
+        left: left + 'px',
+        width: '0px',
+        height: '0px',
+        borderStyle: 'solid',
+      }
+      if (this.selectedTx.isAbove) {
+        obj.borderTop = '16px solid transparent'
+        obj.borderRight = '10px solid transparent'
+        obj.borderBottom = '16px solid ' + borderColor
+        obj.borderLeft = '10px solid transparent'
+      } else {
+        obj.borderTop = '16px solid ' + borderColor
+        obj.borderRight = '10px solid transparent'
+        obj.borderBottom = '16px solid transparent'
+        obj.borderLeft = '10px solid transparent'
+      }
+      return obj
+    }
+  },
+  watch: {
+    imageWidth: {
+      handler: function(newVal, oldVal) {
+        if (newVal != oldVal) {
+          this.descriptionStyle()
+        }
+      },
+      deep: false
+    },
+    descWidth: {
+      handler: function(newVal, oldVal) {
+        if (newVal != oldVal) {
+          this.txDetailStyle()
+        }
+      },
+      deep: false
+    },
+  },
+  created() {
+    this.setImageWidth()
+  },
+  mounted() {
+    microsoftTeams.initialize()
+  },
+  methods: {
     descriptionStyle() {
       const imageWidth = this.selectedSensor.length == 0 ? this.imageWidth : this.meditagWidt
       const width = this.getDescWidth(imageWidth)
       this.descWidth = width
       const obj = {
-        width: width + 'px',
-        minWidth: this.descriptionWidth,
+        width: width + 'px'
       }
       return obj
     },
@@ -138,46 +185,19 @@ export default {
       }
       return obj
     },
-    arrowStyle() {
-      const left = this.selectedTx.orgLeft - this.txDetailLeft - 8
-      const borderColor = this.selectedSensor.length == 0 ? this.selectedTx.bgColor : this.selectedSensor[0].bg
-      let obj = {
-          left: left + 'px',
-          width: '0px',
-          height: '0px',
-          borderStyle: 'solid',
-      }
-      if (this.selectedTx.isAbove) {
-        obj.borderTop = '16px solid transparent'
-        obj.borderRight = '10px solid transparent'
-        obj.borderBottom = '16px solid ' + borderColor
-        obj.borderLeft = '10px solid transparent'
-      } else {
-        obj.borderTop = '16px solid ' + borderColor
-        obj.borderRight = '10px solid transparent'
-        obj.borderBottom = '16px solid transparent'
-        obj.borderLeft = '10px solid transparent'
-      }
-      return obj
-    }
-  },
-  created() {
-    this.setImageWidth()
-  },
-  mounted() {
-    microsoftTeams.initialize()
-  },
-  methods: {
     getDescWidth(imageWidth) {
       const containerWidth = this.selectedTx.containerWidth
       const items = this.getDispItems()
       const dataLength = items.reduce((accum, e) => {
-        return Math.max(accum, e.val.length)
+        if (e.val.length) {
+          return Math.max(accum, e.val.length)
+        }
+        return accum
       }, 0)
       const dataWidth = dataLength * 10 // 実際のフォントは13xだが半角も考慮して小さめに設定
       const maxWidth = containerWidth - (imageWidth + 20)
       const width = dataWidth < maxWidth ? dataWidth : maxWidth
-      return width
+      return width < this.descriptionWidth ? this.descriptionWidth : width
     },
     getTxDetailLeft(imageWidth, descWidth) {
       const containerWidth = this.selectedTx.containerWidth
