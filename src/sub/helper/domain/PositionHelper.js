@@ -413,6 +413,12 @@ export const addFixedPosition = (orgPositions, locations = [], selectedMapId = n
         const addPos = Object.assign({}, pos)
         if (pos.tx) {
           addPos.tx = Object.assign({}, pos.tx)
+          if (pos.tx.display) {
+            addPos.tx.display = Object.assign({}, pos.tx.display)
+          }
+        }
+        if (pos.location) {
+          addPos.location = Object.assign({}, pos.location)
         }
         addPos.isFixedPosition = false
         addPos.location = pos.exb.location
