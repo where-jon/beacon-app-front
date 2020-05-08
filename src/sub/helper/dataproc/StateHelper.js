@@ -42,7 +42,7 @@ export const setMaster = (key, val) => {
   master[key] = val
 }
 export const getMaster = (key) => {
-  if (BrowserUtil.isDev()) {
+  if (BrowserUtil.isDev() || key == 'regions') {
     return key? store.state.app_service[key]: store.state.app_service
   }
   else {
