@@ -3,13 +3,8 @@
     <div
       v-if="!isShowModal"
       id="txDetail"
-      :class="'balloon ' + getClass()"
-      :style="{
-        left: getLeft(),
-        top: getTop(),
-        backgroundColor: selectedSensor.length == 0 ? selectedTx.bgColor : selectedSensor[0].bg,
-        color: selectedSensor.length == 0? selectedTx.color: blackColor,
-      }"
+      class="balloon"
+      :style="txDetailStyle"
     >
       <div v-if="selectedSensor.length == 0" class="potBox" @click="$emit('resetDetail')">
         <div class="clearfix">
@@ -17,7 +12,7 @@
             <img v-if="selectedTx.thumbnail.length > 0" id="img" :src="selectedTx.thumbnail" :height="imageHeight" width="auto">
             <img v-else src="/default.png" width="auto" :height="imageHeight">
           </div>
-          <div class="description">
+          <div class="description" :style="descriptionStyle">
             <div v-for="item in getDispItems()" :key="item.key">
               <div v-if="item.key !== 'name' || !inMsTeams">
                 {{ item.val }}
@@ -30,6 +25,7 @@
         </div>
       </div>
       <meditag :sensors="selectedSensor" :is-popup="true" />
+      <div id="popup-arrow" :style="arrowStyle"></div>
     </div>
     <txdetailmodal
       v-else
@@ -105,10 +101,11 @@ export default {
       tipHeight: 15,
       imageWidth: 0,
       descriptionWidth: 147,
-      left: 0,
       meditagWidth: 266,
       blackColor: FONT.COLOR.BLACK,
-      inMsTeams: APP.AUTH.USE_AD && BrowserUtil.inIframe()
+      inMsTeams: APP.AUTH.USE_AD && BrowserUtil.inIframe(),
+      descWidth: 0,
+      txDetailLeft: 0,
     }
   },
   computed: {
@@ -117,30 +114,97 @@ export default {
     },
     descriptionSP() {
       return APP.TXDETAIL.NO_UNREGIST_THUMB ? "descriptionSPNoThumbnail" : "descriptionSP"
+    },
+    descriptionStyle() {
+      const imageWidth = this.selectedSensor.length == 0 ? this.imageWidth : this.meditagWidt
+      const width = this.getDescWidth(imageWidth)
+      this.descWidth = width
+      const obj = {
+        width: width + 'px',
+        minWidth: this.descriptionWidth,
+      }
+      return obj
+    },
+    txDetailStyle() {
+      const imageWidth = this.selectedSensor.length == 0 ? this.imageWidth : this.meditagWidt
+      const top = this.getTxDetailTop()
+      const left = this.getTxDetailLeft(imageWidth, this.descWidth)
+      this.txDetailLeft = left
+      const obj = {
+        top: top + 'px',
+        left: left + 'px',
+        backgroundColor: this.selectedSensor.length == 0 ? this.selectedTx.bgColor : this.selectedSensor[0].bg,
+        color: this.selectedSensor.length == 0? this.selectedTx.color: this.blackColor,
+      }
+      return obj
+    },
+    arrowStyle() {
+      const left = this.selectedTx.orgLeft - this.txDetailLeft - 8
+      const borderColor = this.selectedSensor.length == 0 ? this.selectedTx.bgColor : this.selectedSensor[0].bg
+      let obj = {
+          left: left + 'px',
+          width: '0px',
+          height: '0px',
+          borderStyle: 'solid',
+      }
+      if (this.selectedTx.isAbove) {
+        obj.borderTop = '16px solid transparent'
+        obj.borderRight = '10px solid transparent'
+        obj.borderBottom = '16px solid ' + borderColor
+        obj.borderLeft = '10px solid transparent'
+      } else {
+        obj.borderTop = '16px solid ' + borderColor
+        obj.borderRight = '10px solid transparent'
+        obj.borderBottom = '16px solid transparent'
+        obj.borderLeft = '10px solid transparent'
+      }
+      return obj
     }
+  },
+  created() {
+    this.setImageWidth()
   },
   mounted() {
     microsoftTeams.initialize()
   },
-  updated() {
-    this.popupHeight = this.getPopupHeight()
-    this.left = this.getLeft()
-  },
   methods: {
+    getDescWidth(imageWidth) {
+      const containerWidth = this.selectedTx.containerWidth
+      const items = this.getDispItems()
+      const dataLength = items.reduce((accum, e) => {
+        return Math.max(accum, e.val.length)
+      }, 0)
+      const dataWidth = dataLength * 10 // 実際のフォントは13xだが半角も考慮して小さめに設定
+      const maxWidth = containerWidth - (imageWidth + 20)
+      const width = dataWidth < maxWidth ? dataWidth : maxWidth
+      return width
+    },
+    getTxDetailLeft(imageWidth, descWidth) {
+      const containerWidth = this.selectedTx.containerWidth
+      let left = this.selectedTx.orgLeft - DISP.TXDETAIL_DIFF
+      if (this.selectedSensor.length == 0) {
+        const txDetailWidth = imageWidth + this.getDescWidth(imageWidth) + 20
+        const over = (left + txDetailWidth) - containerWidth
+        if (0 < over) {
+          if (containerWidth <= txDetailWidth) {
+            left = 0
+          } else {
+            left = left - over
+          }
+        }
+      } else {
+        const over = (left + imageWidth) - containerWidth
+        if (0 < over) {
+          left = left - over
+        }
+      }
+      return left
+    },
     isDisableThumbnail() {
       return APP.TXDETAIL.NO_UNREGIST_THUMB ? !(this.selectedTx.thumbnail.length > 0) : false
     },
     async setImageWidth() {
       this.imageWidth = await loadImage(this.selectedTx.thumbnail, this.imageHeight)
-    },
-    isOutOfFrame() {
-      const containerWidth = this.selectedTx.containerWidth - 45
-      if (this.selectedSensor.length == 0) {
-        this.setImageWidth()
-        return containerWidth <= this.selectedTx.orgLeft + this.descriptionWidth + this.imageWidth
-      }
-      // Meditagの場合
-      return containerWidth <= this.selectedTx.orgLeft + this.meditagWidth
     },
     getDispItems () {
       return APP.TXDETAIL.ITEMS.map(key => {
@@ -155,27 +219,12 @@ export default {
       const resultHeight = prohibitMessageElement? prohibitMessageElement.offsetHeight : 0
       return resultHeight
     },
-    getLeft() {
-      this.setImageWidth()
-      const isOut = this.isOutOfFrame()
-      const imageWidth = this.isDisableThumbnail()? 0 : this.imageWidth
-      const left = !isOut ? this.selectedTx.orgLeft - DISP.TXDETAIL_DIFF : 
-        this.selectedSensor.length == 0? (this.selectedTx.orgLeft - (this.descriptionWidth + imageWidth)): this.selectedTx.orgLeft + DISP.TX.R - this.meditagWidth
-      return left + 'px'
-    },
-    getTop() {
+    getTxDetailTop() {
       const txR = DISP.TX.R * this.selectedTx.scale
       const height = this.getPopupHeight() // ポップアップの高さ
       let top = this.selectedTx.orgTop - height - txR
       //top += this.getProhibitAlertHeight()
-      return top + 'px'
-    },
-    getClass() {
-      const isOut = this.isOutOfFrame()
-      if (this.selectedTx.isAbove) {
-        return !isOut ? 'balloon-b' : 'balloon-br'
-      }
-      return !isOut ? 'balloon-u' : 'balloon-ur'
+      return top
     },
     getPopupHeight() {
       return this.selectedSensor.length == 0 ? DISP.TXDETAIL_POPUP_SIZE : DISP.TXMEDITAG_POPUP_SIZE
@@ -202,6 +251,7 @@ export default {
   position: absolute;
   padding: 0px;
   z-index: 5;
+  max-height: 135px;
 }
 .balloon::before {
   content: '';
@@ -236,43 +286,11 @@ export default {
   background-color: inherit;
 }
 
-/* 吹き出し・上辺左側 */
-.balloon-b::before {
-  top: -8px;
-  /* 位置 */
-  left: 15px;
-  /* 傾斜角(skew) */
-  transform: rotate(45deg) skew(10deg,10deg);
-}
-
-/* 吹き出し・下辺左側 */
-.balloon-u::before {
-  bottom: -8px;
-  /* 位置 */
-  left: 15px;
-  /* 傾斜角(skew) */
-  transform: rotate(45deg) skew(10deg,10deg);
-}
-
-/* 下辺右側 */
-.balloon-ur::before {
-  bottom: -8px;
-  right: 15px;
-  transform: rotate(45deg) skew(10deg,10deg);
-}
-
-/* 上辺右側 */
-.balloon-br::before {
-  top: -8px;
-  right: 15px;
-  transform: rotate(45deg) skew(10deg,10deg) translateZ(-1px);
-}
-
 .potBox {
   padding: 5px;
   overflow: hidden;
   border-radius: 3px;
-  font-size: 0.9em;
+  font-size: 13px;
   display: flex;
   flex-direction: column;
 }
@@ -292,7 +310,6 @@ export default {
 .description {
   float: left;
   height: 125px;
-  width: 147px;
   font-weight: bold;
   padding-left: 10px;
   overflow-y: scroll;
