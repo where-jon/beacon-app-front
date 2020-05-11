@@ -162,7 +162,7 @@ export default {
       this.zoneCd = zoneData.cd
       this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryNames, zoneData.categoryId)
       this.isEnableNameText = true
-      console.error(zoneData.categoryId, this.vueSelected.category)
+      console.warn(zoneData.categoryId, this.vueSelected.category)
     },
     unSelected () {
       this.isEnableNameText = false
@@ -238,13 +238,17 @@ export default {
         entity.extValue = JSON.stringify(extValue)
       }
 
-      entity.categoryCd = zone.zoneCategoryList.map(zc => {
-        const category = this.categories.find(category => category.categoryId == zc.zoneCategoryPK.categoryId)
-        if (category) {
-          entity.categoryCd = category.categoryCd
-        }
-        return category.categoryCd
-      }).join(';')
+      let category = null
+      if (zone.zoneCategoryList && zone.zoneCategoryList.length > 0) {
+        const zc = zone.zoneCategoryList[0]
+        const categoryId = zc.zoneCategoryPK.categoryId
+        category = this.categories.find(category => category.categoryId == categoryId)
+      }
+      if (category) {
+        entity.categoryCd = category.categoryCd
+      } else {
+        entity.categoryCd = ''
+      }
 
       const area = this.areas.find(ar => ar.areaId == zone.areaId)
       if (area) {

@@ -521,12 +521,17 @@ export default {
       this.zones.setInActive()
     },
     addZone (zoneRec) {
+      let categoryId = null
+      if (zoneRec.zoneCategoryList && zoneRec.zoneCategoryList.length > 0) {
+        const zc = zoneRec.zoneCategoryList[0]
+        categoryId = zc.zoneCategoryPK.categoryId
+      }
       const zone = new Zone({
         id: zoneRec.zoneId,
         areaId: this.areaId,
         cd: zoneRec.zoneCd,
         name: zoneRec.zoneName,
-        categoryId: zoneRec.categoryId,
+        categoryId: categoryId,
         startX: zoneRec.x * this.aspectRatio,
         startY: zoneRec.y * this.aspectRatio,
         stage: this.stage,
