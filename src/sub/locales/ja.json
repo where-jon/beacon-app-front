@@ -195,7 +195,6 @@
     "led_type5": "LED(Type5)",
     "ambientLight":"照度",
     "soundNoise":"騒音",
-    "led": "LED",
     "led_type3": "LED(Type3)",
     "meditag": "MEDiTAG",
     "magnet": "マグネット",
@@ -352,8 +351,6 @@
     "occupy": "満",
 
     "guestAccess": "来客アクセス管理",
-
-    "meeting_room": "会議室",
 
     "password": "パスワード",
     "passwordCurrent": "現在のパスワード",
@@ -1768,7 +1765,6 @@
     "loadingFile": "ファイルを読み込んでいます。({now} / {all} 件)",
     "networkError": "サーバに接続できません。",
     "noLedDevice": "操作できるLEDデバイスがありません。",
-    "providerUserNotAllowed": "プロバイダユーザではこの機能は利用できません。",
     "noPersonAssociated": "このユーザは人と関連付けがないため、この機能は使用できません。",
     "totalRowsMessage": "{row}件(表示は最新{maxRows}件まで)",
     "listEmpty": "データが存在しません。",

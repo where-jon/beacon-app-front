@@ -194,7 +194,6 @@
     "led_type3": "LED(Type3)",
     "ambientLight":"Brightness",
     "soundNoise":"Noise",
-    "led": "LED",
     "meditag": "MEDiTAG",
     "magnet": "Magnet",
     "omr-env": "Environmental sensor",
@@ -341,14 +340,11 @@
     "toilet": "Toilet",
     "male": "Male",
     "female": "Female",
-    "share": "Share",
     "multip": "Multipurpose",
     "empty": "｜",
     "occupy": "ー",
 
     "guestAccess": "Vistor access management",
-
-    "meeting_room": "Meeting room",
 
     "password": "Password",
     "passwordCurrent": "Current password",
@@ -503,10 +499,10 @@
     "graph": "Stay rate graph",
     "normalGraph": "Graph",
     
-    "stayRatioAbsent1Time": "Absence 1 hour",
-    "stayRatioAbsent1Ratio": "Absence 1 rate",
-    "stayRatioAbsent2Time": "Absense 2 hours",
-    "stayRatioAbsent2Ratio": "Absense 2 rate",
+    "stayRatioAbsent1Time": "Absence1 hour",
+    "stayRatioAbsent1Ratio": "Absence1 rate",
+    "stayRatioAbsent2Time": "Absense2 hour",
+    "stayRatioAbsent2Ratio": "Absense2 rate",
 
     "positionSummary": "Position summary",
 
@@ -583,7 +579,7 @@
     "number": "Number",
     "numberList": "Number list",
     "boolean": "Boolean value",
-    "datetime": "Date",
+    "datetime": "Date and time",
 
     "---------------- Added at 1.1 ---------------":"",
 
@@ -811,8 +807,8 @@
           "PASSWORD": "PASSWORD for email settings",
           "SMTP_HOST": "Mail setting HOST",
           "SMTP_PORT": "Mail setting Port",
-          "SMTP_AUTH": "Authentication for email settings",
-          "SMTP_STARTTLS": "TLS for email settings"
+          "SMTP_AUTH": "Authentication for email settings::Authentication for email settings.{SMTP_AUTH}",
+          "SMTP_STARTTLS": "TLS for email settings::TLS for email settings.{SMTP_STARTTLS}"
       },
       "POS": {
         "AUTO_RELOAD": "Position history automatic reload interval::Set the interval for performing automatic reloading of position history in the position (map) screen in milliseconds. ★",
@@ -825,7 +821,7 @@
         "MOVING_AVERAGE_TIME": "Moving average::Set up the moving average time that the server uses when aggregating location information.",
         "USE_MULTI_POSITIONING": "Use 3point Positioning::Use 3-point Positioning",
         "MULTI_POSITIONING_NUM": "Multipoint positioning::Set up the number of multipoint positioning",
-        "PROHIBIT_ALERT": "Use prohibited area::Use prohibited alert area",
+        "PROHIBIT_ALERT": "Use prohibited area::Use prohibited alert area.{PROHIBIT_ALERT}",
         "PROHIBIT_GROUP_ZONE": "Prohibited area inaccessible group setting::Set up the group CD with zone CDs that can not enter in the prohibited area.",
         "LOST_ALERT": "Use critical parts carrying out detection alert::Set up the method for notifying the critical parts carrying out detection alert. Possible to set up values are{LOST_ALERT}",
         "LOST_ALERT_TIME": "Important goods removal detection alert threshold::Specify the conditions for alerting detection of important goods removal detection. Notifies when the threshold (milliseconds) is exceeded after moving from the specified zone.",
@@ -1202,7 +1198,7 @@
         "HORIZON": "Number of columns when displaying TX icon tiles",
         "VERTICAL": "Number of lines when displaying TX icon tiles",
         "FIXED_POS": {
-          "APPLY_COLOR": "Apply fixed display settings (APP.FIXED_POS): Set up true if you want to apply the settings of colors and shapes set in: APP.FIXED_POS to fixed display.",
+          "APPLY_COLOR": "Apply fixed display settings (APP.FIXED_POS):: Set up true if you want to apply the settings of colors and shapes set in APP.FIXED_POS to fixed display.",
           "SHAPE": "Fixed display Tx icon shape :: Set up the value of SHAPE of Constants.",
           "R": "Fixed display Tx icon radius",
           "COLOR": "Fixed display Tx icon color",
@@ -1236,7 +1232,7 @@
         },
         "BGCOLOR_DEFAULT": "Icon background color of place layout setting screen (Tx related)::Set up the default background color of the icon associated with Tx displayed on the place setting screen. Set with a color code including #.",
         "BGCOLOR_DEFAULT_NOTX": "Icon background color of the location arrangement setting screen (when Tx is not related)::Set up the default background color of the icons that are not associated with Tx displayed on the location setting screen. Set up with a color code including #.",
-        "COLOR": "Set up the font color of the icons displayed on the location setting screen. Set up with a color code including #.",
+        "COLOR": "Set up the font color of the icons displayed on the location setting screen::Set up the font color of the icons displayed on the location setting screen. Set up with a color code including #.",
         "MAX_FONT_SIZE": "Icon maximum font of location arrangement setting screen::Set up the maximum font size of the icons displayed on the location setting screen.",
         "BGCOLOR_PATTERN": "Icon background color of place layout setting screen (Tx related)::Set up the background color of the icon associated with Tx displayed on the place setting screen. It can be specified for each location type and sensor type. Set up a color code that includes a value indicating the location type and #, separated by a colon, such as [1: # FFFFFF, 2: # FFFFFF, pir: # FFFFFF, magnet: #FFFFFF]. The following values can be set for the type of sensor.{SENSOR_TYPE}",
         "BGCOLOR_PATTERN_NOTX": "Icon background color of the location arrangement setting screen (Tx is not related)::Set up the background color of the icons that are not associated with Tx and displayed on the location setting screen. It can be specified for each location type and sensor type. Set up a color code that includes a value indicating the location type and #, separated by a colon, such as [1: # FFFFFF, 2: # FFFFFF, pir: # FFFFFF, magnet: #FFFFFF]. The following values can be set for the type of sensor.{SENSOR_TYPE}",
@@ -1377,7 +1373,7 @@
     },
     "EXSERVER": {
       "ENABLE": "Enable EXServer::Enable EXServer.",
-      "BASE_URL": "EXServerのURL::Set the EXServer URL.",
+      "BASE_URL": "EXServer's URL::Set the EXServer URL.",
       "MULTI_API": "EXServer 3-point positioning API::Use EXServer's three-point positioning API.",
       "MAX_DEVICES": "EXServer devices::Specify the number of EXBs to measure simultaneously on EXServer."
     },
@@ -1606,7 +1602,7 @@
         "thermopile": "thermopile::thermopile",
         "led_type2": "led(Type2)::LED(Type2)",
         "led_type5": "led(Type5)::LED(Type5)",
-        "led_type3": "led(Type5)::LED(Type3)",
+        "led_type3": "led(Type3)::LED(Type3)",
         "meditag": "meditag::MEDiTAG",
         "magnet": "magnet::Magnet",
         "button": "button::Button",
@@ -1704,7 +1700,6 @@
     "loadingFile": "Loading file. ({now} / {all})",
     "networkError": "Unable to connect to the server.",
     "noLedDevice": "There are no LED devices to operate.",
-    "providerUserNotAllowed": "This function is not available for provider users.",
     "noPersonAssociated": "This feature is not available because this user has no person associated with it.",
     "totalRowsMessage": "Total: {row} (Only latest {maxRows} are displayed)",
     "listEmpty": "There are no records matching your request.",
