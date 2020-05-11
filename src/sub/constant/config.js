@@ -517,7 +517,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     INUSE_LABEL: 'inUse', // PIRで存在時のラベルキー
     EMPTY_SHOW: true, // PIRで不在時に表示するか否か
     EMPTY_BGCOLOR: '#595959', // PIRで不存時の背景色
-    EMPTY_LABEL: 'empty', // PIRで不在時のラベルキー
+    EMPTY_LABEL: 'empty2', // PIRで不在時のラベルキー
   },
   PRESSURE: {
     R_SIZE: 26,  // 圧力センサ表示時の円の半径
@@ -527,7 +527,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     INUSE_LABEL: 'inUse', // 圧力センサで使用時のラベルキー
     EMPTY_SHOW: true, // 圧力センサで未使用時に表示するか否か
     EMPTY_BGCOLOR: '#595959', // 圧力センサで不存時の背景色
-    EMPTY_LABEL: 'empty', // 圧力センサで未使用時のラベルキー
+    EMPTY_LABEL: 'empty2', // 圧力センサで未使用時のラベルキー
   },
   MEDITAG: {
     STRESS_BG: ['#85A9D1', '#F0C864', '#F49696'], // ストレスレベルに応じた背景色
