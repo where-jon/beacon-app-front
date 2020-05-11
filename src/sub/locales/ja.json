@@ -283,7 +283,7 @@
     "key": "キー名",
     "keyName": "項目名",
     "defaultVal": "デフォルト値",
-    "defaultOther": "デフォルト(その他)",
+    "defaultOther": "その他(未設定)",
     "add": "追加",
     "addForm": "項目を追加",
     "addSetting": "新規登録",
