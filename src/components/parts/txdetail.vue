@@ -25,7 +25,7 @@
         </div>
       </div>
       <meditag :sensors="selectedSensor" :is-popup="true" />
-      <div id="popup-arrow" :style="arrowStyle" />
+      <div id="popup-arrow" :style="arrowStyle()" />
     </div>
     <txdetailmodal
       v-else
@@ -115,8 +115,48 @@ export default {
     descriptionSP() {
       return APP.TXDETAIL.NO_UNREGIST_THUMB ? 'descriptionSPNoThumbnail' : 'descriptionSP'
     },
+  },
+  created() {
+    this.setImageWidth()
+  },
+  mounted() {
+    microsoftTeams.initialize()
+  },
+  methods: {
+    descriptionStyle() {
+      const width = this.getDescWidth(this.isDisableThumbnail() ? 0 : this.imageWidth)
+      const obj = {
+        width: width + 'px'
+      }
+      this.descWidth = width
+      return obj
+    },
+    txDetailStyle() {
+      let width
+      if (this.selectedSensor.length == 0) {
+        width = this.getTxDetailWidth(this.isDisableThumbnail() ? 0 : this.imageWidth, this.descWidth)
+      } else {
+        width = this.meditagWidth
+      }
+      this.txDetailLeft = this.getTxDetailLeft(width)
+      let left = this.txDetailLeft
+      const right = left + width
+      const arrowRight = left + this.getArrowRight()
+
+      if (right < arrowRight) {
+        left += (arrowRight - right)
+      }
+      const top = this.getTxDetailTop()
+      const obj = {
+        top: top + 'px',
+        left: left + 'px',
+        backgroundColor: this.selectedSensor.length == 0 ? this.selectedTx.bgColor : this.selectedSensor[0].bg,
+        color: this.selectedSensor.length == 0? this.selectedTx.color: this.blackColor,
+      }
+      return obj
+    },
     arrowStyle() {
-      const left = this.selectedTx.orgLeft - this.txDetailLeft - 8
+      const left = this.getArrowLeft()
       const borderColor = this.selectedSensor.length == 0 ? this.selectedTx.bgColor : this.selectedSensor[0].bg
       let obj = {
         left: left + 'px',
@@ -136,54 +176,12 @@ export default {
         obj.borderLeft = '10px solid transparent'
       }
       return obj
-    }
-  },
-  watch: {
-    imageWidth: {
-      handler: function(newVal, oldVal) {
-        if (newVal != oldVal) {
-          this.descriptionStyle()
-        }
-      },
-      deep: false
     },
-    descWidth: {
-      handler: function(newVal, oldVal) {
-        if (newVal != oldVal) {
-          this.txDetailStyle()
-        }
-      },
-      deep: false
+    getArrowLeft() {
+      return this.selectedTx.orgLeft - this.txDetailLeft - 10
     },
-  },
-  created() {
-    this.setImageWidth()
-  },
-  mounted() {
-    microsoftTeams.initialize()
-  },
-  methods: {
-    descriptionStyle() {
-      const imageWidth = this.selectedSensor.length == 0 ? this.imageWidth : this.meditagWidt
-      const width = this.getDescWidth(imageWidth)
-      this.descWidth = width
-      const obj = {
-        width: width + 'px'
-      }
-      return obj
-    },
-    txDetailStyle() {
-      const imageWidth = this.selectedSensor.length == 0 ? this.imageWidth : this.meditagWidt
-      const top = this.getTxDetailTop()
-      const left = this.getTxDetailLeft(imageWidth, this.descWidth)
-      this.txDetailLeft = left
-      const obj = {
-        top: top + 'px',
-        left: left + 'px',
-        backgroundColor: this.selectedSensor.length == 0 ? this.selectedTx.bgColor : this.selectedSensor[0].bg,
-        color: this.selectedSensor.length == 0? this.selectedTx.color: this.blackColor,
-      }
-      return obj
+    getArrowRight() {
+      return this.getArrowLeft() + 20
     },
     getDescWidth(imageWidth) {
       const containerWidth = this.selectedTx.containerWidth
@@ -194,17 +192,16 @@ export default {
         }
         return accum
       }, 0)
-      const dataWidth = dataLength * 10 // 実際のフォントは13xだが半角も考慮して小さめに設定
+      const dataWidth = dataLength * 10 // 実際のフォントは13pxだが半角も考慮して小さめに設定
       const maxWidth = containerWidth - (imageWidth + 20)
       const width = dataWidth < maxWidth ? dataWidth : maxWidth
       return width < this.descriptionWidth ? this.descriptionWidth : width
     },
-    getTxDetailLeft(imageWidth, descWidth) {
+    getTxDetailLeft(txDetailWidth) {
       const containerWidth = this.selectedTx.containerWidth
-      let left = this.selectedTx.orgLeft - DISP.TXDETAIL_DIFF
+      let left = this.selectedTx.orgLeft - 20
+      const over = (left + txDetailWidth) - containerWidth
       if (this.selectedSensor.length == 0) {
-        const txDetailWidth = imageWidth + this.getDescWidth(imageWidth) + 20
-        const over = (left + txDetailWidth) - containerWidth
         if (0 < over) {
           if (containerWidth <= txDetailWidth) {
             left = 0
@@ -213,12 +210,14 @@ export default {
           }
         }
       } else {
-        const over = (left + imageWidth) - containerWidth
         if (0 < over) {
           left = left - over
         }
       }
       return left
+    },
+    getTxDetailWidth(imageWidth, descWidth) {
+      return imageWidth + descWidth + 20
     },
     isDisableThumbnail() {
       return APP.TXDETAIL.NO_UNREGIST_THUMB ? !(this.selectedTx.thumbnail.length > 0) : false
