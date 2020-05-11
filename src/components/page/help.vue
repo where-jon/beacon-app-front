@@ -263,7 +263,7 @@ export default {
       case 'potPerson':
         return [
           { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
-          { isActive: true, displayName: this.getLabel('potCd'), keyName: 'potCd' },
+          { isActive: true, displayName: this.getLabel('potCd'), keyName: this.getLabel('potCd') },
           { isActive: true, displayName: this.getLabel('btxId'), keyName: 'btxId' },
           { isActive: true, displayName: this.getLabel('potName'), keyName: 'potName' },
           { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'potType' },
@@ -276,7 +276,7 @@ export default {
       case 'potThing':
         return [
           { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
-          { isActive: true, displayName: this.getLabel('potCd'), keyName: 'potCd' },
+          { isActive: true, displayName: this.getLabel('potCd'), keyName: this.getLabel('potCd') },
           { isActive: true, displayName: this.getLabel('btxId'), keyName: 'btxId' },
           { isActive: true, displayName: this.getLabel('potName'), keyName: 'potName' },
           { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'potType' },
@@ -289,7 +289,7 @@ export default {
       case 'potOther':
         return [
           { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
-          { isActive: true, displayName: this.getLabel('potCd'), keyName: 'potCd' },
+          { isActive: true, displayName: this.getLabel('potCd'), keyName: this.getLabel('potCd') },
           { isActive: true, displayName: this.getLabel('btxId'), keyName: 'btxId' },
           { isActive: true, displayName: this.getLabel('potName'), keyName: 'potName' },
           { isActive: true, displayName: this.getHelpDescription('empty'), keyName: 'potType' },
