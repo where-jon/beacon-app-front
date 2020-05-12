@@ -16,7 +16,7 @@
       </div>
       <div class="smallBox elapsedTime">
         <span><img src="~/assets/icon/clock.svg" width="32" height="32"><span style="margin-left: 5px;" v-t="'label.elapsed_time'" /></span>
-        <div class="numval">{{ elapsedTime | number_format }}<span v-t="'label.hour'"></span></div>
+        <div class="numval">{{ elapsedTime | number_format }}<span v-t="'label.hours'"></span></div>
       </div>
     </div>
     <div style="clear:both;">

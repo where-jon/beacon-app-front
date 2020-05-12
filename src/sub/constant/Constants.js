@@ -364,7 +364,7 @@ export const SUM_UNIT = {
   getOptions(){
     return [
       {value:1, text: i18n.t('label.minute'), param: 'minute'},
-      {value:2, text: i18n.t('label.hour'), param: 'hour'},
+      {value:2, text: i18n.t('label.hours'), param: 'hour'},
       {value:3, text: i18n.t('label.day'), param: 'day'},
     ]
   }

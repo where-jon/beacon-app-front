@@ -5,11 +5,29 @@
       <alert :message="message" />
 
       <b-form @submit.prevent>
-        <b-form-row>
+        <b-form-row v-if="page=='activityGraph'">
           <span v-t="'label.historyDateFrom'" class="d-flex align-items-center" />
           <date-picker v-model="form.datetimeFrom" :clearable="false" type="datetime" class="ml-2 inputdatefrom" required />
           <span v-t="'label.historyDateTo'" class="d-flex align-items-center ml-2" />
           <date-picker v-model="form.datetimeTo" :clearable="false" type="datetime" class="ml-2 inputdateto" required />
+        </b-form-row>
+        <b-form-row v-if="page=='meetingGraph'">
+          <table>
+            <tr>
+              <td><span v-t="'label.historyDateFrom'" class="d-flex align-items-center" /></td>
+              <td><date-picker v-model="form.datetimeFrom" :clearable="false" type="date" class="inputdatefrom" required /></td>
+              <td><b-form-select v-model="form.hourFrom" :options="hoursOptions" /></td>
+              <td>{{ $i18n.tnl('label.hour') }}</td>
+              <td><b-form-select v-model="form.minuteFrom" :options="minutesOptions" /></td>
+              <td>{{ $i18n.tnl('label.minute') }}</td>
+              <td><span v-t="'label.historyDateTo'" class="d-flex align-items-center" /></td>
+              <td><date-picker v-model="form.datetimeTo" :clearable="false" type="date" class="inputdateto" required /></td>
+              <td><b-form-select v-model="form.hourTo" :options="hoursOptions" /></td>
+              <td>{{ $i18n.tnl('label.hour') }}</td>
+              <td><b-form-select v-model="form.minuteTo" :options="minutesOptions"/></td>
+              <td>{{ $i18n.tnl('label.minute') }}</td>
+            </tr>
+          </table>
         </b-form-row>
 
         <b-form-row class="mt-3">
@@ -103,6 +121,10 @@ export default {
       form: {
         datetimeFrom: '',
         datetimeTo: '',
+        hourFrom: 0,
+        hourTo: 0,
+        minuteFrom: 0,
+        minuteTo: 0,
         graph: 'location'
       },
       vueSelected: {
@@ -126,6 +148,20 @@ export default {
         { value: 'location', text: this.$i18n.tnl('label.initLocation')},
         { value: 'zone', text: this.$i18n.tnl('label.zone')}
       ]
+    },
+    hoursOptions(){
+      let ret = []
+      for(let i = 0; i < 24; i++){
+        ret.push({ value:i, text:i })
+      }
+      return ret
+    },
+    minutesOptions(){
+      let ret = []
+      for(let i = 0; i < 60; i += APP.POSITION_SUMMARY_INTERVAL){
+        ret.push({ value:i, text:i })
+      }
+      return ret
     } 
   },
   watch: {
@@ -199,7 +235,7 @@ export default {
         this.hideProgress()
       }
     },
-    getTotal(fromDt, toDt, doRound=false){
+    getTotal(fromDt, toDt){
       let fromDate = fromDt.getYear()*10000 + fromDt.getMonth()*100 + fromDt.getDate()
       let toDate = toDt.getYear()*10000 + toDt.getMonth()*100 + toDt.getDate()
       const start = (Math.floor(APP.SVC.STAY_SUM.START / 100)*60 + APP.SVC.STAY_SUM.START % 100) * 60
@@ -220,12 +256,6 @@ export default {
       const isEnd = toTime > end // endで丸めたか？
       toTime = Math.min(toTime, end)
 
-      // 指定時間を丸める
-      if(doRound){
-        fromTime = this.round(fromTime)
-        toTime = this.round(toTime)
-      }
-
       // 1日の場合
       let total = 0
       if(fromDate == toDate){
@@ -235,9 +265,6 @@ export default {
         total += end - fromTime
         total += toTime - start
         total += (toDate - fromDate - 1) * (end - start)
-      }
-      if(doRound && !isEnd){
-        total += APP.POSITION_SUMMARY_INTERVAL * 60
       }
       Util.debug('total', total)
       return total
