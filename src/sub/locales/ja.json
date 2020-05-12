@@ -1579,8 +1579,7 @@
         "locationName": "locationName::場所名",
         "areaName": "areaName::エリア名",
         "x": "x::X座標",
-        "y": "y::Y座標",
-        "txName": "Tx名"
+        "y": "y::Y座標"
       },
       "POS_LIST": {
         "tel": "tel::電話番号",
