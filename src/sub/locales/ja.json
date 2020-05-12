@@ -1060,8 +1060,6 @@
         "STACK_TYPE": "活動実績の集計方法::活動実績の集計方法を指定します。(location zoneCategory)"
       },
       "MEETING": {
-        "GROUP_BY": "利用人数分析の集計単位::利用人数分析の集計単位を指定します。(exb location)",
-        "AXIS_TYPE": "リストの表示単位::リストの表示単位を指定します。(exb location zone)",
         "MAX_NUM": "利用人数集計の最大値::最大利用人数を設定します。1以上を設定してください。"
       },
       "ATTENDANCE": {

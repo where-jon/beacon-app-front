@@ -4,67 +4,68 @@
     <div class="container">
       <alert :message="message" />
 
-      <b-form v-if="show" @submit.prevent="save">
-        <b-form-group>
-          <b-form-row>
-            <label v-t="'label.id'" />
-          </b-form-row>
-          <b-form-row>
-            <b-col sm="5">
-              <input v-model="form.zoneCd" :readonly="!isEditable" type="text" maxlength="20" class="form-control" :pattern="cdPattern" required>
-            </b-col>
-          </b-form-row>
-        </b-form-group>
-        <b-form-group v-show="zoneTypeOptions.length > 1">
-          <label v-t="'label.zoneType'" />
-          <b-form-radio-group v-model="form.zoneType" :options="zoneTypeOptions" :disabled="!isEditable || hasId" :required="zoneTypeOptions.length > 1" />
-        </b-form-group>
-        <b-form-group>
-          <b-form-row>
-            <label v-t="'label.zoneName'" class="control-label" />
-          </b-form-row>
-          <b-form-row>
-            <b-col sm="5">
-              <input v-model="form.zoneName" :readonly="!isEditable" :disabled="!isEnableNameText" type="text" maxlength="20" class="form-control" required>
-            </b-col>
-          </b-form-row>
-        </b-form-group>
+      <b-row>
+        <b-col md="8" offset-md="2">
+          <b-form v-if="show" @submit.prevent="save">
+            <b-form-group>
+              <b-form-row>
+                <label v-t="'label.id'" />
+              </b-form-row>
+              <b-form-row>
+                <input v-model="form.zoneCd" :readonly="!isEditable" type="text" maxlength="20" class="form-control" :pattern="cdPattern" required>
+              </b-form-row>
+            </b-form-group>
+            <b-form-group v-show="zoneTypeOptions.length > 1">
+              <label v-t="'label.zoneType'" />
+              <b-form-radio-group v-model="form.zoneType" :options="zoneTypeOptions" :disabled="!isEditable || hasId" :required="zoneTypeOptions.length > 1" />
+            </b-form-group>
+            <b-form-group>
+              <b-form-row>
+                <label v-t="'label.zoneName'" class="control-label" />
+              </b-form-row>
+              <b-form-row>
+                <input v-model="form.zoneName" :readonly="!isEditable" :disabled="!isEnableNameText" type="text" maxlength="20" class="form-control" required>
+              </b-form-row>
+            </b-form-group>
 
-        <extform :is-editable="isEditable" :form="form" :p-ext-value="extValue" />
+            <extform :is-editable="isEditable" :form="form" :p-ext-value="extValue" />
 
-        <b-form-group>
-          <b-form-row>
-            <label v-t="'label.areaName'" class="control-label" />
-          </b-form-row>
-          <b-form-row>
-            <b-col sm="5">
-              <v-select v-model="vueSelected.area" :options="areaNames" :disabled="!isEditable" class="vue-options-lg">
-                <template slot="no-options">
-                  {{ vueSelectNoMatchingOptions }}
-                </template>
-              </v-select>
-            </b-col>
-          </b-form-row>
-          <b-form-row>
-            <label v-t="'label.categoryName'" class="control-label" />
-          </b-form-row>
-          <b-form-row>
-            <b-col sm="5">
-              <v-select v-model="vueSelected.category" :options="categoryNames" :disabled="!isEditable" class="vue-options-lg">
-                <template slot="no-options">
-                  {{ vueSelectNoMatchingOptions }}
-                </template>
-              </v-select>
-            </b-col>
-          </b-form-row>
-        </b-form-group>
+            <b-form-group>
+              <b-form-row>
+                <label v-t="'label.areaName'" class="control-label" />
+              </b-form-row>
+              <b-form-row>
+                <v-select v-model="vueSelected.area" :options="areaNames" :disabled="!isEditable" class="vue-options-lg">
+                  <template slot="no-options">
+                    {{ vueSelectNoMatchingOptions }}
+                  </template>
+                </v-select>
+              </b-form-row>
+              <b-form-row>
+                <label v-t="'label.categoryName'" class="control-label" />
+              </b-form-row>
+              <b-form-row>
+                <v-select v-model="vueSelected.category" :options="categoryNames" :disabled="!isEditable" class="vue-options-lg">
+                  <template slot="no-options">
+                    {{ vueSelectNoMatchingOptions }}
+                  </template>
+                </v-select>
+              </b-form-row>
+            </b-form-group>
 
-        <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
-        <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="doBeforeSubmit(false)">
-          {{ $i18n.tnl(`label.${isUpdate? 'update': 'register'}`) }}
-        </b-button>
-        <b-button v-if="isRegistable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" @click="doBeforeSubmit(true)" />
-      </b-form>
+            <b-form-group>
+              <label v-t="'label.capacity'" />
+              <input v-model="form.capacity" :readonly="!isEditable" type="number" min="0" max="99999" class="form-control">
+            </b-form-group>
+
+            <b-button v-t="'label.back'" type="button" variant="outline-danger" class="mr-2 my-1" @click="backToList" />
+            <b-button v-if="isEditable" :variant="theme" type="submit" class="mr-2 my-1" @click="doBeforeSubmit(false)">
+              {{ $i18n.tnl(`label.${isUpdate? 'update': 'register'}`) }}
+            </b-button>
+            <b-button v-if="isRegistable && !isUpdate" v-t="'label.registerAgain'" :variant="theme" type="submit" class="my-1" @click="doBeforeSubmit(true)" />
+          </b-form>
+        </b-col>
+      </b-row>
     </div>
   </div>
 </template>
@@ -122,7 +123,7 @@ export default {
       name: 'zone',
       id: 'zoneId',
       form: Util.extract(this.$store.state.app_service.zone, [
-        'zoneId', 'zoneCd', 'zoneType', 'zoneName',
+        'zoneId', 'zoneCd', 'zoneType', 'zoneName', 'capacity',
         'areaId', 'locationZoneList.0.locationZonePK.locationId', 'zoneCategoryList',
         ...ExtValueHelper.getExtValueKeys(APP.ZONE, true)
       ]),
@@ -232,6 +233,7 @@ export default {
         ID: this.form.zoneCd,
         zoneName: this.form.zoneName,
         extValue: null,
+        capacity: this.form.capacity
       }
 
       const extValue = {}

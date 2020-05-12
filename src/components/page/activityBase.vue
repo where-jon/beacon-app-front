@@ -4,44 +4,49 @@
     <div class="container">
       <alert :message="message" />
 
-      <b-form inline @submit.prevent>
-        <b-form-group>
-          <b-form-row class="mr-3">
-            <span v-t="'label.historyDateFrom'" class="d-flex align-items-center" />
-            <date-picker v-model="form.datetimeFrom" :clearable="false" type="datetime" class="ml-2 inputdatefrom" required />
-            <span v-t="'label.historyDateTo'" class="d-flex align-items-center ml-2" />
-            <date-picker v-model="form.datetimeTo" :clearable="false" type="datetime" class="ml-2 inputdateto" required />
+      <b-form @submit.prevent>
+        <b-form-row>
+          <span v-t="'label.historyDateFrom'" class="d-flex align-items-center" />
+          <date-picker v-model="form.datetimeFrom" :clearable="false" type="datetime" class="ml-2 inputdatefrom" required />
+          <span v-t="'label.historyDateTo'" class="d-flex align-items-center ml-2" />
+          <date-picker v-model="form.datetimeTo" :clearable="false" type="datetime" class="ml-2 inputdateto" required />
+        </b-form-row>
 
-            <label v-if="filter=='group'" v-t="'label.group'" class="ml-2" />
-            <span v-if="filter=='group'" :title="vueSelectTitle(vueSelected.group)">
-              <v-select v-model="vueSelected.group" :options="groupOptions" class="ml-2 inputSelect vue-options">
-                <template slot="selected-option" slot-scope="option">
-                  {{ vueSelectCutOn(option) }}
-                </template>
-                <template slot="no-options">
-                  {{ vueSelectNoMatchingOptions }}
-                </template>
-              </v-select>
-            </span>
+        <b-form-row class="mt-3">
+          <span v-if="filter=='group'" v-t="'label.group'" class="d-flex align-items-center" />
+          <span v-if="filter=='group'" :title="vueSelectTitle(vueSelected.group)">
+            <v-select v-model="vueSelected.group" :options="groupOptions" class="ml-2 inputSelect vue-options">
+              <template slot="selected-option" slot-scope="option">
+                {{ vueSelectCutOn(option) }}
+              </template>
+              <template slot="no-options">
+                {{ vueSelectNoMatchingOptions }}
+              </template>
+            </v-select>
+          </span>
 
-            <label v-if="filter=='area'" v-t="'label.area'" class="ml-2" />
-            <span v-if="filter=='area'" :title="vueSelectTitle(vueSelected.area)">
-              <v-select v-model="vueSelected.area" :options="areaOptions" class="ml-2 inputSelect vue-options">
-                <template slot="selected-option" slot-scope="option">
-                  {{ vueSelectCutOn(option) }}
-                </template>
-                <template slot="no-options">
-                  {{ vueSelectNoMatchingOptions }}
-                </template>
-              </v-select>
-            </span>
-          </b-form-row>
+          <span v-if="filter=='area'" v-t="'label.area'" class="d-flex align-items-center" />
+          <span v-if="filter=='area'" :title="vueSelectTitle(vueSelected.area)">
+            <v-select v-model="vueSelected.area" :options="areaOptions" class="ml-2 inputSelect vue-options">
+              <template slot="selected-option" slot-scope="option">
+                {{ vueSelectCutOn(option) }}
+              </template>
+              <template slot="no-options">
+                {{ vueSelectNoMatchingOptions }}
+              </template>
+            </v-select>
+          </span>
 
-          <b-form-row class="mt-3 mb-3">
-            <b-button v-t="'label.display'" type="submit" :variant="theme" @click="display(false)" />
-            <b-button v-if="download" v-t="'label.download'" type="submit" :variant="theme" @click="display(true)" class="ml-2" />
-          </b-form-row>
-        </b-form-group>
+          <span v-if="page=='meetingGraph'" v-t="'label.mode'" class="d-flex align-items-center" />
+          <span v-if="page=='meetingGraph'" :title="vueSelectTitle(vueSelected.area)">
+            <b-form-select v-model="form.graph" :options="graphOptions" class="ml-2" />
+          </span>
+        </b-form-row>
+
+        <b-form-row class="mt-3 mb-3">
+          <b-button v-t="'label.display'" type="submit" :variant="theme" @click="display(false)" />
+          <b-button v-if="download" v-t="'label.download'" type="submit" :variant="theme" @click="display(true)" class="ml-2" />
+        </b-form-row>
       </b-form>
 
       <slot />
@@ -97,11 +102,12 @@ export default {
       breadCrumbs: ViewHelper.createBreadCrumbItems('sumTitle', this.page),
       form: {
         datetimeFrom: '',
-        datetimeTo: ''
+        datetimeTo: '',
+        graph: 'location'
       },
       vueSelected: {
         group: null,
-        category: null,
+        area: null
       },
       message: '',
       viewList: [],
@@ -115,6 +121,12 @@ export default {
     }
   },
   computed: {
+    graphOptions(){
+      return [
+        { value: 'location', text: this.$i18n.tnl('label.initLocation')},
+        { value: 'zone', text: this.$i18n.tnl('label.zone')}
+      ]
+    } 
   },
   watch: {
     'vueSelected.group': {
