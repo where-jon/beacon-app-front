@@ -869,7 +869,6 @@ export const SETTING = {
       EXSERVER: {
         BASE_URL: SETTING.STRING,
         MULTI_API: SETTING.BOOLEAN,
-        TIME_RANGE: SETTING.NUMBER,
         MAX_DEVICES: SETTING.NUMBER,
       },
     }
