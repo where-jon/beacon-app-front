@@ -41,33 +41,28 @@ export default {
       const param = {}
       const from = new Date(form.datetimeFrom).getTime()
       const to = new Date(form.datetimeTo).getTime()
-      const url = `/core/positionHistory/summaryBy/${APP.MEETING.GROUP_BY}_id/${from}/${to}/${APP.POSITION_SUMMARY_INTERVAL}/${APP.POSITION_SUMMARY_RECEIVE_COUNT}`
+      const url = `/core/positionHistory/summaryBy/${form.graph}_id/${from}/${to}/${APP.POSITION_SUMMARY_INTERVAL}/${APP.POSITION_SUMMARY_RECEIVE_COUNT}`
       const data = await HttpHelper.getAppService(url)
       Util.debug('data', data)
 
       let ret = null
-      if(APP.MEETING.AXIS_TYPE == "exb"){
-        ret = data.map( d => {
-          const exb = this.exbIdMap[d.axisId]
-          const capacity = Util.v(exb, 'location.capacity')
-          return {...d, name: exb.deviceId, areaId: exb.areaId, areaName: exb.areaName, capacity }
-        })
-      }else if(APP.MEETING.AXIS_TYPE == "location"){
+      // if(APP.MEETING.AXIS_TYPE == "exb"){
+      //   ret = data.map( d => {
+      //     const exb = this.exbIdMap[d.axisId]
+      //     const capacity = Util.v(exb, 'location.capacity')
+      //     return {...d, name: exb.deviceId, areaId: exb.areaId, areaName: exb.areaName, capacity }
+      //   })
+      if(form.graph == "location"){
         ret = data.map( d => {
           const location = this.locationIdMap[d.axisId]
           const capacity = Util.v(location, 'capacity')
           return {...d, name: location.locationName, areaId: location.area.areaId, areaName: location.area.areaName, capacity}
         })
-      // locationとzoneは1対1が前提。表示がzone名になるだけ。
-      }else if(APP.MEETING.AXIS_TYPE == "zone"){
-        ret = data.filter(d => {
-          const location = this.locationIdMap[d.axisId]
-          return location.zoneList && location.zoneList.length >= 1
-        }).map( d => {
-          const location = this.locationIdMap[d.axisId]
-          const zone = location.zoneList[0]
-          const capacity = Util.v(location, 'capacity')
-          return {...d, name: zone.zoneName, areaId: location.area.areaId, areaName: location.area.areaName, capacity}
+      }else if(form.graph == "zone"){
+        ret = data.map( d => {
+          const zone = this.zoneIdMap[d.axisId]
+          const capacity = Util.v(zone, 'capacity')
+          return {...d, name: zone.zoneName, areaId: Util.v(zone, 'area.areaId'), areaName: Util.v(zone, 'area.areaName'), capacity}
         })
       }
       Util.debug('data2', ret)

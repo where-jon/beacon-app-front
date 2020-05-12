@@ -1010,8 +1010,6 @@
         "STACK_TYPE": "Aggregation method of activity results::Specify the aggregation method of activity results.(location zoneCategory)"
       },
       "MEETING": {
-        "GROUP_BY": "Aggregation unit of meeting room use results::Specify the total unit of the meeting room use results.(EXB location)",
-        "AXIS_TYPE": "Display unit of meeting room use results::Specify the display unit of the meeting room.(EXB location zone)",
         "MAX_NUM": "Maximum value of meeting room usage total"
       },
       "SVC": {
