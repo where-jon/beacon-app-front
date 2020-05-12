@@ -1668,7 +1668,7 @@
         "thermopile": "thermopile::サーモパイル",
         "led_type2": "led(Type2)::LED(Type2)",
         "led_type5": "led(Type5)::LED(Type5)",
-        "led_type3": "led(Type5)::LED(Type3)",
+        "led_type3": "led(Type3)::LED(Type3)",
         "meditag": "meditag::MEDiTAG",
         "magnet": "magnet::マグネット",
         "button": "button::ボタン",
