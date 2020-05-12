@@ -230,7 +230,8 @@ export default {
       if (path && this.useLastUrl(lastPath)) {
         this.fromPageUrl = '#' + lastPath
       } else {
-        this.fromPageUrl = path? '#' + path[path.length - 2] + '_' + lastPath: ''
+        const url = path? '#' + path[path.length - 2] + '_' + lastPath: ''
+        this.fromPageUrl = url == '#role_edit' ? '#master_role' : url
       }
       this.$root.$emit('bv::show::modal', 'helpModal')
     },

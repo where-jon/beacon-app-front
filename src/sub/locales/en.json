@@ -1791,7 +1791,8 @@
     "bulkAuthFailed": "Target item name can not be used because it is already used internally.",
     "bulkSystemUseFailed": "The target item name can not be changed because it is a fixed data used in the system. To continue registration, the target data needs to be deleted from the CSV.",
     "bulkSystemUseNameFailed": "The target item name can not be used because it is a fixed name used in the system. It needs to be registered with a different name.",
-
+    "featureId": "Not displayed. An ID that uniquely identifies each feature. Specify the feature to be set in the relevant role.",
+    "roleId": "Not displayed. An ID that uniquely identifies each role (the same information as updateKey). This is supplemental information and is not reflected even if changed.",
     "dummy": ""
   },
   "helpIntroduction": {
