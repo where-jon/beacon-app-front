@@ -39,8 +39,8 @@ export default {
     },
     async fetchData(form){
       const param = {}
-      const from = new Date(form.datetimeFrom).getTime()
-      const to = new Date(form.datetimeTo).getTime()
+      const from = new Date(form.datetimeFrom).getTime() + (form.hourFrom * 60 + form.minuteFrom ) * 60 * 1000
+      const to = new Date(form.datetimeTo).getTime() + (form.hourTo * 60 + form.minuteTo ) * 60 * 1000
       const url = `/core/positionHistory/summaryBy/${form.graph}_id/${from}/${to}/${APP.POSITION_SUMMARY_INTERVAL}/${APP.POSITION_SUMMARY_RECEIVE_COUNT}`
       const data = await HttpHelper.getAppService(url)
       Util.debug('data', data)
@@ -74,7 +74,7 @@ export default {
 
       const start = new Date(form.datetimeFrom)
       const end = new Date(new Date(form.datetimeTo).getTime() - 1000) // 1秒引いておく
-      const total = func.getTotal(start, end, true)
+      const total = func.getTotal(start, end)
 
       const from = start.getTime()
       const to = end.getTime()
