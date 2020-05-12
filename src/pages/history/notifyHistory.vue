@@ -478,8 +478,9 @@ export default {
       const state = this.form.notifyState ? this.form.notifyState : 0
       const txId = this.txId ? "?txId="+this.txId : ""
       const charset = getCharSet(this.$store.state.loginId)
+      const header = this.$i18n.tnl('label.success') + '_' + this.$i18n.tnl('label.failed') + '_' + this.getCsvHeaderList()
       BrowserUtil.executeFileDL(
-        APP_SERVICE.BASE_URL + `/core/rcvexcloud/csvdownload/${state}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/${charset}${txId}`
+        APP_SERVICE.BASE_URL + `/core/rcvexcloud/csvdownload/${state}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/${charset}/${header}${txId}`
       )
     },
     getFields(aNotifyState) {
@@ -504,7 +505,7 @@ export default {
     getCsvHeaderList() {
       return  this.getFields(this.form.notifyState).map((record) => {
         return record.label
-      }).join(',') + '\n'
+      }).join(',')
     }
   }
 }
