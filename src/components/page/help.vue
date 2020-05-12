@@ -383,7 +383,14 @@ export default {
         return [
           { isActive: true, displayName: this.getHelpDescription('updateKey'), keyName: 'updateKey' },
           { isActive: true, displayName: this.getLabel('roleName'), keyName: 'roleName' },
+          { isActive: true, displayName: this.getHelpDescription('featureId'), keyName: 'featureId' },
+          { isActive: true, displayName: this.getLabel('featureName'), keyName: 'featureName' },
+          { isActive: true, displayName: this.getLabel('path'), keyName: 'path' },
+          { isActive: true, displayName: this.getLabel('mode'), keyName: 'mode' },
+          { isActive: true, displayName: this.getLabel('featureType'), keyName: 'featureType' },
+          { isActive: true, displayName: this.getLabel('version'), keyName: 'version' },
           { isActive: true, displayName: this.getHelpDescription('delFlg'), keyName: 'delFlg' },
+          { isActive: true, displayName: this.getHelpDescription('roleId'), keyName: 'roleId' },
         ]
       case 'zoneClass':
         return [
