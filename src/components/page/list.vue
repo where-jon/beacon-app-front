@@ -3,6 +3,7 @@
     <input type="password" style="display:none">
     <b-container :fluid="isFluid" @click="resetDetail">
       <alert :message="showMessage? message: error" :force-hide="alertForceHide" />
+      <div v-if="systemPopupObj" id="systemPopup" :style="systemPopupObj.style">{{ systemPopupObj.title }}</div>
 
       <!-- searchbox -->
       <template v-if="!params.hideSearchBox">
@@ -242,14 +243,14 @@
         </template>
         <!-- 設定用 -->
         <template slot="key" slot-scope="row">
-          <div v-b-tooltip="getTooltipInfo(row.item)">
+          <div class="systemPopup" @mouseover="onSystemItemHover($event, row.item)" @mouseleave="hideSystemPopup">
             <span>
               {{ row.item.key }}
             </span>
           </div>
         </template>
         <template slot="keyName" slot-scope="row">
-          <div v-b-tooltip="getTooltipInfo(row.item)">
+          <div class="systemPopup" @mouseover="onSystemItemHover($event, row.item)" @mouseleave="hideSystemPopup">
             <span>
               {{ row.item.keyName }}
             </span>
@@ -314,7 +315,6 @@ import detailFilter from '../../components/parts/detailFilter.vue'
 import alert from '../parts/alert.vue'
 import settinginput from '../parts/settinginput.vue'
 import txdetail from '../../components/parts/txdetail.vue'
-
 
 export default {
   components: {
@@ -417,7 +417,12 @@ export default {
       sortDesc: false,
       lasteFetched: 0,
       sortCompare: (aData, bData, key) => this.sortCompareCustom(aData, bData, key),
-      ...this.params
+      ...this.params,
+      systemPopupObj: null,
+      navRect: null,
+      sidebarRect: null,
+      systemPopupHoverX: 0,
+      systemPopupHoverY: 0,
     }
   },
   computed: {
@@ -558,6 +563,9 @@ export default {
       }
       this.replaceAS({editPage: null, moveEditPage: false})
     })
+
+    this.navRect = DomUtil.getRect('nav')
+    this.sidebarRect = DomUtil.getRect('#bd-sidebar')
   },
   // beforeDestroy() {
   //   document.removeEventListener('touchstart', this.touchEnd)
@@ -603,20 +611,43 @@ export default {
     getItem(key){
       return this.callParentMethodOrDef('getItem', {}, key)
     },
-    getTooltipInfo(item){
-      const ret = {
-        placement: 'bottom',
-        trigger: 'hover',
-        html: true,
-        delay: {
-          show: 500,
-          hide: 0,
-        },
-      }
+    onSystemItemHover(event, item) {
       if(Util.hasValue(item.title)){
-        ret.title = item.title
+        const elm = DomUtil.closest(event.target, '.systemPopup')
+        const rect = elm.getBoundingClientRect()
+        const scrollY = window.scrollY
+        window.scrollTo(0, scrollY)
+        const title = item.title
+        const fontSize = 13
+        const lineHeight = 1.5
+        const padding = 5
+        this.systemPopupObj = {
+          title: title,
+          style : {
+            'font-size': fontSize + 'px',
+            'line-height': lineHeight,
+            left: rect.left - this.sidebarRect.width + 'px',
+            top: scrollY + rect.top - this.navRect.height - (title.split("\n").length * fontSize * lineHeight) - padding * 2 + 'px',
+            'white-space': 'pre-wrap',
+            position: 'absolute',
+            'box-sizing': 'border-box',
+            'border': 'solid 1px #808080',
+            'border-radius': '5px',
+            'background-color': '#ffffe0',
+            'padding': padding + 'px',
+            'z-index': 99
+          },
+        }
+        this.systemPopupHoverX = event.pageX
+        this.systemPopupHoverY = event.pageY
       }
-      return ret
+    },
+    hideSystemPopup(event) {
+      if (event.pageX != this.systemPopupHoverX || event.pageY != this.systemPopupHoverY) {
+        this.systemPopupObj = null
+        this.systemPopupHoverX = 0
+        this.systemPopupHoverY = 0
+      }
     },
     clearAction(key){
       this.callParentMethod('clearAction', key)

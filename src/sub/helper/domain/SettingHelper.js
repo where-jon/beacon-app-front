@@ -40,7 +40,7 @@ export const convertTitle = str => {
     const optionsJson = Util.getValue(optionsList, src.replace(/[{}]/g, ''), {})
     const option = Object.keys(optionsJson).reduce((prev, cur) => {
       const elem = optionsJson[cur].split('::')
-      return prev + '<br>' + elem[0] + ' : ' + elem[1]
+      return prev + '\n' + elem[0] + ' : ' + elem[1]
     }, '')
     str = str.replace(new RegExp(src, 'g'), option)
   })
