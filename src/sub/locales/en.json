@@ -281,7 +281,7 @@
     "key": "Key",
     "keyName": "Item name",
     "defaultVal": "Default value",
-    "defaultOther": "Default(other)",
+    "defaultOther": "Other(Not set)",
     "add": "Add",
     "addForm": "Add item",
     "addSetting": "New registration",
