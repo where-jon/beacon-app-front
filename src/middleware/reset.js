@@ -10,4 +10,9 @@ export default function (context) {
   Util.removeInterval()
 
   LocalStorageHelper.setLocalStorage('defaultConfigDescription', JSON.stringify(context.app.$i18n.tnl('config'))) // TODO: 未使用なら削除
+
+  // IE11のみGC実行
+  if(window.CollectGarbage){
+    window.CollectGarbage()
+  }
 }

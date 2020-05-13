@@ -150,6 +150,7 @@ export default {
                 btxId,
                 name: Util.getValue(tx, 'pot.potName'),
                 power_level: powerLevel,
+                timestamp: EXCloudHelper.getDispTime(e),
                 powerLevelTimestamp: this.getTimestamp(EXCloudHelper.getDispTime(e)),
                 finalReceiveTimestamp: this.getTimestamp(EXCloudHelper.getDispTime(e)),
                 state: this.$refs.monitorTable.getStateLabel('tx', EXCloudHelper.getDispTime(e)),

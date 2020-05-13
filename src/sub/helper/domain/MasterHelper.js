@@ -18,6 +18,7 @@ import * as SensorHelper from '../domain/SensorHelper'
 
 let store
 let i18n
+let onRefreshMasterFunc
 
 /**
  * vue.jsで使用するオブジェクトを設定する。
@@ -28,6 +29,15 @@ let i18n
 export const setApp = (pStore, pi18n) => {
   store = pStore
   i18n = pi18n
+}
+
+/**
+ * マスタ取得後のコールバック関数を保存
+ * 
+ * @param {*} pOnRefreshMasterFunc 
+ */
+export const setRefreshMasterCallback = (pOnRefreshMasterFunc) => {
+  onRefreshMasterFunc = pOnRefreshMasterFunc
 }
 
 /**
@@ -533,12 +543,16 @@ const storeCommitAll = (masters, idmaps) => {
     }
   })
 
-  storeCommit('lastMasterFetchTime', new Date().getTime())
+  storeCommit('lastMasterFetchTime', new Date().getTime(), true)
+
+  if (onRefreshMasterFunc) {
+    onRefreshMasterFunc()
+  }
+
 }
 
-const storeCommit = (key, val) => {
-  StateHelper.storeCommit(key, val)
-  // StateHelper.setMaster(key, val)
+const storeCommit = (key, val, forceState) => {
+  StateHelper.storeCommit(key, val, forceState)    
 }
 
 
@@ -646,7 +660,7 @@ export const getOptionsFromState = (key, textField, notNull, filterCallback) => 
   if (!key.endsWith('s')) {
     keys = key.endsWith('y')? key.slice(0, -1) + 'ies' : key + 's'
   }
-  const masterList = store.state.app_service[keys]
+  const masterList = StateHelper.getMaster(keys)
 
   Util.debug('masterList:', masterList)
   Util.debug('typeof textField: ', typeof textField)

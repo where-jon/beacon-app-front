@@ -12,6 +12,7 @@ import * as NumberUtil from '../../util/NumberUtil'
 import * as Util from '../../util/Util'
 import * as EXCloudHelper from '../dataproc/EXCloudHelper'
 import * as MenuHelper from '../dataproc/MenuHelper'
+import * as StateHelper from '../dataproc/StateHelper'
 import * as StyleHelper from '../ui/StyleHelper'
 import * as DetectStateHelper from './DetectStateHelper'
 import * as SensorHelper from './SensorHelper'
@@ -63,9 +64,9 @@ export const loadPosition = async (count, allShow = false, fixSize = false, show
   Util.debug('fetchPositionHistory', positions)
   const now = !DEV.USE_MOCK_EXC ? new Date().getTime(): mock.positions_conf.start + count++ * mock.positions_conf.interval
 
-  const txIdMap = store.state.app_service.txIdMap
-  const exbIdMap = store.state.app_service.exbIdMap
-  const locationIdMap = store.state.app_service.locationIdMap
+  const txIdMap = StateHelper.getMaster().txIdMap
+  const exbIdMap = StateHelper.getMaster().exbIdMap
+  const locationIdMap = StateHelper.getMaster().locationIdMap
   const mRoomPlans = showMRoom ? store.state.main.mRoomPlans : null
 
   positions = _(positions).filter(pos => shoudTxShow(pos, allShow, txIdMap, locationIdMap))
@@ -95,6 +96,7 @@ export const loadPosition = async (count, allShow = false, fixSize = false, show
         display
       }
     }).compact().value()
+
   if (showMRoom) {
     const locationIds = mRoomPlans.reduce((arr, e) => {
       arr = arr.concat(e.locationIds)
@@ -106,7 +108,7 @@ export const loadPosition = async (count, allShow = false, fixSize = false, show
     })
   }
 
-  store.commit('main/replaceMain', {positions})
+  StateHelper.setPositions(positions)
   return positions
 }
 
@@ -143,14 +145,14 @@ export const shoudTxShow = (pos, allShow, txIdMap, locationIdMap) => {
  * @param {Number} [selectedFreWord]
  * @return {Object[]}
  */
-export const filterPositions = (positions = store.state.main.positions,
+export const filterPositions = (positions = StateHelper.getPositions(),
   showAllTime = false, 
   showTxNoOwner = APP.POS.SHOW_TX_NO_OWNER,
   selectedCategoryId = store.state.main.selectedCategoryId,
   selectedGroupId = store.state.main.selectedGroupId,
   selectedTxIdList = store.state.main.selectedTxIdList,
   selectedFreeWord = store.state.main.selectedFreeWord) => { // p, position-display, rssimap, position-list, position, ProhibitHelper
-  const txIdMap = store.state.app_service.txIdMap
+  const txIdMap = StateHelper.getMaster().txIdMap
 
   if (!showTxNoOwner) { // potの所有状態で絞込み(TX未登録やPotと紐付いていない場合は表示しない)
     positions = positions.filter(pos => {
@@ -189,7 +191,7 @@ const positionFilterFreeWord = (pos, freeWord) => {
  * @return {Object[]}
  */
 const positionFilter = (positions, groupId, categoryId, txIdList, freeWord) => { //p
-  const txIdMap = store.state.app_service.txIdMap
+  const txIdMap = StateHelper.getMaster().txIdMap
   return _(positions).filter(pos => {
     const tx = txIdMap[pos.txId]
     let grpHit = true
@@ -221,7 +223,7 @@ const positionFilter = (positions, groupId, categoryId, txIdList, freeWord) => {
  */
 export const filterPositionsOnlyGuest = (positions) => {
   return positions.filter(pos => {
-    const tx = store.state.app_service.txIdMap[pos.txId]
+    const tx = StateHelper.getMaster().txIdMap[pos.txId]
     const groupCd = Util.getValue(tx, 'pot.group.groupCd')
     return APP.POS.GUEST_GROUP_CD_LIST.includes(groupCd)
   })
@@ -385,6 +387,19 @@ export const isDoubleTx = (btxId) => btxId >= zoneBtxIdAddNumber
 
 export const getDoubleDefaultTxId = (btxId) => btxId - zoneBtxIdAddNumber
 
+/**
+ * posオブジェクトについて変更が必要な部分のみシャローコピーしたオブジェクトを作成
+ * @param {*} pos 
+ */
+const copyPos = (pos) => {
+  const newPos = Object.assign({}, pos)
+  newPos.tx = Object.assign({}, pos.tx)
+  if (pos.tx.display) {
+    newPos.tx.display = Object.assign({}, pos.tx.display)
+  }
+  return newPos
+}
+
 // ------- 固定表示 -------
 
 
@@ -396,7 +411,7 @@ export const getDoubleDefaultTxId = (btxId) => btxId - zoneBtxIdAddNumber
  * @param {*} selectedMapId 
  */
 export const addFixedPosition = (orgPositions, locations = [], selectedMapId = null) => {
-  let positions = _.cloneDeep(orgPositions)
+  let positions = orgPositions.map(pos => copyPos(pos))
   // エリア上の場所を抽出
   const additionalPos = []
   // 表示対象となるTxのposを抽出
@@ -408,12 +423,11 @@ export const addFixedPosition = (orgPositions, locations = [], selectedMapId = n
       pos.inFixedZone = isInFixedPosZone(pos)
       // 固定場所ゾーンにいず、かつ検知状態の場合、フリーアドレスとしても表示
       if (!pos.inFixedZone && pos.detectState == DETECT_STATE.DETECTED && !SensorHelper.isFixedSensorTx(pos.tx)) {
-        const addPos = _.cloneDeep(pos)
+        const addPos = copyPos(pos)
         addPos.isFixedPosition = false
-        addPos.location = pos.exb.location
+        addPos.location = Object.assign({}, pos.exb.location)
         // addPos.isAddtional = true
         additionalPos.push(addPos)
-
         pos.hasAnother = true
       }
       pos.location = pos.tx.location
@@ -735,8 +749,14 @@ export const getLabel = key => {
  * @param {Object} preloadThumbnail
  * @return {Object}
  */
-export const createTxDetailInfo = (x, y, tx, canvasScale, offset, containerRect, preloadThumbnail) => {
+export const createTxDetailInfo = (x, y, color, bgColor, tx, canvasScale, offset, containerRect, preloadThumbnail) => {
   const display = StyleHelper.getPositionDisplay(tx)
+  if (!color) {
+    color = display.color
+  }
+  if (!bgColor) {
+    bgColor = display.bgColor
+  }
   const position = filterPositions().find(e => e.btxId === tx.btxId)
   const ret = {
     btxId: tx.btxId,
@@ -749,14 +769,14 @@ export const createTxDetailInfo = (x, y, tx, canvasScale, offset, containerRect,
     class: !tx.btxId ? '': 'balloon-u', // 上表示のみに固定,
     timestamp: position ? DateUtil.formatDate(new Date(position.timestamp)) : '',
     thumbnail: Util.getValue(preloadThumbnail, 'src', ''),
-    bgColor: display.bgColor,
-    color: display.color,
+    bgColor,
+    color,
     isDispRight: x + offset.x + 100 < window.innerWidth,
     minor: getLabel('minor') + Util.getValue(tx, 'btxId', ''),
     major: getLabel('major') + Util.getValue(tx, 'major', ''),
     name: getLabel('name') + Util.getValue(tx, 'pot.potName', ''),
     tel: getLabel('tel') + Util.getValue(tx, 'pot.extValue.tel', ''),
-    category: getLabel('category') + Util.getValue(tx, 'pot.cateogry.categoryName', ''),
+    category: getLabel('category') + Util.getValue(tx, 'pot.category.categoryName', ''),
     group: getLabel('group') + Util.getValue(tx, 'pot.group.groupName', ''),
     email: getLabel('email') + Util.getValue(tx, 'pot.user.email', '')
   }
@@ -783,19 +803,19 @@ export const createTxDetailInfo = (x, y, tx, canvasScale, offset, containerRect,
  * @param {Object} preloadThumbnail
  * @return {Object}
  */
-export const createTxDetailInfoOnStack = (x, y, tx, offset, preloadThumbnail) => {
+export const createTxDetailInfoOnStack = (x, y, tx, offset, preloadThumbnail, containerRect) => {
   const display = StyleHelper.getPositionDisplay(tx)
   const position = filterPositions().find(e => e.btxId === tx.btxId)
   const ret = {
     btxId: tx.btxId,
-    minor: i18n.tnl('label.minor') + ':' + tx.btxId,
+    minor: i18n.tnl('label.minor') + ':' + tx.minor,
     major: tx.major? i18n.tnl('label.major') + ':' + tx.major : '',
     // TX詳細ポップアップ内部で表示座標計算する際に必要
     orgLeft: x - offset.x + APP.POS_STACK.ADJUST_POPUP.X,
     orgTop: y - offset.y + APP.POS_STACK.ADJUST_POPUP.Y,
     scale:  null ,
-    containerWidth: null,
-    containerHeight: null,
+    containerWidth: containerRect.width,
+    containerHeight: containerRect.height,
     class: !tx.btxId ? '': 'balloon-u', // 上表示のみに固定,
     name: Util.getValue(tx, 'pot.potName', ''),
     tel: Util.getValue(tx, 'pot.extValue.tel', ''),

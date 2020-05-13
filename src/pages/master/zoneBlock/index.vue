@@ -162,7 +162,6 @@ export default {
       this.zoneCd = zoneData.cd
       this.vueSelected.category = VueSelectHelper.getVueSelectData(this.categoryNames, zoneData.categoryId)
       this.isEnableNameText = true
-      console.warn(zoneData.categoryId, this.vueSelected.category)
     },
     unSelected () {
       this.isEnableNameText = false

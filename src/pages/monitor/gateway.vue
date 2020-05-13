@@ -75,7 +75,8 @@ export default {
         }
         this.gateways = gateways.map(e => {
           if(EXSERVER.ENABLE){
-            const state = this.$refs.monitorTable.getStateLabel('gw', e.timestamp*1000)
+            e.timestamp *= 1000
+            const state = this.$refs.monitorTable.getStateLabel('gw', e.timestamp)
             return { ...e, state: state }
           }else{
             const state = this.$refs.monitorTable.getStateLabel('gw', e.timestamp)

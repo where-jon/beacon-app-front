@@ -78,7 +78,6 @@ const getDetectList = async (position, zones, groupZoneList, isLost) => {
   if (isLost && APP.POS.LOST_ALERT_TIME > 0) {
     // 持出禁止ゾーンでの最終測位日時{txId, potId, 最終測位日時}の配列を返す。
     lastDetectedOnLostZone = await HttpHelper.getAppService('/core/zone/lastDtInLostZone?_=' + new Date().getTime())
-    console.error({lastDetectedOnLostZone})
   }
   let detectList = []
   zones.forEach(zone => {

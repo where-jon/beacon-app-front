@@ -8,48 +8,46 @@ import * as Util from '../../sub/util/Util'
 import * as ConfigHelper from '../../sub/helper/dataproc/ConfigHelper'
 import * as LocaleHelper from '../../sub/helper/base/LocaleHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
+import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import * as OptionHelper from '../../sub/helper/dataproc/OptionHelper'
 import * as ThemeHelper from '../../sub/helper/ui/ThemeHelper'
 import * as VueSelectHelper from '../../sub/helper/ui/VueSelectHelper'
 import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
 
-const exMapState = (namespace, map) => {
-  return mapState(namespace, map)
-  // let ret = {} // 実験：not work yet
-  // map.forEach(e => {
-  //   ret[e] = {
-  //     get: () => {return StateHelper.getMaster(e)},
-  //     set: (val) => {}
-  //   }
-  // })
-  // return ret
-}
+/**
+ * this.xxxでアクセス可能なマスタ関係
+ * モードによって、Stateか通常変数か切り替わる
+ */
+const masterArray = [
+  'exbs',
+  'exbIdMap',
+  'deviceIdMap',
+  'txs',
+  'txIdMap',
+  'btxIdMap',
+  'pots',
+  'potIdMap',
+  'areas',
+  'areaIdMap',
+  'zones',
+  'zoneIdMap',
+  'categories',
+  'categoryIdMap',
+  'groups',
+  'groupIdMap',
+  'locations',
+  'locationIdMap',
+  'sensors',
+  'sensorIdMap',
+  'roles',
+  'templates',
+]
 
 export default {
   computed: {
-    ...exMapState('app_service', [
-      'exbs',
-      'exbIdMap',
-      'deviceIdMap',
-      'txs',
-      'txIdMap',
-      'btxIdMap',
-      'pots',
-      'potIdMap',
-      'areas',
-      'areaIdMap',
-      'zones',
-      'zoneIdMap',
-      'categories',
-      'categoryIdMap',
-      'groups',
-      'groupIdMap',
-      'locations',
-      'locationIdMap',
-      'sensors',
-      'sensorIdMap',
-      'roles',
+    ...StateHelper.exMapState('app_service', masterArray),
+    ...mapState('app_service', [ // 必ずStateにセットするマスタ
       'regions',
     ]),
     ...mapState([
@@ -155,6 +153,9 @@ export default {
       set(val) { this.replaceMain({'selectedFreeWord': val})},
     },
   },
+  mounted() {
+    MasterHelper.setRefreshMasterCallback(this.onRefreshMaster)
+  },
   methods: {
     ...mapMutations('app_service', [
       'replaceAS',
@@ -176,6 +177,11 @@ export default {
       'showProgress',
       'hideProgress',
     ]),
+    onRefreshMaster() { // マスタ(再)取得時にデータを更新する
+      masterArray.forEach(e => {
+        Object.assign(this[e], StateHelper.getMaster(e))
+      })
+    },
     callParentComputed(method) {
       const func = Util.v(this.$parent.$options.computed, method)
       return func? func.call(this.$parent): undefined

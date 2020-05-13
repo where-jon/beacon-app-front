@@ -99,7 +99,7 @@
                 {{ val }}({{ gPowerLevel }})
               </div>
               <div v-if="bUserCheck">
-                {{ val }}({{ row.item.powerLevels[key] }})<br>
+                {{ val }}<br>
               </div>
             </span>
           </template>
@@ -113,14 +113,6 @@
             <span v-for="(val, key) in row.item.zoneNames" :key="key">
               {{ val }}<br>
             </span>
-          </template>
-
-          <template v-if="form.notifyState !== 'TX_BATTERY_ALERT'">
-            <template slot="minors" slot-scope="row">
-              <span v-for="(val, key) in row.item.minors" :key="key">
-                {{ val }}<br>
-              </span>
-            </template>
           </template>
 
           <template slot="deviceIds" slot-scope="row">
@@ -191,8 +183,8 @@ export default {
         {key: 'positionDt', sortable: true, label:'dt'},
         {key: 'notifyTo', sortable: true,label:'notifyTo' },
         {key: 'majors', sortable: true,label:'major' },
-        {key: 'minor', sortable: true,label:'minor' },
-        {key: 'txNames', sortable: true,label:'txName' },
+        {key: 'minors', sortable: true,label:'minor' },
+        {key: 'potNames', sortable: true,label:'txName' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
       fields2: ViewHelper.addLabelByKey(this.$i18n, [  // GW状態アラート
@@ -219,14 +211,14 @@ export default {
         {key: 'positionDt', sortable: true, label:'dt'},
         {key: 'notifyTo', sortable: true,label:'notifyTo' },
         {key: 'majors', sortable: true,label:'major' },
-        {key: 'minor', sortable: true,label:'minor' },
-        {key: 'txNames', sortable: true,label:'txName' },
+        {key: 'minors', sortable: true,label:'minor' },
+        {key: 'potNames', sortable: true,label:'txName' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
       fields6: ViewHelper.addLabelByKey(this.$i18n, [  // ユーザ登録通知
         {key: 'positionDt', sortable: true, label:'dt'},
         {key: 'notifyTo', sortable: true,label:'notifyTo' },
-        {key: 'minor', sortable: true,label:'minor' },
+        {key: 'minors', sortable: true,label:'minor' },
         {key: 'userName', sortable: true,label:'txName' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
       ]),
@@ -253,7 +245,7 @@ export default {
         tx: null,
         datetimeFrom: null,
         datetimeTo: null,
-        notifyState: null,
+        notifyState: NOTIFY_STATE.TX_DELIVERY_NOTIFY,
       },
       vueSelected: {
         tx: null,
@@ -273,7 +265,6 @@ export default {
       limitViewRows: 100,
       totalRows: 0,
       sortBy: null,
-      csvHeaders: this.getCsvHeaders('TX_DELIVERY_NOTIFY'),
     }
   },
   computed: {
@@ -324,89 +315,6 @@ export default {
     this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`
   },
   methods: {
-    getCsvHeaders(num){
-      switch(num) {
-      case 'TX_DELIVERY_NOTIFY':
-        return {
-          positionDt: 'notifyDatetime',
-          notifyTo : 'notifyTo',
-          majors : 'majors',
-          minors  : 'minors',
-          major : 'major',
-          minor  : 'minor',
-          txNames : 'txNames',
-          notifyResult : 'notifyResult',
-        }
-      case 'GW_ALERT':
-        return {
-          positionDt: 'notifyDatetime',
-          notifyTo : 'notifyTo',
-          deviceIds  : 'deviceIds',
-          lastRcvDatetimes : 'lastRcvDatetimes',
-          notifyResult : 'notifyResult',
-        }
-      case 'EXB_ALERT':
-        return {
-          positionDt: 'notifyDatetime',
-          notifyTo : 'notifyTo',
-          deviceIds  : 'deviceIds',
-          lastRcvDatetimes : 'lastRcvDatetimes',
-          notifyResult : 'notifyResult',
-        }
-      case 'TX_BATTERY_ALERT':
-        return {
-          positionDt: 'notifyDatetime',
-          notifyTo : 'notifyTo',
-          minorPowerLevel  : 'minorPowerLevel',
-          txNames : 'txNames',
-          notifyResult : 'notifyResult',
-          minors  : 'minors',
-          minor  : 'minor',
-          powerLevels  : 'powerLevels',
-        }
-      case 'TX_SOS_ALERT':
-        return {
-          positionDt: 'notifyDatetime',
-          notifyTo : 'notifyTo',
-          minors  : 'minors',
-          minor  : 'minor',
-          txNames : 'txNames',
-          notifyResult : 'notifyResult',
-        }
-      case 'USER_REG_NOTIFY':
-        return {
-          positionDt: 'notifyDatetime',
-          notifyTo : 'notifyTo',
-          minors  : 'minors',
-          minor  : 'minor',
-          userName : 'userName',
-          notifyResult : 'notifyResult',
-        }
-      case 'PROHIBIT_NOTIFY':
-        return {
-          positionDt: 'notifyDatetime',
-          notifyTo : 'notifyTo',
-          minors  : 'minors',
-          minor  : 'minor',
-          potNames : 'potName',
-          zoneNames : 'zoneName',
-          lastRcvDatetimes : 'lastRcvDatetime',
-          notifyResult : 'notifyResult',
-        }
-      case 'LOST_NOTIFY':
-        return {
-          positionDt: 'notifyDatetime',
-          notifyTo : 'notifyTo',
-          minors  : 'minors',
-          minor  : 'minor',
-          potNames : 'potName',
-          zoneNames : 'zoneName',
-          lastRcvPosNames: 'lastRcvPosName',
-          lastRcvDatetimes : 'lastRcvDatetime',
-          notifyResult : 'notifyResult',
-        }
-      }
-    },
     csvColumnBrTag(csvColumn){
       let tempNames = csvColumn.toString()
       return tempNames.replace( /,/gi, ';')
@@ -440,7 +348,6 @@ export default {
       try {
         const aNotifyState = (this.form.notifyState != null)?this.form.notifyState:0
         this.fields = this.getFields(aNotifyState)
-        this.csvHeaders = this.getCsvHeaders(aNotifyState)
         const aTxId = this.txId
         const fetchList = await HttpHelper.getAppService(
           aTxId? `/core/rcvexcloud/history/${aNotifyState}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}?txId=${aTxId}`
@@ -461,10 +368,11 @@ export default {
           notifyData.notifyResult = this.$i18n.tnl('label.' + (notifyData.notifyResult == 0? 'success': 'failed'))
           let arNotifyto = this.getNotifyTo(notifyData.notifyTo)
           arNotifyto ? notifyData.notifyTo = arNotifyto: null
+          const entity = this.createEntity(notifyData)
           if (++count <= this.limitViewRows) {
-            this.viewList.push(notifyData)
+            this.viewList.push(entity)
           }
-          this.csvList.push(notifyData)
+          this.csvList.push(entity)
         })
         this.totalRows = this.viewList.length
         this.footerMessage = `${this.$i18n.tnl('message.totalRowsMessage', {row: this.viewList.length, maxRows: this.limitViewRows})}`
@@ -474,14 +382,42 @@ export default {
         this.hideProgress()
       }
     },
+    createEntity(e) {
+      const fieldKeys = this.getFieldKeys()
+      const obj = {}
+      fieldKeys.forEach(k => obj[k] = e[k])
+      if (this.form.notifyState == 'TX_BATTERY_ALERT' && e.minors && e.powerLevels) {
+        obj.minors = e.minors.map((minor,index) => {
+          return minor + '(' + e.powerLevels[index] + ')'
+        })
+      }
+      return obj
+    },
     async exportCsv() {
-      const state = this.form.notifyState ? this.form.notifyState : 0
-      const txId = this.txId ? "?txId="+this.txId : ""
-      const charset = getCharSet(this.$store.state.loginId)
-      const header = this.$i18n.tnl('label.success') + '_' + this.$i18n.tnl('label.failed') + '_' + this.getCsvHeaderList()
-      BrowserUtil.executeFileDL(
-        APP_SERVICE.BASE_URL + `/core/rcvexcloud/csvdownload/${state}/${this.form.datetimeFrom.getTime()}/${this.form.datetimeTo.getTime()}/${charset}/${header}${txId}`
-      )
+      const fieldKeys = this.getFieldKeys()
+      const records = this.csvList.map(e => this.createEntity(e))
+      records.forEach((record) => {
+        record.userName = record.userName ? this.csvColumnBrTag(record.userName) : false
+        record.notifyTo = record.notifyTo ? this.csvColumnBrTag(record.notifyTo) : false
+        record.majors = record.majors ? this.csvColumnBrTag(record.majors) : false
+        record.minors = record.minors ? this.csvColumnBrTag(record.minors) : false
+        record.potNames = record.potNames ? this.csvColumnBrTag(record.potNames) : false
+        record.zoneNames = record.zoneNames ? this.csvColumnBrTag(record.zoneNames) : false
+        record.lastRcvPosNames = record.lastRcvPosNames ? this.csvColumnBrTag(record.lastRcvPosNames) : false
+        record.deviceIds = record.deviceIds ? this.csvColumnBrTag(record.deviceIds) : false
+        record.lastRcvDatetimes = record.lastRcvDatetimes ? this.csvColumnBrTag(record.lastRcvDatetimes) : false
+        record.powerLevels = record.powerLevels ? this.csvColumnBrTag(record.powerLevels) : false
+        if(this.form.notifyState == 'TX_BATTERY_ALERT' && record.minors && record.powerLevels){
+          let minors = record.minors.split(';')
+          let powerLevels = record.powerLevels.split(';')
+          let minorPowerLevel = ''
+          minors.forEach((minor,index) => {
+            minorPowerLevel += minor + '(' + powerLevels[index] + ');'
+          })
+          record.minors = minorPowerLevel
+        }
+      })
+      BrowserUtil.fileDL('notifyHistory.csv', CsvUtil.converToCsv(records, this.getFieldKeys(), this.getCsvHeaderList().join(',') + '\n'), getCharSet(this.$store.state.loginId))
     },
     getFields(aNotifyState) {
       if (aNotifyState == NOTIFY_STATE.TX_DELIVERY_NOTIFY) {
@@ -503,9 +439,10 @@ export default {
       }
     },
     getCsvHeaderList() {
-      return  this.getFields(this.form.notifyState).map((record) => {
-        return record.label
-      }).join(',')
+      return  this.getFields(this.form.notifyState).map(record => record.label)
+    },
+    getFieldKeys() {
+      return  this.getFields(this.form.notifyState).map(record => record.key)
     }
   }
 }

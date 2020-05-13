@@ -92,10 +92,10 @@
                     {{ loginId }}
                   </em>
                 </template>
-                <b-dropdown-item href="#" v-if="showSetting" @click="move('/setting/personal')">
+                <b-dropdown-item v-if="showSetting" href="#" @click="move('/setting/personal')">
                   <font-awesome-icon icon="user-cog" fixed-width />&nbsp;&nbsp;{{ $t('label.personal') }}
                 </b-dropdown-item>
-                <b-dropdown-item href="#" v-if="showHelp" @click="openHelp">
+                <b-dropdown-item v-if="showHelp" href="#" @click="openHelp">
                   <font-awesome-icon icon="question-circle" fixed-width />&nbsp;&nbsp;{{ $t('label.help') }}
                 </b-dropdown-item>
                 <b-dropdown-item href="#" @click="logout">
@@ -126,6 +126,7 @@ import * as ImageHelper from '../../sub/helper/base/ImageHelper'
 import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
 import * as RegionHelper from '../../sub/helper/domain/RegionHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
+import * as StateHelper from '../../sub/helper/dataproc/StateHelper'
 import { getThemeClasses } from '../../sub/helper/ui/ThemeHelper'
 import commonmixin from '../mixin/commonmixin.vue'
 import Help from '../page/help.vue'
@@ -156,14 +157,14 @@ export default {
     },
     showSetting(){
       const roleFeatureList = this.$store.state.featureList
-      const mode = MenuHelper.getMode("/setting/personal", roleFeatureList) & ROLE_FEATURE.MODE.SYS_ALL
+      const mode = MenuHelper.getMode('/setting/personal', roleFeatureList) & ROLE_FEATURE.MODE.SYS_ALL
       return mode != 0
     },
     showHelp(){
       return DISP.MENU.SHOW_HELP
     },
     ...mapState('app_service', [
-      'pots', 'regions', 'features'
+      'features'
     ]),
     navbarClasses() {
       // use for update theme-color

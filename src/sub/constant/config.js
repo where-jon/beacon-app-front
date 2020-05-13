@@ -13,7 +13,7 @@ export const DEV = { // 開発デバッグ関連
 export const APP = { // 機能面に関する設定
   SAAS_DOMAIN: '.saas.',
   COMMON: {
-    VERSION: 'Version 1.3.3', // バージョン　this application version
+    VERSION: 'Version 1.3.2', // バージョン　this application version
     TIME_ZONE: 'JST', // 午前0時を決定するためのタイムゾーン
     AUTO_RELOAD: 60000, // 自動リロード間隔(ミリ秒)
   },
@@ -346,7 +346,8 @@ export const APP = { // 機能面に関する設定
   ATTENDANCE: {
     ALL_DAY_HOUR: 8,
     HALF_DAY_HOUR: 4,
-    LATE_HOUR: 10
+    LATE_HOUR: 10,
+    TEMP_MIN_HOUR: 1,
   },
   
   // その他
@@ -516,7 +517,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     INUSE_LABEL: 'inUse', // PIRで存在時のラベルキー
     EMPTY_SHOW: true, // PIRで不在時に表示するか否か
     EMPTY_BGCOLOR: '#595959', // PIRで不存時の背景色
-    EMPTY_LABEL: 'empty', // PIRで不在時のラベルキー
+    EMPTY_LABEL: 'sensorEmpty', // PIRで不在時のラベルキー
   },
   PRESSURE: {
     R_SIZE: 26,  // 圧力センサ表示時の円の半径
@@ -526,7 +527,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     INUSE_LABEL: 'inUse', // 圧力センサで使用時のラベルキー
     EMPTY_SHOW: true, // 圧力センサで未使用時に表示するか否か
     EMPTY_BGCOLOR: '#595959', // 圧力センサで不存時の背景色
-    EMPTY_LABEL: 'empty', // 圧力センサで未使用時のラベルキー
+    EMPTY_LABEL: 'sensorEmpty', // 圧力センサで未使用時のラベルキー
   },
   MEDITAG: {
     STRESS_BG: ['#85A9D1', '#F0C864', '#F49696'], // ストレスレベルに応じた背景色

@@ -1,5 +1,5 @@
 <template>
-  <div class="container" :style="cssVars">
+  <div class="container">
     <breadcrumb :items="breadCrumbs" :reload="false" />
     <alert :message="message" />
     <div v-if="isFeatureAvailabe">
@@ -81,9 +81,9 @@
               {{ $t('label.legend') }}
             </label>
             <ul class="list-group list-group-horizontal">
-              <li class="list-group-item actual-in-plan">{{ $t('label.planned') }}・{{ $t('label.used') }}</li>
-              <li class="list-group-item no-actual">{{ $t('label.planned') }}・{{ $t('label.noUse') }}</li>
-              <li class="list-group-item actual-out-of-plan">{{ $t('label.noPlan') }}・{{ $t('label.used') }}</li>
+              <li class="list-group-item actualInPlan">{{ $t('label.planned') }}・{{ $t('label.used') }}</li>
+              <li class="list-group-item noActual">{{ $t('label.planned') }}・{{ $t('label.noUse') }}</li>
+              <li class="list-group-item actualOutOfPlan">{{ $t('label.noPlan') }}・{{ $t('label.used') }}</li>
             </ul>
           </b-form-row>
         </b-form>
@@ -141,6 +141,7 @@ export default {
       message: '',
       locale: null,
       doUpate: false,
+      bgColorIsSet: false,
 
       clickScheduleEvent: null,
 
@@ -253,14 +254,6 @@ export default {
     isFeatureAvailabe() {
       return this.featureAvailabe
     },
-    cssVars() {
-      return {
-        '--editPlanHeaderBgColor': DISP.PLAN.EDIT_PLAN_HEADER_BG_COLOR,
-        '--actualInPlanBgColor': DISP.PLAN.ACTUAL_IN_PLAN_BG_COLOR,
-        '--noActualBgColor': DISP.PLAN.NO_ACTUAL_IN_PLAN_BG_COLOR,
-        '--actualOutOfPlanBgColor': DISP.PLAN.ACTUAL_OUT_OF_PLAN_BG_COLOR,
-      }
-    },
     filterPotPersonOpts() {
       const doFilter = !this.currentUser ? false : this.currentUser.isAd
         ? this.targetPlan.potId == null || this.targetPlan.potId == this.currentUser.adPot.potId ? true : false
@@ -369,6 +362,9 @@ export default {
     },
     doCompare: {
       handler: function(newVal, oldVal) {
+        if (newVal) {
+          this.bgColorIsSet = false
+        }
         if (this.planMode == 'meetingRoom') {
           this.fetchData()
         }
@@ -388,8 +384,13 @@ export default {
       this.doFetchData = false
       this.fetchData()
     }
+    if (!this.bgColorIsSet && this.planMode == 'meetingRoom' && this.doCompare) {
+      this.bgColorIsSet = true
+      this.setBgColor()
+    }
   },
   async mounted() {
+    this.setBgColor()
     this.locale = LocaleHelper.getSystemLocale()
     domevent.on(document.body, 'mousedown', this.onMouseDown, this)
     const tgc = document.getElementById('tgc')
@@ -411,6 +412,21 @@ export default {
     this.fetchData()
   },
   methods: {
+    setBgColor() {
+      document.getElementsByClassName('editPlanHeader').forEach(e => {
+        e.style['background-color'] = DISP.PLAN.EDIT_PLAN_HEADER_BG_COLOR
+        e.style['border-color'] = DISP.PLAN.EDIT_PLAN_HEADER_BG_COLOR
+      })
+      document.getElementsByClassName('actualInPlan').forEach(e => {
+        e.style['background-color'] = DISP.PLAN.ACTUAL_IN_PLAN_BG_COLOR
+      })
+      document.getElementsByClassName('noActual').forEach(e => {
+        e.style['background-color'] = DISP.PLAN.NO_ACTUAL_IN_PLAN_BG_COLOR
+      })
+      document.getElementsByClassName('actualOutOfPlan').forEach(e => {
+        e.style['background-color'] = DISP.PLAN.ACTUAL_OUT_OF_PLAN_BG_COLOR
+      })
+    },
     onMouseDown(mouseDownEvent) {
       if (this.clickScheduleEvent) {
         const target = (mouseDownEvent.target || mouseDownEvent.srcElement)
@@ -832,11 +848,10 @@ export default {
 <style>
 .editPlanHeader {
   color: #ffffff;
-  background-color: var(--editPlanHeaderBgColor);
-  border-color: var(--editPlanHeaderBgColor);
   font-weight: bold;
 }
 .tui-full-calendar-week-container {
+  width: 100%;
   height: inherit;
   display: inline-block;
   font-size: 10px;
@@ -872,18 +887,15 @@ export default {
 .list-group-item {
   line-height: 10px;
 }
-.actual-in-plan {
-  background-color: var(--actualInPlanBgColor);
+.actualInPlan {
   color: black;
 }
 
-.no-actual {
-  background-color: var(--noActualBgColor);
+.noActual {
   color: black;
 }
 
-.actual-out-of-plan {
-  background-color: var(--actualOutOfPlanBgColor);
+.actualOutOfPlan {
   color: black;
 }
 </style>

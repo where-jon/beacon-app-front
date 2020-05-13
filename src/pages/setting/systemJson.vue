@@ -89,7 +89,7 @@ export default {
   },
   computed: {
     ...mapState('app_service', [
-      'zones', 'zoneIdMap', 'groups', 'settings'
+      'settings'
     ]),
     ...mapState([
       'showAlert'
