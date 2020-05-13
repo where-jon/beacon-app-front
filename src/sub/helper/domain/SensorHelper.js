@@ -17,6 +17,7 @@ import * as AppServiceHelper from '../dataproc/AppServiceHelper'
 import * as ChartHelper from '../ui/ChartHelper'
 import * as ConfigHelper from '../dataproc/ConfigHelper'
 import * as EXCloudHelper from '../dataproc/EXCloudHelper'
+import * as StateHelper from '../dataproc/StateHelper'
 import * as HeatmapHelper from '../ui/HeatmapHelper'
 import * as StyleHelper from '../ui/StyleHelper'
 import * as PositionHelper from './PositionHelper'
@@ -1078,8 +1079,8 @@ export const getTodayThermoHumidityInfo = async (id, isExb) => {
  * @return {Object[]}
  */
 export const fetchSensorInfo = async (targetSensorIds = []) => {
-  const deviceIdMap = store.state.app_service.deviceIdMap
-  const btxIdMap = store.state.app_service.btxIdMap
+  const deviceIdMap = StateHelper.getMaster().deviceIdMap
+  const btxIdMap = StateHelper.getMaster().btxIdMap
   const sensorInfos = await fetchAllSensor(targetSensorIds)
 
   const sensorMap = {}
@@ -1116,8 +1117,8 @@ export const fetchSensorInfo = async (targetSensorIds = []) => {
  * @param {*} pos 
  */
 const addSensorInfo = (sensor, pos) => {
-  const deviceIdMap = store.state.app_service.deviceIdMap
-  const btxIdMap = store.state.app_service.btxIdMap
+  const deviceIdMap = StateHelper.getMaster().deviceIdMap
+  const btxIdMap = StateHelper.getMaster().btxIdMap
 
   const exb = deviceIdMap[sensor.deviceId]
   let tx = btxIdMap[sensor.btxId]
@@ -1132,7 +1133,7 @@ const addSensorInfo = (sensor, pos) => {
   else {
     location = sensor.btxId? (tx? tx.location: {}): exb? exb.location: {}
     if (!location) location = {}
-    // location = store.state.app_service.locations.find(e => e.locationId == location.locationId)
+    // location = StateHelper.getMaster().locations.find(e => e.locationId == location.locationId)
     areaId = location.areaId
     areaName = Util.getValue(location, 'area.areaName')
     zoneIdList = Util.hasValue(location.zoneIdList)? location.zoneIdList: []
@@ -1178,7 +1179,7 @@ const addSensorInfo = (sensor, pos) => {
  * @return {Object[]}
  */
 export const mergeExbWithSensor = (selectedSensorId, exCluodSensors) => {
-  const exbs = store.state.app_service.exbs
+  const exbs = StateHelper.getMaster().exbs
   return _(exbs)
     .filter(exb => {
       return exb.location && exb.location.x && exb.location.y > 0
@@ -1200,7 +1201,7 @@ export const mergeExbWithSensor = (selectedSensorId, exCluodSensors) => {
  * @return {Object[]}
  */
 export const mergeTxWithSensorAndPosition = (selectedSensor, exCluodSensors, positions) => {
-  const txs = store.state.app_service.txs
+  const txs = StateHelper.getMaster().txs
   const allPosition = selectedSensor == SENSOR.MEDITAG
   return _(txs)
     .filter(tx => allPosition || tx.location && tx.location.x && tx.location.y > 0) // MEDiTAG以外は固定位置のTXのみ

@@ -50,8 +50,8 @@ export const floorVal = (val, decimalPoint = 2) => {
  * @param {Number} len 分母
  * @return {Number}
  */
-export const getPercent = (val, len) => {
-  const ret = floorVal(val / len * 100, 1)
+export const getPercent = (val) => {
+  const ret = floorVal(val * 100, 1)
   return Number.isInteger(ret) ? ret + '.0%' : ret + '%'
 }
 

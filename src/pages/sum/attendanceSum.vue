@@ -11,6 +11,7 @@
             <date-picker v-model="form.date" :clearable="false" type="date" class="ml-2 inputdatefrom" required />
 
             <b-button v-t="'label.display'" type="submit" :variant="theme" @click="display" class="ml-2" />
+            <b-button v-t="'label.download'" type="submit" :variant="theme" @click="download" class="ml-2" />
           </b-form-row>
         </b-form-group>
       </b-form>
@@ -91,8 +92,8 @@ export default {
         {key: 'attendancePer', sortable: false, label: this.$i18n.tnl('label.attendancePer') },
         {key: 'allDayWorkPer', sortable: false, label: this.$i18n.tnl('label.allDayWorkPer') },
         {key: 'halfDayWorkPer', sortable: false, label: this.$i18n.tnl('label.halfDayWorkPer') },
-        {key: 'lateTimeWorkPer', sortable: false, label: this.$i18n.tnl('label.lateTimeWorkPer') },
         {key: 'temporaryTimeWorkPer', sortable: false, label: this.$i18n.tnl('label.temporaryTimeWorkPer') },
+        {key: 'lateTimeWorkPer', sortable: false, label: this.$i18n.tnl('label.lateTimeWorkPer') },
         {key: 'detail', label: ''}
       ]
     },
@@ -129,9 +130,16 @@ export default {
         this.hideProgress()
       }
     },
+    async download(){
+      let csv = ',' + this.getField().filter(e => e.label && e.label != '').map(e => e.label).join(',') + '\n' // ヘッダー
+      _.forEach(this.viewList, v => {
+        csv += `${v.groupName},${v.attendancePer},${v.allDayWorkPer},${v.halfDayWorkPer},${v.temporaryTimeWorkPer},${v.lateTimeWorkPer}\n`
+      })
+      BrowserUtil.fileDL('attendanceSum.csv', csv, CharSetHelper.getCharSet(this.$store.state.loginId))
+    },
     async fetchData(form){
       const date = moment(form.date).format('YYYYMMDD')
-      const url = `/office/attendance/list/${date}/0/0`
+      const url = `/office/attendance/sum/${date}`
       return await HttpHelper.getAppService(url)
     },
     async showDetail(item){
@@ -140,83 +148,19 @@ export default {
       this.$router.push('/sum/attendanceDetail')
     },
     createList(data){
-      this.viewList = []
-      this.totalRows = 0
-
-      const pots = this.pots.filter(e => e.potType == POT_TYPE.PERSON && e.group).map(e => {
-        const groupId = e.group ? e.group.groupId : 10000
-        return {...e, groupId}
-      })
-
-      // グループごとにまとめる
-      const groups = ArrayUtil.sumData(pots, 'groupId')
-      Util.debug('groups', groups)
-
-      let attendance = {}
-      data.forEach(e => attendance[e.potId] = e)
-
-      // 表示作成
-      let attendanceSum = 0
-      let allSum = 0
-      let halfSum = 0
-      let tempSum = 0
-      let lateSum = 0
-      groups.forEach( list => {
-        let attendanceCount = 0
-        let allCount = 0
-        let halfCount = 0
-        let tempCount = 0
-        let lateCount = 0
-        list.forEach(pot => {
-          const e = attendance[pot.potId]
-          if(e){
-            attendanceCount++
-            if((e.outDt - e.inDt)>=1000*60*60*APP.ATTENDANCE.ALL_DAY_HOUR){
-              allCount++
-            }else if((e.outDt - e.inDt)>=1000*60*60*APP.ATTENDANCE.HALF_DAY_HOUR){
-              halfCount++
-            }else{
-              tempCount++
-            }
-            if(DateUtil.formatDateWithTimeZone(e.inDt, 'H') >= APP.ATTENDANCE.LATE_HOUR){
-              lateCount++
-            }
-          }
-        })
-        attendanceSum += attendanceCount
-        allSum += allCount
-        halfSum += halfCount
-        tempSum += tempCount
-        lateSum += lateCount
-        this.viewList.push({
-          groupId: list[0].group ? list[0].group.groupId : 0,
-          groupName: list[0].group ? list[0].group.groupName : '',
-          attendancePer: NumberUtil.getPercent(attendanceCount, list.length),
-          allDayWorkPer: NumberUtil.getPercent(allCount, list.length),
-          halfDayWorkPer: NumberUtil.getPercent(halfCount, list.length),
-          lateTimeWorkPer: NumberUtil.getPercent(lateCount, attendanceCount),
-          temporaryTimeWorkPer: NumberUtil.getPercent(tempCount, list.length),
+      this.viewList = data.map( e => {
+        return {
+          groupId: e.groupId ? e.groupId : 0,
+          groupName: e.groupId == 0 ? this.$i18n.tnl('label.companyWide') : e.groupName,
+          attendancePer: NumberUtil.getPercent(e.total),
+          allDayWorkPer: NumberUtil.getPercent(e.all),
+          halfDayWorkPer: NumberUtil.getPercent(e.half),
+          lateTimeWorkPer: NumberUtil.getPercent(e.late),
+          temporaryTimeWorkPer: NumberUtil.getPercent(e.temp),
           isDetail: true
-        })
+        }
       })
-      // 全社追加
-      this.viewList.unshift({
-          groupId: 0,
-          groupName: this.$i18n.tnl('label.companyWide'),
-          attendancePer: NumberUtil.getPercent(attendanceSum, pots.length),
-          allDayWorkPer: NumberUtil.getPercent(allSum, pots.length),
-          halfDayWorkPer: NumberUtil.getPercent(halfSum, pots.length),
-          lateTimeWorkPer: NumberUtil.getPercent(lateSum, attendanceSum),
-          temporaryTimeWorkPer: NumberUtil.getPercent(tempSum, pots.length)
-      })
-      Util.debug('viewList', this.viewList)
-      this.totalRows = this.viewList.length
-      return
     },
-    getPercent(val, len){
-      const ret = NumberUtil.floorVal(val / len * 100, 1)
-      return Number.isInteger(ret) ? ret + '.0%' : ret + '%'
-    }
   }
 }
 </script>

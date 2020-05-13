@@ -517,6 +517,7 @@ export default {
       if(this.stage){
         this.showTxAll()
         this.stage.update()
+        this.stage.enableMouseOver()
       }
     },
     'vueSelected.area': {
@@ -753,8 +754,8 @@ export default {
         const alwaysTxs = this.txs.some(tx => Util.v(tx, 'location.areaId') == this.selectedAreaId && NumberUtil.bitON(tx.disp, TX.DISP.ALWAYS))
         if (this.usePositionsCache) {
           this.replaceMain({usePositionsCache: false})
-          const positions = this.$store.state.main.positions.filter(pos => PositionHelper.shoudTxShow(pos, false, this.txIdMap, this.locationIdMap))
-          this.replaceMain({ positions })
+          const positions = StateHelper.getPositions().filter(pos => PositionHelper.shoudTxShow(pos, false, this.txIdMap, this.locationIdMap))
+          StateHelper.setPositions(positions)
         }
         else {
           await PositionHelper.loadPosition(this.count, alwaysTxs, false, this.pShowMRoomStatus)
@@ -796,8 +797,8 @@ export default {
       this.replace({ showWarn: Util.hasValue(this.warnMessage) })
 
       this.stage.on('click', evt => this.resetDetail())
-      this.stage.enableMouseOver()
       this.stage.update()
+      this.stage.enableMouseOver()
 
       if(!this.firstTime && reloadButton){
         this.reloadState.isLoad = false
@@ -829,6 +830,7 @@ export default {
         }
         Util.merge(this, await ProhibitHelper.loadProhibitDetect(alertState, this.stage, this.icons, this.zones, this.positions, this.pShowProhibit, this.pShowLost))
         this.replace({ showAlert: this.showDismissibleAlert })
+        this.reShowTxDetail(this.positions) // アラートが非同期処理なので、ポップアップを再表示する
       }
     },
     async showToilet() { // トイレを表示する
@@ -880,6 +882,8 @@ export default {
         this.isQuantity = true
         this.detectCount = {}
         this.showTxAll()
+        this.stage.update()
+        this.stage.enableMouseOver()
       }
     },
     showQuantityTx(positions) { // 数量アイコン表示
@@ -907,8 +911,6 @@ export default {
         })
 
       this.positions = positions
-      this.stage.update()
-      this.stage.enableMouseOver()
       this.reShowTxDetail(positions)
       // パラメータリセット
       this.detectCount = {}
@@ -1145,13 +1147,13 @@ export default {
       evt.stopPropagation()
       this.showReady = false
       const txBtn = evt.currentTarget
-      this.showDetail(txBtn.btxId, txBtn.x, txBtn.y)
+      this.showDetail(txBtn.btxId, txBtn.x, txBtn.y, txBtn.color, txBtn.bgColor)
     },
-    showDetail(btxId, x, y) {
+    showDetail(btxId, x, y, color, bgColor) {
       // アラート表示でずれるので遅延実行を行う
-      this.$nextTick(() => this.showDetailImp(btxId, x, y))
+      this.$nextTick(() => this.showDetailImp(btxId, x, y, color, bgColor))
     },
-    showDetailImp(btxId, x, y) { // (p,) position
+    showDetailImp(btxId, x, y, color, bgColor) { // (p,) position
       if(!Util.hasValue(this.pShowDetail)){
         return
       }
@@ -1165,23 +1167,23 @@ export default {
       const isNoThumbnail = APP.TXDETAIL.NO_UNREGIST_THUMB && !Util.v(tx, 'pot.existThumbnail')
       if (!isNoThumbnail) {
         // サムネイル表示あり
-        this.preloadThumbnail.onload = () => this.setupSelectedTx(tx, x, y, true)
+        this.preloadThumbnail.onload = () => this.setupSelectedTx(tx, x, y, true, color, bgColor)
         this.preloadThumbnail.src = null // iOSでonloadが一度しか呼ばれないので対策
         this.preloadThumbnail.src = PotHelper.getThumbnailUrl(tx, this.thumbnailUrl) 
       } else {
         // サムネイル表示無し
-        this.setupSelectedTx(tx, x, y, false)
+        this.setupSelectedTx(tx, x, y, false, color, bgColor)
       }
     },
     // Txアイコンを選択した場合のポップアップ
-    setupSelectedTx(tx, x, y, isDispThumbnail) {
+    setupSelectedTx(tx, x, y, isDispThumbnail, color, bgColor) {
       const map = DomUtil.getRect('#map')
       const containerParent = DomUtil.getRect('#mapContainer', 'parentNode')
       const offsetX = map.left - containerParent.left + (!this.pInstallation? 0: 48)
       const navbarY = containerParent.top
       const offsetY = map.top - navbarY + (!this.pInstallation? 0: 20)
 
-      const selectedTx = PositionHelper.createTxDetailInfo(x, y, tx, this.canvasScale, {x: offsetX, y: offsetY}, containerParent, isDispThumbnail? this.preloadThumbnail: {})
+      const selectedTx = PositionHelper.createTxDetailInfo(x, y, color, bgColor, tx, this.canvasScale, {x: offsetX, y: offsetY}, containerParent, isDispThumbnail? this.preloadThumbnail: {})
       this.replaceMain({ selectedTx })
       this.$nextTick(() => this.showReady = true)
       if (this.isShowModal()) {
@@ -1235,6 +1237,8 @@ export default {
       if (this.isQuantity) {
         this.isQuantity = false
         this.showTxAll()
+        this.stage.update()
+        this.stage.enableMouseOver()
       }
     },
     showTxAll() { // TXアイコン個別表示
@@ -1251,7 +1255,7 @@ export default {
         this.showAbsentZoneTxAll()
       }
 
-      let positions = this.$store.state.main.positions
+      let positions = StateHelper.getPositions()
       if (!this.pInstallation && !this.pShowOnlyGuest) {
         positions = PositionHelper.addFixedPosition(positions, this.locations, this.selectedAreaId) // 固定位置追加
       }
@@ -1269,8 +1273,9 @@ export default {
         if (this.pOnlyFixTx && this.sensorMap.temperature) {
           this.sensorMap.temperature.forEach(val => { // サンワセンサーはminorを持たずEXCloud側で測位しないため、仮想的に測位情報を作る（あとの処理で必要なものだけセット）
             if (!positions.some(pos => pos.btxId == val.btxId)) {
-              const tx = _.cloneDeep(this.txIdMap[val.txId])
-              if (tx && tx.location) {
+              const orgTx = this.txIdMap[val.txId]
+              if (orgTx && orgTx.location) {
+                const tx = Object.assign({}, orgTx)
                 tx.disp = 1
                 positions.push({
                   txId: val.txId, btxId: val.btxId, isFixedPosition: true, x: tx.location.x, y: tx.location.y, 
@@ -1304,19 +1309,18 @@ export default {
       this.detectedCount = 0
       // Txアイコンを表示する
       const btns = positions.map(pos => this.createBtn(pos)).filter(pos => pos)
-      this.txCont.removeAllChildren()
+
       btns.forEach(b => {
         if(b.isFixed){
           this.txCont.addChild(b) // 固定座席、固定ゾーンを先に表示
         }
       })
-      btns.forEach(b => {
+      btns.some(b => {
         if(!b.isFixed){
           this.txCont.addChild(b)
         }        
       })
       this.positions = positions
-      this.stage.update()
       this.reShowTxDetail(positions)
 
     },    
@@ -1343,7 +1347,7 @@ export default {
       pos.isTransparent = pos.isTransparent || isAbsentZone // TODO: 別の場所に移動
       const txBtn = this.updateTxBtn(pos, pos.tx, meditag, magnet)
       if(this.reloadSelectedTx.btxId == pos.btxId){
-        this.showDetail(txBtn.btxId, txBtn.x, txBtn.y)
+        this.showDetail(txBtn.btxId, txBtn.x, txBtn.y, txBtn.color, txBtn.bgColor)
       }
       this.txIcons.push({ button: txBtn, device: pos.tx, config: txBtn.iconInfo, sign: -1 })
       return txBtn
@@ -1396,13 +1400,17 @@ export default {
         return ret
       }
       // 既に該当btxIdのTXアイコンが作成済みか?
-      // console.error(pos.btxId + '_' + pos.isFixedPosition, pos.x, pos.y)
-      let txBtn = this.icons[pos.btxId + '_' + pos.isFixedPosition]
+      const key = pos.btxId + '_' + pos.isFixedPosition
+      let txBtn = this.icons[key]
       if (!txBtn || txBtn.color != color || txBtn.bgColor != bgColor || txBtn.isTransparent != pos.isTransparent) {
         // 作成されていない場合、新規作成してからiconsに登録
+        if (txBtn) {
+          delete this.icons[key]
+        }
         txBtn = IconHelper.createTxBtn(pos, display.shape, color, bgColor, this.getMapScale())
         txBtn.on('click', evt => this.txOnClick(evt))
-        this.icons[pos.btxId + '_' + pos.isFixedPosition] = txBtn
+        txBtn.isTransparent = pos.isTransparent
+        this.icons[key] = txBtn
       } else {
         // 作成済みの場合、座標値のみセットする
         txBtn.x = pos.x
@@ -1449,7 +1457,7 @@ export default {
       const txBtnInfo = this.updateZoneTxBtn(pos, tx, meditag, magnet)
       const txBtn = txBtnInfo.txBtn
       if(this.reloadSelectedTx.btxId == txBtnInfo.zoneBtxId){
-        this.showDetail(txBtn.txId, txBtn.x, txBtn.y)
+        this.showDetail(txBtn.txId, txBtn.x, txBtn.y, txBtn.color, txBtn.bgColor)
       }
       this.txCont.addChild(txBtn)
     },

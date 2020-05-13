@@ -10,14 +10,16 @@ import { mapState } from 'vuex'
 import * as ViewHelper from '../../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../../components/layout/breadcrumb.vue'
 import reloadmixin from '../../../components/mixin/reloadmixin.vue'
+import commonmixin from '../../../components/mixin/commonmixin.vue'
 import mList from '../../../components/page/list.vue'
+import * as StateHelper from '../../../sub/helper/dataproc/StateHelper'
 
 export default {
   components: {
     breadcrumb,
     mList, 
   },
-  mixins: [reloadmixin],
+  mixins: [commonmixin, reloadmixin],
   data() {
     return {
       params: {
@@ -37,27 +39,13 @@ export default {
           {key: 'actions', thStyle: {width:'130px !important'} }
         ]),
         sortBy: 'notifyTemplateId',
-        initTotalRows: this.$store.state.app_service.templates.length
+        initTotalRows: StateHelper.getMaster().templates.length
       },
       breadCrumbs: ViewHelper.createBreadCrumbItems('master', 'notifyTemplate'),
     }
   },
-  computed: {
-    ...mapState('app_service', [
-      'templates',
-    ]),
-  },
   methods: {
     async fetchData(payload) {
-      try {
-        this.showProgress()
-        if (payload && payload.done) {
-          payload.done()
-        }
-      }
-      catch(e) {
-        console.error(e)
-      }
       this.hideProgress()
     },
   }

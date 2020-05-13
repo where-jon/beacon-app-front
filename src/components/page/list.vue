@@ -93,7 +93,8 @@
         :current-page="compactMode? 1: currentPage" :per-page="perPage"
         :filter="compactMode? () => true: executeFilter" :bordered="params.bordered"
         :sort-by.sync="sortBy" :sort-compare="compactMode? () => 0: sortCompare" :sort-desc.sync="sortDesc" :empty-filtered-text="emptyMessage"
-        show-empty striped hover outlined caption-top responsive
+        :responsive="!iosOrAndroid" :stacked="iosOrAndroid ? 'md' : null"
+        show-empty striped hover outlined caption-top
         @filtered="onFiltered"
         @sort-changed="compactMode? fetchCompactListOnNext(): () => {}"
       >
@@ -224,14 +225,14 @@
           <div class="empty-icon d-inline-flex" /><!-- 横幅0の「支柱」 -->
           <div class="d-inline-flex flex-wrap">
             <span v-if="useTxPopup">
-              <div v-for="position in row.item.positions" :key="position.areaId"
+              <div v-for="position in row.item.positions" :key="position.txId"
                    :style="position.display" :class="'d-inline-flex m-1 '+ position.blinking" @click="txOnClick($event,position.tx)"
               >
                 {{ position.label }}
               </div>
             </span>
             <span v-else>
-              <div v-for="position in row.item.positions" :key="position.areaId"
+              <div v-for="position in row.item.positions" :key="position.txId"
                    :style="position.display" :class="'d-inline-flex m-1 '+ position.blinking" @click.stop="mapDisplay(position, true)"
               >
                 {{ position.label }}
@@ -414,6 +415,7 @@ export default {
       error: null,
       sortBy: null,
       sortDesc: false,
+      lasteFetched: 0,
       sortCompare: (aData, bData, key) => this.sortCompareCustom(aData, bData, key),
       ...this.params
     }
@@ -640,6 +642,11 @@ export default {
       this.$nextTick(() => this.fetchCompactList())
     },
     async fetchCompactList() { // マスタ一覧をサーバから取得
+      let now = new Date().getTime()
+      if (now - this.lasteFetched < 100) { // IEで2回リクエストを送ってしまう問題への対応
+        return
+      }
+      this.lasteFetched = now
       if(!Util.hasValue(this.sortBy)) {
         this.sortBy = this.old.sortBy
         this.sortDesc = this.old.sortDesc
@@ -924,12 +931,11 @@ export default {
       if(item.absent){
         return
       }
-      const tx = item.tx
       const selectedTx = {
-        btxId: tx.btxId,
+        btxId: item.btxId,
       }
       const selectedAreaId = Util.getValue(item, 'exb.location.areaId')
-      const txOk = await this.callParentMethod('checkDetectedTx', tx)
+      const txOk = await this.callParentMethod('checkDetectedTx', item.txId)
       if (txOk) {
         this.replaceMain({selectedTx})
       }
@@ -954,7 +960,8 @@ export default {
     setupSelectedTx (tx, x, y, isDispThumbnail) { // Txアイコンを選択した場合のポップアップ
       const menuGroup = DomUtil.getRect('.menu-groups')  //  ナビの情報取得：x位置調整
       const navbar = DomUtil.getRect('.navbar')  // ナビの情報取得：y位置調整
-      const selectedTx = PositionHelper.createTxDetailInfoOnStack(x, y, tx,{x: menuGroup.width, y: navbar.height} , isDispThumbnail? this.preloadThumbnail: {})
+      const containerRect = DomUtil.getRect('#bd-page')
+      const selectedTx = PositionHelper.createTxDetailInfoOnStack(x, y, tx,{x: menuGroup.width, y: navbar.height} , isDispThumbnail? this.preloadThumbnail: {}, containerRect)
       this.replaceMain({ selectedTx })
       this.$nextTick(() => this.showReady = true)
       if (this.isShowModal()) {

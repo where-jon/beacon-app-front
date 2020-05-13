@@ -69,6 +69,7 @@ export default {
       showDismissibleAlert: false,
       count: 0, // mockテスト用
       positionList: [],
+      lasteFetched: 0,
     }
   },
   computed: {
@@ -84,6 +85,11 @@ export default {
   methods: {
     async fetchData(payload) {
       try {
+        let now = new Date().getTime()
+        if (now - this.lasteFetched < 100) { // IEで2回リクエストを送ってしまう問題への対応
+          return
+        }
+        this.lasteFetched = now
         this.replace({showAlert: false})
         this.showProgress()
         await PositionHelper.loadPosition(0, true)
@@ -96,8 +102,13 @@ export default {
         positions = positions.map(pos => {
           let prohibitCheck = minorMap[pos.minor] != null
 
-          return {
-            ...pos,
+          return { // データが多くオブジェクトの階層が深く・循環しているとIEが固まるため、最小限のデータにする
+            minor: pos.minor,
+            btxId: pos.btxId,
+            state:  pos.state,
+            detectState:  pos.detectState,
+            updatetime: pos.updatetime,
+            noSelectedTx: pos.noSelectedTx,
             // powerLevel: this.getPowerLevel(pos),
             txId: Util.v(pos, 'tx.txId'),
             potCd: Util.v(pos, 'tx.pot.potCd'),
@@ -113,6 +124,11 @@ export default {
             areaId: Util.v(pos, 'exb.location.areaId'),
             blinking : prohibitCheck? 'blinking' : null,
             isDisableArea: Util.v(pos, 'exb.location.isAbsentZone', false),
+            exb: {
+              location: {
+                areaId: Util.v(pos, 'exb.location.areaId')
+              }
+            }
           }
         })
         this.totalRows = positions.length
@@ -147,11 +163,11 @@ export default {
     //     return batteryOpts.find((val) => val.value === 3)
     //   }
     // },
-    async checkDetectedTx(tx) {
+    async checkDetectedTx(txId) {
       //await this.fetchData()
       return _.some(this.positionList, (pos) => {
-        return pos.tx && pos.tx.txId == tx.txId
-            && !pos.noSelectedTx
+        return pos.txId == txId
+            && !pos.noSelectedTx // TODO: 
       })
     }
   }

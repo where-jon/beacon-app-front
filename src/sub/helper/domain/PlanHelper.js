@@ -6,6 +6,7 @@
 import { DISP } from '../../constant/config'
 import moment from 'moment'
 import * as HttpHelper from '../base/HttpHelper'
+import * as StateHelper from '../dataproc/StateHelper'
 import * as IconHelper from '../ui/IconHelper'
 
 let store
@@ -32,7 +33,7 @@ export const fetchMRoomPlan = async (selectedAreaId) => {
 }
 
 export const createAllMRoomIcons = (scale) => {
-  const positions = store.state.main.positions
+  const positions = StateHelper.getPositions()
   const locationPositionMap = positions.reduce((accum, pos) => {
     if (!accum[pos.location.locationId]) {
       accum[pos.location.locationId] = []
