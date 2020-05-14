@@ -5,8 +5,8 @@
  */
 
 import _ from 'lodash'
-import { DISP } from '../../constant/config'
-import { SHAPE, CATEGORY } from '../../constant/Constants'
+import { DISP, APP } from '../../constant/config'
+import { SHAPE, CATEGORY, PRESENCE } from '../../constant/Constants'
 import * as StyleHelper from '../ui/StyleHelper'
 import * as SensorHelper from './SensorHelper'
 
@@ -75,6 +75,23 @@ export const createTxLegends = (txList, categoryList, groupList) => {
       ]
     })
   }
+
+  if (APP.POS.WITH.PRESENCE) { // プレゼンスアイコンの凡例を追加
+    ret.push({id: 100, items: [
+      { id: 1, text: '', style: null },
+      { id: 2, text: i18n.tnl('label.presenceIcon'), style: {'margin-left':'-40px'} },
+    ]})
+    _.forEach(PRESENCE.STATUS, (value, key) => {
+      ret.push({id: 100 + value, items: [
+        { id: 1, text: '', style: StyleHelper.getStyleDisplay1(
+          { shape:SHAPE.CIRCLE, bgColor: DISP.PRESENCE.BG[value - 1], color: '#000000', size: DISP.TX.PRESENCE.R }
+        ) },
+        { id: 2, text: i18n.tnl('label.' + key), style: null },
+      ]})
+    })  
+  }
+
+
   return ret
 }
 

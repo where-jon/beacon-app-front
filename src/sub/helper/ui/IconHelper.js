@@ -64,6 +64,7 @@ const createShape = (radius, color, option = {}) => {
   const icon = new Shape()
   icon.graphics.beginFill(color).drawCircle(0, 0, radius, radius)
   icon.alpha = Util.getValue(option, 'alpha', 1)
+  icon.radius = radius
   return icon
 }
 
@@ -82,10 +83,13 @@ const createRect = (width, height, color, option = {}) => {
   const r = Util.getValue(option, 'roundRect', 0)
   const icon = new Shape()
   icon.graphics.beginStroke(strokeColor).setStrokeStyle(strokeStyle).beginFill(color)
+  icon.width = width
+  icon.height = height
   if(r == 0){
     icon.graphics.drawRect(-1 * width, -1 * height, width * 2, height * 2)
     return icon
   }
+  icon.radius = r
   icon.graphics.drawRoundRect(-width, -height, width * 2, height * 2, r)
   return icon
 }
@@ -352,16 +356,47 @@ export const createTxBtn = (pos, shape, color, bgColor, mapScale, isAbsent = fal
   txBtn.bgColor = bgColor
   // txBtn.isTransparent  // TODO: 値をセットしていない
 
-  const radius = DISP.TX.R * 2
-  const statusIcon = new Container()
-  const statusRadius = 5
-  statusIcon.addChild(createShape(statusRadius,'#ffff00', {}))
-  statusIcon.x = radius - statusRadius * 2 - 5
-  statusIcon.y = radius - statusRadius * 2 - 5
-  txBtn.addChild(statusIcon)
+  // プレゼンスアイコン追加
+  if (APP.POS.WITH.PRESENCE) {
+    addPresenceIcon(pos, txBtn)
+  }
 
   return txBtn
 }
+
+/**
+ * プレゼンスアイコンを付加する
+ * 
+ * @param {*} pos 
+ * @param {*} txBtn 
+ */
+const addPresenceIcon = (pos, txBtn) => {
+  const icon = txBtn.children.find(e => e instanceof Shape)
+  if (!icon) return
+
+  const statusRadius = DISP.TX.PRESENCE.R
+  let x, y
+  if (icon.width) {
+    if (icon.radius) { // 角丸四角の場合
+      x = y = icon.width - icon.radius * (1 - Math.sqrt(0.5)) - statusRadius
+    }
+    else { // 四角の場合
+      x = (icon.width - statusRadius) * 0.95 // 若干隙間を入れる
+      y = (icon.height - statusRadius) * 0.95
+    }
+  }
+  else { // 円の場合
+    x = y = Math.sqrt(0.5) * icon.radius - statusRadius
+  }
+
+  const status = Util.nvl(pos.presenceStatus, 6)
+  const statusIcon = new Container()
+  statusIcon.addChild(createShape(statusRadius, DISP.PRESENCE.BG[status - 1], {}))
+  statusIcon.x = x
+  statusIcon.y = y
+  txBtn.addChild(statusIcon)
+}
+
 
 /**
  * カウント用ラベルボタンを作成する。
