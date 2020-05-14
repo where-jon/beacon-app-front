@@ -77,7 +77,7 @@ export const APP = { // 機能面に関する設定
     WITH: {
       CATEGORY: true, // 位置表示(地図)にカテゴリを表示
       GROUP: false, // 位置表示(地図)にグループを表示
-      PRESENCE: true, // 位置表示（地図）のアイコンにプレゼンスステータスを表示
+      PRESENCE: false, // 位置表示（地図）のアイコンにプレゼンスステータスを表示（デフォルトは必ずfalse）
     },
 
     PLUGIN: {

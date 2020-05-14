@@ -636,11 +636,11 @@ export default {
           let findCategory
           let findArea
           let areaIndex = 0
-          if (this.pPresence && stay.byId == -1) { // プレゼンスの場合、-1はオフライン扱い
-            stay.byId = PRESENCE.STATUS.Offline
+          if (this.pPresence && stay.byId == -1) { // プレゼンスの場合、-1はUnknown扱い
+            stay.byId = PRESENCE.STATUS.PresenceUnknown
             stay.byName = 'Offline'
           }
-          const isAbsentZone = this.pPresence? (stay.byId == PRESENCE.STATUS.Offline): this.isAbsentZoneData(stay.byId)
+          const isAbsentZone = this.pPresence? ArrayUtil.equalsAny(stay.byId, [PRESENCE.STATUS.Offline, PRESENCE.STATUS.PresenceUnknown]): this.isAbsentZoneData(stay.byId)
           if (this.isLostData(stay.byId) || isAbsentZone) {
             lostTime += stay.period
             time = moment().startOf('days').add(stay.period, 's').format('HH:mm')

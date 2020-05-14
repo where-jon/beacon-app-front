@@ -9,7 +9,7 @@ import cold from '../../../assets/icon/cold.png'
 import comfort from '../../../assets/icon/comfort.png'
 import hot from '../../../assets/icon/hot.png'
 import { APP, DISP } from '../../constant/config'
-import { SHAPE, TX, SENSOR, DISCOMFORT } from '../../constant/Constants'
+import { SHAPE, TX, SENSOR, DISCOMFORT, PRESENCE } from '../../constant/Constants'
 import * as ColorUtil from '../../util/ColorUtil'
 import * as NumberUtil from '../../util/NumberUtil'
 import * as StringUtil from '../../util/StringUtil'
@@ -389,7 +389,7 @@ const addPresenceIcon = (pos, txBtn) => {
     x = y = Math.sqrt(0.5) * icon.radius - statusRadius
   }
 
-  const status = Util.nvl(pos.presenceStatus, 6)
+  const status = Util.nvl(pos.presenceStatus, PRESENCE.STATUS.PresenceUnknown)
   const statusIcon = new Container()
   statusIcon.addChild(createShape(statusRadius, DISP.PRESENCE.BG[status - 1], {}))
   statusIcon.x = x
