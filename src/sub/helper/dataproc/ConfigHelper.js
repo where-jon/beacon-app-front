@@ -61,6 +61,7 @@ export const reloadConfig = async () => {
   const login = LocalStorageHelper.getLogin()
   const userInfo = await AuthHelper.getUserInfo(login.isTenantAdmin)
   AuthHelper.resetConfig(login.isTenantAdmin, userInfo.setting)
+  return new Date()
 }
 
 /**

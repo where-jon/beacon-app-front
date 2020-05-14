@@ -5,7 +5,7 @@
     <auto-alert browser-size />
     <alert v-if="!callee" :message="message" />
     <div class="container">
-      <m-list ref="mList" :params="params" :list="settingList" :per-page="settingList.length" :use-pagenation="false" :alert-force-hide="true" max-filter-length="40" />
+      <m-list ref="mList" :params="params" :list="settingList" :per-page="20" :use-pagenation="true" :alert-force-hide="true" max-filter-length="40" />
       <b-form id="updateForm" class="mb-3" @submit.prevent="onUpdateSubmit">
         <b-button v-if="!callee && isEditable && !isShowNewForm" v-t="'label.update'" :variant="theme" type="submit" class="ml-2" @click="doBeforeSubmit(true)" />
         <b-button v-if="isRegistable && !isShowNewForm && useRegistForm" v-t="'label.addForm'" :variant="theme" type="button" class="float-right" @click="showNewForm(true)" />
@@ -124,6 +124,7 @@ export default {
   },
   data () {
     return {
+      configReloadedTime: null,
       params: {
         id: 'settingId',
         fields: ViewHelper.addLabelByKey(this.$i18n, [ 
@@ -210,10 +211,20 @@ export default {
         this.newForm.key = this.newForm.key.replace(/\s/g, '')
       }
     },
+    waitReloadConfig() {
+      setTimeout(() => {
+        if (this.configReloadedTime == null) {
+          this.waitReloadConfig()
+        } else {
+          this.configReloadedTime = null
+          this.fetchData()
+        }
+      },200)
+    },
     async fetchData(updateOldSettings = true) {
       try {
         this.showProgress()
-        if(!this.calee){
+        if(!this.callee){
           await StateHelper.load('setting')
         }
         if(updateOldSettings){
@@ -258,15 +269,18 @@ export default {
       return setting.value
     },
     async onSaved() {
-      await ConfigHelper.reloadConfig()
+      ConfigHelper.reloadConfig().then(v => {
+        this.configReloadedTime = v
+      })
       await AuthHelper.storeMagicNumberList()
       this.showNewForm(false)
     },
     async onBeforeReload(){
-      await this.fetchData()
+      this.waitReloadConfig()
     },
     onUpdateSubmit(evt){
       if(!this.callee){
+        this.configReloadedTime = null
         this.save(evt)
         return
       }
@@ -354,6 +368,7 @@ export default {
     },
     onRegistSubmit(evt){
       if(!this.callee){
+        this.configReloadedTime = null
         this.save(evt)
         return
       }
