@@ -767,7 +767,7 @@ export const createTxDetailInfo = (x, y, color, bgColor, tx, canvasScale, offset
     containerWidth: containerRect.width,
     containerHeight: containerRect.height,
     class: !tx.btxId ? '': 'balloon-u', // 上表示のみに固定,
-    timestamp: position ? DateUtil.formatDate(new Date(position.timestamp)) : '',
+    timestamp: getLabel('txTimestamp') + (position ? DateUtil.formatDate(new Date(position.timestamp)) : ''),
     thumbnail: Util.getValue(preloadThumbnail, 'src', ''),
     bgColor,
     color,
@@ -784,7 +784,11 @@ export const createTxDetailInfo = (x, y, color, bgColor, tx, canvasScale, offset
   if(extValue){
     Object.keys(extValue).forEach( key => { 
       if(!ret[key] && extValue[key] ){ // 既にあるキーは書き換えないかつ値が存在する拡張キーのみ表示対象にする
-        ret[key] = getLabel(key) + extValue[key] 
+        let label = getLabel(key)
+        if (label.length > 0) {
+          label = label.substr(0, 1).toUpperCase() + label.substr(1)
+        }
+        ret[key] = label + extValue[key]
       }
     } )
   }

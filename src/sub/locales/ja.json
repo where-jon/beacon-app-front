@@ -129,6 +129,7 @@
     "major": "major",
     "minor": "minor",
     "minorPowerLevel": "minor(電池レベル)",
+    "txTimestamp": "受信日時",
 
     "locationId": "位置ID",
     "locationCd": "ID",
