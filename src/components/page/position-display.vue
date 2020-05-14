@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <m-list :params="params" :list="getDataList()" :alert-force-hide=true />
+  <div @click="resetDetail">
+    <m-list ref="positionList" :params="params" :list="getDataList()" :alert-force-hide=true />
   </div>
 </template>
 
@@ -81,6 +81,9 @@ export default {
     this.replaceAS({positions: []})
   },
   methods: {
+    resetDetail() {
+      this.$refs.positionList.resetDetail()
+    },
     getDataList() {
       return this[this.eachListName]
     },
