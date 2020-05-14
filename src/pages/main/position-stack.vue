@@ -1,5 +1,5 @@
 <template>
-  <div class="container-fluid">
+  <div class="container-fluid" @click="resetDetail">
     <breadcrumb :items="breadCrumbs" :extra-nav-spec="extraNavSpec"
                 :reload="reload" :short-name="shortName" reload-emit-name="allFetch"
     />
@@ -96,6 +96,13 @@ export default {
   async mounted() {
   },
   methods: {
+    resetDetail() {
+      if (this.isShow('area')) {
+        this.$refs.areaPosition.resetDetail()
+      } else {
+        this.$refs.zonePosition.resetDetail()
+      }
+    },
     isShow(type){
       return this.positionType == POSITION_STACK_TYPES[type.toUpperCase()]
     },
