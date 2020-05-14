@@ -1196,6 +1196,7 @@
         "ROUNDRECT_RADIUS": "Round radius of Tx icon::Set up the roundness of the four corners to Tx set to the rounded square icon.",
         "BGCOLOR": "Default background color for Tx icons::Set up the background color for Tx icons that do not belong to either category or group. Set up with a color code other than #.",
         "COLOR": "Default text color of Tx icon::Set up the text color of the Tx icon to which neither category nor group belongs. Set up with a color code other than #.",
+        "SHAPE": "Default display Tx icon shape :: Set up the value of SHAPE of Constants.",
         "STROKE_COLOR": "Default border color for Tx icons::Set up the border color for Tx icons to which neither category nor group belongs. Set up with a color code other than #.",
         "ALPHA": "Absent time Tx Icon Transmissive Value::Set up the transmit value when Tx is absence.Set up as a decimal value from 0 (transparent) to 1 (opaque).",
         "LOST_ALPHA": "Absent Tx Icon Transmissive Value::Set up the transmit value when Tx is absent. Set up it as a decimal value from 0 (transparent) to 1 (opaque).",

@@ -66,7 +66,7 @@ export const createTxLegends = (txList, categoryList, groupList) => {
   }))
   // グループ、カテゴリに全てのTXが紐付いている場合は、デフォルトを非表示
   if(!hasAllTxDisplayInfo(txs)){
-    const defaultStyle = { shape: SHAPE.CIRCLE, bgColor: DISP.TX.BGCOLOR, color: DISP.TX.COLOR }
+    const defaultStyle = { shape: DISP.TX.SHAPE, bgColor: DISP.TX.BGCOLOR, color: DISP.TX.COLOR }
     ret.push({
       id: 0,
       items: [

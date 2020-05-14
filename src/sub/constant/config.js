@@ -13,7 +13,7 @@ export const DEV = { // 開発デバッグ関連
 export const APP = { // 機能面に関する設定
   SAAS_DOMAIN: '.saas.',
   COMMON: {
-    VERSION: 'Version 1.3.2', // バージョン　this application version
+    VERSION: 'Version 1.3.3', // バージョン　this application version
     TIME_ZONE: 'JST', // 午前0時を決定するためのタイムゾーン
     AUTO_RELOAD: 60000, // 自動リロード間隔(ミリ秒)
   },
@@ -412,6 +412,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     ROUNDRECT_RADIUS: 13, // Tx角丸表示時のRADIUS
     BGCOLOR: '#3bcddc', // Tx表示時のデフォルト背景色
     COLOR: '#000000', // Tx表示時のデフォルト文字色
+    SHAPE: SHAPE.CIRCLE, // Tx表示時のデフォルト形状
     STROKE_COLOR: '#cccccc', // Tx表示時のデフォルト枠線色
     STROKE_WIDTH: 1, // Tx表示時のデフォルト枠線幅
     ALPHA: 0.6, // Tx表示時(離席)のデフォルト透過値

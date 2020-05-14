@@ -37,7 +37,7 @@ export const setApp = pi18n => {
  * @param {Object} locationInfo 設定値「DISP.**_LOC」を使用する
  * @return {String}
  */
-export const getLocationColor = (location, locationInfo) => {
+const getLocationColor = (location, locationInfo) => {
   const sensorNameList = Util.getValue(location, 'txList', [])
     .concat(Util.getValue(location, 'exbList', []))
     .map(device => device.sensorName)
@@ -60,7 +60,7 @@ export const getLocationColor = (location, locationInfo) => {
  * @param {Object} [option = {}]
  * @return {Object}
  */
-export const createShape = (radius, color, option = {}) => {
+const createShape = (radius, color, option = {}) => {
   const icon = new Shape()
   icon.graphics.beginFill(color).drawCircle(0, 0, radius, radius)
   icon.alpha = Util.getValue(option, 'alpha', 1)
@@ -76,7 +76,7 @@ export const createShape = (radius, color, option = {}) => {
  * @param {Object} [option = {}]
  * @return {Object}
  */
-export const createRect = (width, height, color, option = {}) => {
+const createRect = (width, height, color, option = {}) => {
   const strokeColor = Util.getValue(option, 'strokeColor', '#000000')
   const strokeStyle = Util.getValue(option, 'strokeStyle', 0)
   const r = Util.getValue(option, 'roundRect', 0)
@@ -99,7 +99,7 @@ export const createRect = (width, height, color, option = {}) => {
  * @param {Object} [option = {}]
  * @return {Object}
  */
-export const createText = (text, font, color, option = {}) => {
+const createText = (text, font, color, option = {}) => {
   const label = new Text(text)
   label.font = StyleHelper.getAdjustFontSize(()=> Util.getValue(option, 'fontSize', StyleHelper.getFont2Size(font)) * DISP.FONT_ICON_ADJUST_SCALE, Util.getValue(option, 'bold', false))
   label.color = color
@@ -119,7 +119,7 @@ export const createText = (text, font, color, option = {}) => {
  * @param {Object} [option = {}]
  * @return {Object}
  */
-export const createCircleIcon = (text, radius, color, bgColor, option = {}) => {
+const createCircleIcon = (text, radius, color, bgColor, option = {}) => {
   const icon = new Container()
   icon.addChild(createShape(radius, bgColor, option))
   icon.addChild(createText(text, StyleHelper.getInRectFontSize(DISP.IS_SCALE_ICON_TEXT ? text : DISP.DUMMY_ICON_TEXT, radius * 2, radius * 2), color, option))
@@ -137,7 +137,7 @@ export const createCircleIcon = (text, radius, color, bgColor, option = {}) => {
  * @param {Object} [option = {}]
  * @return {Object}
  */
-export const createRectIcon = (text, width, height, color, bgColor, option = {}) => {
+const createRectIcon = (text, width, height, color, bgColor, option = {}) => {
   const icon = new Container()
   icon.addChild(createRect(width, height, bgColor, option))
   icon.addChild(createText(text, StyleHelper.getInRectFontSize(DISP.IS_SCALE_ICON_TEXT ? text : DISP.DUMMY_ICON_TEXT, width * 2, height * 2), color, option))
@@ -244,7 +244,7 @@ export const createLocationIcon = (location, key, maxLength, locationInfo, mapSc
  * @param {String} bgColor
  * @return {{bgColor: String, strokeColor: String}}
  */
-export const createPositionRectInfo = (pos, bgColor) => {
+const createPositionRectInfo = (pos, bgColor) => {
   let strokeAlpha = 1
   let fillAlpha = 1
   if (NumberUtil.bitON(pos.tx.disp, TX.DISP.ALWAYS)) {
@@ -271,7 +271,7 @@ export const createPositionRectInfo = (pos, bgColor) => {
  * @param {Number} mapScale
  * @return {Object}
  */
-export const createPositionTxIcon = (pos, shape, color, bgColor, mapScale) => {
+const createPositionTxIcon = (pos, shape, color, bgColor, mapScale) => {
   const rectInfo = createPositionRectInfo(pos, bgColor)
   const txRadius = (pos.txR? pos.txR: DISP.TX.R) / mapScale
   return createIcon(
@@ -316,7 +316,7 @@ export const createLastSystemTx = (pos, mapScale) => {
  * @param {Number} mapScale
  * @return {Object}
  */
-export const createAbsentTxIcon = (pos, shape, color, bgColor, mapScale) => {
+const createAbsentTxIcon = (pos, shape, color, bgColor, mapScale) => {
   const txRadius = DISP.TX.R / mapScale
   return createIcon(
     pos.label, txRadius, txRadius, color, ColorUtil.getRGBA(bgColor, 1), {
@@ -351,6 +351,15 @@ export const createTxBtn = (pos, shape, color, bgColor, mapScale, isAbsent = fal
   txBtn.color = color
   txBtn.bgColor = bgColor
   // txBtn.isTransparent  // TODO: 値をセットしていない
+
+  const radius = DISP.TX.R * 2
+  const statusIcon = new Container()
+  const statusRadius = 5
+  statusIcon.addChild(createShape(statusRadius,'#ffff00', {}))
+  statusIcon.x = radius - statusRadius * 2 - 5
+  statusIcon.y = radius - statusRadius * 2 - 5
+  txBtn.addChild(statusIcon)
+
   return txBtn
 }
 
@@ -361,7 +370,7 @@ export const createTxBtn = (pos, shape, color, bgColor, mapScale, isAbsent = fal
  * @param {Number} scale
  * @return {Object}
  */
-export const createCountButton = (count, scale) => {
+const createCountButton = (count, scale) => {
   const label = createCircleIcon(i18n.tnl('message.count', {count}), DISP.PIR.R_SIZE / scale, '#FF3222', '#FFFFFF', {bold: true, circle: false, alpha: 0, fontSize: 40 / scale})
   label.cursor = ''
   return label
@@ -374,7 +383,7 @@ export const createCountButton = (count, scale) => {
  * @param {Number} count
  * @return {{bgColor: String, width: Number}}
  */
-export const createExbShapeInfo = (sensorId, count) => {
+const createExbShapeInfo = (sensorId, count) => {
   if(sensorId == SENSOR.PRESSURE){
     return {
       bgColor: (count <= DISP.PRESSURE.VOL_MIN)? DISP.PRESSURE.BGCOLOR: DISP.PRESSURE.EMPTY_BGCOLOR,
@@ -394,7 +403,7 @@ export const createExbShapeInfo = (sensorId, count) => {
  * @param {Number} count
  * @return {{label: String, color: String}}
  */
-export const createExbLabelInfo = (sensorId, count) => {
+const createExbLabelInfo = (sensorId, count) => {
   if(sensorId == SENSOR.PRESSURE){
     return {
       label: i18n.tnl('label.' + (count <= DISP.PRESSURE.VOL_MIN? DISP.PRESSURE.INUSE_LABEL: DISP.PRESSURE.EMPTY_LABEL)),
@@ -415,7 +424,7 @@ export const createExbLabelInfo = (sensorId, count) => {
  * @param {Number} mapScale
  * @return {Object}
  */
-export const createUseStateIcon = (sensorId, count, mapScale) => {
+const createUseStateIcon = (sensorId, count, mapScale) => {
   const shapeInfo = createExbShapeInfo(sensorId, count)
   const labelInfo = createExbLabelInfo(sensorId, count)
   return createCircleIcon(labelInfo.label, shapeInfo.width / mapScale, labelInfo.color, shapeInfo.bgColor, {bold: false})
@@ -461,7 +470,7 @@ export const createExbIconForMagnet = (tx, magnetSensorList, mapScale) => {
  * @param {Object} exb
  * @return {Object}
  */
-export const createDiscomfortIcon = (stage, device, mapScale) => {
+const createDiscomfortIcon = (stage, device, mapScale) => {
   const discomfort = SensorHelper.getDiscomfort(device.temperature, device.humidity)
   const bitmap = discomfort == DISCOMFORT.COLD? cold: discomfort == DISCOMFORT.COMFORT? comfort: hot
   const icon = new Bitmap(bitmap)
@@ -484,7 +493,7 @@ export const createDiscomfortIcon = (stage, device, mapScale) => {
  * @param {Number} mapScale
  * @return {Object}
  */
-export const createThermohShape = (iconInfo, mapScale) => {
+const createThermohShape = (iconInfo, mapScale) => {
   const btnicon = new Shape()
   btnicon.graphics.beginFill(iconInfo.color).drawCircle(0, 0, DISP.THERMOH.R_SIZE / mapScale, DISP.THERMOH.R_SIZE / mapScale)
   btnicon.alpha = DISP.THERMOH.ALPHA
@@ -498,7 +507,7 @@ export const createThermohShape = (iconInfo, mapScale) => {
  * @param {Number} mapScale
  * @return {String}
  */
-export const getThermohFont = (ft = DISP.THERMOH.FONT, mapScale) => {
+const getThermohFont = (ft = DISP.THERMOH.FONT, mapScale) => {
   const font = ft.split('px')
   const fontSize = Number(font[0]) / mapScale
   return Math.round(fontSize) + 'px' + font[1]
@@ -511,7 +520,7 @@ export const getThermohFont = (ft = DISP.THERMOH.FONT, mapScale) => {
  * @param {Number} mapScale
  * @return {Object}
  */
-export const createThermoLabel = (device, mapScale) => {
+const createThermoLabel = (device, mapScale) => {
   const text = NumberUtil.formatTemperature(device.temperature) + i18n.tnl('label.temperatureUnit') + '\n' + NumberUtil.formatHumidity(device.humidity) + i18n.tnl('label.humidityUnit')
   const label = new Text(text)
   label.font = getThermohFont(DISP.THERMOH.FONT, mapScale)

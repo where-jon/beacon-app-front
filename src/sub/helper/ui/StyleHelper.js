@@ -119,7 +119,7 @@ export const getPositionDisplay = tx => {
   return {
     color: StringUtil.addPrefix(display.color || DISP.TX.COLOR, '#'),
     bgColor: StringUtil.addPrefix(display.bgColor || DISP.TX.BGCOLOR, '#'),
-    shape: display.shape || SHAPE.CIRCLE
+    shape: display.shape || DISP.TX.SHAPE
   }
 }
 

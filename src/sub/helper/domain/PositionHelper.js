@@ -28,7 +28,7 @@ export const zoneBtxIdAddNumber = 10000
 const defaultDisplay = {
   color: DISP.TX.COLOR,
   bgColor: DISP.TX.BGCOLOR,
-  shape: SHAPE.CIRCLE,
+  shape: DISP.TX.SHAPE,
 }
 
 let store
