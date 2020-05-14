@@ -1493,8 +1493,19 @@
         "BATCH": "バッチ",
         "SIMULATION": "デモ用",
         "MANAGE": "管理用",
-        "OTHER_CATEGORY": "その他",
-        "MAIL": "メール"
+        "MAIL": "メール",
+        "ENTER": "入退場",
+        "INSTALLATION": "設置支援",
+        "PLAN": "予定",
+        "PROCESS_SUM": "工程管理",
+        "PROHIBIT": "禁止区域",
+        "PROXIMITY": "滞在時間集計",
+        "SETTING": "設定",
+        "SVCONLY": "サーバー専用",
+        "SYSTEM_USE": "システム使用",
+        "TOILET": "トイレ",
+        "TX_NUM": "位置表示(地図)",
+        "OTHER_CATEGORY": "その他"
       },
       "SENSOR_NONE": {
         "0": "0::未設定"
