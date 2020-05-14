@@ -48,3 +48,54 @@ export const getRect = (selector, key) => {
   return elm.getBoundingClientRect()
 }
 
+export const closest = (el, selector, excludeEl) => {
+  let parent = el.parentNode
+
+  if (!excludeEl && _matcher(el, selector)) {
+      return el
+  }
+
+  while (parent && parent !== window.document.body) {
+      if (_matcher(parent, selector)) {
+          return parent
+      }
+
+      parent = parent.parentNode
+  }
+
+  return null
+}
+
+export const _matcher = (el, selector) => {
+  const cssClassSelector = /^\./,
+      idSelector = /^#/
+
+  if (cssClassSelector.test(selector)) {
+      return hasClass(el, selector.replace('.', ''))
+  }
+  if (idSelector.test(selector)) {
+      return el.id === selector.replace('#', '')
+  }
+
+  return el.nodeName.toLowerCase() === selector.toLowerCase()
+}
+
+export const hasClass = (el, name) => {
+  let className
+
+  if (el.classList !== undefined) {
+      return el.classList.contains(name)
+  }
+
+  className = getClass(el)
+
+  return className.length > 0 && new RegExp('(^|\\s)' + name + '(\\s|$)').test(className)
+}
+
+export const getClass = (el) => {
+  if (!el || !el.className) {
+      return ''
+  }
+
+  return el.className.baseVal === undefined ? el.className : el.className.baseVal
+}

@@ -127,6 +127,7 @@
     "major": "Major",
     "minor": "Minor",
     "minorPowerLevel": "Minor(Battery level)",
+    "txTimestamp": "Timestamp",
 
     "locationId": "Position ID",
     "locationCd": "ID",
