@@ -61,16 +61,6 @@ export default {
 
         // センサ情報を取得する
         let exCluodSensors = await EXCloudHelper.fetchSensor(this.selectedSensor)
-        // オムロン系はレスポンスが違うので変換する TODO:ロジックを移す。sensoridとは？
-        if(this.selectedSensor == SENSOR.OMR_ENV){
-          if (exCluodSensors.sensors) {
-            exCluodSensors = exCluodSensors.sensors.map(sensor => {
-              return {...sensor, sensorid: sensor.pos_id, btxId: sensor.sensor_id, updatetime: sensor.timestamp}
-            })
-          } else {
-            exCluodSensors = null
-          }
-        }
         // EXB情報とセンサ情報をマージする
         const positionedExb = SensorHelper.mergeExbWithSensor(this.selectedSensor, exCluodSensors)
         // TXの位置情報を取得
