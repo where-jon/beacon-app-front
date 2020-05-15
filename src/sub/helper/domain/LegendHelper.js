@@ -9,6 +9,7 @@ import { DISP, APP } from '../../constant/config'
 import { SHAPE, CATEGORY, PRESENCE } from '../../constant/Constants'
 import * as StyleHelper from '../ui/StyleHelper'
 import * as SensorHelper from './SensorHelper'
+import * as ArrayUtil from '../../util/ArrayUtil'
 
 let i18n
 
@@ -81,10 +82,16 @@ export const createTxLegends = (txList, categoryList, groupList) => {
       { id: 1, text: '', style: null },
       { id: 2, text: i18n.tnl('label.presenceIcon'), style: {'margin-left':'-40px'} },
     ]})
-    _.forEach(PRESENCE.STATUS, (value, key) => {
-      ret.push({id: 100 + value, items: [
+    _.forEach(PRESENCE.STATUS, (status, key) => {
+      let bgColor = DISP.PRESENCE.BG[status - 1]
+      let border = ''
+      if (ArrayUtil.equalsAny(status, [PRESENCE.STATUS.BeRightBack, PRESENCE.STATUS.DoNotDisturb])) {
+        bgColor = '#FFF'
+        border = 'solid 4px ' + DISP.PRESENCE.BG[status - 2] // 滞在グラフとは異なり一つ前の色に合わせる
+      }
+      ret.push({id: 100 + status, items: [
         { id: 1, text: '', style: StyleHelper.getStyleDisplay1(
-          { shape:SHAPE.CIRCLE, bgColor: DISP.PRESENCE.BG[value - 1], color: '#000000', size: DISP.TX.PRESENCE.R }
+          { shape:SHAPE.CIRCLE, bgColor, border, size: DISP.TX.PRESENCE.R }
         ) },
         { id: 2, text: i18n.tnl('label.' + key), style: null },
       ]})

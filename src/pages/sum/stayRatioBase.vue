@@ -337,7 +337,7 @@ export default {
     },
   },
   async created() {
-    this.form.date = DEV.DEFAULT_DATE != '' ? new Date(DEV.DEFAULT_DATE) : moment().add(-1, 'days').format('YYYYMMDD')
+    this.form.date = DEV.DEFAULT_DATE != '' ? new Date(DEV.DEFAULT_DATE) : moment().add(this.pPresence? 0: -1, 'days').format('YYYYMMDD')
     let sortedArea = Object.assign([], this.areas)
     ArrayUtil.sortIgnoreCase(sortedArea, 'areaName')
     this.areaArray = sortedArea

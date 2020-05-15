@@ -5,7 +5,7 @@
 
 import * as mock from '../../../assets/mock/mock'
 import { APP, DEV, DISP } from '../../constant/config'
-import { DETECT_STATE, SHAPE, TX, TX_VIEW_TYPES } from '../../constant/Constants'
+import { DETECT_STATE, PRESENCE, TX, TX_VIEW_TYPES } from '../../constant/Constants'
 import * as ArrayUtil from '../../util/ArrayUtil'
 import * as DateUtil from '../../util/DateUtil'
 import * as NumberUtil from '../../util/NumberUtil'
@@ -792,7 +792,37 @@ export const createTxDetailInfo = (x, y, color, bgColor, tx, canvasScale, offset
       }
     } )
   }
+
+  addPresenceStatus(position, ret) 
   return ret
+}
+
+/**
+ * プレゼンス情報を追加する
+ * 
+ * @param {*} pos 
+ * @param {*} ret 
+ */
+const addPresenceStatus = (pos, ret) => {
+  if (APP.POS.WITH.PRESENCE) {
+    ret.presenceStatus = getLabel('presenceStatus') + i18n.tnl('label.' + getPresenceKey(pos))
+  }
+}
+
+/**
+ * プレゼンス・ステータス（キー文字列）を取得する
+ * 
+ * @param {*} pos 
+ */
+export const getPresenceKey = (pos) => {
+  let presenceKey
+  _.some(PRESENCE.STATUS, (value, key) => {
+    if (value == pos.presenceStatus) {
+      presenceKey = key
+      return true
+    }
+  })
+  return Util.nvl(presenceKey, 'PresenceUnknown')
 }
 
 /**
@@ -839,6 +869,8 @@ export const createTxDetailInfoOnStack = (x, y, tx, offset, preloadThumbnail, co
       }
     } )
   }
+  addPresenceStatus(position, ret) 
+
   return ret
 }
 

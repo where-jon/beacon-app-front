@@ -44,6 +44,7 @@ export default {
           ArrayUtil.includesIgnoreCase(APP.POT.WITH, 'potCd') ? {key: 'potCd', label: 'potCd', sortable: true, tdClass: 'action-rowdata'} : null,
           {key: 'potName', label: 'name', sortable: true, tdClass: 'action-rowdata'},
           ArrayUtil.includesIgnoreCase(APP.POS_LIST.WITH, 'tel')? {key: 'tel', sortable: true, tdClass: 'action-rowdata' }: null,
+          ArrayUtil.includesIgnoreCase(APP.POS_LIST.WITH, 'presenceStatus')? {key: 'presenceStatus', sortable: true, tdClass: 'action-rowdata' }: null,
           MenuHelper.useMaster('category') && APP.POS.WITH.CATEGORY ? {key: 'categoryName', label: 'category', sortable: true, tdClass: 'action-rowdata'} : null,
           MenuHelper.useMaster('group') && APP.POS.WITH.GROUP ? {key: 'groupName', label: 'group', sortable: true, tdClass: 'action-rowdata'} : null,
           {key: 'state', sortable: true, tdClass: 'action-rowdata'},
@@ -101,6 +102,10 @@ export default {
 
         positions = positions.map(pos => {
           let prohibitCheck = minorMap[pos.minor] != null
+          let presenceStatus
+          if (APP.POS.WITH.PRESENCE) {
+            presenceStatus = this.$i18n.tnl('label.' + PositionHelper.getPresenceKey(pos))
+          }
 
           return { // データが多くオブジェクトの階層が深く・循環しているとIEが固まるため、最小限のデータにする
             minor: pos.minor,
@@ -118,6 +123,7 @@ export default {
             areaName: Util.v(pos, 'exb.location.area.areaName'),
             groupName: Util.v(pos, 'tx.pot.group.groupName'),
             categoryName: Util.v(pos, 'tx.pot.category.categoryName'),
+            presenceStatus,
             // 追加フィルタ用
             groupId: Util.v(pos, 'tx.pot.group.groupId'),
             categoryId: Util.v(pos, 'tx.pot.category.categoryId'),

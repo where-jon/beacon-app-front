@@ -113,7 +113,7 @@ export const APP = { // 機能面に関する設定
   },
   // 位置表示(一覧)
   POS_LIST: {
-    WITH: ['mapDisplay'],  // 表示対象の文字列を配列に追加で列を表示する。mapDisplay:「マップ表示」列、tel:「電話番号」列
+    WITH: ['mapDisplay'],  // 表示対象の文字列を配列に追加で列を表示する。mapDisplay:「マップ表示」列、tel:「電話番号」列、presenceStatus：「プレゼンス状態」列
   },
   // 位置表示(全体)
   POS_STACK: {
@@ -299,7 +299,7 @@ export const APP = { // 機能面に関する設定
     SORT: 'desc', // 履歴情報Excの日付デフォルトソート（asc or desc）
   },
   TXDETAIL: {
-    // TX詳細表示項目
+    // TX詳細表示項目（presenceStatus: プレゼンス情報）
     ITEMS: ['minor', 'major', 'name', 'group', 'category', 'tel', 'timestamp'],
     NO_UNREGIST_THUMB: false, // TX詳細サムネイル非表示（未登録の場合）,
     SHOW_LABEL: true, // 標準項目にラベルを表示する,
@@ -538,7 +538,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
     STRESS_BG: ['#85A9D1', '#F0C864', '#F49696'], // ストレスレベルに応じた背景色
   },
   PRESENCE: {
-    BG: ['#92C353', '#C4314B', '#FF314B', '#FCD116', '#CCE116', '#ccc', '#F6f6F6'], // 1 -7
+    BG: ['#92C353', '#C4314B', '#FF314B', '#FCD116', '#F0E68C', '#F6f6F6', '#ccc', '#A381DD'], // 1 -7
   },
   ANALYSIS: { // 分析
     LINE: {

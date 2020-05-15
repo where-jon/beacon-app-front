@@ -12,6 +12,7 @@ import { APP, DISP } from '../../constant/config'
 import { SHAPE, TX, SENSOR, DISCOMFORT, PRESENCE } from '../../constant/Constants'
 import * as ColorUtil from '../../util/ColorUtil'
 import * as NumberUtil from '../../util/NumberUtil'
+import * as ArrayUtil from '../../util/ArrayUtil'
 import * as StringUtil from '../../util/StringUtil'
 import * as Util from '../../util/Util'
 import * as ConfigHelper from '../dataproc/ConfigHelper'
@@ -371,30 +372,41 @@ export const createTxBtn = (pos, shape, color, bgColor, mapScale, isAbsent = fal
  * @param {*} txBtn 
  */
 const addPresenceIcon = (pos, txBtn) => {
-  const icon = txBtn.children.find(e => e instanceof Shape)
-  if (!icon) return
+  const shape = txBtn.children.find(e => e instanceof Shape)
+  if (!shape) return
 
-  const statusRadius = DISP.TX.PRESENCE.R
-  let x, y
-  if (icon.width) {
-    if (icon.radius) { // 角丸四角の場合
-      x = y = icon.width - icon.radius * (1 - Math.sqrt(0.5)) - statusRadius
+  const statusRadius = DISP.TX.PRESENCE.R // ステータスアイコンの半径
+  let x, y // TXアイコン内の位置を計算
+  if (shape.width) {
+    if (shape.radius) { // 角丸四角の場合
+      x = y = shape.width - shape.radius * (1 - Math.sqrt(0.5)) - statusRadius
     }
     else { // 四角の場合
-      x = (icon.width - statusRadius) * 0.95 // 若干隙間を入れる
-      y = (icon.height - statusRadius) * 0.95
+      x = (shape.width - statusRadius) * 0.95 // 若干隙間を入れる
+      y = (shape.height - statusRadius) * 0.95
     }
   }
   else { // 円の場合
-    x = y = Math.sqrt(0.5) * icon.radius - statusRadius
+    x = y = Math.sqrt(0.5) * shape.radius - statusRadius
   }
 
-  const status = Util.nvl(pos.presenceStatus, PRESENCE.STATUS.PresenceUnknown)
-  const statusIcon = new Container()
-  statusIcon.addChild(createShape(statusRadius, DISP.PRESENCE.BG[status - 1], {}))
-  statusIcon.x = x
-  statusIcon.y = y
-  txBtn.addChild(statusIcon)
+  let status = Util.nvl(pos.presenceStatus, PRESENCE.STATUS.PresenceUnknown)
+  const icon = new Shape()
+  let color = DISP.PRESENCE.BG[status - 1]
+  if (ArrayUtil.equalsAny(status, [PRESENCE.STATUS.BeRightBack, PRESENCE.STATUS.DoNotDisturb])) {
+    color = DISP.PRESENCE.BG[status - 2] // 滞在グラフとは異なり一つ前の色に合わせる
+    icon.graphics.beginStroke(color) // 中抜にする
+    icon.graphics.setStrokeStyle(statusRadius / 1.5)
+    icon.graphics.beginFill('#FFF')
+    icon.graphics.drawCircle(0, 0, statusRadius * 0.9, statusRadius * 0.9) // 線を入れると若干大きくなるため補正
+  }
+  else {
+    icon.graphics.beginFill(color)
+    icon.graphics.drawCircle(0, 0, statusRadius, statusRadius)
+  }
+  icon.x = x
+  icon.y = y
+  txBtn.addChild(icon)
 }
 
 

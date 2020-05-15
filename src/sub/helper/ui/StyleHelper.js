@@ -31,7 +31,7 @@ export const getStyleDisplay1 = (val, option = {reverceColor: false, fixSize: tr
     'color': ColorUtil.colorCd4display(option.reverceColor? val.bgColor: val.color),
     'background-color': ColorUtil.colorCd4display(option.reverceColor? val.color: val.bgColor, '#FFFFFF'),
     'text-align': 'center',
-    border: 'solid 1px #ccc',
+    border: Util.nvl(val.border, 'solid 1px #ccc'),
     'border-radius': val.shape == SHAPE.CIRCLE? '50%': val.shape == SHAPE.ROUND_SQUARE? DISP.TX.ROUNDRECT_RADIUS + 'px': null,
     'justify-content': 'center',
     'display': ['-ms-flexbox', '-webkit-flex', 'flex'],

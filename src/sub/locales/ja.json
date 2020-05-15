@@ -812,6 +812,7 @@
     "toNomalMode": "通常モードへ",
 
     "---------------- Presence ---------------":"",
+    "presenceStatus":"プレゼンス",
     "presenceIcon":"プレゼンス表示アイコン",
     "presenceSum":"プレゼンス日単位分析",
     "Available":"連絡可能",
@@ -1610,6 +1611,7 @@
       },
       "POS_LIST": {
         "tel": "tel::電話番号",
+        "presenceStatus": "presenceStatus::プレゼンス情報",
         "mapDisplay": "mapDisplay::マップ表示"
       },
       "TX": {
@@ -1661,6 +1663,7 @@
         "group": "group::グループ",
         "category": "category::カテゴリ",
         "tel": "tel::電話番号",
+        "presenceStatus": "presenceStatus::プレゼンス情報",
         "timestamp": "timestamp::最終取得日時"
       },
       "PROHIBIT_ALERT": {
