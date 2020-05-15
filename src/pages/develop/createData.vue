@@ -120,7 +120,7 @@ export default {
     ]),
     kindOptions() {
       // const arr = ['POSITION','SENSOR_1','SENSOR_2','SENSOR_3','SENSOR_5','SENSOR_6','SENSOR_8','SENSOR_9','SENSOR_10','SENSOR_11']
-      const arr = ['POSITION','SENSOR_1','SENSOR_2','SENSOR_3','SENSOR_5','SENSOR_6','SENSOR_8'] // TODO: omron
+      const arr = ['POSITION','SENSOR_1','SENSOR_2','SENSOR_3','SENSOR_5','SENSOR_6','SENSOR_8','SENSOR_9']
       return arr.map(e => ({value: e, text: this.$i18n.tnl('label.' + e), label: this.$i18n.tnl('label.' + e)}))
     },
     isPosition() {
@@ -187,7 +187,11 @@ export default {
         case SENSOR.PRESSURE:
           addFields.push('press_vol')
           break
-        case SENSOR.OMR_ENV: // TODO:
+        case SENSOR.OMR_ENV:
+          addFields.push('temperature')
+          addFields.push('humidity')
+          addFields.push('ambientLight')
+          addFields.push('soundNoise')
           break
         case SENSOR.OMR_TP_ENV: // TODO:
           break
@@ -288,7 +292,8 @@ export default {
           case SENSOR.PRESSURE:
             dataAdd = {press_vol: 1200}
             break
-          case SENSOR.OMR_ENV: // TODO:
+          case SENSOR.OMR_ENV:
+            dataAdd = {temperature:25, humidity:50, ambientLight:80, soundNoise:70}
             break
           case SENSOR.OMR_TP_ENV: // TODO:
             break

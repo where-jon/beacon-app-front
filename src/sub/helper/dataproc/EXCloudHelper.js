@@ -10,6 +10,7 @@ import * as mock from '../../../assets/mock/mock'
 import { DEV, EXSERVER, EXCLOUD, APP_SERVICE } from '../../constant/config'
 import * as DateUtil from '../../util/DateUtil'
 import * as HttpHelper from '../base/HttpHelper'
+import { SENSOR } from '../../constant/Constants'
 
 /**
  * 日付フォーマットを行う。
@@ -68,8 +69,8 @@ export const fetchSensor = async (sensorId) => {
   const sensorUrl = DEV.ONLY_FROM_DB? EXCLOUD.SENSOR_URL_NEW: EXCLOUD.SENSOR_URL // 大幅な変更があるため十分検証されるまでは、開発用のみで使う
   let data = DEV.USE_MOCK_EXC? mock.sensor[sensorId]:
     await HttpHelper.getExCloud(url(sensorUrl).replace('{id}', sensorId) + new Date().getTime())
-  
-  return _(data).map(val => { // deviceid, btx_idはすべて名前を変換する
+  data = (sensorId == SENSOR.OMR_ENV ? data.sensors : data)
+  data = _(data).map(val => { // deviceid, btx_idはすべて名前を変換する
     if (val.deviceid) {
       val.deviceId = val.deviceid
       delete val.deviceid
@@ -81,9 +82,15 @@ export const fetchSensor = async (sensorId) => {
     if (val.btxid) {
       val.btxId = val.btxid
       delete val.btxid
-    }      
+    }
     return val
   }).compact().value()
+  if (sensorId == SENSOR.OMR_ENV) {
+    data = data.map(sensor => {
+      return {...sensor, sensorid: sensor.pos_id, btxId: sensor.sensor_id, updatetime: sensor.timestamp}
+    })
+  }
+  return data
 }
 
 /**
