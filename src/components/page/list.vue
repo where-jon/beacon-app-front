@@ -3,7 +3,7 @@
     <input type="password" style="display:none">
     <b-container :fluid="isFluid" @click="resetDetail">
       <alert :message="showMessage? message: error" :force-hide="alertForceHide" />
-      <div v-if="systemPopupObj" id="systemPopup" :style="systemPopupObj.style">{{ systemPopupObj.title }}</div>
+      <div v-if="systemPopupObj" id="systemPopup" :style="systemPopupObj.style" @mouseleave="hideSystemPopup">{{ systemPopupObj.title }}</div>
 
       <!-- searchbox -->
       <template v-if="!params.hideSearchBox">
