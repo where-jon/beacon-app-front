@@ -379,7 +379,8 @@ const addPresenceIcon = (pos, txBtn) => {
   let x, y // TXアイコン内の位置を計算
   if (shape.width) {
     if (shape.radius) { // 角丸四角の場合
-      x = y = shape.width - shape.radius * (1 - Math.sqrt(0.5)) - statusRadius
+      x = shape.width - shape.radius * (1 - Math.sqrt(0.5)) - statusRadius
+      y = shape.height - shape.radius * (1 - Math.sqrt(0.5)) - statusRadius
     }
     else { // 四角の場合
       x = (shape.width - statusRadius) * 0.95 // 若干隙間を入れる
@@ -392,16 +393,15 @@ const addPresenceIcon = (pos, txBtn) => {
 
   let status = Util.nvl(pos.presenceStatus, PRESENCE.STATUS.PresenceUnknown)
   const icon = new Shape()
-  let color = DISP.PRESENCE.BG[status - 1]
   if (ArrayUtil.equalsAny(status, [PRESENCE.STATUS.BeRightBack, PRESENCE.STATUS.DoNotDisturb])) {
-    color = DISP.PRESENCE.BG[status - 2] // 滞在グラフとは異なり一つ前の色に合わせる
-    icon.graphics.beginStroke(color) // 中抜にする
+    // 中抜にする
+    icon.graphics.beginStroke(DISP.PRESENCE.BG[status - 2]) // 滞在グラフとは異なり一つ前の色に合わせる
     icon.graphics.setStrokeStyle(statusRadius / 1.5)
     icon.graphics.beginFill('#FFF')
     icon.graphics.drawCircle(0, 0, statusRadius * 0.9, statusRadius * 0.9) // 線を入れると若干大きくなるため補正
   }
   else {
-    icon.graphics.beginFill(color)
+    icon.graphics.beginFill(DISP.PRESENCE.BG[status - 1])
     icon.graphics.drawCircle(0, 0, statusRadius, statusRadius)
   }
   icon.x = x

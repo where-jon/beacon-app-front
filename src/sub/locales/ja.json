@@ -1274,7 +1274,7 @@
         "VERTICAL": "TXアイコンタイル表示時の行数",
         "FIXED_POS": {
           "APPLY_COLOR": "固定表示設定（APP.FIXED_POS）適用::APP.FIXED_POSに設定した色・形等の設定を固定表示に適用する場合、trueを設定する。",
-          "SHAPE": "固定表示Txアイコンの形::ConstantsのSHAPEの値を設定する。",
+          "SHAPE": "固定表示Txアイコンの形::Txアイコンの形状を設定する。設定可能な値は次の通りです。{SHAPE}",
           "R": "固定表示Txアイコンの半径",
           "COLOR": "固定表示Txアイコンの色",
           "IN_ZONE_BGCOLOR": "固定表示Txアイコンの固定ゾーン内の色",
@@ -1686,6 +1686,11 @@
         "year": "year::年単位",
         "month": "month::月単位",
         "hours": "hours::時間単位"
+      },
+      "SHAPE": {
+        "CIRCLE": "1::円",
+        "SQUARE": "2::四角形",
+        "ROUND_SQUARE": "3::角丸四角形"
       },
       "COLOR_TYPE": {
         "category": "category::カテゴリ",
