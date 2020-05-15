@@ -409,6 +409,7 @@ export const DISP = { // 表示系設定（表示・色・フォント・サイ�
   TX: {
     R_ABSOLUTE: true, // Txの半径を画面解像度に合わせる
     R: 26, // Txの半径
+    ASPECT_RATIO: 1, // 四角形の場合のアスペクト比（高さ/幅）
     FIX_R: 26, // Txの半径(カテゴリ一覧、グループ一覧、凡例表示用)
     ROUNDRECT_RADIUS: 13, // Tx角丸表示時のRADIUS
     BGCOLOR: '#3bcddc', // Tx表示時のデフォルト背景色

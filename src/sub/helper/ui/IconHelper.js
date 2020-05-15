@@ -279,8 +279,9 @@ const createPositionRectInfo = (pos, bgColor) => {
 const createPositionTxIcon = (pos, shape, color, bgColor, mapScale) => {
   const rectInfo = createPositionRectInfo(pos, bgColor)
   const txRadius = (pos.txR? pos.txR: DISP.TX.R) / mapScale
+  const aspectRatio = Util.nvl(DISP.TX.ASPECT_RATIO, 1)
   return createIcon(
-    pos.label, txRadius, txRadius, color, rectInfo.bgColor, {
+    pos.label, txRadius, txRadius * aspectRatio, color, rectInfo.bgColor, {
       circle: shape == SHAPE.CIRCLE,
       roundRect: shape == SHAPE.SQUARE? 0: DISP.TX.ROUNDRECT_RADIUS / mapScale,
       strokeColor: rectInfo.strokeColor,
