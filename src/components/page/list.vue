@@ -308,6 +308,7 @@ import * as LocalStorageHelper from '../../sub/helper/base/LocalStorageHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
 import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as PositionHelper from '../../sub/helper/domain/PositionHelper'
+import * as TxDetailHelper from '../../sub/helper/domain/TxDetailHelper'
 import * as SensorHelper from '../../sub/helper/domain/SensorHelper'
 import * as PotHelper from '../../sub/helper/domain/PotHelper'
 import commonmixin from '../mixin/commonmixin.vue'
@@ -992,7 +993,7 @@ export default {
       const menuGroup = DomUtil.getRect('.menu-groups')  //  ナビの情報取得：x位置調整
       const navbar = DomUtil.getRect('.navbar')  // ナビの情報取得：y位置調整
       const containerRect = DomUtil.getRect('#bd-page')
-      const selectedTx = PositionHelper.createTxDetailInfoOnStack(x, y, tx,{x: menuGroup.width, y: navbar.height} , isDispThumbnail? this.preloadThumbnail: {}, containerRect)
+      const selectedTx = TxDetailHelper.createTxDetailInfo(x, y, null, null, tx, 1.0, {x: menuGroup.width, y: navbar.height} , containerRect, isDispThumbnail? this.preloadThumbnail: {}, true)
       this.replaceMain({ selectedTx })
       this.$nextTick(() => this.showReady = true)
       if (this.isShowModal()) {

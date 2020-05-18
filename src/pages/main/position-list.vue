@@ -15,6 +15,7 @@ import * as ArrayUtil from '../../sub/util/ArrayUtil'
 import * as Util from '../../sub/util/Util'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
 import * as PositionHelper from '../../sub/helper/domain/PositionHelper'
+import * as TxDetailHelper from '../../sub/helper/domain/TxDetailHelper'
 import * as ProhibitHelper from '../../sub/helper/domain/ProhibitHelper'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
@@ -104,7 +105,7 @@ export default {
           let prohibitCheck = minorMap[pos.minor] != null
           let presenceStatus
           if (APP.POS.WITH.PRESENCE) {
-            presenceStatus = this.$i18n.tnl('label.' + PositionHelper.getPresenceKey(pos))
+            presenceStatus = this.$i18n.tnl('label.' + TxDetailHelper.getPresenceKey(pos))
           }
 
           return { // データが多くオブジェクトの階層が深く・循環しているとIEが固まるため、最小限のデータにする

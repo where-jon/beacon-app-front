@@ -202,6 +202,7 @@ import * as MessageHelper from '../../sub/helper/domain/MessageHelper'
 import * as MenuHelper from '../../sub/helper/dataproc/MenuHelper'
 import * as OptionHelper from '../../sub/helper/dataproc/OptionHelper'
 import * as PositionHelper from '../../sub/helper/domain/PositionHelper'
+import * as TxDetailHelper from '../../sub/helper/domain/TxDetailHelper'
 import * as ProhibitHelper from '../../sub/helper/domain/ProhibitHelper'
 import * as SensorHelper from '../../sub/helper/domain/SensorHelper'
 import * as ToiletHelper from '../../sub/helper/domain/ToiletHelper'
@@ -1183,7 +1184,7 @@ export default {
       const navbarY = containerParent.top
       const offsetY = map.top - navbarY + (!this.pInstallation? 0: 20)
 
-      const selectedTx = PositionHelper.createTxDetailInfo(x, y, color, bgColor, tx, this.canvasScale, {x: offsetX, y: offsetY}, containerParent, isDispThumbnail? this.preloadThumbnail: {})
+      const selectedTx = TxDetailHelper.createTxDetailInfo(x, y, color, bgColor, tx, this.canvasScale, {x: offsetX, y: offsetY}, containerParent, isDispThumbnail? this.preloadThumbnail: {})
       this.replaceMain({ selectedTx })
       this.$nextTick(() => this.showReady = true)
       if (this.isShowModal()) {
