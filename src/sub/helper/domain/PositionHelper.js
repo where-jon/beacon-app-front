@@ -25,7 +25,7 @@ const angle = 45
 // ゾーンエリアに表示するTXIDに付加する数値
 export const zoneBtxIdAddNumber = 10000
 
-const defaultDisplay = {
+export const defaultDisplay = {
   color: DISP.TX.COLOR,
   bgColor: DISP.TX.BGCOLOR,
   shape: DISP.TX.SHAPE,
