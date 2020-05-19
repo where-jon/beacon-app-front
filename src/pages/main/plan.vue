@@ -44,9 +44,9 @@
               </v-select>
             </span>
           </b-form-row>
-          <!-- <b-form-row v-if="planMode == 'normal' && currentUser && currentUser.role.roleName == 'SYS_ADMIN'" class="my-1 ml-2 ml-sm-0">
+          <b-form-row v-if="planMode == 'normal' && currentUser" class="my-1 ml-2 ml-sm-0">
             <b-button class="ml-sm-4 ml-2 mr-1" :variant="theme" @click="onClickSync">{{ $t('label.syncWithOutlook') }}</b-button>
-          </b-form-row> -->
+          </b-form-row>
           <b-form-row v-if="planMode == 'meetingRoom'" class="my-1 ml-2 ml-sm-0">
             <b-form-checkbox v-model="doCompare">
               {{ $t('label.planActual') }}
@@ -833,11 +833,11 @@ export default {
         regionId: region.regionId,
         meshId: region.meshId,
         batchTarget: 'AD_SYNC',
-        expired: -1,
+        expired: moment().add(10, 's').valueOf(),
         param: '',
-        batchType: 'INTERVAL'
+        batchType: 'CRON'
       }
-      const queueName = 'INTERVAL'
+      const queueName = 'CRON'
       const stopAfter = 10
       const path = `/meta/tenant/publishTask?updateOnlyNN=${UPDATE_ONLY_NN.NONE}&queueName=${queueName}&stopAfter=${stopAfter}&_=${new Date().getTime()}`
       let result = await HttpHelper.putAppService(path, batch)
