@@ -844,7 +844,8 @@ export default {
       // フィールド設定に合わせ、出力するデータのキーリストを生成する
       _.filter(this.fields, (field) => {
         return _.some(Object.keys(viewList[0]), (key) => { 
-          return key!= 'graph' && key === field.key
+          return key!= 'graph' && key === field.key 
+          && (key != 'categoryName' || !this.pPresence) // プレゼンスではカテゴリを出力しない。
         })
       }).forEach((field) => { keys.push(field) })
 

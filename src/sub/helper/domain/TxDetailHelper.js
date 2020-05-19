@@ -4,6 +4,7 @@
  */
 
 import { APP, DEV, DISP } from '../../constant/config'
+import { PRESENCE } from '../../constant/Constants'
 import * as StyleHelper from '../ui/StyleHelper'
 import * as PositoinHelper from './PositionHelper'
 import * as DateUtil from '../../util/DateUtil'
