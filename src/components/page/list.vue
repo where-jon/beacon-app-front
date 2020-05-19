@@ -993,7 +993,7 @@ export default {
       const menuGroup = DomUtil.getRect('.menu-groups')  //  ナビの情報取得：x位置調整
       const navbar = DomUtil.getRect('.navbar')  // ナビの情報取得：y位置調整
       const containerRect = DomUtil.getRect('#bd-page')
-      const selectedTx = TxDetailHelper.createTxDetailInfo(x, y, null, null, tx, 1.0, {x: menuGroup.width, y: navbar.height} , containerRect, isDispThumbnail? this.preloadThumbnail: {}, true)
+      const selectedTx = TxDetailHelper.createTxDetailInfo(x, y, PositionHelper.defaultDisplay.color, PositionHelper.defaultDisplay.bgColor, tx, 1.0, {x: menuGroup.width, y: navbar.height} , containerRect, isDispThumbnail? this.preloadThumbnail: {}, true)
       this.replaceMain({ selectedTx })
       this.$nextTick(() => this.showReady = true)
       if (this.isShowModal()) {
