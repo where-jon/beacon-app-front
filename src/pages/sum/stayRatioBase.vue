@@ -578,7 +578,7 @@ export default {
           return
         }
 
-        this.viewList = this.getStayDataList(moment(this.form.date).format('YYYY-MM-DD'), sumData, APP.STAY_SUM.ABSENT_LIMIT, APP.STAY_SUM.LOST_LIMIT)
+        this.viewList = this.getStayDataList(moment(this.form.date).format('YYYY-MM-DD'), sumData, APP.STAY_SUM.ABSENT_LIMIT, APP.STAY_SUM.LOST_LIMIT, false)
 
         this.totalRows = this.viewList.length
       }
@@ -596,7 +596,7 @@ export default {
     isLostData(byId) {
       return byId == -1
     },
-    getStayDataList(date, stayData, absentLimit = 0, lostLimit = APP.LOST_TIME) {
+    getStayDataList(date, stayData, absentLimit = 0, lostLimit = APP.LOST_TIME, includesZeroPercent = true) {
       const fromSecond = (Math.floor(APP.SVC.STAY_SUM.START / 100) * 60 + APP.SVC.STAY_SUM.START % 100) * 60
       const toSecond = (Math.floor(APP.SVC.STAY_SUM.END / 100) * 60 + APP.SVC.STAY_SUM.END % 100) * 60
       const graphTimeRatio = this.getTimeRatioData()
@@ -640,7 +640,8 @@ export default {
             stay.byId = PRESENCE.STATUS.PresenceUnknown
             stay.byName = 'PresenceUnknown'
           }
-          const isAbsentZone = this.pPresence? ArrayUtil.equalsAny(stay.byId, [PRESENCE.STATUS.Offline, PRESENCE.STATUS.PresenceUnknown]): this.isAbsentZoneData(stay.byId)
+          const isAbsentZone = this.pPresence? !ArrayUtil.equalsAny(stay.byId, [PRESENCE.STATUS.Available, PRESENCE.STATUS.Busy, PRESENCE.STATUS.DoNotDisturb])
+            : this.isAbsentZoneData(stay.byId)
           if (this.isLostData(stay.byId) || isAbsentZone) {
             lostTime += stay.period
             time = moment().startOf('days').add(stay.period, 's').format('HH:mm')
@@ -714,7 +715,7 @@ export default {
             zoneCategory: stay.byName,
           }
 
-        }).filter(data => { return data.percent != 0})
+        }).filter(data => includesZeroPercent || data.percent != 0)
 
         const pot = this.pots.find((val) => val.potId == data.potId)
         const result = {
