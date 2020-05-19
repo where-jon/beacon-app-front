@@ -492,8 +492,8 @@ export const PRESENCE = {
     Available: 1,
     Busy: 2,
     DoNotDisturb: 3,
-    Away: 4,
     BeRightBack: 5,
+    Away: 4,
     Offline: 6,
     PresenceUnknown: 7,
   }
