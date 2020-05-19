@@ -183,6 +183,9 @@
     "lostNotify": "重要物品持出アラート",
     "userRegNotify": "ユーザ登録通知",
     "sosNotify": "SOSボタン押下通知",
+    "txUndetectedNotify":"TX一定時間未検知",
+    "txNeglectNotify":"TX放置",
+    "txHaveMultipleNotify":"TX複数所持",
 
     "exbeacon": "EXBeacon",
     "settingExbeacon": "EXBeacon設定",

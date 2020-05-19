@@ -569,6 +569,9 @@ export const NOTIFY_STATE = {
   TX_SOS_ALERT: 'TX_SOS_ALERT',
   PROHIBIT_NOTIFY: 'PROHIBIT_NOTIFY',
   LOST_NOTIFY: 'LOST_NOTIFY',
+  TX_UNDETECTED_NOTIFY: 'TX_UNDETECTED_NOTIFY',
+  TX_NEGLECT_NOTIFY: 'TX_NEGLECT_NOTIFY',
+  TX_HAVE_MULTIPLE_NOTIFY: 'TX_HAVE_MULTIPLE_NOTIFY',
   getOptions(){
     return [
       {value: this.TX_DELIVERY_NOTIFY, text: i18n.t('label.txBtnNotify'), index:0},
@@ -579,6 +582,9 @@ export const NOTIFY_STATE = {
       {value:this.TX_SOS_ALERT, text: i18n.t('label.sosNotify'), index:3},
       {value:this.PROHIBIT_NOTIFY, text: i18n.t('label.prohibitNotify'), index:4},
       {value:this.LOST_NOTIFY, text: i18n.t('label.lostNotify'), index:5},
+      {value:this.TX_UNDETECTED_NOTIFY, text: i18n.t('label.txUndetectedNotify'), index:6},
+      {value:this.TX_NEGLECT_NOTIFY, text: i18n.t('label.txNeglectNotify'), index:7},
+      {value:this.TX_HAVE_MULTIPLE_NOTIFY, text: i18n.t('label.txHaveMultipleNotify'), index:8},
     ]
   }
 }
