@@ -1184,7 +1184,7 @@ export default {
       const navbarY = containerParent.top
       const offsetY = map.top - navbarY + (!this.pInstallation? 0: 20)
 
-      const selectedTx = TxDetailHelper.createTxDetailInfo(x, y, color, bgColor, tx, this.canvasScale, {x: offsetX, y: offsetY}, containerParent, isDispThumbnail? this.preloadThumbnail: {})
+      const selectedTx = TxDetailHelper.createTxDetailInfo(x, y, color, bgColor, false, tx, this.canvasScale, {x: offsetX, y: offsetY}, containerParent, isDispThumbnail? this.preloadThumbnail: {})
       this.replaceMain({ selectedTx })
       this.$nextTick(() => this.showReady = true)
       if (this.isShowModal()) {

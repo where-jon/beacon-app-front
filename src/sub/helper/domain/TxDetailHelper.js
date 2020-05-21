@@ -37,8 +37,8 @@ export const setApp = (pI18n) => {
  * @oaran {Boolean} isList
  * @return {Object}
  */
-export const createTxDetailInfo = (x, y, color, bgColor, tx, canvasScale, offset, containerRect, preloadThumbnail, isList) => {
-  const display = StyleHelper.getPositionDisplay(tx)
+export const createTxDetailInfo = (x, y, color, bgColor, useDefaultColor, tx, canvasScale, offset, containerRect, preloadThumbnail, isList) => {
+  const display = StyleHelper.getPositionDisplay(tx, useDefaultColor)
   if (!color) {
     color = display.color
   }
