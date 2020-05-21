@@ -1,15 +1,14 @@
 ﻿{
     "$schema": "https://developer.microsoft.com/en-us/json-schemas/teams/v1.5/MicrosoftTeams.schema.json",
     "manifestVersion": "1.5",
-    "version": "1.3.0.7",
-    "id": "8a3c94dd-df78-4b59-b18f-656f6370dc2a",
+    "version": "{VERSION}",
+    "id": "{APPLICATION_ID}",
     "packageName": "msteams.exbeacon.com",
     "developer": {
-        "name": "Kyowa Exeo Corporation",
-        "websiteUrl": "https://www.exeo.co.jp",
-        "privacyUrl": "https://www.exeo.co.jp/jigyou/ni-mcrsft/pdf/PP(EXOfficeアプリ)_HP用2.pdf",
-        "termsOfUseUrl": "https://www.exeo.co.jp/jigyou/ni-mcrsft/pdf/TOU(EXOfficeForMicrosoftTeams)_rel3.pdf",
-        "mpnId": "4562888"
+        "name": "{COMPANY_NAME}",
+        "websiteUrl": "{COMPANY_URL}",
+        "privacyUrl": "{COMPANY_PRIVACY_POLICY_URL}",
+        "termsOfUseUrl": "{COMPANY_TERMS_OF_USE_URL}"
     },
     "localizationInfo": {
       "defaultLanguageTag": "ja-jp"
@@ -20,7 +19,7 @@
     },
     "description": {
         "short":"「在席管理」、「会議室管理」、「入退室管理」そしてオフィス診断などをカード1枚、ワンプラットフォームで提供する新しいオフィス・ソリューション。",
-        "full": "本アプリのご利用には協和エクシオとの契約、協和エクシオによるアカウント設定、IT管理者による初期設定が必要です。オフィスワーカー１人ひとりが場所と時間を自由に選択できるABW(Activity Based Working)時代が到来していますが、こうしたオフィスになくてはならない「在席管理」を、カード1枚、ワンプラットフォームで提供する新しいオフィス・ソリューションがEXOffice for Teamsです。例えば、Teamsでコミュニケーションをとる際に、EXOfficeの「在席管理」画面をみることで、先方参加者の居場所や、誰と会話しているのかなど周辺状況を確認することができるようになり、そうした情報をもとに、電話するか、チャットするか、あるいは直接訪問するかといったコミュニケーション手段の選択が可能になります。EXOfficeを導入するには、新たにインフラの構築が必要になります。まず、オフィスにIoT専用LAN｢EXBeaconプラットフォーム｣を導入します。Bluetooth mesh等を活用した端末EXBeaconをオフィスに適切に配置することでLANが形成されます。オフィスワーカーには例えば社員証としてBLEタグを保持してもらうことで、BLEタグの電波をIoTLANが受信しオフィスワーカーの位置を測ることができます。当EXOfficeアプリは、利用前に全ユーザや管理対象物品に添付するタグIDのDB登録を含む事前設定(EXEOまたはWHERE)が必要です。このEXOfficeアプリ群とそれに付帯するオプションサービスは、EXEOまたはWHEREによって、ユーザ(企業)とEXEOとの間の契約締結後に、登録ユーザに対して提供されます。未登録ユーザは当アプリを使えません。当アプリは企業(B2B)ユーザ向け提供が前提であり、利用に先駆けて利用者(企業)と提供者(EXEO)間の個別契約が必要となります。EXOfficeアプリユーザに向けたEXEOの個人情報保護方針(Privacy Policy)や利用規約(Terms of Usage)については、詳細をこの個別契約内で規定するため、その条文はWebサイト等での一般公開は困難です。詳細はEXEOのサポートデスクまで照会願います。"
+        "full": "オフィスワーカー１人ひとりが場所と時間を自由に選択できるABW(Activity Based Working)時代が到来していますが、こうしたオフィスになくてはならない「在席管理」を、カード1枚、ワンプラットフォームで提供する新しいオフィス・ソリューションがEXOffice for Teamsです。例えば、Teamsでコミュニケーションをとる際に、EXOfficeの「在席管理」画面をみることで、先方参加者の居場所や、誰と会話しているのかなど周辺状況を確認することができるようになり、そうした情報をもとに、電話するか、チャットするか、あるいは直接訪問するかといったコミュニケーション手段の選択が可能になります。EXOfficeを導入するには、新たにインフラの構築が必要になります。まず、オフィスにIoT専用LAN｢EXBeaconプラットフォーム｣を導入します。Bluetooth mesh等を活用した端末EXBeaconをオフィスに適切に配置することでLANが形成されます。オフィスワーカーには例えば社員証としてBLEタグを保持してもらうことで、BLEタグの電波をIoTLANが受信しオフィスワーカーの位置を測ることができます。当EXOfficeアプリは、利用前に全ユーザや管理対象物品に添付するタグIDのDB登録を含む事前設定が必要です。"
     },
     "icons": {
         "outline": "outline.png",
@@ -29,7 +28,7 @@
     "accentColor": "#2e7bb2",
     "configurableTabs": [
         {
-            "configurationUrl": "https://exbeacon-evalkit.s3-ap-northeast-1.amazonaws.com/config-test.html",
+            "configurationUrl": "{CONFIG_PAGE_URL}",
             "canUpdateConfiguration": true,
             "scopes": [
                 "team"
@@ -37,12 +36,12 @@
         }
     ],   
     "validDomains": [
-        "*.saas.msteams.exbeacon.com",
-        "msteams-data.saas.exbeacon.com",
-        "msteams.dev.exbeacon.com"
+        "{FRONT_DOMAIN}",
+        "{BACKEND_DOMAIN}",
+        "{WEBSITE_URL_DOMAIN}"
     ],
     "webApplicationInfo": {
-        "id": "8a3c94dd-df78-4b59-b18f-656f6370dc2a",
+        "id": "{APPLICATION_ID}",
         "resource": "https://graph.microsoft.com"
     }
 }

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-with, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="content-type" content="text/html; charset = UTF-8">
+  <style>
+  </style>
+  <title>EXOffice configuration</title>
+</head>
+<body>
+  <script src="https://statics.teams.microsoft.com/sdk/v1.4.2/js/MicrosoftTeams.min.js" crossorigin="anonymous"></script>
+  <script type="text/javascript">
+
+  microsoftTeams.initialize();
+
+  microsoftTeams.settings.registerOnSaveHandler(function(saveEvent){
+        microsoftTeams.settings.setSettings({
+            entityId: "exofficeProd",
+            suggestedDisplayName: "EXOffice",
+            contentUrl: "{FRONT_URL}",
+            websiteUrl: "{COMPANY_URL}"
+        });
+        saveEvent.notifySuccess();
+    });
+
+  microsoftTeams.settings.setValidityState(true);
+
+</script>
+
+<h1>EXOffice for Teams(exeotest)</h1>
+<div class="description">
+exeotest:オフィスワーカー１人ひとりが場所と時間を自由に選択できるABW(Activity Based Working)時代が到来していますが、こうしたオフィスになくてはならない「在席管理」を、カード1枚、ワンプラットフォームで提供する新しいオフィス・ソリュ
+ーションがEXOffice for Teamsです。
+</div>
+
+
+</body>
+</html>
