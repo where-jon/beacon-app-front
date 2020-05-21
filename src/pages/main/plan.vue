@@ -44,9 +44,6 @@
               </v-select>
             </span>
           </b-form-row>
-          <b-form-row v-if="planMode == 'normal' && currentUser" class="my-1 ml-2 ml-sm-0">
-            <b-button class="ml-sm-4 ml-2 mr-1" :variant="theme" @click="onClickSync">{{ $t('label.syncWithOutlook') }}</b-button>
-          </b-form-row>
           <b-form-row v-if="planMode == 'meetingRoom'" class="my-1 ml-2 ml-sm-0">
             <b-form-checkbox v-model="doCompare">
               {{ $t('label.planActual') }}
@@ -825,23 +822,6 @@ export default {
         window.scrollTo(0, 0)
       }
     },
-    async onClickSync() {
-      const login =  getLogin()
-      const region = login.currentRegion
-      const batch = {
-        tenantId: login.currentTenant.tenantId,
-        regionId: region.regionId,
-        meshId: region.meshId,
-        batchTarget: 'AD_SYNC',
-        expired: moment().add(10, 's').valueOf(),
-        param: '',
-        batchType: 'CRON'
-      }
-      const queueName = 'CRON'
-      const stopAfter = 10
-      const path = `/meta/tenant/publishTask?updateOnlyNN=${UPDATE_ONLY_NN.NONE}&queueName=${queueName}&stopAfter=${stopAfter}&_=${new Date().getTime()}`
-      let result = await HttpHelper.putAppService(path, batch)
-    }
   }
 }
 </script>

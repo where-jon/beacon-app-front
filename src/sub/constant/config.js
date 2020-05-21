@@ -26,7 +26,7 @@ export const APP = { // 機能面に関する設定
     // APP_ID: 'fcfc143f-c8c8-454e-ab72-fdf2e49f862f',
     // REDIRECT_URL: 'https://xxx.saas.msteams.exbeacon.com/azlogin/adminend/',
     // REDIRECT_URL: 'https://provider.saas.dev-133.exbeacon.com/azlogin/end/',
-    REDIRECT_URL: 'https://testmatsu133.saas.dev-133.exbeacon.com/azlogin/end/',
+    REDIRECT_URL: 'https://xxx.saas.dev-133.exbeacon.com/azlogin/end/',
     APP_ID: '9c1fbf13-0f18-48ef-804d-ac171fa1c857', // AAD clientId
   },  
   MENU: {
