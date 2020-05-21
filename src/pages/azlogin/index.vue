@@ -145,8 +145,9 @@ export default {
       // microsoftTeams.initialize()
       LocalStorageHelper.setLocalStorage('tenantName', this.tenantName)
       // const redirectUrl = encodeURIComponent(APP.AUTH.REDIRECT_URL.split('end').join('adminend'))
-      const redirectUrl = encodeURIComponent(APP.AUTH.REDIRECT_URL.split('end/').join('')) + '?admin_consent=True'
+      const redirectUrl = encodeURIComponent(APP.AUTH.REDIRECT_URL.split('end/').join('')) + '%3Fadmin_consent=True'
       const adminConsentUrl = 'https://login.microsoftonline.com/common/adminconsent?client_id=' + APP.AUTH.APP_ID + '&redirect_uri=' + redirectUrl
+      alert(adminConsentUrl)
       location.href = adminConsentUrl
       // microsoftTeams.authentication.authenticate({
       //   url: adminConsentUrl,
