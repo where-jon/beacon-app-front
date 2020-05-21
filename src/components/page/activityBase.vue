@@ -15,13 +15,15 @@
           <table>
             <tr>
               <td><span v-t="'label.historyDateFrom'" class="d-flex align-items-center" /></td>
-              <td><date-picker v-model="form.datetimeFrom" :clearable="false" type="date" class="inputdatefrom" required /></td>
+              <td><date-picker v-model="form.datetimeFrom" :clearable="false" type="date" style="width:150px;" class="inputdatefrom" required /></td>
+              <td width="10px"></td>
               <td><b-form-select v-model="form.hourFrom" :options="hoursOptions" /></td>
               <td>{{ $i18n.tnl('label.hour') }}</td>
               <td><b-form-select v-model="form.minuteFrom" :options="minutesOptions" /></td>
               <td>{{ $i18n.tnl('label.minute') }}</td>
               <td><span v-t="'label.historyDateTo'" class="d-flex align-items-center" /></td>
-              <td><date-picker v-model="form.datetimeTo" :clearable="false" type="date" class="inputdateto" required /></td>
+              <td><date-picker v-model="form.datetimeTo" :clearable="false" type="date" style="width:150px;" class="inputdateto" required /></td>
+              <td width="10px"></td>
               <td><b-form-select v-model="form.hourTo" :options="hoursOptions" /></td>
               <td>{{ $i18n.tnl('label.hour') }}</td>
               <td><b-form-select v-model="form.minuteTo" :options="minutesOptions"/></td>
