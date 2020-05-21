@@ -132,11 +132,11 @@ export default {
       const sum = ArrayUtil.sumData(areaData, 'timestamp')
       Util.debug('sum', sum)
 
-      let csv = this.$i18n.tnl("label.positionDt") + "," + this.getCol() + "," + this.$i18n.tnl("label.count") + "\n"
+      let csv = this.$i18n.tnl("label.positionDt") + "," + this.getCol(form) + "," + this.$i18n.tnl("label.count") + "\n"
       for(var time=from; time<to; time += interval){
         if(sum[time]){
           sum[time].forEach(pos => {
-            const cdName = this.getCdName(pos)
+            const cdName = this.getCdName(form, pos)
             const name = cdName.name ? (cdName.name + ",") : ""
             csv += DateUtil.formatDateWithTimeZone(time, 'YYYY/MM/DD HH:mm') + "," + cdName.cd + "," + name + pos.cnt + "\n"
           })
@@ -155,29 +155,22 @@ export default {
       )
     }, 
     // csvのカラムを返す
-    getCol(){
-      if(APP.MEETING.AXIS_TYPE == "exb"){
-        return this.$i18n.tnl("label.deviceId")
-      }
-      if(APP.MEETING.AXIS_TYPE == "location"){
+    getCol(form){
+      if(form.graph == "location"){
         return this.$i18n.tnl("label.locationCd") + "," + this.$i18n.tnl("label.locationName")
       }
-      if(APP.MEETING.AXIS_TYPE == "zone"){
+      if(form.graph == "zone"){
         return this.$i18n.tnl("label.zoneCd") + "," + this.$i18n.tnl("label.zoneName")
       }
       return null
     },
     // cdとnameを返す
-    getCdName(pos){
-      if(APP.MEETING.AXIS_TYPE == "exb"){
-        const exb = this.exbIdMap[pos.axisId]
-        return {cd: exb.deviceId}
-      }
-      if(APP.MEETING.AXIS_TYPE == "location"){
+    getCdName(form, pos){
+      if(form.graph == "location"){
         const location = this.locationIdMap[pos.axisId]
         return {cd: location.locationCd, name: location.locationName}
       }
-      if(APP.MEETING.AXIS_TYPE == "zone"){
+      if(form.graph == "zone"){
         const location = this.locationIdMap[pos.axisId]
         if(location.zoneList && location.zoneList.length >= 1){
           return {cd: location.zoneList[0].zoneCd, name: location.zoneList[0].zoneName}
