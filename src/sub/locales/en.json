@@ -1756,14 +1756,15 @@
     "lostDetected": "<Prohibition of export> {time} {potCd} ({potName}) has not been returned to the specified place.",
     "prohibitDetected": "<No entry> {time} {groupName} ({potName}) has entered {zoneName}.",
       
-    "MSTEAMS": {
-      "USER_GUIDE1": "In order to use EXOffice, you have to grant this application a permission to read your organization's groups and users on your Office365.",
-      "USER_GUIDE2": "Enter your organization name, click the button below and sign in with administrator of Office365. This operation should be done on PC.",
-      "USER_GUIDE3": "You must have an account with an EXOffice. For details please inquire the EXOffice help desk by e-mail exoffice_sup@en2.exeo.co.jp.",
-      "INVALID_TENANT": "To use this EXOffice, a contract is required with WHERE Inc. If you already signed the contract, please let us know.",
-      "WAIT_A_MOMENT": "Now Loading...",
-      "INVALID_TENANT_CONTACT": "Contact: http://where123.jp/contact/",
-      "IF_NOT_SHOWN": "To show EXOffice, click Sign In button below. If it does not work, try again after reload this page."
+    "msTeams": {
+      "userGuide1": "In order to use EXOffice, you have to grant this application a permission to read your organization's groups and users on your Office365.",
+      "userGuide2": "Enter your organization name, click the button below and sign in with administrator of Office365. This operation should be done on PC.",
+      "userGuide3": "You must have an account with an EXOffice. For details please inquire the EXOffice help desk by e-mail exoffice_sup@en2.exeo.co.jp.",
+      "invalidTenant": "To use this EXOffice, a contract is required with WHERE Inc. If you already signed the contract, please let us know.",
+      "invalidToken": "Invalid Token",
+      "waitAMoment": "Now Loading...",
+      "invalidTenantContact": "Contact: http://where123.jp/contact/",
+      "ifNotShown": "To show EXOffice, click Sign In button below. If it does not work, try again after reload this page."
     },
 
     "alreadyReserved": "already reserved.",

@@ -1858,14 +1858,15 @@
     "lostDetected": "<持出検知> {time} {potCd}「{potName}」が所定の場所に戻されていません。",
     "prohibitDetected": "<進入検知> {time} {groupName}（{potName}）が、{zoneName}に立ち入りました。",
 
-    "MSTEAMS": {
-      "USER_GUIDE1": "EXOfficeを利用するには、お客様のOffice365におけるグループおよびユーザ情報へ本アプリがアクセスすることを許可していただく必要があります。",
-      "USER_GUIDE2": "Office365のテナントの管理者でサインインしていただき、権限を付与していただけるようお願いいたします。なお、この操作はPCで行ってください。",
-      "USER_GUIDE3": "ご利用にはEXOfficeのアカウントが必要です。詳しくはEXOfficeヘルプ　exoffice_sup@en2.exeo.co.jp へお問合せください。",
-      "INVALID_TENANT": "本アプリ（EXOffice）を利用するには、サービス提供者（株式会社WHERE）と利用契約を結ぶ必要があります。すでに利用契約を結ばれている場合には、その旨ご一報ください。",
-      "WAIT_A_MOMENT": "初期処理中...",
-      "INVALID_TENANT_CONTACT": "連絡先：https://where123.jp/contact/",
-      "IF_NOT_SHOWN": "EXOfficeを表示するには以下のサインイン・ボタンをクリックしてください。もしそれでも表示されない場合は、リロードを行ってから実行してください。"
+    "msTeams": {
+      "userGuide1": "EXOfficeを利用するには、お客様のOffice365におけるグループおよびユーザ情報へ本アプリがアクセスすることを許可していただく必要があります。",
+      "userGuide2": "Office365のテナントの管理者でサインインしていただき、権限を付与していただけるようお願いいたします。なお、この操作はPCで行ってください。",
+      "userGuide3": "ご利用にはEXOfficeのアカウントが必要です。詳しくはEXOfficeヘルプ　exoffice_sup@en2.exeo.co.jp へお問合せください。",
+      "invalidTenant": "本アプリ（EXOffice）を利用するには、サービス提供者（株式会社WHERE）と利用契約を結ぶ必要があります。すでに利用契約を結ばれている場合には、その旨ご一報ください。",
+      "waitAMoment": "初期処理中...",
+      "invalidToken": "トークンが無効です。",
+      "invalidTenantContact": "連絡先：https://where123.jp/contact/",
+      "ifNotShown": "EXOfficeを表示するには以下のサインイン・ボタンをクリックしてください。もしそれでも表示されない場合は、リロードを行ってから実行してください。"
     },
 
     "alreadyReserved": "既に予約済です。",

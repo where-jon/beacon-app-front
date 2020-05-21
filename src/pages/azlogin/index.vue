@@ -1,27 +1,34 @@
 <template>
   <b-container fluid>
-    <div class="not-registered" v-if="notRegistered">
+    <div v-if="notRegistered" class="not-registered">
       <b-row>
-        {{ $t('message.MSTEAMS.USER_GUIDE1') }}<br />{{ $t('message.MSTEAMS.USER_GUIDE2') }}<br />
+        {{ $t('message.msTeams.userGuide1') }}<br>{{ $t('message.msTeams.userGuide2') }}<br>
       </b-row>
-      <b-form inline class="tenant">
+      <b-form inline class="tenant" @submit.prevent>
         <label class="tenant-name">{{ $t('label.tenantName') }}</label>
         <input v-model="tenantName" type="text" class="form-control" maxlength="64" size="40">
         <button class="btn btn-primary btn-large approval" :disabled="!isInputTenantName" @click="adminConsent">{{ $t('label.adminConsent') }}</button>
       </b-form>
     </div>
-    <div v-if="disabled">{{ $t('message.MSTEAMS.INVALID_TENANT') }}<br />{{ $t('message.MSTEAMS.INVALID_TENANT_CONTACT') }}</div>
-    <div v-if="!finishInit"><br />{{ $t('message.MSTEAMS.WAIT_A_MOMENT') }}</div>
+    <div v-if="disabled">
+      {{ $t('message.msTeams.invalidTenant') }}<br>{{ $t('message.msTeams.invalidTenantContact') }}
+    </div>
+    <div v-if="invalidToken">
+      <br>{{ $t('message.msTeams.invalidToken') }}
+    </div>
     <div v-if="notShown">
-      <p/>
-      <div v-html="$t('message.MSTEAMS.IF_NOT_SHOWN')"/>
-      <div v-html="$t('message.MSTEAMS.USER_GUIDE3')"/>
+      <p />
+      <div v-html="$t('message.msTeams.ifNotShown')"/>
+      <div v-html="$t('message.msTeams.userGuide3')"/>
       <button class="button-windowslive" @click="signIn">
         <div class="button-icon"/>
         <div class="button-text">
           <span>Sign In with Microsoft</span>
         </div>
       </button>
+    </div>
+    <div v-if="!finishInit">
+      <br>{{ $t('message.msTeams.waitAMoment') }}
     </div>
   </b-container>
 </template>
@@ -142,23 +149,10 @@ export default {
       }
     },
     adminConsent() {
-      // microsoftTeams.initialize()
       LocalStorageHelper.setLocalStorage('tenantName', this.tenantName)
-      // const redirectUrl = encodeURIComponent(APP.AUTH.REDIRECT_URL.split('end').join('adminend'))
-      const redirectUrl = encodeURIComponent(APP.AUTH.REDIRECT_URL.split('end/').join('')) + '%3Fadmin_consent=True'
+      const redirectUrl = encodeURIComponent(APP.AUTH.REDIRECT_URL.split('end').join('adminend'))
       const adminConsentUrl = 'https://login.microsoftonline.com/common/adminconsent?client_id=' + APP.AUTH.APP_ID + '&redirect_uri=' + redirectUrl
-      alert(adminConsentUrl)
       location.href = adminConsentUrl
-      // microsoftTeams.authentication.authenticate({
-      //   url: adminConsentUrl,
-      //   width: 600,
-      //   height: 535,
-      //   success: () => {},
-      //   failure: () => {}
-      // })
-      // this.notRegistered = false
-      // this.finishInit = true
-      // this.disabled = true
     }
   }
 }

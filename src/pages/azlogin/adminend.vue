@@ -1,6 +1,6 @@
 <template>
   <div>
-    Close this popup window.
+    Waiting...
   </div>
 </template>
 
@@ -8,9 +8,7 @@
 
 export default {
   async mounted() {
-    if (window.opener) {
-      window.opener.location.reload()
-    }
+    this.$router.push('/azlogin/' + location.search)
   }
 }
 

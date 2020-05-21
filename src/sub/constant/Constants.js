@@ -1406,7 +1406,7 @@ export const PLUGIN_CONSTANTS = {
 
 export const TENANT = {
   STATUS: {
-    INVALID_TOKEN: -2,
+    invalidToken: -2,
     NOT_REGISTERED: -1,
     REGISTERED: 1,
     REQUIRE_TOKEN: 9,

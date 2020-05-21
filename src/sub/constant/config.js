@@ -25,8 +25,8 @@ export const APP = { // 機能面に関する設定
     USE_AD: false, // ActiveDirectoryで認証
     // APP_ID: 'fcfc143f-c8c8-454e-ab72-fdf2e49f862f',
     // REDIRECT_URL: 'https://xxx.saas.msteams.exbeacon.com/azlogin/adminend/',
-    REDIRECT_URL: 'https://xxx.saas.dev-133.exbeacon.com/azlogin/end/', // 認証後redirect先
-    APP_ID: 'dd3ea682-9b02-49ec-9d15-c63cee38c792', // AAD clientId
+    REDIRECT_URL: 'http://localhost:3000/azlogin/end/', // 認証後redirect先
+    APP_ID: '4d1f0746-fbe0-472c-9706-edf1c23314f9', // AAD clientId
   },  
   MENU: {
     SHOW_MENU_LINK: '',
