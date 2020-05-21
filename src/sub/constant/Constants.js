@@ -351,13 +351,14 @@ export const SENSOR = {
   OMR_TP_ENV: 11,
   LED_TYPE5: 12,
   LED_TYPE3: 13,
+  CO2: 14,
   MAGNET_STATUS: {
     OFF: 0,
     ON: 4,
   },
   STRING: ['','temperature','pir','thermopile','led_type2','meditag','magnet','button','pressure','omr-env','omr-tp-human','omr-tp-env','led_type5'],
   NAMES: ['','thermohumidity','pir','thermopile','led_type2','meditag','magnet','button','pressure','omr-env','omr-tp-human','omr-tp-env','led_type5'],
-  EXB_SENSORS: [2, 3, 6, 8],
+  EXB_SENSORS: [2, 3, 6, 8, 14],
 }
 
 export const SUM_UNIT = {
