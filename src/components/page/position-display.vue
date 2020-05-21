@@ -39,7 +39,18 @@ export default {
   },
   data() {
     return {
-      params: {
+      message: '',
+      prohibitDetectList : null,
+      showDismissibleAlert: false,
+      positions: [],
+      lasteFetched: 0,
+      eachZones: [],
+      eachAreas: [],
+    }
+  },
+  computed: {
+    params() {
+      return {
         name: 'position-stack',
         id: 'position-stackId',
         fields: addLabelByKey(this.$i18n, [
@@ -51,21 +62,20 @@ export default {
         disableTableButtons: true,
         bordered: true,
         parentFilter: this.form,
-      },
-      name: this.masterName + 'Name',
-      id: this.masterName + 'Id',
-      message: '',
-      listName: StringUtil.single2multi(this.masterName),
-      eachListName: StringUtil.concatCamel('each', StringUtil.single2multi(this.masterName)), // TODO: ゾーンかエリアかなのになんでeachListなんて名前つけるんだ！
-      prohibitDetectList : null,
-      showDismissibleAlert: false,
-      positions: [],
-      lasteFetched: 0,
-      eachZones: [],
-      eachAreas: [],
-    }
-  },
-  computed: {
+      }
+    },
+    name() {
+      return this.masterName + 'Name'
+    },
+    id() {
+      return this.masterName + 'Id'
+    },
+    listName() {
+      return StringUtil.single2multi(this.masterName)
+    },
+    eachListName() { // TODO: ゾーンかエリアかなのになんでeachListなんて名前つけるんだ！
+      return StringUtil.concatCamel('each', StringUtil.single2multi(this.masterName))
+    },
     // ...mapState('main', [ // TODO: stateには定義されていない。この画面でしか使わないのであればstateに入れない
     //   'eachAreas',
     //   'eachZones',
@@ -196,22 +206,23 @@ export default {
         this.replace({showAlert:false})
         this.showProgress()
         // positionデータ取得
-        await PositionHelper.loadPosition(null, true, true)
-        this.positions = PositionHelper.filterPositions(undefined, false, true, null, null, null, null).filter(p => p.tx && p.tx.disp==1)
-
-        this.loadProhibitDetect()
-
-        // 分類checkProhibitZone
-        const tempMaster = this.splitMaster(this.positions, this.prohibitDetectList)
-        // this.replaceMain({[this.eachListName]: tempMaster}) // TODO: 意味不明、Stateに入れる必要ある？
-        this[this.eachListName] = tempMaster
-        if (payload && payload.done) {
-          payload.done()
-        }
+        PositionHelper.loadPosition(null, true, true).then(e => {
+          this.positions = PositionHelper.filterPositions(undefined, false, true, null, null, null, null).filter(p => p.tx && p.tx.disp==1)
+          return this.loadProhibitDetect()
+        }).then(e => {
+          // 分類checkProhibitZone
+          const tempMaster = this.splitMaster(this.positions, this.prohibitDetectList)
+          // this.replaceMain({[this.eachListName]: tempMaster}) // TODO: 意味不明、Stateに入れる必要ある？
+          this[this.eachListName] = tempMaster
+          if (payload && payload.done) {
+            payload.done()
+          }
+          this.hideProgress()
+        })
       } catch(e) {
         console.error(e)
+        this.hideProgress()
       }
-      this.hideProgress()
     },
     async checkDetectedTx(txId) {
       //await this.fetchData()

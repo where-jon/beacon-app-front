@@ -45,7 +45,7 @@ export const getRect = (selector, key) => {
   if (key) {
     elm = elm[key]
   }
-  return elm.getBoundingClientRect()
+  return elm ? elm.getBoundingClientRect() : null
 }
 
 export const closest = (el, selector, excludeEl) => {
