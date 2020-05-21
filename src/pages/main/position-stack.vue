@@ -1,6 +1,6 @@
 <template>
   <div class="container-fluid" @click="resetDetail">
-    <breadcrumb :items="breadCrumbs" :extra-nav-spec="extraNavSpec"
+    <breadcrumb ref="breadcrumb" :items="breadCrumbs" :extra-nav-spec="extraNavSpec"
                 :reload="reload" :short-name="shortName" reload-emit-name="allFetch"
     />
     <alert v-model="alertData.isAlert" :message="alertData.message" :fix="fixHeight" :prohibit="alertData.isAlert" :prohibit-view="isProhibitView" :alert-style="alertStyle" />
@@ -9,14 +9,17 @@
         <!--
         -->
         <b-form-row class="my-1 ml-2 ml-sm-0">
-          <label v-t="'label.positionStackType'" class="mr-2 mt-1" />
-          <span>
-            <b-form-select v-model="positionType" :options="positionTypeOptions" />
+          <label class="mr-2 mt-1">
+            {{ $t('label.positionStackType') }}
+          </label>
+          <span :title="vueSelectTitle(positionType)">
+            <v-select v-model="positionType" :options="positionTypeOptions" :clearable="false" class="ml-1 mr-2 vue-options" :style="vueSelectStyle">
+            </v-select>
           </span>
         </b-form-row>
         <!--
         -->
-        <b-form-row v-if="isShow('zone')" class="my-1 ml-2 ml-sm-0">
+        <b-form-row v-if="positionType.value == 2" class="my-1 ml-2 ml-sm-0">
           <label v-t="'label.zoneCategory'" class="ml-sm-4 ml-2 mr-1 mt-1" />
           <span :title="vueSelectTitle(vueSelected.zoneCategory)">
             <v-select v-model="vueSelected.zoneCategory" :options="zoneCategoryOptions" class="ml-1 mr-2 vue-options" :style="vueSelectStyle">
@@ -31,8 +34,7 @@
         </b-form-row>
       </b-form>
     </b-row>
-    <position-display v-show="isShow('area')" ref="areaPosition" master-name="area" :alert-data="alertData" />
-    <position-display v-show="isShow('zone')" ref="zonePosition" master-name="zone" :alert-data="alertData" :form="form" />
+    <position-display ref="positionDisp" :master-name="masterName" :alert-data="alertData" :form="form"/>
   </div>
 </template>
 
@@ -62,14 +64,14 @@ export default {
       shortName: this.$i18n.t('label.positionStackShort'),
       reload: true,
       alertData: { message: null, isAlert:false},
-      form: {
-        zoneCategory: null,
-      },
+      form: null,
       vueSelected: {
         zoneCategory: null,
       },
       styles: [],
-      positionType: DISP.POS_STACK.TYPE,
+      positionTypeOptions: POSITION_STACK_TYPES.getTypes(),
+      positionType: null,
+      masterName: 'area',
     }
   },
   computed: {
@@ -77,9 +79,6 @@ export default {
       return {
         'font-weight': DISP.THERMOH.ALERT_WEIGHT,
       }
-    },
-    positionTypeOptions(){
-      return POSITION_STACK_TYPES.getTypes()
     },
     fixAlert(){
       return this.fix > 0
@@ -92,19 +91,31 @@ export default {
       },
       deep: true,
     },
+    positionType: {
+      handler: function(newVal, oldVal){
+        if (oldVal == null || newVal.value == oldVal.value) {
+          return
+        }
+        if (newVal.value == POSITION_STACK_TYPES.ZONE) {
+          this.masterName = 'zone'
+          this.form = {
+            zoneCategory: null,
+          }
+        } else {
+          this.masterName = 'area'
+          this.form = null
+        }
+        this.$refs.breadcrumb.clickReload()
+      },
+      deep: false,
+    }
   },
-  async mounted() {
+  created() {
+    this.positionType = this.positionTypeOptions.find(e => e.value == DISP.POS_STACK.TYPE)
   },
   methods: {
     resetDetail() {
-      if (this.isShow('area')) {
-        this.$refs.areaPosition.resetDetail()
-      } else {
-        this.$refs.zonePosition.resetDetail()
-      }
-    },
-    isShow(type){
-      return this.positionType == POSITION_STACK_TYPES[type.toUpperCase()]
+      this.$refs.positionDisp.resetDetail()
     },
   },
 }

@@ -609,8 +609,8 @@ export const TX_VIEW_TYPES = {
 export const POSITION_STACK_TYPES = {
   getTypes(){
     return [
-      {text: i18n.tnl('label.area'), value: 1, className: 'area'},
-      {text: i18n.tnl('label.zone'), value: 2, className: 'zone'},
+      {label: i18n.tnl('label.area'), value: 1},
+      {label: i18n.tnl('label.zone'), value: 2},
     ]
   },
   AREA: 1,
