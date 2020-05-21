@@ -25,8 +25,8 @@ export const APP = { // 機能面に関する設定
     USE_AD: false, // ActiveDirectoryで認証
     // APP_ID: 'fcfc143f-c8c8-454e-ab72-fdf2e49f862f',
     // REDIRECT_URL: 'https://xxx.saas.msteams.exbeacon.com/azlogin/adminend/',
-    REDIRECT_URL: 'http://xxx.saas.dev-133.exbeacon.com/azlogin/end/', // 認証後redirect先
-    APP_ID: '9c1fbf13-0f18-48ef-804d-ac171fa1c857', // AAD clientId
+    REDIRECT_URL: 'https://xxx.saas.dev-133.exbeacon.com/azlogin/end/', // 認証後redirect先
+    APP_ID: 'dd3ea682-9b02-49ec-9d15-c63cee38c792', // AAD clientId
   },  
   MENU: {
     SHOW_MENU_LINK: '',
@@ -133,7 +133,7 @@ export const APP = { // 機能面に関する設定
   EXB: {
     WITH: [],
     SENSOR: [
-      // 1,2,3,4,8,9,10,11,12,13,14
+      // 1,2,3,4,8,9,10,11,12,13
     ], // EXBのタイプに設定可能なセンサーID(m_settingとのずれを防ぐためデフォルトは空にする)
     DEVICEID_TYPE: 'deviceId',
     MULTI_SENSOR: true,
