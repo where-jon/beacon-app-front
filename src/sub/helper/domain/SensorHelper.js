@@ -815,34 +815,49 @@ export const getFields9 = () => {
 }
 
 /**
+ * CO2センサの一覧表示で使用するテーブルの項目を取得する。
+ * @method
+ * @return {Object[]}
+ */
+export const getFields14 = () => {
+  return addLabelByKey(i18n, [
+    {key: 'sensorDt', sortable: true, label:'dt'},
+    ConfigHelper.includesDeviceType('deviceId')? {key: 'deviceId', sortable: true }: null,
+    ConfigHelper.includesDeviceType('deviceIdX')? {key: 'deviceIdX', sortable: true }: null,
+    {key: 'locationName', label:'locationZoneName', sortable: true,},
+    {key: 'areaName', label:'area', sortable: true,},
+    {key: 'co2', label:'co2', sortable: true},
+  ])
+}
+
+/**
  * 指定したセンサで使用するテーブルの項目を取得する。
  * @method
  * @param {Number} sensorId
  * @return {Object[]} 規定値がない場合は温湿度と同値
  */
-export const getFields = (sensorId) => { // TODO: switch文
-  if(sensorId == SENSOR.TEMPERATURE){
-    return getFields1()
+export const getFields = (sensorId) => {
+  console.log('sensorId', sensorId)
+  switch(sensorId){
+    case SENSOR.TEMPERATURE:
+      return getFields1()
+    case SENSOR.PIR:
+      return getFields2()
+    case SENSOR.THERMOPILE:
+      return getFields2()
+    case SENSOR.MEDITAG:
+      return getFields5()
+    case SENSOR.MAGNET:
+      return getFields6()
+    case SENSOR.PRESSURE:
+      return getFields8()
+    case SENSOR.OMR_ENV:
+      return getFields9()
+    case SENSOR.CO2:
+      return getFields14()
+    default:
+      return getFields1()
   }
-  if(sensorId == SENSOR.PIR){
-    return getFields2()
-  }
-  if(sensorId == SENSOR.THERMOPILE){
-    return getFields2()
-  }
-  if(sensorId == SENSOR.MEDITAG){
-    return getFields5()
-  }
-  if(sensorId == SENSOR.MAGNET){
-    return getFields6()
-  }
-  if(sensorId == SENSOR.PRESSURE){
-    return getFields8()
-  }
-  if(sensorId == SENSOR.OMR_ENV){
-    return getFields9()
-  }
-  return getFields1()
 }
 
 /**
