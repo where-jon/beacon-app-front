@@ -10,6 +10,11 @@ import * as StringUtil from '../../util/StringUtil'
 import * as SensorHelper from '../domain/SensorHelper'
 import * as Util from '../../util/Util'
 
+export const defaultDisplay = {
+  color: DISP.TX.COLOR,
+  bgColor: DISP.TX.BGCOLOR,
+  shape: DISP.TX.SHAPE,
+}
 
 /**
  * カテゴリ、グループのサンプル矩形スタイルを取得する。
@@ -114,11 +119,13 @@ export const inLabel = (iconRadius, font, useLabel) => {
  * @param {Object} tx
  * @return {{color: String, bgColor: String, shape: Number}}
  */
-export const getPositionDisplay = tx => {
+export const getPositionDisplay = (tx, useDefaultColor) => {
   const display = tx.display? tx.display: Util.v(tx, 'pot.' + DISP.TX.DISPLAY_PRIORITY + '.display', {})
+  const color = display.color ? display.color : useDefaultColor ? defaultDisplay.color : DISP.TX.COLOR
+  const bgColor = display.bgColor ? display.bgColor : useDefaultColor ? defaultDisplay.bgColor : DISP.TX.BGCOLOR
   return {
-    color: StringUtil.addPrefix(display.color || DISP.TX.COLOR, '#'),
-    bgColor: StringUtil.addPrefix(display.bgColor || DISP.TX.BGCOLOR, '#'),
+    color: StringUtil.addPrefix(color, '#'),
+    bgColor: StringUtil.addPrefix(bgColor, '#'),
     shape: display.shape || DISP.TX.SHAPE
   }
 }
