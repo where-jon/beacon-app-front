@@ -142,20 +142,22 @@ export default {
       }
     },
     adminConsent() {
-      microsoftTeams.initialize()
+      // microsoftTeams.initialize()
       LocalStorageHelper.setLocalStorage('tenantName', this.tenantName)
-      const redirectUrl = encodeURIComponent(APP.AUTH.REDIRECT_URL.split('end').join('adminend'))
+      // const redirectUrl = encodeURIComponent(APP.AUTH.REDIRECT_URL.split('end').join('adminend'))
+      const redirectUrl = encodeURIComponent(APP.AUTH.REDIRECT_URL.split('end/').join(''))
       const adminConsentUrl = 'https://login.microsoftonline.com/common/adminconsent?client_id=' + APP.AUTH.APP_ID + '&redirect_uri=' + redirectUrl
-      microsoftTeams.authentication.authenticate({
-        url: adminConsentUrl,
-        width: 600,
-        height: 535,
-        success: () => {},
-        failure: () => {}
-      })
-      this.notRegistered = false
-      this.finishInit = true
-      this.disabled = true
+      location.href = adminConsentUrl
+      // microsoftTeams.authentication.authenticate({
+      //   url: adminConsentUrl,
+      //   width: 600,
+      //   height: 535,
+      //   success: () => {},
+      //   failure: () => {}
+      // })
+      // this.notRegistered = false
+      // this.finishInit = true
+      // this.disabled = true
     }
   }
 }
