@@ -226,14 +226,14 @@
           <div class="empty-icon d-inline-flex" /><!-- 横幅0の「支柱」 -->
           <div class="d-inline-flex flex-wrap">
             <span v-if="useTxPopup">
-              <div v-for="position in row.item.positions" :key="position.txId"
+              <div v-for="position in row.item.positions" :key="position.txId" :id="'btx_' + position.btxId"
                    :style="position.display" :class="'d-inline-flex m-1 '+ position.blinking" @click="txOnClick($event,position.tx)"
               >
                 {{ position.label }}
               </div>
             </span>
             <span v-else>
-              <div v-for="position in row.item.positions" :key="position.txId"
+              <div v-for="position in row.item.positions" :key="position.txId" :id="'btx_' + position.btxId"
                    :style="position.display" :class="'d-inline-flex m-1 '+ position.blinking" @click.stop="mapDisplay(position, true)"
               >
                 {{ position.label }}
@@ -424,6 +424,7 @@ export default {
       sidebarRect: null,
       systemPopupHoverX: 0,
       systemPopupHoverY: 0,
+      doUpdatePopup: false,
     }
   },
   computed: {
@@ -530,8 +531,20 @@ export default {
     selectedAreaId: function(newVal, oldVal) {
       LocalStorageHelper.setLocalStorage(KEY.CURRENT.AREA, newVal)
     },
+    list: {
+      handler: function(newVal, oldVal) {
+        this.doUpdatePopup = true
+      },
+      deep: false,
+    }
   },
   async created() {
+  },
+  updated() {
+    if (this.doUpdatePopup) {
+      this.doUpdatePopup = false
+      this.updatePopup()
+    }
   },
   async mounted() {
     const currentArea = LocalStorageHelper.getLocalStorage(KEY.CURRENT.AREA)
@@ -994,6 +1007,7 @@ export default {
       const navbar = DomUtil.getRect('.navbar')  // ナビの情報取得：y位置調整
       const containerRect = DomUtil.getRect('#bd-page')
       const selectedTx = TxDetailHelper.createTxDetailInfo(x, y, null, null, true, tx, 1.0, {x: menuGroup.width, y: navbar.height} , containerRect, isDispThumbnail? this.preloadThumbnail: {}, true)
+      selectedTx.pot = tx.pot
       this.replaceMain({ selectedTx })
       this.$nextTick(() => this.showReady = true)
       if (this.isShowModal()) {
@@ -1002,6 +1016,19 @@ export default {
     },
     isShowModal() { // pir, position
       return BrowserUtil.isResponsiveMode()
+    },
+    updatePopup() {
+      const tx = this.selectedTx
+      if (!tx || !tx.btxId) {
+        return
+      }
+      const rect = DomUtil.getRect(`#btx_${tx.btxId}`)
+      if (rect) {
+        this.showReady = false
+        this.showDetail(tx, rect.x, rect.y + window.pageYOffset)
+      } else {
+        this.resetDetail()
+      }
     },
     showDetail(tx, x, y) {
       // アラート表示でずれるので遅延実行を行う

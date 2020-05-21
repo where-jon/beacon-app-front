@@ -93,14 +93,6 @@ export default {
       //
       viewList: [],
       fields: [],
-      fields1: SensorHelper.getFields1([
-        { key: 'locationName', forceShow: true },
-      ]),
-      fields2: SensorHelper.getFields2(),
-      fields5: SensorHelper.getFields5(),
-      fields6: SensorHelper.getFields6(),
-      fields8: SensorHelper.getFields8(),
-      fields9: SensorHelper.getFields9(),
       currentPage: 1,
       perPage: 20,
       limitViewRows: 100,
@@ -113,7 +105,7 @@ export default {
     const date = DateUtil.getDefaultDate()
     this.form.datetimeFrom = DateUtil.getDatetime(date, {hours: -1})
     this.form.datetimeTo = DateUtil.getDatetime(date)
-    this.fields = this.fields1
+    this.fields = SensorHelper.getFields1([{ key: 'locationName', forceShow: true }])
   },
   mounted() {
     ViewHelper.importElementUI()
@@ -173,6 +165,9 @@ export default {
         senHist.soundNoise = senHist.value.sound_noise
         senHist.ambientLight = senHist.value.ambient_light
       }
+      if (senHist.sensorId == SENSOR.CO2) {
+        senHist.co2 = senHist.value.co2
+      }
     },
     async displayImpl(){
       this.replace({showAlert: false})
@@ -204,25 +199,25 @@ export default {
       }
     },
     getFields(aSensorId) {
-      if (aSensorId == SENSOR.TEMPERATURE) {
-        return this.fields1
-      }
       if (aSensorId == SENSOR.PIR || aSensorId == SENSOR.THERMOPILE) {
-        return this.fields2
+        return SensorHelper.getFields2()
       }
       if (aSensorId == SENSOR.MEDITAG) {
-        return this.fields5
+        return SensorHelper.getFields5()
       }
       if (aSensorId == SENSOR.MAGNET) {
-        return this.fields6
+        return SensorHelper.getFields6()
       }
       if (aSensorId == SENSOR.PRESSURE) {
-        return this.fields8
+        return SensorHelper.getFields8()
       }
       if (aSensorId == SENSOR.OMR_ENV) {
-        return this.fields9
+        return SensorHelper.getFields9()
       }
-      return this.fields1
+      if (aSensorId == SENSOR.CO2) {
+        return SensorHelper.getFields14()
+      }
+      return SensorHelper.getFields1([{ key: 'locationName', forceShow: true }])
     },
     async fetchData(payload) {
     },
