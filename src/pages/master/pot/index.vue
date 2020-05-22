@@ -93,16 +93,21 @@ export default {
       })
     },
     getFields(){
-      return ViewHelper.addLabelByKey(this.$i18n, [ 
+      const columnsOrder = ['ID', 'potName', 'ruby', 'thumbnail', 'groupName', 'action']
+      const customColumn = PotHelper.createCustomColumn(this.pName)
+      .filter(c => c.key !== 'categoryName' && c.key !== 'potType')
+      let result = ViewHelper.addLabelByKey(this.$i18n, [ 
         {key: 'ID', sortable: true , tdClass: 'thumb-rowdata'},
         {key: 'potName', sortable: true , tdClass: 'thumb-rowdata'},
         ArrayUtil.includesIgnoreCase(APP[this.getFullName().toUpperCase()].WITH, 'thumbnail')? {key: 'thumbnail', tdClass: 'thumb-rowdata' }: null,
-        {key: 'txIdName', label:'tx', sortable: true, tdClass: 'thumb-rowdata' },
-        {key: 'displayName', sortable: true, tdClass: 'thumb-rowdata'},
-      ].concat(PotHelper.createCustomColumn(this.pName))
+        // {key: 'txIdName', label:'tx', sortable: true, tdClass: 'thumb-rowdata' },
+        // {key: 'displayName', sortable: true, tdClass: 'thumb-rowdata'},
+      ]
+      .concat(customColumn)
         .concat([
           {key: 'actions', thStyle: {'min-width':'130px !important'} , tdClass: 'thumb-rowdata'},
         ])).filter(val => val)
+        return columnsOrder.map(order => result.find(r => r.key === order)).filter(r => r !== null)
     },
     thumbnail(row) {
       return row.existThumbnail? this.thumbnailUrl.replace('{id}', row.updateKey) + row.thumbnailUpdateDt: null

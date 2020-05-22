@@ -10,6 +10,7 @@
             <chrome-input />
             <span v-for="(potTx, index) in form.potTxList" :key="index">
               <b-form inline @submit.prevent>
+                <!--
                 <b-form-group>
                   <b-form-row class="mb-3 mr-5">
                     <label>
@@ -22,8 +23,10 @@
                     </v-select>
                   </b-form-row>
                 </b-form-group>
+                -->
               </b-form>
             </span>
+            <!--
             <b-form-group v-show="potTypeOptions.length > 1 && !useAd">
               <label v-t="'label.categoryType'" />
               <b-form-radio-group v-model="form.potType" :options="potTypeOptions" :disabled="!isEditable" :required="potTypeOptions.length > 1" />
@@ -32,6 +35,7 @@
               <label v-t="'label.potCd'" />
               <input v-model="form.potCd" :readonly="!isEditable || useAd" type="text" maxlength="20" class="form-control">
             </b-form-group>
+            -->
             <b-form-group>
               <label v-t="'label.potName'" />
               <input v-model="form.potName" :readonly="!isEditable || useAd" type="text" maxlength="100" class="form-control" required>
@@ -52,6 +56,7 @@
                 </template>
               </v-select>
             </b-form-group>
+            <!--
             <b-form-group v-show="isShownWith('category')">
               <label v-t="'label.category'" />
               <v-select v-model="vueSelected.category" :options="categoryOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options-lg">
@@ -60,6 +65,7 @@
                 </template>
               </v-select>
             </b-form-group>
+            -->
             <b-form-group v-show="isShownWith('group')">
               <label v-t="'label.group'" />
               <v-select v-model="vueSelected.group" :options="groupOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options-lg">
@@ -143,7 +149,8 @@ export default {
     },
     pTypeList: {
       type: Array,
-      default: () => [POT_TYPE.PERSON, POT_TYPE.THING, POT_TYPE.OTHER],
+      // POT_TYPEは人一択
+      default: () => [POT_TYPE.PERSON],
     },
   },
   data() {
@@ -153,8 +160,8 @@ export default {
       form: {
         ...Util.extract(this.$store.state.app_service.pot,
           ['potId', 'potCd', 'potName', 'potType', 'extValue.ruby',
-            'displayName', 'potGroupList.0.group.groupId', 'potCategoryList',
-            'existThumbnail', 'description', ...PotHelper.getPotExtKeys(this.pName, true)])
+            'displayName', 'potGroupList.0.group.groupId',
+            ...PotHelper.getPotExtKeys(this.pName, true)])
       },
       vueSelected: {
         group: null,
@@ -397,7 +404,13 @@ export default {
     },
     async onSaving() {
       const entity = PotHelper.createEntity(this.form, this.minors, this.potTypeOptions, this.groups, this.categories)
+      // POT種別は"人"一択
+      entity.potType = [POT_TYPE.getTypes().filter(t => t.value === POT_TYPE.PERSON)[0].text]
+      // potCdは"worker"  + potId
+      entity.potCd = `worker${entity.potId}`
       this.potCdOld = this.form.potCd
+      delete entity.potTxList
+      delete entity.groupCd
       return await AppServiceHelper.bulkSaveByCsvStr(this.pAppServicePath, [entity])
     },
     getNameByteLangth(){

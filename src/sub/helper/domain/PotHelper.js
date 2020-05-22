@@ -116,26 +116,34 @@ export const createEntity = (form, minors = [], potTypeOptions = [], groups = []
     entity.groupCd = form.groupId ? groups.filter(e => e.groupId == form.groupId).map(e => e.groupCd).join(";") : null
   }
 
+  /*
   if (form['categoryId']) {
     entity.categoryCd = form.categoryId ? categories.filter(e => e.categoryId == form.categoryId).map(e => e.categoryCd).join(";") : null
   }
+  */
 
+  /*
   if (form['authCategoryIdList']) {
     if(Util.hasValue(form.authCategoryIdList)){
       const list = categories.filter(e => form.authCategoryIdList.includes(e.categoryId)).map(e => e.categoryCd)
       entity.auth = list.length > 0 ? list.join(";") : null
     }
   }
+  */
 
+  /*
   if (minors.length > 0) {
     entity.minor = minors.length > 0 ? minors.join(';') : null
   }
+  */
 
+  /*
   ['btxId', 'potUserList', 'potCategoryList', 'potTxList', 'potGroupList', 'attendanceList'].forEach(prop => {
     if (form[prop]) {
       entity[prop] = null
     }
   })
+  */
   
   return entity
 }

@@ -313,7 +313,7 @@
     "potName": "名前",
     "potSearchName": "検知名",
     "post": "役職",
-    "ruby": "ふりがな",
+    "ruby": "フリガナ",
     "tel": "電話番号",
     "departmentEtc": "部門等",
     "outsideNumber": "外線番号",
@@ -378,8 +378,7 @@
     "shape": "形",
     "shapeName": "形",
     "authCategoryName": "権限名",
-
-    "group": "グループ",
+    "group": "派遣会社",
     "groupId": "グループID",
     "groupCd": "ID",
     "groupName": "グループ名",
