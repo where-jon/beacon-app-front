@@ -93,7 +93,7 @@ export default {
       })
     },
     getFields(){
-      const columnsOrder = ['ID', 'potName', 'ruby', 'thumbnail', 'groupName', 'action']
+      const columnsOrder = ['ID', 'potName', 'ruby', 'thumbnail', 'groupName', 'actions']
       const customColumn = PotHelper.createCustomColumn(this.pName)
       .filter(c => c.key !== 'categoryName' && c.key !== 'potType')
       let result = ViewHelper.addLabelByKey(this.$i18n, [ 
