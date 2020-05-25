@@ -88,13 +88,13 @@ export default {
   methods: {
     getField(){
       return [
-        {key: 'groupName', sortable: true, label: ''},
-        {key: 'attendancePer', sortable: false, label: this.$i18n.tnl('label.attendancePer') },
-        {key: 'allDayWorkPer', sortable: false, label: this.$i18n.tnl('label.allDayWorkPer') },
-        {key: 'halfDayWorkPer', sortable: false, label: this.$i18n.tnl('label.halfDayWorkPer') },
-        {key: 'temporaryTimeWorkPer', sortable: false, label: this.$i18n.tnl('label.temporaryTimeWorkPer') },
-        {key: 'lateTimeWorkPer', sortable: false, label: this.$i18n.tnl('label.lateTimeWorkPer') },
-        {key: 'detail', label: ''}
+        {key: 'index', sortable: false, label: this.$i18n.tnl('label.MANAGE_WORKERS.index') },
+        {key: 'potName', sortable: false, label: this.$i18n.tnl('label.MANAGE_WORKERS.name') },
+        {key: 'workName', sortable: false, label: this.$i18n.tnl('label.MANAGE_WORKERS.workName') },
+        {key: 'startTime', sortable: false, label: this.$i18n.tnl('label.MANAGE_WORKERS.startTime') },
+        {key: 'restTime', sortable: false, label: this.$i18n.tnl('label.MANAGE_WORKERS.restTime') },
+        {key: 'restTimeSelfReport', sortable: false, label: this.$i18n.tnl('label.MANAGE_WORKERS.restTimeSelfReport') },
+        {key: 'leaveTime', sortable: false, label: this.$i18n.tnl('label.MANAGE_WORKERS.leaveTime') },
       ]
     },
     async display() {
@@ -139,7 +139,7 @@ export default {
     },
     async fetchData(form){
       const date = moment(form.date).format('YYYYMMDD')
-      const url = `/office/attendance/sum/${date}`
+      const url = `/core/manageworkers/resttime/${date}/63`
       return await HttpHelper.getAppService(url)
     },
     async showDetail(item){
@@ -148,16 +148,22 @@ export default {
       this.$router.push('/sum/attendanceDetail')
     },
     createList(data){
-      this.viewList = data.map( e => {
+      const getTime = (s) => {
+        const d = new Date(s)
+        return `${d.getHours()}:${('00' + d.getMinutes()).slice(-2)}`
+      }
+      this.viewList = data.map( (e, i, a) => {
+        console.log(e)
+        let startTime = getTime(e.startTime)
+        let leaveTime = getTime(e.leaveTime)
         return {
-          groupId: e.groupId ? e.groupId : 0,
-          groupName: e.groupId == 0 ? this.$i18n.tnl('label.companyWide') : e.groupName,
-          attendancePer: NumberUtil.getPercent(e.total),
-          allDayWorkPer: NumberUtil.getPercent(e.all),
-          halfDayWorkPer: NumberUtil.getPercent(e.half),
-          lateTimeWorkPer: NumberUtil.getPercent(e.late),
-          temporaryTimeWorkPer: NumberUtil.getPercent(e.temp),
-          isDetail: true
+          index: (i+1),
+          potName: e.potName,
+          workName: e.workName,
+          startTime: startTime,
+          restTime: e.restTime,
+          restTimeSelfReport: e.restTimeSelfReport,
+          leaveTime: leaveTime,
         }
       })
     },
