@@ -1413,3 +1413,9 @@ export const TENANT = {
     DISABLED: 0
   }
 }
+
+export const GROUP = {
+  TYPE: {
+    COMPANY: 9,
+  }
+}

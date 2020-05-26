@@ -5,15 +5,18 @@
       <alert :message="message" />
 
       <b-form inline @submit.prevent>
-        <b-form-group>
-          <b-form-row class="mt-3 mb-3">
             <span v-t="'label.date'" class="d-flex align-items-center" />
             <date-picker v-model="form.date" :clearable="false" type="date" class="ml-2 inputdatefrom" required />
 
-            <b-button v-t="'label.display'" type="submit" :variant="theme" @click="display" class="ml-2" />
-            <b-button v-t="'label.download'" type="submit" :variant="theme" @click="download" class="ml-2" />
-          </b-form-row>
-        </b-form-group>
+            <label class="mr-sm-2" v-t="'label.group'" style="margin-left:10px;"/>
+            <v-select v-model="vueSelected.group" :options="companyOptions">
+              <template slot="no-options">
+                {{ vueSelectNoMatchingOptions }}
+              </template>
+            </v-select>
+
+            <b-button v-t="'label.display'" type="submit" :variant="theme" @click="display" />
+            <b-button v-t="'label.download'" type="submit" :variant="theme" @click="download" style="margin-left:10px" />
       </b-form>
 
       <b-row class="mt-3">
@@ -45,9 +48,12 @@ import * as BrowserUtil from '../../sub/util/BrowserUtil'
 import * as NumberUtil from '../../sub/util/NumberUtil'
 import * as Util from '../../sub/util/Util'
 import * as ViewHelper from '../../sub/helper/ui/ViewHelper'
+import * as VueSelectHelper from '../../sub/helper/ui/VueSelectHelper'
 import * as MasterHelper from '../../sub/helper/domain/MasterHelper'
 import * as HttpHelper from '../../sub/helper/base/HttpHelper'
 import * as CharSetHelper from '../../sub/helper/base/CharSetHelper'
+import * as OptionHelper from '../../sub/helper/dataproc/OptionHelper'
+import { GROUP } from '../../sub/constant/Constants'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import commonmixin from '../../components/mixin/commonmixin.vue'
 import alert from '../../components/parts/alert.vue'
@@ -64,7 +70,11 @@ export default {
     return {
       breadCrumbs: ViewHelper.createBreadCrumbItems('sumTitle', 'attendanceSum'),
       form: {
-        date: ''
+        date: '',
+        groupId: null,
+      },
+      vueSelected: {
+        group: null,
       },
       message: '',
       viewList: [],
@@ -73,10 +83,20 @@ export default {
       sortBy: 'name',
       totalRows: 0,
       allDayWorkPer: null,
-      halfDayWorkPer: null
+      halfDayWorkPer: null,
+      companyOptions: [],
     }
   },
   computed: {
+    ...mapState('app_service', ['groups']),
+  },
+  watch: {
+    'vueSelected.group': {
+      handler: function(newVal, oldVal){
+        this.form.groupId = Util.getValue(newVal, 'value')
+      },
+      deep: true,
+    },
   },
   async created() {
     const date = DateUtil.getDefaultDate()
@@ -84,6 +104,14 @@ export default {
   },
   async mounted() {
     ViewHelper.importElementUI()
+    this.companyOptions = this.groups
+    .filter(g => g.groupType === GROUP.TYPE.COMPANY).map(g => {
+      return {
+        label: g.groupName,
+        text: g.groupName,
+        value: g.groupId
+      }
+    })
   },
   methods: {
     getField(){
@@ -131,15 +159,16 @@ export default {
       }
     },
     async download(){
-      let csv = ',' + this.getField().filter(e => e.label && e.label != '').map(e => e.label).join(',') + '\n' // ヘッダー
+      let csv = this.getField().filter(e => e.label && e.label != '').map(e => e.label).join(',') + '\n' // ヘッダー
       _.forEach(this.viewList, v => {
-        csv += `${v.groupName},${v.attendancePer},${v.allDayWorkPer},${v.halfDayWorkPer},${v.temporaryTimeWorkPer},${v.lateTimeWorkPer}\n`
+        csv += `${v.index},${v.potName},${v.workName},${v.startTime},${v.restTime},${v.restTimeSelfReport},${v.leaveTime}\n`
       })
-      BrowserUtil.fileDL('attendanceSum.csv', csv, CharSetHelper.getCharSet(this.$store.state.loginId))
+      BrowserUtil.fileDL('workerAttendance.csv', csv, CharSetHelper.getCharSet(this.$store.state.loginId))
     },
     async fetchData(form){
+      this.viewList = []
       const date = moment(form.date).format('YYYYMMDD')
-      const url = `/core/manageworkers/resttime/${date}/63`
+      const url = `/core/manageworkers/resttime/${date}/${this.vueSelected.group ? this.vueSelected.group.value : -1}`
       return await HttpHelper.getAppService(url)
     },
     async showDetail(item){
@@ -153,7 +182,6 @@ export default {
         return `${d.getHours()}:${('00' + d.getMinutes()).slice(-2)}`
       }
       this.viewList = data.map( (e, i, a) => {
-        console.log(e)
         let startTime = getTime(e.startTime)
         let leaveTime = getTime(e.leaveTime)
         return {

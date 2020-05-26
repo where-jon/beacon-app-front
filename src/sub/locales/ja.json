@@ -424,7 +424,7 @@
     "meetingRoomName": "会議室名",
 
     "attendanceDetail": "入退室管理詳細",
-    "attendanceSum": "入退室管理",
+    "attendanceSum": "勤怠管理(作業員)",
     "entranceTime": "入室",
     "exitTime": "退室",
     "lastDetected": "最終検知",
