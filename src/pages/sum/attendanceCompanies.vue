@@ -5,32 +5,22 @@
       <alert :message="message" />
 
       <b-form inline @submit.prevent>
-            <span v-t="'label.date'" class="d-flex align-items-center" />
-            <date-picker v-model="form.date" :clearable="false" type="date" class="ml-2 inputdatefrom" required />
+        <span v-t="'label.historyDateFrom'" class="d-flex align-items-center" />
+        <date-picker v-model="form.fromDate" :clearable="false" type="date" class="ml-2 inputdatefrom" required />
+        <label class="mr-sm-2" style="margin-left:10px;">～</label>
+        <date-picker v-model="form.toDate" :clearable="false" type="date" class="ml-2 inputdatefrom" required />
 
-            <label class="mr-sm-2" v-t="'label.group'" style="margin-left:10px;"/>
-            <v-select v-model="vueSelected.group" :options="companyOptions">
-              <template slot="no-options">
-                {{ vueSelectNoMatchingOptions }}
-              </template>
-            </v-select>
-
-            <b-button v-t="'label.display'" type="submit" :variant="theme" @click="display" />
-            <b-button v-t="'label.download'" type="submit" :variant="theme" @click="download" style="margin-left:10px" />
-      </b-form>
-
-      <b-row class="mt-3">
-        <b-table :items="viewList" :fields="getField()" :current-page="currentPage" :per-page="perPage" :sort-by.sync="sortBy" :sort-compare="defaultSortCompare" stacked="md" striped hover outlined>
-          <template slot="detail" slot-scope="row">
-            <b-button v-if="row.item.isDetail" v-t="'label.detail'" :variant="theme" size="sm" class="mx-1" @click.stop="showDetail(row.item)" />
+        <label class="mr-sm-2" v-t="'label.group'" style="margin-left:10px;"/>
+        <v-select v-model="vueSelected.group" :options="companyOptions">
+          <template slot="no-options">
+            {{ vueSelectNoMatchingOptions }}
           </template>
-        </b-table>
-      </b-row>
-      <b-row>
-        <b-col md="6" class="mt-1 mb-3">
-          <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage" class="my-0" />
-        </b-col>
-      </b-row>
+        </v-select>
+
+        <b-button v-t="'label.display'" type="submit" :variant="theme" @click="display" />
+        <b-button v-t="'label.download'" type="submit" :variant="theme" @click="download" style="margin-left:10px" />
+      </b-form>
+      <m-list :params="listParams" :total-rows="totalRows" :list="viewList" :alert-force-hide="true" />
     </div>
   </div>
 </template>
@@ -57,6 +47,7 @@ import { GROUP } from '../../sub/constant/Constants'
 import breadcrumb from '../../components/layout/breadcrumb.vue'
 import commonmixin from '../../components/mixin/commonmixin.vue'
 import alert from '../../components/parts/alert.vue'
+import mList from '../../components/page/list.vue'
 import moment from 'moment'
 
 export default {
@@ -64,13 +55,15 @@ export default {
     DatePicker,
     breadcrumb,
     alert,
+    mList,
   },
   mixins: [commonmixin],
   data () {
     return {
-      breadCrumbs: ViewHelper.createBreadCrumbItems('sumTitle', 'attendanceSum'),
+      breadCrumbs: ViewHelper.createBreadCrumbItems('sumTitle', 'attendanceCompanies'),
       form: {
-        date: '',
+        fromDate: '',
+        toDate: '',
         groupId: null,
       },
       vueSelected: {
@@ -85,6 +78,55 @@ export default {
       allDayWorkPer: null,
       halfDayWorkPer: null,
       companyOptions: [],
+      listParams: {
+        hideNormalSearchBox: true,
+        disableTableButtons: true,
+        fields: [
+          {
+            key: 'index',
+            label: this.$t('label.MANAGE_WORKERS.index'),
+            sortable: true,
+            tdClass: 'action-rowdata' 
+          },
+          {
+            key: 'groupName',
+            label: this.$t('label.MANAGE_WORKERS.company'),
+            sortable: true,
+            tdClass: null
+          },
+          {
+            key: 'categoryName',
+            label: this.$t('label.MANAGE_WORKERS.workName'),
+            sortable: true,
+            tdClass: null
+          },
+          {
+            key: 'count',
+            label: this.$t('label.MANAGE_WORKERS.count'),
+            sortable: true,
+            tdClass: null
+          },
+          {
+            key: 'workTimeSum',
+            label: this.$t('label.MANAGE_WORKERS.workTimeSum'),
+            sortable: true,
+            tdClass: null
+          },
+          {
+            key: 'restTimeSum',
+            label: this.$t('label.MANAGE_WORKERS.restTimeSum'),
+            sortable: true,
+            tdClass: null
+          },
+          {
+            key: 'restTimeSelfSum',
+            label: this.$t('label.MANAGE_WORKERS.restTimeSumSelf'),
+            sortable: true,
+            tdClass: null
+          },
+        ]
+      },
+      totalRows: 0,
     }
   },
   computed: {
@@ -100,7 +142,8 @@ export default {
   },
   async created() {
     const date = DateUtil.getDefaultDate()
-    this.form.date = DateUtil.getDatetime(date, {date: -1})
+    this.form.fromDate = DateUtil.getDatetime(date, {date: -1})
+    this.form.toDate = DateUtil.getDatetime(date, {date: 0})
   },
   async mounted() {
     ViewHelper.importElementUI()
@@ -114,25 +157,14 @@ export default {
     })
   },
   methods: {
-    getField(){
-      return [
-        {key: 'index', sortable: false, label: this.$i18n.tnl('label.MANAGE_WORKERS.index') },
-        {key: 'potName', sortable: false, label: this.$i18n.tnl('label.MANAGE_WORKERS.name') },
-        {key: 'workName', sortable: false, label: this.$i18n.tnl('label.MANAGE_WORKERS.workName') },
-        {key: 'startTime', sortable: false, label: this.$i18n.tnl('label.MANAGE_WORKERS.startTime') },
-        {key: 'restTime', sortable: false, label: this.$i18n.tnl('label.MANAGE_WORKERS.restTime') },
-        {key: 'restTimeSelfReport', sortable: false, label: this.$i18n.tnl('label.MANAGE_WORKERS.restTimeSelfReport') },
-        {key: 'leaveTime', sortable: false, label: this.$i18n.tnl('label.MANAGE_WORKERS.leaveTime') },
-      ]
-    },
     async display() {
       Util.debug('form', this.form)
 
       try {
         this.replace({showAlert: false})
         this.showProgress()
-        if ( !Util.hasValue(this.form.date) ) {
-          this.message = this.$i18n.tnl('message.pleaseEnterSearchCriteria')
+        if (!Util.hasValue(this.form.fromDate) || !Util.hasValue(this.form.toDate)) {
+          this.message = this.$i18n.tnl('message.pleaseEnterPeriod')
           this.replace({showAlert: true})
           this.hideProgress()
           return
@@ -165,11 +197,13 @@ export default {
       })
       BrowserUtil.fileDL('workerAttendance.csv', csv, CharSetHelper.getCharSet(this.$store.state.loginId))
     },
-    async fetchData(form){
+    async fetchData(){
       this.viewList = []
-      const date = moment(form.date).format('YYYYMMDD')
-      const url = `/core/manageworkers/resttime/${date}/${this.vueSelected.group ? this.vueSelected.group.value : -1}`
-      return await HttpHelper.getAppService(url)
+      const fromDate = moment(this.form.fromDate).format('YYYYMMDD')
+      const toDate = moment(this.form.toDate).format('YYYYMMDD')
+      const url = `/office/manageworkers/company/${fromDate}/${toDate}${this.vueSelected.group ? '?company=' + this.vueSelected.group.value : ''}`
+      const result = await HttpHelper.getAppService(url)
+      return result
     },
     async showDetail(item){
       this.replaceMain({selectedDate: this.form.date})
@@ -182,18 +216,17 @@ export default {
         return `${d.getHours()}:${('00' + d.getMinutes()).slice(-2)}`
       }
       this.viewList = data.map( (e, i, a) => {
-        let startTime = getTime(e.startTime)
-        let leaveTime = getTime(e.leaveTime)
         return {
           index: (i+1),
-          potName: e.potName,
-          workName: e.workName,
-          startTime: startTime,
-          restTime: e.restTime,
-          restTimeSelfReport: e.restTimeSelfReport,
-          leaveTime: leaveTime,
+          groupName: e.groupName,
+          categoryName: e.categoryName,
+          count: e.count,
+          workTimeSum: e.workTimeSum,
+          restTimeSum: e.restTimeSum,
+          restTimeSelfSum: e.restTimeSelfSum,
         }
       })
+      this.totalRows = this.viewList.length
     },
   }
 }

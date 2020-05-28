@@ -1192,6 +1192,7 @@ export const MENU = [
     path: 'sum/usage-situation',
     icon: 'chart-line',
     pages: [
+      /*
       {
         key: 'usageSituation',
         path: 'usage-situation',
@@ -1257,11 +1258,18 @@ export const MENU = [
         path: 'planActual',
         icon: 'chart-bar',
       },
+      */
       {
-        key: 'attendanceSum',
-        path: 'attendanceSum',
+        key: 'attendanceWorkers',
+        path: 'attendanceWorkers',
         icon: 'clock',
       },
+      {
+        key: 'attendanceCompanies',
+        path: 'attendanceCompanies',
+        icon: 'clock',
+      },
+      /*
       {
         key: 'attendanceDetail',
         path: 'attendanceDetail',
@@ -1272,6 +1280,7 @@ export const MENU = [
         path: 'presenceSum',
         icon: 'user-clock',
       },
+      */
     ]
   },
   {

@@ -424,7 +424,8 @@
     "meetingRoomName": "会議室名",
 
     "attendanceDetail": "入退室管理詳細",
-    "attendanceSum": "勤怠管理(作業員)",
+    "attendanceWorkers": "勤怠管理(作業員)",
+    "attendanceCompanies": "勤怠管理(派遣会社)",
     "entranceTime": "入室",
     "exitTime": "退室",
     "lastDetected": "最終検知",
@@ -831,7 +832,12 @@
       "startTime": "開始時間",
       "leaveTime": "終了時間",
       "restTime": "休憩時間",
-      "restTimeSelfReport": "休憩時間(自己申告)"
+      "restTimeSelfReport": "休憩時間(自己申告)",
+      "company": "派遣会社",
+      "count": "人数",
+      "workTimeSum": "作業時間合計",
+      "restTimeSum": "休憩時間合計",
+      "restTimeSumSelf": "休憩時間合計(自己申告)"
     },
 
     "dummy": ""
@@ -1817,6 +1823,7 @@
     "invalidLoginId": "ログインIDは英数記号を指定してください。",
     "notFound": "検索結果が存在しませんでした。",
     "pleaseEnterSearchCriteria": "検索条件を入力してください。",
+    "pleaseEnterPeriod": "期間を入力してください",
     "uploadData": "{val}件のデータが登録可能です。",
     "uploadNoData": "登録可能なデータがありません。",
     "uploadWarnData": "{val}件のデータは登録できません。",
