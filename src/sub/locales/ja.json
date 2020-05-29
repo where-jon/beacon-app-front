@@ -837,7 +837,8 @@
       "count": "人数",
       "workTimeSum": "作業時間合計",
       "restTimeSum": "休憩時間合計",
-      "restTimeSumSelf": "休憩時間合計(自己申告)"
+      "restTimeSumSelf": "休憩時間合計(自己申告)",
+      "tempRegistWorker": "仮登録作業員"
     },
 
     "dummy": ""

@@ -1428,3 +1428,5 @@ export const GROUP = {
     COMPANY: 9,
   }
 }
+
+export const TEMP_REGIST_WORKER_CATEGORYCD = 'TEMP_REGIST_WORKER'

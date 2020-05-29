@@ -56,7 +56,13 @@
                 </template>
               </v-select>
             </b-form-group>
-            <!--
+
+            <b-form-group>
+              <b-form-checkbox v-model="vueSelected.category" :value="tempRegistWorkerId" :unchecked-value="null">
+              {{ $t('label.MANAGE_WORKERS.tempRegistWorker') }}
+              </b-form-checkbox>
+            </b-form-group>
+<!--
             <b-form-group v-show="isShownWith('category')">
               <label v-t="'label.category'" />
               <v-select v-model="vueSelected.category" :options="categoryOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options-lg">
@@ -65,7 +71,7 @@
                 </template>
               </v-select>
             </b-form-group>
-            -->
+-->
             <b-form-group v-show="isShownWith('group')">
               <label v-t="'label.group'" />
               <v-select v-model="vueSelected.group" :options="groupOptions" :disabled="!isEditable" :readonly="!isEditable" class="mb-3 vue-options-lg">
@@ -109,7 +115,7 @@
 import { mapState } from 'vuex'
 import _ from 'lodash'
 import { APP, EXCLOUD, APP_SERVICE } from '../../../sub/constant/config'
-import { POT_TYPE, TYPE_RELATION, CATEGORY } from '../../../sub/constant/Constants'
+import { POT_TYPE, TYPE_RELATION, CATEGORY, TEMP_REGIST_WORKER_CATEGORYCD } from '../../../sub/constant/Constants'
 import * as StringUtil from '../../../sub/util/StringUtil'
 import * as Util from '../../../sub/util/Util'
 import * as AppServiceHelper from '../../../sub/helper/dataproc/AppServiceHelper'
@@ -160,7 +166,8 @@ export default {
       form: {
         ...Util.extract(this.$store.state.app_service.pot,
           ['potId', 'potCd', 'potName', 'potType', 'extValue.ruby',
-            'displayName', 'potGroupList.0.group.groupId',
+            'displayName', 'potGroupList.0.group.groupId','potCategoryList.0.category.categoryId',
+            'potCategoryList.0.category.categoryCd',
             ...PotHelper.getPotExtKeys(this.pName, true)])
       },
       vueSelected: {
@@ -176,7 +183,8 @@ export default {
       thumbnailUrl: APP_SERVICE.BASE_URL + EXCLOUD.POT_THUMBNAIL_URL,
       potCdOld: null,
       useAd: APP.AUTH.USE_AD,
-      excludeExtKeys: ['ruby', 'auth', 'category', 'group', 'thumbnail', 'description', 'user']
+      excludeExtKeys: ['ruby', 'auth', 'category', 'group', 'thumbnail', 'description', 'user'],
+      tempRegistWorkerId: null
     }
   },
   computed: {
@@ -193,12 +201,14 @@ export default {
       return ViewHelper.createBreadCrumbItems('master', {text: StringUtil.concatCamel('pot', this.pName), href: this.backPath}, ViewHelper.getDetailCaptionKey(this.$store.state.app_service.pot.potId))
     },
     categoryOptions() {
-      return MasterHelper.getOptionsFromState('category', false, true,
+      const result = MasterHelper.getOptionsFromState('category', false, true,
         category => category.categoryType === TYPE_RELATION.getPotCategory()[this.form.potType]
       )
+      return result
     },
     ...mapState('app_service', [
       'pot',
+      'categories',
       'updatedThumbnail',
     ]),
     thumbnailSrc () {
@@ -229,7 +239,10 @@ export default {
     },
     'vueSelected.category': {
       handler: function(newVal, oldVal){
-        this.form.categoryId = Util.getValue(newVal, 'value')
+        this.form.categoryId = newVal
+        if (newVal) {
+          this.form.categoryCd = TEMP_REGIST_WORKER_CATEGORYCD
+        }
       },
       deep: true,
     },
@@ -257,7 +270,6 @@ export default {
   },
   async created(){
     this.initForm()
-
     const potUser = Util.hasValue(this.pot.potUserList)? this.pot.potUserList[0]: null
     if(potUser && potUser.user){
       this.form.loginId = potUser.user.loginId
@@ -278,6 +290,16 @@ export default {
     this.vueSelected.group = VueSelectHelper.getVueSelectData(this.groupOptions, this.form.groupId)
     ValidateHelper.setCustomValidationMessage()
     VueSelectHelper.disabledAllSubmit()
+
+    // 仮登録作業員カテゴリーの取得
+    const tempWorkerCategory = this.categories.find(c => c.categoryCd === TEMP_REGIST_WORKER_CATEGORYCD)
+    if (tempWorkerCategory) {
+      this.tempRegistWorkerId = tempWorkerCategory.categoryId
+    }
+
+    if (this.form.categoryCd && this.form.categoryCd === TEMP_REGIST_WORKER_CATEGORYCD) {
+      this.vueSelected.category = this.form.categoryId
+    }
   },
   methods: {
     getAuthCategoryOptions() {
@@ -405,12 +427,9 @@ export default {
     async onSaving() {
       const entity = PotHelper.createEntity(this.form, this.minors, this.potTypeOptions, this.groups, this.categories)
       // POT種別は"人"一択
-      entity.potType = [POT_TYPE.getTypes().filter(t => t.value === POT_TYPE.PERSON)[0].text]
-      // potCdは"worker"  + potId
-      entity.potCd = `worker${entity.potId}`
+      entity.potType = [POT_TYPE.getTypes().filter(t => t.value === POT_TYPE.PERSON)[0].value]
       this.potCdOld = this.form.potCd
       delete entity.potTxList
-      delete entity.groupCd
       return await AppServiceHelper.bulkSaveByCsvStr(this.pAppServicePath, [entity])
     },
     getNameByteLangth(){
