@@ -1080,6 +1080,7 @@ export const MENU = [
         path: 'pot',
         icon: 'id-card',
       },
+      /*
       {
         key: 'potPerson',
         path: 'potPerson',
@@ -1095,41 +1096,50 @@ export const MENU = [
         path: 'potOther',
         icon: 'cubes',
       },
+      */
       {
         key: 'category',
         path: 'category',
         icon: 'object-group',
       },
+      /*
       {
         key: 'categoryPerson',
         path: 'categoryPerson',
         icon: 'users',
       },
+      */
+      /*
       {
         key: 'categoryThing',
         path: 'categoryThing',
         icon: 'object-group',
       },
+      */
       {
         key: 'categoryZone',
         path: 'categoryZone',
         icon: 'object-ungroup',
       },
+      /*
       {
         key: 'categoryAuth',
         path: 'categoryAuth',
         icon: 'key',
       },
+      */
       {
         key: 'group',
         path: 'group',
         icon: 'sitemap',
       },
+      /*
       {
         key: 'user',
         path: 'user',
         icon: 'user',
       },
+      */
       {
         key: 'role',
         path: 'role',
