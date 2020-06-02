@@ -185,7 +185,7 @@
     "sosNotify": "SOSボタン押下通知",
     "txUndetectedNotify":"TX一定時間未検知",
     "txNeglectNotify":"TX放置",
-    "txHaveMultipleNotify":"TX複数所持",
+    "txMultipleNotify":"TX複数所持",
 
     "exbeacon": "EXBeacon",
     "settingExbeacon": "EXBeacon設定",
