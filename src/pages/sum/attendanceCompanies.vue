@@ -146,11 +146,11 @@ export default {
     this.form.toDate = DateUtil.getDatetime(date, {date: 0})
   },
   async mounted() {
+    console.log('@@@@ group')
+    console.log(this.groups)
     ViewHelper.importElementUI()
     this.companyOptions = this.groups
     .filter(g => {
-      console.log('@@@@ group')
-      console.log(g)
       return g.groupType === GROUP.TYPE.COMPANY
     }).map(g => {
       return {
