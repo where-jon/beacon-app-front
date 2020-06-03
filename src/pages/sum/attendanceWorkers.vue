@@ -106,7 +106,6 @@ export default {
     }
   },
   computed: {
-    ...mapState('app_service', ['groups']),
   },
   watch: {
     'vueSelected.group': {
@@ -122,14 +121,22 @@ export default {
   },
   async mounted() {
     ViewHelper.importElementUI()
-    this.companyOptions = this.groups
-    .filter(g => g.groupType === GROUP.TYPE.COMPANY).map(g => {
-      return {
-        label: g.groupName,
-        text: g.groupName,
-        value: g.groupId
-      }
-    })
+    try {
+      this.showProgress()
+      const groups = await HttpHelper.getAppService('/basic/group')
+      this.companyOptions = groups.filter(g => g.groupType !== null && g.groupType === GROUP.TYPE.COMPANY)
+      .map(g => {
+        return {
+          label: g.groupName,
+          text: g.groupName,
+          value: g.groupId
+        }
+      })
+    } catch (e) {
+      console.error(e)
+    } finally {
+      this.hideProgress()
+    }
   },
   methods: {
     getField(){

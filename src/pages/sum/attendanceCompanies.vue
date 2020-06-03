@@ -130,7 +130,6 @@ export default {
     }
   },
   computed: {
-    ...mapState('app_service', ['groups']),
   },
   watch: {
     'vueSelected.group': {
@@ -146,19 +145,23 @@ export default {
     this.form.toDate = DateUtil.getDatetime(date, {date: 0})
   },
   async mounted() {
-    console.log('@@@@ group')
-    console.log(this.groups)
     ViewHelper.importElementUI()
-    this.companyOptions = this.groups
-    .filter(g => {
-      return g.groupType === GROUP.TYPE.COMPANY
-    }).map(g => {
-      return {
-        label: g.groupName,
-        text: g.groupName,
-        value: g.groupId
-      }
-    })
+    try {
+      this.showProgress()
+      const groups = await HttpHelper.getAppService('/basic/group')
+      this.companyOptions = groups.filter(g => g.groupType !== null && g.groupType === GROUP.TYPE.COMPANY)
+      .map(g => {
+        return {
+          label: g.groupName,
+          text: g.groupName,
+          value: g.groupId
+        }
+      })
+    } catch (e) {
+      console.error(e)
+    } finally {
+      this.hideProgress()
+    }
   },
   methods: {
     async display() {
