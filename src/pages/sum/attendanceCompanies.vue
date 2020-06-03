@@ -148,15 +148,17 @@ export default {
   async mounted() {
     ViewHelper.importElementUI()
     this.companyOptions = this.groups
-    .filter(g => g.groupType === GROUP.TYPE.COMPANY).map(g => {
+    .filter(g => {
+      console.log('@@@@ group')
+      console.log(g)
+      return g.groupType === GROUP.TYPE.COMPANY
+    }).map(g => {
       return {
         label: g.groupName,
         text: g.groupName,
         value: g.groupId
       }
     })
-    console.log('@@@@@@@@@@@@@@@ this.companyOptions')
-    console.log(this.companyOptions)
   },
   methods: {
     async display() {
