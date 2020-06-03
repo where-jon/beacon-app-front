@@ -184,7 +184,7 @@
     "userRegNotify": "ユーザ登録通知",
     "sosNotify": "SOSボタン押下通知",
     "txUndetectedNotify":"TX一定時間未検知",
-    "txNeglectNotify":"TX置きっぱなし",
+    "txNeglectNotify":"TX隠し",
     "txMultipleNotify":"TX複数所持",
 
     "exbeacon": "EXBeacon",
@@ -314,6 +314,8 @@
     "potCd": "ID",
     "potName": "名前",
     "potSearchName": "検知名",
+    "companyName": "派遣会社名",
+    "workName": "作業種別",
     "post": "役職",
     "ruby": "ふりがな",
     "tel": "電話番号",

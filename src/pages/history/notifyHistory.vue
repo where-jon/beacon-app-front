@@ -138,6 +138,12 @@
               {{ val }} <br>
             </span>
           </template>
+
+          <template slot="companyNames" slot-scope="row">
+            <span v-for="(val, key) in row.item.companyNames" :key="key">
+              {{ val }} <br>
+            </span>
+          </template>
         </b-table>
 
         <b-row>
@@ -245,6 +251,17 @@ export default {
         {key: 'minors', sortable: true,label:'minor' },
         {key: 'potNames', sortable: true, label:'potSearchName'},
         {key: 'zoneNames', sortable: true, label:'zoneName'},
+        {key: 'lastRcvPosNames', sortable: true,label:'finalReceiveLocation' },
+        {key: 'lastRcvDatetimes', sortable: true,label:'finalReceiveTime' },
+        {key: 'notifyResult', sortable: true,label:'notifyResult' },
+      ]),
+      fields9: ViewHelper.addLabelByKey(this.$i18n, [  // zdcアラート
+        {key: 'positionDt', sortable: true, label:'dt'},
+        {key: 'notifyTo', sortable: true,label:'notifyTo' },
+        {key: 'minor', sortable: true,label:'minor' },
+        {key: 'potNames', sortable: true, label:'potName'},
+        {key: 'companyNames', sortable: true, label:'companyName'},
+        {key: 'workNames', sortable: true, label:'workName'},
         {key: 'lastRcvPosNames', sortable: true,label:'finalReceiveLocation' },
         {key: 'lastRcvDatetimes', sortable: true,label:'finalReceiveTime' },
         {key: 'notifyResult', sortable: true,label:'notifyResult' },
@@ -500,6 +517,8 @@ export default {
         return this.fields7
       }else if (aNotifyState == NOTIFY_STATE.LOST_NOTIFY) {
         return this.fields8
+      }else if (aNotifyState == NOTIFY_STATE.TX_UNDETECTED_NOTIFY || aNotifyState == NOTIFY_STATE.TX_NEGLECT_NOTIFY || aNotifyState == NOTIFY_STATE.TX_MULTIPLE_NOTIFY) {
+        return this.fields9
       }
     },
     getCsvHeaderList() {
