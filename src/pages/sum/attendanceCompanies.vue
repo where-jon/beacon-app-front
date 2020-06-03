@@ -155,6 +155,8 @@ export default {
         value: g.groupId
       }
     })
+    console.log('@@@@@@@@@@@@@@@ this.companyOptions')
+    console.log(this.companyOptions)
   },
   methods: {
     async display() {
