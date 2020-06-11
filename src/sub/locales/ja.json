@@ -184,6 +184,9 @@
     "lostNotify": "重要物品持出アラート",
     "userRegNotify": "ユーザ登録通知",
     "sosNotify": "SOSボタン押下通知",
+    "txUndetectedNotify":"TX一定時間未検知",
+    "txNeglectNotify":"TX隠し",
+    "txMultipleNotify":"TX複数所持",
 
     "exbeacon": "EXBeacon",
     "settingExbeacon": "EXBeacon設定",
@@ -312,6 +315,8 @@
     "potCd": "ID",
     "potName": "名前",
     "potSearchName": "検知名",
+    "companyName": "派遣会社名",
+    "workName": "作業種別",
     "post": "役職",
     "ruby": "フリガナ",
     "tel": "電話番号",
