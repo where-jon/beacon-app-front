@@ -57,7 +57,7 @@ export default {
             {key: 'category', optionFunc: this.filteredCategoryOptions}
             : null
         ].filter(e => e),
-        sortBy: 'ID',
+        sortBy: 'ruby',
         addFilterFields: ['txIdNames'],
       },
       name: 'pot',
