@@ -97,6 +97,9 @@ export default {
       userMailState: NOTIFY_STATE.getOptions().filter(val => val.value == 'USER_REG_NOTIFY')[0].value,
       prohibitState: NOTIFY_STATE.getOptions().filter(val => val.value == 'PROHIBIT_NOTIFY')[0].value,
       lostState: NOTIFY_STATE.getOptions().filter(val => val.value == 'LOST_NOTIFY')[0].value,
+      txUndetectedState: NOTIFY_STATE.getOptions().filter(val => val.value == 'TX_UNDETECTED_NOTIFY')[0].value,
+      txNeglectState: NOTIFY_STATE.getOptions().filter(val => val.value == 'TX_NEGLECT_NOTIFY')[0].value,
+      txMultipleState: NOTIFY_STATE.getOptions().filter(val => val.value == 'TX_MULTIPLE_NOTIFY')[0].value,
       notify: _.slice(NOTIFY_MIDIUM.getTypes()).filter(val => APP.NOTIFY.MIDIUM_TYPES.includes(val.value)),
       isEnableNameText: true,
       isRegist: false,
@@ -136,9 +139,14 @@ export default {
     },
     signalChange(evt = this.form.notifyTemplateKey) {
       this.form.notifyMedium == undefined ? this.form.notifyMedium = 0:null
-      if (evt == this.deliveryState || evt == this.userMailState || evt == this.prohibitState || evt == this.lostState) {
+      if (evt == this.txUndetectedState || evt == this.txNeglectState || evt == this.txMultipleState
+           || evt == this.deliveryState || evt == this.userMailState || evt == this.prohibitState || evt == this.lostState) {
         this.notify = _.slice(NOTIFY_MIDIUM.getTypes()).filter(val => [0].includes(val.value))
         this.bNotifyTo = evt == this.userMailState || evt == this.deliveryState ?  false: true
+        if(this.txUndetectedState || this.txNeglectState || this.txMultipleState){
+          this.bNotifyTo = true
+          this.form.notifyMedium = 0
+        }
         this.bSubject = true
         if(evt != this.form.notifyTemplateKey){
           this.form.notifyMedium = 0
