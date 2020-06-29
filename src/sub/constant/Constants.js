@@ -1139,13 +1139,11 @@ export const MENU = [
         path: 'group',
         icon: 'sitemap',
       },
-      /*
       {
         key: 'user',
         path: 'user',
         icon: 'user',
       },
-      */
       {
         key: 'role',
         path: 'role',
