@@ -57,7 +57,7 @@
     "node-sass": "^4.12.0",
     "nuxt": "^2.8.1",
     "nuxt-fontawesome": "^0.4.0",
-    "papaparse": "^5.0.0",
+    "papaparse": "^5.2.0",
     "sass-loader": "^7.1.0",
     "vue-color": "^2.7.0",
     "vue-i18n": "^8.11.2",
