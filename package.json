@@ -54,7 +54,7 @@
     "moment": "^2.24.0",
     "moment-timezone": "^0.5.27",
     "msal": "^1.2.0",
-    "node-sass": "^4.12.0",
+    "node-sass": "^7.0.0",
     "nuxt": "^2.8.1",
     "nuxt-fontawesome": "^0.4.0",
     "papaparse": "^5.0.0",
