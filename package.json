@@ -84,7 +84,7 @@
     "esm": "^3.2.25",
     "jsdoc": "^3.6.2",
     "jsdoc-vuejs": "^3.0.0",
-    "jsdom": "^15.1.1",
+    "jsdom": "^16.5.0",
     "nodemon": "^1.18.9",
     "url-search-params-polyfill": "^7.0.0",
     "vue-template-compiler": "^2.5.16"
