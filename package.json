@@ -47,7 +47,7 @@
     "encoding-japanese": "^1.0.29",
     "heatmap.js": "^2.0.5",
     "jschardet": "^2.1.0",
-    "jszip": "^3.2.1",
+    "jszip": "^3.7.0",
     "konva": "^3.3.3",
     "lodash": "^4.17.11",
     "md5": "^2.2.1",
